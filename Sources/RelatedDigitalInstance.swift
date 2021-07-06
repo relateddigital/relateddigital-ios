@@ -50,6 +50,18 @@ public class RelatedDigitalInstance {
         self.relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource)
     }
     
+    public func tryLog(logType: Int, message: String){
+        if logType == 1 {
+            RelatedDigitalLogger.debug(message)
+        } else if  logType == 2 {
+            RelatedDigitalLogger.info(message)
+        } else if  logType == 3 {
+            RelatedDigitalLogger.warn(message)
+        } else {
+            RelatedDigitalLogger.error(message)
+        }
+    }
+    
     /*
     convenience init?() {
         let canReadFromUserDefaults = false
