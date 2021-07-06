@@ -24,4 +24,4 @@ DerivedData
 .bundle
 Package.resolved
 .swiftpm/
-ObjCStarter/Podfile.lock
+Podfile.lock
