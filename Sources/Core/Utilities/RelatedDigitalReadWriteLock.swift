@@ -1,5 +1,5 @@
 //
-//  RelatedDigitalWriteLock.swift
+//  RelatedDigitalReadWriteLock.swift
 //  
 //
 //  Created by Egemen Gulkilik on 6.07.2021.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class RelatedDigitalWriteLock {
+class RelatedDigitalReadWriteLock {
     let concurentQueue: DispatchQueue
 
     init(label: String) {

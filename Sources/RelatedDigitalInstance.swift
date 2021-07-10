@@ -12,6 +12,8 @@ public class RelatedDigitalInstance {
     var relatedDigitalUser: RelatedDigitalUser!
     var relatedDigitalProfile: RelatedDigitalProfile!
     var relatedDigitalCookie = RelatedDigitalCookie()
+    var relatedDigitalPushNotifications: RelatedDigitalPushNotifications
+    let readWriteLock: RelatedDigitalReadWriteLock
 
 
     //TODO: bunun satır sayısını azaltabilirsin
@@ -47,7 +49,9 @@ public class RelatedDigitalInstance {
     
 
     init(organizationId: String, profileId: String, dataSource: String) {
-        self.relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource)
+        relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource)
+        relatedDigitalPushNotifications = RelatedDigitalPushNotifications()
+        readWriteLock = RelatedDigitalReadWriteLock(label: "RelatedDigitalInstanceLock")
     }
     
     public func enablePushNotifications(appAlias: String) {

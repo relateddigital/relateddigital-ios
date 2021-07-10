@@ -34,7 +34,7 @@ struct RelatedDigitalLogMessage {
 }
 
 class RelatedDigitalLogger {
-    private static let readWriteLock: RelatedDigitalWriteLock = RelatedDigitalWriteLock(label: "relatedDigitalLoggerLock")
+    private static let readWriteLock: RelatedDigitalReadWriteLock = RelatedDigitalReadWriteLock(label: "relatedDigitalLoggerLock")
     private static var enabledLevels = Set<RelatedDigitalLogLevel>()
     
     class func enableLevel(_ level: RelatedDigitalLogLevel) {
