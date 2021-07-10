@@ -50,6 +50,17 @@ public class RelatedDigitalInstance {
         self.relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource)
     }
     
+    public func enablePushNotifications(appAlias: String) {
+        self.relatedDigitalProfile.pushNotificationsEnabled = true
+        self.relatedDigitalProfile.appAlias = appAlias
+    }
+    
+    public func disablePushNotifications() {
+        self.relatedDigitalProfile.pushNotificationsEnabled = false
+    }
+    
+    
+    
     public func tryLog(logType: Int, message: String){
         if logType == 1 {
             RelatedDigitalLogger.debug(message)
