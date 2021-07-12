@@ -1,13 +1,13 @@
 //
-//  RelatedDigitalCookie.swift
-//  
+//  RelatedDigitalLoadBalancerCookie.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen Gulkilik on 6.07.2021.
 //
 
 import Foundation
 
-struct RelatedDigitalCookie {
+struct RelatedDigitalLoadBalancerCookie {
     var loggerCookieKey: String?
     var loggerCookieValue: String?
     var realTimeCookieKey: String?

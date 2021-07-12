@@ -11,9 +11,9 @@ public class RelatedDigitalInstance {
 
     var relatedDigitalUser: RelatedDigitalUser!
     var relatedDigitalProfile: RelatedDigitalProfile!
-    var relatedDigitalCookie = RelatedDigitalCookie()
+    var relatedDigitalCookie = RelatedDigitalLoadBalancerCookie()
     var relatedDigitalAnalytics: RelatedDigitalAnalytics
-    var relatedDigitalPushNotifications: RelatedDigitalPushNotifications
+    var relatedDigitalPushNotifications: RelatedDigitalPushNotification
     let readWriteLock: RelatedDigitalReadWriteLock
 
 
@@ -52,7 +52,7 @@ public class RelatedDigitalInstance {
     init(organizationId: String, profileId: String, dataSource: String) {
         relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource)
         relatedDigitalAnalytics = RelatedDigitalAnalytics(relatedDigitalProfile: relatedDigitalProfile)
-        relatedDigitalPushNotifications = RelatedDigitalPushNotifications(relatedDigitalProfile: relatedDigitalProfile)
+        relatedDigitalPushNotifications = RelatedDigitalPushNotification(relatedDigitalProfile: relatedDigitalProfile)
         readWriteLock = RelatedDigitalReadWriteLock(label: "RelatedDigitalInstanceLock")
     }
     

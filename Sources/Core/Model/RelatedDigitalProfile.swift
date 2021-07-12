@@ -23,5 +23,6 @@ struct RelatedDigitalProfile: Codable {
     var isIDFAEnabled = false
     var pushNotificationsEnabled = false
     var appAlias = ""
+    var sdkVersion = "5.00"
 }
 

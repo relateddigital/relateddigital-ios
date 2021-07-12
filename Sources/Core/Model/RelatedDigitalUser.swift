@@ -1,6 +1,6 @@
 //
 //  RelatedDigitalUser.swift
-//  
+//  RelatedDigitalIOS
 //
 //  Created by Egemen Gulkilik on 6.07.2021.
 //
@@ -16,4 +16,9 @@ struct RelatedDigitalUser: Codable {
     var visitorData: String?
     var userAgent: String?
     var identifierForAdvertising: String?
+    var lastEventTime: String?
+    var nrv = 0
+    var pviv = 0
+    var tvc = 0
+    var lvt: String?
 }

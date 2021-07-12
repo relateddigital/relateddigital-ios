@@ -1,6 +1,6 @@
 //
 //  RelatedDigitalDate.swift
-//  
+//  RelatedDigitalIOS
 //
 //  Created by Egemen Gulkilik on 6.07.2021.
 //
