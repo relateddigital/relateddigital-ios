@@ -7,7 +7,7 @@
 
 import Foundation
 
-class RelatedDigitalPushNotifications{
+class RelatedDigitalPushNotifications {
     
     let relatedDigitalProfile: RelatedDigitalProfile
     
