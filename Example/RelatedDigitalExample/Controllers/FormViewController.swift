@@ -7,11 +7,9 @@
 
 import UIKit
 
-/// View controller that shows a form.
-@objc(EurekaFormViewController)
 class FormViewController: UIViewController, FormViewControllerProtocol, FormDelegate {
 
-    @IBOutlet var tableView: UITableView!
+    var tableView: UITableView!
 
     private lazy var _form: Form = { [weak self] in
         let form = Form()

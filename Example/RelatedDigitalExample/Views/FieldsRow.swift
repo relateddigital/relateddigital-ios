@@ -286,12 +286,6 @@ class _URLRow: FieldRow<URLCell> {
     }
 }
 
-class _TwitterRow: FieldRow<TwitterCell> {
-    required init(tag: String?) {
-        super.init(tag: tag)
-    }
-}
-
 class _AccountRow: FieldRow<AccountCell> {
     required init(tag: String?) {
         super.init(tag: tag)
@@ -332,22 +326,8 @@ final class EmailRow: _EmailRow, RowType {
     }
 }
 
-/// A String valued row where the user can enter a twitter username.
-final class TwitterRow: _TwitterRow, RowType {
-    required init(tag: String?) {
-        super.init(tag: tag)
-    }
-}
-
 /// A String valued row where the user can enter a simple account username.
 final class AccountRow: _AccountRow, RowType {
-    required init(tag: String?) {
-        super.init(tag: tag)
-    }
-}
-
-/// A String valued row where the user can enter a zip code.
-final class ZipCodeRow: _ZipCodeRow, RowType {
     required init(tag: String?) {
         super.init(tag: tag)
     }
@@ -369,13 +349,6 @@ final class DecimalRow: _DecimalRow, RowType {
 
 /// A row where the user can enter an URL. The value of this row will be a URL.
 final class URLRow: _URLRow, RowType {
-    required init(tag: String?) {
-        super.init(tag: tag)
-    }
-}
-
-/// A String valued row where the user can enter a phone number.
-final class PhoneRow: _PhoneRow, RowType {
     required init(tag: String?) {
         super.init(tag: tag)
     }

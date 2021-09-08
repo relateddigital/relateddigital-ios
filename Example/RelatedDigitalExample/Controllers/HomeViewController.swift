@@ -39,6 +39,22 @@ class HomeViewController: FormViewController {
         }
     }
     
+    func addCreateApiButtonRow() -> ButtonRow {
+        return ButtonRow {
+            $0.title = "createAPI"
+        }.onCellSelection { _, _ in
+            self.goToTabBarController()
+        }
+    }
+    
+    func goToTabBarController() {
+        let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
+        self.view.window?.rootViewController = appDelegate?.getTabBarController()
+    }
+    
+    
+    
+    
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {
             headerView.contentView.backgroundColor = .white
@@ -63,6 +79,7 @@ class HomeViewController: FormViewController {
         form +++
             Section("createAPI")
             <<< addOrganizationIdTextRow()
+            <<< addCreateApiButtonRow()
     }
     
     

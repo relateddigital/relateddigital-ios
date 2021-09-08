@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4C0CB2C264445A8A014E5929 /* Pods_RelatedDigitalExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5A998483FFF01F94AF0313 /* Pods_RelatedDigitalExample.framework */; };
+		88146CD1269CF5AD00473051 /* RelatedDigitalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88146CD0269CF5AD00473051 /* RelatedDigitalTabBarController.swift */; };
+		88146CD3269CF8A400473051 /* AnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88146CD2269CF8A400473051 /* AnalyticsViewController.swift */; };
+		88146CD5269CF8E000473051 /* GeofenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88146CD4269CF8E000473051 /* GeofenceViewController.swift */; };
 		88680B0D2694FC09004B8DE8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88680B0C2694FC09004B8DE8 /* AppDelegate.swift */; };
 		88680B112694FC09004B8DE8 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88680B102694FC09004B8DE8 /* HomeViewController.swift */; };
 		88680B162694FC0C004B8DE8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88680B152694FC0C004B8DE8 /* Assets.xcassets */; };
@@ -57,6 +60,9 @@
 /* Begin PBXFileReference section */
 		4B5A998483FFF01F94AF0313 /* Pods_RelatedDigitalExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RelatedDigitalExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2532F67A145754C5FB2598 /* Pods-RelatedDigitalExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RelatedDigitalExample.release.xcconfig"; path = "Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample.release.xcconfig"; sourceTree = "<group>"; };
+		88146CD0269CF5AD00473051 /* RelatedDigitalTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedDigitalTabBarController.swift; sourceTree = "<group>"; };
+		88146CD2269CF8A400473051 /* AnalyticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewController.swift; sourceTree = "<group>"; };
+		88146CD4269CF8E000473051 /* GeofenceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofenceViewController.swift; sourceTree = "<group>"; };
 		88680B092694FC09004B8DE8 /* RelatedDigitalExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RelatedDigitalExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88680B0C2694FC09004B8DE8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		88680B102694FC09004B8DE8 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -217,10 +223,13 @@
 		88C8886F2695456000E50A10 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				88146CD2269CF8A400473051 /* AnalyticsViewController.swift */,
 				88C888742695474300E50A10 /* Core.swift */,
 				88680B102694FC09004B8DE8 /* HomeViewController.swift */,
 				88C888702695461400E50A10 /* FormViewController.swift */,
 				88C8887826954A6000E50A10 /* Validation.swift */,
+				88146CD0269CF5AD00473051 /* RelatedDigitalTabBarController.swift */,
+				88146CD4269CF8E000473051 /* GeofenceViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -406,12 +415,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88146CD5269CF8E000473051 /* GeofenceViewController.swift in Sources */,
 				88C8887F26954D1800E50A10 /* RowProtocols.swift in Sources */,
 				88C888772695485C00E50A10 /* NavigationAccessoryView.swift in Sources */,
+				88146CD3269CF8A400473051 /* AnalyticsViewController.swift in Sources */,
 				88C8888326954EDB00E50A10 /* Operators.swift in Sources */,
 				88C8887D26954C2A00E50A10 /* InlineRowType.swift in Sources */,
 				8872F1D9269529A100FD9649 /* Section.swift in Sources */,
 				8872F1E6269531CE00FD9649 /* Row.swift in Sources */,
+				88146CD1269CF5AD00473051 /* RelatedDigitalTabBarController.swift in Sources */,
 				8872F1EA269534D800FD9649 /* FieldsRow.swift in Sources */,
 				8872F1DE26952ED800FD9649 /* CellType.swift in Sources */,
 				8872F1E026952F7900FD9649 /* RowType.swift in Sources */,

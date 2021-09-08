@@ -128,7 +128,6 @@ class _FieldCell<T> : Cell<T>, UITextFieldDelegate, TextFieldCell where T: Equat
     @IBOutlet weak var titleLabel: UILabel?
 
     fileprivate var observingTitleText = false
-    private var awakeFromNibCalled = false
 
     open var dynamicConstraints = [NSLayoutConstraint]()
 
@@ -170,15 +169,9 @@ class _FieldCell<T> : Cell<T>, UITextFieldDelegate, TextFieldCell where T: Equat
         super.init(coder: aDecoder)
     }
 
-    open override func awakeFromNib() {
-        super.awakeFromNib()
-        awakeFromNibCalled = true
-    }
-
     deinit {
         textField?.delegate = nil
         textField?.removeTarget(self, action: nil, for: .allEvents)
-        guard !awakeFromNibCalled else { return }
         if observingTitleText {
             titleLabel?.removeObserver(self, forKeyPath: "text")
         }
@@ -192,11 +185,9 @@ class _FieldCell<T> : Cell<T>, UITextFieldDelegate, TextFieldCell where T: Equat
         super.setup()
         selectionStyle = .none
 
-        if !awakeFromNibCalled {
-            titleLabel?.addObserver(self, forKeyPath: "text", options: [.new, .old], context: nil)
-            observingTitleText = true
-            imageView?.addObserver(self, forKeyPath: "image", options: [.new, .old], context: nil)
-        }
+        titleLabel?.addObserver(self, forKeyPath: "text", options: [.new, .old], context: nil)
+        observingTitleText = true
+        imageView?.addObserver(self, forKeyPath: "image", options: [.new, .old], context: nil)
         textField.addTarget(self, action: #selector(_FieldCell.textFieldDidChange(_:)), for: .editingChanged)
 
         if let titleLabel = titleLabel {
@@ -210,29 +201,20 @@ class _FieldCell<T> : Cell<T>, UITextFieldDelegate, TextFieldCell where T: Equat
         super.update()
         detailTextLabel?.text = nil
 
-        if !awakeFromNibCalled {
-            if let title = row.title {
-                switch row.cellStyle {
-                case .subtitle:
-                    textField.textAlignment = .left
-                    textField.clearButtonMode = .whileEditing
-                default:
-                    textField.textAlignment = title.isEmpty ? .left : .right
-                    textField.clearButtonMode = title.isEmpty ? .whileEditing : .never
-                }
-            } else {
+        if let title = row.title {
+            switch row.cellStyle {
+            case .subtitle:
                 textField.textAlignment = .left
                 textField.clearButtonMode = .whileEditing
+            default:
+                textField.textAlignment = title.isEmpty ? .left : .right
+                textField.clearButtonMode = title.isEmpty ? .whileEditing : .never
             }
         } else {
-            textLabel?.text = nil
-            titleLabel?.text = row.title
-            if #available(iOS 13.0, *) {
-                titleLabel?.textColor = row.isDisabled ? .tertiaryLabel : .label
-            } else {
-                titleLabel?.textColor = row.isDisabled ? .gray : .black
-            }
+            textField.textAlignment = .left
+            textField.clearButtonMode = .whileEditing
         }
+        
         textField.delegate = self
         textField.text = row.displayValueFor?(row.value)
         textField.isEnabled = !row.isDisabled
@@ -281,7 +263,6 @@ class _FieldCell<T> : Cell<T>, UITextFieldDelegate, TextFieldCell where T: Equat
 
     open func customConstraints() {
 
-        guard !awakeFromNibCalled else { return }
         contentView.removeConstraints(dynamicConstraints)
         dynamicConstraints = []
         

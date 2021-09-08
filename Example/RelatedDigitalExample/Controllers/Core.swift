@@ -27,19 +27,8 @@ class RowDefaults {
 
 struct CellProvider<Cell: BaseCell> where Cell: CellType {
 
-    /// Nibname of the cell that will be created.
-    private (set) var nibName: String?
-
-    /// Bundle from which to get the nib file.
-    private (set) var bundle: Bundle!
-
     init() {}
-
-    init(nibName: String, bundle: Bundle? = nil) {
-        self.nibName = nibName
-        self.bundle = bundle ?? Bundle(for: Cell.self)
-    }
-
+    
     /**
      Creates the cell with the specified style.
 
@@ -48,9 +37,6 @@ struct CellProvider<Cell: BaseCell> where Cell: CellType {
      - returns: the cell
      */
     func makeCell(style: UITableViewCell.CellStyle) -> Cell {
-        if let nibName = self.nibName {
-            return bundle.loadNibNamed(nibName, owner: nil, options: nil)!.first as! Cell
-        }
         return Cell.init(style: style, reuseIdentifier: nil)
     }
 }
@@ -59,7 +45,6 @@ struct CellProvider<Cell: BaseCell> where Cell: CellType {
  Enumeration that defines how a controller should be created.
 
  - Callback->VCType: Creates the controller inside the specified block
- - NibFile:          Loads a controller from a nib file in some bundle
  - StoryBoard:       Loads the controller from a Storyboard by its storyboard id
  */
 enum ControllerProvider<VCType: UIViewController> {
@@ -70,11 +55,6 @@ enum ControllerProvider<VCType: UIViewController> {
     case callback(builder: (() -> VCType))
 
     /**
-     *  Loads a controller from a nib file in some bundle
-     */
-    case nibFile(name: String, bundle: Bundle?)
-
-    /**
      *  Loads the controller from a Storyboard by its storyboard id
      */
     case storyBoard(storyboardId: String, storyboardName: String, bundle: Bundle?)
@@ -83,8 +63,6 @@ enum ControllerProvider<VCType: UIViewController> {
         switch self {
             case .callback(let builder):
                 return builder()
-            case .nibFile(let nibName, let bundle):
-                return VCType.init(nibName: nibName, bundle:bundle ?? Bundle(for: VCType.self))
             case .storyBoard(let storyboardId, let storyboardName, let bundle):
                 let sb = UIStoryboard(name: storyboardName, bundle: bundle ?? Bundle(for: VCType.self))
                 return sb.instantiateViewController(withIdentifier: storyboardId) as! VCType
