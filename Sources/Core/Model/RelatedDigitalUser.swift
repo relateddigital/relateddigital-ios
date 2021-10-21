@@ -21,4 +21,6 @@ struct RelatedDigitalUser: Codable {
     var pviv = 0
     var tvc = 0
     var lvt: String?
+    var appVersion: String?
+    var sdkVersion: String?
 }

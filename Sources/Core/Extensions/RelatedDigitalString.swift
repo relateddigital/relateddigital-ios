@@ -13,4 +13,9 @@ extension String {
         String.dateFormatter.dateFormat = format
         return String.dateFormatter.date(from: self)
     }
+    
+    var isEmptyOrWhitespace: Bool {
+        return self.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+    
 }
