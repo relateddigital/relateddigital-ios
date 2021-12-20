@@ -20,3 +20,16 @@ class RelatedDigitalParameter {
         self.relatedKeys = relatedKeys
     }
 }
+
+public class urlConstant {
+    static var shared = urlConstant()
+    var urlPrefix = "s.visilabs.net"
+    var securityTag = "https"
+    var organizationId = "676D325830564761676D453D"
+    var profileId = "356467332F6533766975593D"
+    
+    func setTest() {
+        urlPrefix = "tests.visilabs.net"
+        securityTag = "http"
+    }
+}

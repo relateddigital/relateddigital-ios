@@ -11,20 +11,22 @@ import UIKit
 
 struct RelatedDigitalConstants {
     static let http = "http"
-    static let https = "https"
+    static let https = urlConstant.shared.securityTag
     static let dateFormat = "yyyy-MM-dd HH:mm:ss"
-    
+    static let sdkVersion = "0.0.1"
     static let loggerEndPoint = "lgr.visilabs.net"
     static let realtimeEndPoint = "rt.visilabs.net"
-    static let recommendationEndPoint = "s.visilabs.net/json"
-    static let actionEndPoint = "s.visilabs.net/actjson"
-    static let geofenceEndPoint = "s.visilabs.net/geojson"
-    static let mobileEndPoint = "s.visilabs.net/mobile"
-    static let subsjsonEndpoint = "s.visilabs.net/subsjson"
-    static let promotionEndpoint = "s.visilabs.net/promotion"
+    static var recommendationEndPoint = "\(urlConstant.shared.urlPrefix)/json"
+    static var actionEndPoint = "\(urlConstant.shared.urlPrefix)/actjson"
+    static var geofenceEndPoint = "\(urlConstant.shared.urlPrefix)/geojson"
+    static var mobileEndPoint = "\(urlConstant.shared.urlPrefix)/mobile"
+    static var subsjsonEndpoint = "\(urlConstant.shared.urlPrefix)/subsjson"
+    static var promotionEndpoint = "\(urlConstant.shared.urlPrefix)/promotion"
     static let subscriptionEndpoint = "pushs.euromsg.com/subscription"
     static var retentionEndpoint = "pushr.euromsg.com/retention"
-    
+    static var remoteConfigEndpoint = "mbls.visilabs.net/rc.json"
+    static let queueSize = 5000
+
     // MARK: - UserDefaults Keys
 
     static let userDefaultsProfileKey = "Visilabs.profile"

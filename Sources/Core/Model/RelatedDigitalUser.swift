@@ -7,6 +7,8 @@
 
 import Foundation
 
+typealias Queue = [[String: String]]
+
 struct RelatedDigitalUser: Codable {
     var cookieId: String?
     var exVisitorId: String?
