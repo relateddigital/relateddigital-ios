@@ -22,11 +22,11 @@ public class RelatedDigitalInstance : CustomDebugStringConvertible {
     let RelatedDigitalEventInstance: RelatedDigitalInstance
     var networkQueue: DispatchQueue!
     let RelatedDigitalSendInstance: RelatedDigitalSend
-
-
+    
+    
     public var debugDescription: String {
         return "Visilabs(siteId : // TODO:" +
-            "organizationId: // TODO:"
+        "organizationId: // TODO:"
     }
     //TODO: bunun satır sayısını azaltabilirsin
     public var loggingEnabled: Bool = false {
@@ -46,20 +46,20 @@ public class RelatedDigitalInstance : CustomDebugStringConvertible {
             }
         }
     }
-
+    
     public var useInsecureProtocol: Bool = false
     
     /*{
-        didSet {
-            self.relatedDigitalProfile.useInsecureProtocol = useInsecureProtocol
-            setEndpoints(dataSource: self.relatedDigitalProfile.dataSource,
-                                        useInsecureProtocol: useInsecureProtocol)
-            saveRelatedDigitalProfile(self.relatedDigitalProfile)
-        }
-    }
- */
+     didSet {
+     self.relatedDigitalProfile.useInsecureProtocol = useInsecureProtocol
+     setEndpoints(dataSource: self.relatedDigitalProfile.dataSource,
+     useInsecureProtocol: useInsecureProtocol)
+     saveRelatedDigitalProfile(self.relatedDigitalProfile)
+     }
+     }
+     */
     
-
+    
     init(organizationId: String, profileId: String, dataSource: String) {
         relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource)
         relatedDigitalAnalytics = RelatedDigitalAnalytics(relatedDigitalProfile: relatedDigitalProfile)
@@ -98,24 +98,43 @@ public class RelatedDigitalInstance : CustomDebugStringConvertible {
         return sharedApplication
     }
     
+    
+    
+    
+    /*
+     convenience init?() {
+     let canReadFromUserDefaults = false
+     if canReadFromUserDefaults {
+     self.init(organizationId: "", profileId: "", dataSource: "")
+     } else {
+     return nil
+     }
+     }
+     */
+    
+}
+
+
+extension RelatedDigitalInstance {
+    
+    
     public func customEvent(_ pageName: String, properties: [String: String]) {
-        
-//        if VisilabsPersistence.isBlocked() {
-//            VisilabsLogger.warn("Too much server load, ignoring the request!")
-//            return
-//        }
-//
-//        if pageName.isEmptyOrWhitespace {
-//            VisilabsLogger.error("customEvent can not be called with empty page name.")
-//            return
-//        }
-//
-//        checkPushPermission()
+        //        if VisilabsPersistence.isBlocked() {
+        //            VisilabsLogger.warn("Too much server load, ignoring the request!")
+        //            return
+        //        }
+        //
+        //        if pageName.isEmptyOrWhitespace {
+        //            VisilabsLogger.error("customEvent can not be called with empty page name.")
+        //            return
+        //        }
+        //
+        //        checkPushPermission()
         
         trackingQueue.async { [weak self, pageName, properties] in
             guard let self = self else { return }
             var eQueue = Queue()
-            var vUser = relatedDigitalUser()
+            var vUser = RelatedDigitalUser()
             var chan = ""
             self.readWriteLock.read {
                 eQueue = self.eventsQueue
@@ -123,10 +142,10 @@ public class RelatedDigitalInstance : CustomDebugStringConvertible {
                 chan = self.relatedDigitalProfile.channel
             }
             let result = self.RelatedDigitalEventInstance.customEvent(pageName: pageName,
-                                                                properties: properties,
-                                                                eventsQueue: eQueue,
-                                                                visilabsUser: vUser,
-                                                                channel: chan)
+                                                                      properties: properties,
+                                                                      eventsQueue: eQueue,
+                                                                      visilabsUser: vUser,
+                                                                      channel: chan)
             self.readWriteLock.write {
                 self.eventsQueue = result.eventsQueque
                 self.relatedDigitalUser = result.visilabsUser
@@ -150,19 +169,39 @@ public class RelatedDigitalInstance : CustomDebugStringConvertible {
             self.send()
         }
     }
-    /*
-    convenience init?() {
-        let canReadFromUserDefaults = false
-        if canReadFromUserDefaults {
-            self.init(organizationId: "", profileId: "", dataSource: "")
-        } else {
-            return nil
+    
+    func checkInAppNotification(properties: [String: String]) {
+        trackingQueue.async { [weak self, properties] in
+            guard let self = self else { return }
+            self.networkQueue.async { [weak self, properties] in
+                guard let self = self else { return }
+                self.visilabsTargetingActionInstance.checkInAppNotification(properties: properties,
+                                                                            visilabsUser: self.relatedDigitalUser,
+                                                                            completion: { visilabsInAppNotification in
+                    if let notification = visilabsInAppNotification {
+                        self.visilabsTargetingActionInstance.notificationsInstance.inappButtonDelegate = self.inappButtonDelegate
+                        self.visilabsTargetingActionInstance.notificationsInstance.showNotification(notification)
+                    }
+                })
+            }
         }
     }
- */
-
+    
+    func checkTargetingActions(properties: [String: String]) {
+        trackingQueue.async { [weak self, properties] in
+            guard let self = self else { return }
+            self.networkQueue.async { [weak self, properties] in
+                guard let self = self else { return }
+                self.visilabsTargetingActionInstance.checkTargetingActions(properties: properties, visilabsUser: self.relatedDigitalUser, completion: { model in
+                    if let targetingAction = model {
+                        self.showTargetingAction(targetingAction)
+                    }
+                })
+            }
+        }
+    }
+    
 }
-
 
 
 extension RelatedDigitalInstance {
@@ -182,9 +221,9 @@ extension RelatedDigitalInstance {
                     self.eventsQueue.removeAll()
                 }
                 let cookie = self.RelatedDigitalSendInstance.sendEventsQueue(eQueue,
-                                                                       visilabsUser: vUser,
-                                                                       visilabsCookie: vCookie,
-                                                                       timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval)
+                                                                             relatedDigitalUser: vUser,
+                                                                             relatedDigitalCookie: vCookie,
+                                                                             timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval)
                 self.readWriteLock.write {
                     self.relatedDigitalCookie = cookie
                 }
