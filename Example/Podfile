@@ -1,8 +1,0 @@
-platform :ios, '10.0'
-
-target 'RelatedDigitalExample' do
-  use_frameworks!
- pod 'RelatedDigitalIOS', :path => '../'
-end
-
-
