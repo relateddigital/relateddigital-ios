@@ -124,7 +124,6 @@
 				88D3B679279B7C9E00FB5A79 /* RelatedDigitalErrors.swift */,
 				88D53D60279BE8A500A24B3E /* Base */,
 				8869E68E27A2CC40003CA9C1 /* Config */,
-				88D3B66B279B68FE00FB5A79 /* Core */,
 				88D3B66A279B689E00FB5A79 /* HTTP */,
 				88D3B66E279B736D00FB5A79 /* RelatedDigital */,
 			);
@@ -163,13 +162,6 @@
 				8869E69327A2CCCC003CA9C1 /* RequestSession.swift */,
 			);
 			path = HTTP;
-			sourceTree = "<group>";
-		};
-		88D3B66B279B68FE00FB5A79 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Core;
 			sourceTree = "<group>";
 		};
 		88D3B66E279B736D00FB5A79 /* RelatedDigital */ = {
