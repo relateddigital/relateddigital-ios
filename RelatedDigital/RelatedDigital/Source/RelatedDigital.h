@@ -20,4 +20,4 @@ FOUNDATION_EXPORT const unsigned char RelatedDigitalVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <RelatedDigital/PublicHeader.h>
 
-
+#import "RelatedDigitalDisposable.h"

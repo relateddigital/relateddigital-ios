@@ -24,7 +24,7 @@ public class RelatedDigital: NSObject {
     
     /// A flag that checks if the RelatedDigital instance is available. `true` if available, otherwise `false`.
     @objc
-    public static var isFlying : Bool {
+    public static var isCreated : Bool {
         get {
             return RelatedDigital._shared != nil
         }
@@ -37,7 +37,7 @@ public class RelatedDigital: NSObject {
     /// Shared RelatedDigital instance.
     @objc
     public static var shared: RelatedDigital {
-        if (!RelatedDigital.isFlying) {
+        if (!RelatedDigital.isCreated) {
             assertionFailure("Create must be called before accessing RelatedDigital.")
         }
         return _shared!

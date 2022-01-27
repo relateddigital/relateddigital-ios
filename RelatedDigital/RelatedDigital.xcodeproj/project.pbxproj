@@ -7,16 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8869E69027A2CC96003CA9C1 /* RuntimeConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8869E68F27A2CC96003CA9C1 /* RuntimeConfig.swift */; };
+		8869E69427A2CCCC003CA9C1 /* HTTPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8869E69127A2CCCC003CA9C1 /* HTTPResponse.swift */; };
+		8869E69527A2CCCC003CA9C1 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8869E69227A2CCCC003CA9C1 /* Request.swift */; };
+		8869E69627A2CCCC003CA9C1 /* RequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8869E69327A2CCCC003CA9C1 /* RequestSession.swift */; };
+		8869E69827A2CEDE003CA9C1 /* RelatedDigitalInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8869E69727A2CEDE003CA9C1 /* RelatedDigitalInstance.swift */; };
 		88C1EBA4279B6186002F83EC /* RelatedDigital.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88C1EB99279B6186002F83EC /* RelatedDigital.framework */; };
 		88C1EBB5279B6345002F83EC /* RelatedDigital.h in Headers */ = {isa = PBXBuildFile; fileRef = 88C1EBB4279B6345002F83EC /* RelatedDigital.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		88D3B668279B662E00FB5A79 /* RequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B667279B662E00FB5A79 /* RequestTest.swift */; };
 		88D3B66D279B6AC100FB5A79 /* RelatedDigital.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B66C279B6AC100FB5A79 /* RelatedDigital.swift */; };
 		88D3B670279B746300FB5A79 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B66F279B746300FB5A79 /* LogLevel.swift */; };
 		88D3B672279B74E000FB5A79 /* RelatedDigitalVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B671279B74E000FB5A79 /* RelatedDigitalVersion.swift */; };
-		88D3B674279B7A7100FB5A79 /* HTTPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B673279B7A7100FB5A79 /* HTTPResponse.swift */; };
-		88D3B676279B7AC400FB5A79 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B675279B7AC400FB5A79 /* Request.swift */; };
-		88D3B678279B7B9C00FB5A79 /* RequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B677279B7B9C00FB5A79 /* RequestSession.swift */; };
 		88D3B67A279B7C9E00FB5A79 /* RelatedDigitalErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3B679279B7C9E00FB5A79 /* RelatedDigitalErrors.swift */; };
+		88D53D5F279BE71200A24B3E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D53D5E279BE71200A24B3E /* Lock.swift */; };
+		88D53D62279BE98D00A24B3E /* RelatedDigitalSwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 88D53D61279BE98D00A24B3E /* RelatedDigitalSwizzler+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		88D53D64279BE9FC00A24B3E /* RelatedDigitalSwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 88D53D63279BE9FC00A24B3E /* RelatedDigitalSwizzler.m */; };
+		88D53D67279BF9D300A24B3E /* RelatedDigitalGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 88D53D65279BF9D300A24B3E /* RelatedDigitalGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		88D53D68279BF9D300A24B3E /* RelatedDigitalGlobal.m in Sources */ = {isa = PBXBuildFile; fileRef = 88D53D66279BF9D300A24B3E /* RelatedDigitalGlobal.m */; };
+		88D53D6B279BFBDD00A24B3E /* RelatedDigitalDisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 88D53D69279BFBDD00A24B3E /* RelatedDigitalDisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		88D53D6C279BFBDD00A24B3E /* RelatedDigitalDisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 88D53D6A279BFBDD00A24B3E /* RelatedDigitalDisposable.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +39,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8869E68F27A2CC96003CA9C1 /* RuntimeConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeConfig.swift; sourceTree = "<group>"; };
+		8869E69127A2CCCC003CA9C1 /* HTTPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HTTPResponse.swift; path = RelatedDigital/Source/HTTPResponse.swift; sourceTree = SOURCE_ROOT; };
+		8869E69227A2CCCC003CA9C1 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Request.swift; path = RelatedDigital/Source/Request.swift; sourceTree = SOURCE_ROOT; };
+		8869E69327A2CCCC003CA9C1 /* RequestSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RequestSession.swift; path = RelatedDigital/Source/RequestSession.swift; sourceTree = SOURCE_ROOT; };
+		8869E69727A2CEDE003CA9C1 /* RelatedDigitalInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedDigitalInstance.swift; sourceTree = "<group>"; };
 		88C1EB99279B6186002F83EC /* RelatedDigital.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RelatedDigital.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		88C1EBA3279B6186002F83EC /* RelatedDigitalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RelatedDigitalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88C1EBB4279B6345002F83EC /* RelatedDigital.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RelatedDigital.h; sourceTree = "<group>"; };
@@ -38,10 +52,14 @@
 		88D3B66C279B6AC100FB5A79 /* RelatedDigital.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedDigital.swift; sourceTree = "<group>"; };
 		88D3B66F279B746300FB5A79 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
 		88D3B671279B74E000FB5A79 /* RelatedDigitalVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedDigitalVersion.swift; sourceTree = "<group>"; };
-		88D3B673279B7A7100FB5A79 /* HTTPResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPResponse.swift; sourceTree = "<group>"; };
-		88D3B675279B7AC400FB5A79 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
-		88D3B677279B7B9C00FB5A79 /* RequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestSession.swift; sourceTree = "<group>"; };
 		88D3B679279B7C9E00FB5A79 /* RelatedDigitalErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RelatedDigitalErrors.swift; path = RelatedDigital/RelatedDigitalErrors.swift; sourceTree = "<group>"; };
+		88D53D5E279BE71200A24B3E /* Lock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
+		88D53D61279BE98D00A24B3E /* RelatedDigitalSwizzler+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RelatedDigitalSwizzler+Internal.h"; sourceTree = "<group>"; };
+		88D53D63279BE9FC00A24B3E /* RelatedDigitalSwizzler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelatedDigitalSwizzler.m; sourceTree = "<group>"; };
+		88D53D65279BF9D300A24B3E /* RelatedDigitalGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RelatedDigitalGlobal.h; sourceTree = "<group>"; };
+		88D53D66279BF9D300A24B3E /* RelatedDigitalGlobal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelatedDigitalGlobal.m; sourceTree = "<group>"; };
+		88D53D69279BFBDD00A24B3E /* RelatedDigitalDisposable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RelatedDigitalDisposable.h; sourceTree = "<group>"; };
+		88D53D6A279BFBDD00A24B3E /* RelatedDigitalDisposable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelatedDigitalDisposable.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +81,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8869E68E27A2CC40003CA9C1 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				8869E68F27A2CC96003CA9C1 /* RuntimeConfig.swift */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
 		88C1EB8F279B6186002F83EC = {
 			isa = PBXGroup;
 			children = (
@@ -94,7 +120,10 @@
 			isa = PBXGroup;
 			children = (
 				88C1EBB4279B6345002F83EC /* RelatedDigital.h */,
+				88D53D5E279BE71200A24B3E /* Lock.swift */,
 				88D3B679279B7C9E00FB5A79 /* RelatedDigitalErrors.swift */,
+				88D53D60279BE8A500A24B3E /* Base */,
+				8869E68E27A2CC40003CA9C1 /* Config */,
 				88D3B66B279B68FE00FB5A79 /* Core */,
 				88D3B66A279B689E00FB5A79 /* HTTP */,
 				88D3B66E279B736D00FB5A79 /* RelatedDigital */,
@@ -129,9 +158,9 @@
 		88D3B66A279B689E00FB5A79 /* HTTP */ = {
 			isa = PBXGroup;
 			children = (
-				88D3B673279B7A7100FB5A79 /* HTTPResponse.swift */,
-				88D3B675279B7AC400FB5A79 /* Request.swift */,
-				88D3B677279B7B9C00FB5A79 /* RequestSession.swift */,
+				8869E69127A2CCCC003CA9C1 /* HTTPResponse.swift */,
+				8869E69227A2CCCC003CA9C1 /* Request.swift */,
+				8869E69327A2CCCC003CA9C1 /* RequestSession.swift */,
 			);
 			path = HTTP;
 			sourceTree = "<group>";
@@ -148,9 +177,23 @@
 			children = (
 				88D3B66F279B746300FB5A79 /* LogLevel.swift */,
 				88D3B66C279B6AC100FB5A79 /* RelatedDigital.swift */,
+				8869E69727A2CEDE003CA9C1 /* RelatedDigitalInstance.swift */,
 				88D3B671279B74E000FB5A79 /* RelatedDigitalVersion.swift */,
 			);
 			path = RelatedDigital;
+			sourceTree = "<group>";
+		};
+		88D53D60279BE8A500A24B3E /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				88D53D69279BFBDD00A24B3E /* RelatedDigitalDisposable.h */,
+				88D53D6A279BFBDD00A24B3E /* RelatedDigitalDisposable.m */,
+				88D53D65279BF9D300A24B3E /* RelatedDigitalGlobal.h */,
+				88D53D66279BF9D300A24B3E /* RelatedDigitalGlobal.m */,
+				88D53D61279BE98D00A24B3E /* RelatedDigitalSwizzler+Internal.h */,
+				88D53D63279BE9FC00A24B3E /* RelatedDigitalSwizzler.m */,
+			);
+			path = Base;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,6 +203,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88D53D67279BF9D300A24B3E /* RelatedDigitalGlobal.h in Headers */,
+				88D53D6B279BFBDD00A24B3E /* RelatedDigitalDisposable.h in Headers */,
+				88D53D62279BE98D00A24B3E /* RelatedDigitalSwizzler+Internal.h in Headers */,
 				88C1EBB5279B6345002F83EC /* RelatedDigital.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -264,12 +310,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88D3B678279B7B9C00FB5A79 /* RequestSession.swift in Sources */,
-				88D3B674279B7A7100FB5A79 /* HTTPResponse.swift in Sources */,
+				8869E69627A2CCCC003CA9C1 /* RequestSession.swift in Sources */,
+				88D53D64279BE9FC00A24B3E /* RelatedDigitalSwizzler.m in Sources */,
 				88D3B67A279B7C9E00FB5A79 /* RelatedDigitalErrors.swift in Sources */,
+				8869E69427A2CCCC003CA9C1 /* HTTPResponse.swift in Sources */,
+				8869E69027A2CC96003CA9C1 /* RuntimeConfig.swift in Sources */,
+				8869E69527A2CCCC003CA9C1 /* Request.swift in Sources */,
 				88D3B66D279B6AC100FB5A79 /* RelatedDigital.swift in Sources */,
-				88D3B676279B7AC400FB5A79 /* Request.swift in Sources */,
+				88D53D68279BF9D300A24B3E /* RelatedDigitalGlobal.m in Sources */,
+				88D53D6C279BFBDD00A24B3E /* RelatedDigitalDisposable.m in Sources */,
 				88D3B670279B746300FB5A79 /* LogLevel.swift in Sources */,
+				88D53D5F279BE71200A24B3E /* Lock.swift in Sources */,
+				8869E69827A2CEDE003CA9C1 /* RelatedDigitalInstance.swift in Sources */,
 				88D3B672279B74E000FB5A79 /* RelatedDigitalVersion.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
