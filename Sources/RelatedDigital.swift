@@ -1,11 +1,9 @@
 //
-//  RelatedDigital.swift
-//  
+//  Visilabs.swift
+//  VisilabsIOS
 //
-//  Created by Egemen Gulkilik on 6.07.2021.
+//  Created by Egemen on 14.07.2020.
 //
-
-import Foundation
 
 public class RelatedDigital {
     public class func callAPI() -> RelatedDigitalInstance {
@@ -18,7 +16,33 @@ public class RelatedDigital {
     }
 
     @discardableResult
-    public class func createAPI(organizationId: String, profileId: String, dataSource: String) -> RelatedDigitalInstance {
-        RelatedDigitalManager.sharedInstance.initialize(organizationId: organizationId, profileId: profileId, dataSource: dataSource)
+    public class func createAPI(organizationId: String,
+                                profileId: String,
+                                dataSource: String,
+                                inAppNotificationsEnabled: Bool = false,
+                                channel: String = "IOS",
+                                requestTimeoutInSeconds: Int = 30,
+                                geofenceEnabled: Bool = false,
+                                maxGeofenceCount: Int = 20,
+                                isIDFAEnabled: Bool = true,
+                                loggingEnabled: Bool = false,
+                                isTest:Bool = false) -> RelatedDigitalInstance {
+
+
+        RelatedDigitalManager.sharedInstance.initialize(organizationId: organizationId,
+                                                  profileId: profileId,
+                                                  dataSource: dataSource,
+                                                  inAppNotificationsEnabled: inAppNotificationsEnabled,
+                                                  channel: channel,
+                                                  requestTimeoutInSeconds: requestTimeoutInSeconds,
+                                                  geofenceEnabled: geofenceEnabled,
+                                                  maxGeofenceCount: maxGeofenceCount,
+                                                  isIDFAEnabled: isIDFAEnabled,
+                                                  loggingEnabled: loggingEnabled,
+                                                  isTest: isTest)
+    }
+    
+    public class func createAPI() {
+        RelatedDigitalManager.sharedInstance.initialize()
     }
 }

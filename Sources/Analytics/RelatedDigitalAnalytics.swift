@@ -9,9 +9,9 @@ import Foundation
 
 class RelatedDigitalAnalytics {
     
-    let relatedDigitalProfile: RelatedDigitalProfile
+    let relatedDigitalProfile: VisilabsProfile
     
-    init(relatedDigitalProfile: RelatedDigitalProfile) {
+    init(relatedDigitalProfile: VisilabsProfile) {
         self.relatedDigitalProfile = relatedDigitalProfile
     }
     
