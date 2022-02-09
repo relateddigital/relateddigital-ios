@@ -13,7 +13,7 @@ class RelatedDigitalGeofence {
     static let sharedManager = RelatedDigitalGeofence()
 
     var activeGeofenceList: [RelatedDigitalGeofenceEntity]
-    let profile: VisilabsProfile
+    let profile: RelatedDigitalProfile
     var geofenceHistory: RelatedDigitalGeofenceHistory
     private var lastGeofenceFetchTime: Date
     private var lastSuccessfulGeofenceFetchTime: Date

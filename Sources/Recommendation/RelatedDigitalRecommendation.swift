@@ -8,15 +8,15 @@
 import Foundation
 
 class RelatedDigitalRecommendation {
-    let visilabsProfile: VisilabsProfile
+    let visilabsProfile: RelatedDigitalProfile
 
-    init(visilabsProfile: VisilabsProfile) {
+    init(visilabsProfile: RelatedDigitalProfile) {
         self.visilabsProfile = visilabsProfile
     }
 
     func recommend(zoneID: String,
                    productCode: String?,
-                   visilabsUser: VisilabsUser,
+                   visilabsUser: RelatedDigitalUser,
                    channel: String,
                    properties: [String: String] = [:],
                    filters: [VisilabsRecommendationFilter] = [],

@@ -304,7 +304,7 @@ class RelatedDigitalRequest {
         
         let resource = RelatedDigitalNetwork.buildResource(endPoint: .promotion,
                                                      method: .get,
-                                                     timeoutInterval: RelatedDigital.callAPI().visilabsProfile.requestTimeoutInterval,
+                                                     timeoutInterval: RelatedDigital.callAPI().relatedDigitalProfile.requestTimeoutInterval,
                                                      requestBody: nil,
                                                      queryItems: queryItems,
                                                      headers: [String: String](),
@@ -342,7 +342,7 @@ class RelatedDigitalRequest {
         
         let resource  = RelatedDigitalNetwork.buildResource(endPoint: .subsjson,
                                                       method: .get,
-                                                      timeoutInterval: RelatedDigital.callAPI().visilabsProfile.requestTimeoutInterval,
+                                                      timeoutInterval: RelatedDigital.callAPI().relatedDigitalProfile.requestTimeoutInterval,
                                                       requestBody: nil,
                                                       queryItems: queryItems,
                                                       headers: [String: String]() ,
@@ -372,13 +372,13 @@ class RelatedDigitalRequest {
         }
         
         var headers = [String: String]()
-        if let userAgent = RelatedDigital.callAPI().visilabsUser.userAgent {
+        if let userAgent = RelatedDigital.callAPI().relatedDigitalUser.userAgent {
             headers =  ["User-Agent": userAgent]
         }
         
         let resource = RelatedDigitalNetwork.buildResource(endPoint: .remote ,
                                                      method: .get,
-                                                     timeoutInterval: RelatedDigital.callAPI().visilabsProfile.requestTimeoutInterval,
+                                                     timeoutInterval: RelatedDigital.callAPI().relatedDigitalProfile.requestTimeoutInterval,
                                                      headers: headers,
                                                      parse: responseParser)
         
@@ -402,7 +402,7 @@ class RelatedDigitalRequest {
         
         var props = [String: String]()
         
-        if let vProfile = RelatedDigital.callAPI().visilabsProfile {
+        if let vProfile = RelatedDigital.callAPI().relatedDigitalProfile {
             props[RelatedDigitalConstants.organizationIdKey] = vProfile.organizationId
             props[RelatedDigitalConstants.profileIdKey] = vProfile.profileId
             props[RelatedDigitalConstants.channelKey] = vProfile.channel
@@ -410,7 +410,7 @@ class RelatedDigitalRequest {
             props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.ios
         }
         
-        if let vUser = RelatedDigital.callAPI().visilabsUser {
+        if let vUser = RelatedDigital.callAPI().relatedDigitalUser {
             props[RelatedDigitalConstants.cookieIdKey] = vUser.cookieId
             props[RelatedDigitalConstants.exvisitorIdKey] = vUser.exVisitorId
             props[RelatedDigitalConstants.mobileSdkVersion] = vUser.sdkVersion

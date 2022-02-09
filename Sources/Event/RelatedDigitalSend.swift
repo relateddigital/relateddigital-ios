@@ -18,7 +18,7 @@ class RelatedDigitalSend {
     weak var delegate: VisilabsSendDelegate?
 
     // TO_DO: burada internet bağlantısı kontrolü yapmaya gerek var mı?
-    func sendEventsQueue(_ eventsQueue: Queue, visilabsUser: VisilabsUser,
+    func sendEventsQueue(_ eventsQueue: Queue, visilabsUser: RelatedDigitalUser,
                          visilabsCookie: RelatedDigitalCookie, timeoutInterval: TimeInterval) -> RelatedDigitalCookie {
         var mutableCookie = visilabsCookie
 
@@ -82,7 +82,7 @@ class RelatedDigitalSend {
     }
 
     private func prepareHeaders(_ visilabsEndpoint: VisilabsEndpoint, event: [String: String],
-                                visilabsUser: VisilabsUser, visilabsCookie: RelatedDigitalCookie) -> [String: String] {
+                                visilabsUser: RelatedDigitalUser, visilabsCookie: RelatedDigitalCookie) -> [String: String] {
         var headers = [String: String]()
         headers["Referer"] = event[RelatedDigitalConstants.uriKey] ?? ""
         headers["User-Agent"] = visilabsUser.userAgent

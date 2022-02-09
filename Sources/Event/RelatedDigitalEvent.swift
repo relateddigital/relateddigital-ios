@@ -9,9 +9,9 @@ import Foundation
 
 class RelatedDigitalEvent {
     
-    let visilabsProfile: VisilabsProfile
+    let visilabsProfile: RelatedDigitalProfile
     
-    init(visilabsProfile: VisilabsProfile) {
+    init(visilabsProfile: RelatedDigitalProfile) {
         self.visilabsProfile = visilabsProfile
     }
     
@@ -19,9 +19,9 @@ class RelatedDigitalEvent {
     func customEvent(pageName: String? = nil,
                      properties: [String: String],
                      eventsQueue: Queue,
-                     visilabsUser: VisilabsUser,
+                     visilabsUser: RelatedDigitalUser,
                      channel: String) -> (eventsQueque: Queue,
-                                          visilabsUser: VisilabsUser,
+                                          visilabsUser: RelatedDigitalUser,
                                           clearUserParameters: Bool,
                                           channel: String) {
         var props = properties
@@ -116,7 +116,7 @@ class RelatedDigitalEvent {
         return (eQueue, vUser, clearUserParameters, chan)
     }
     
-    private func updateSessionParameters(pageName: String?, visilabsUser: VisilabsUser) -> VisilabsUser {
+    private func updateSessionParameters(pageName: String?, visilabsUser: RelatedDigitalUser) -> RelatedDigitalUser {
         var vUser = visilabsUser
         let dateNowString = RelatedDigitalHelper.formatDate(Date())
         if let lastEventTimeString = visilabsUser.lastEventTime {

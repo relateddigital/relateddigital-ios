@@ -23,7 +23,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     var currentlyShowingNotification: RelatedDigitalInAppNotification?
     var currentlyShowingTargetingAction: TargetingActionViewModel?
     weak var delegate: RelatedDigitalInAppNotificationsDelegate?
-    weak var inappButtonDelegate: VisilabsInappButtonDelegate?
+    weak var inappButtonDelegate: RelatedDigitalInappButtonDelegate?
     weak var currentViewController: UIViewController?
     
     init(lock: RelatedDigitalReadWriteLock) {

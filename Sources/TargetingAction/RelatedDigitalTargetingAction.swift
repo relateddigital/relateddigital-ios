@@ -9,14 +9,14 @@ import UIKit
 // swiftlint:disable type_body_length
 class RelatedDigitalTargetingAction {
 
-    let visilabsProfile: VisilabsProfile
+    let visilabsProfile: RelatedDigitalProfile
 
-    required init(lock: RelatedDigitalReadWriteLock, visilabsProfile: VisilabsProfile) {
+    required init(lock: RelatedDigitalReadWriteLock, visilabsProfile: RelatedDigitalProfile) {
         self.notificationsInstance = RelatedDigitalInAppNotifications(lock: lock)
         self.visilabsProfile = visilabsProfile
     }
 
-    private func prepareHeaders(_ visilabsUser: VisilabsUser) -> [String: String] {
+    private func prepareHeaders(_ visilabsUser: RelatedDigitalUser) -> [String: String] {
         var headers = [String: String]()
         headers["User-Agent"] = visilabsUser.userAgent
         return headers
@@ -36,7 +36,7 @@ class RelatedDigitalTargetingAction {
     }
 
     func checkInAppNotification(properties: [String: String],
-                                visilabsUser: VisilabsUser,
+                                visilabsUser: RelatedDigitalUser,
                                 completion: @escaping ((_ response: RelatedDigitalInAppNotification?) -> Void)) {
         let semaphore = DispatchSemaphore(value: 0)
         let headers = prepareHeaders(visilabsUser)
@@ -90,7 +90,7 @@ class RelatedDigitalTargetingAction {
     // MARK: - Targeting Actions
 
     func checkTargetingActions(properties: [String: String],
-                                visilabsUser: VisilabsUser,
+                                visilabsUser: RelatedDigitalUser,
                                 completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -563,7 +563,7 @@ class RelatedDigitalTargetingAction {
     //https://s.visilabs.net/mobile?OM.oid=676D325830564761676D453D&OM
     // .siteID=356467332F6533766975593D&OM.cookieID=B220EC66-A746-4130-93FD-53543055E406&
     // OM.exVisitorID=ogun.ozturk%40euromsg.com&action_id=188&action_type=FavoriteAttributeAction&OM.apiver=IOS
-    func getFavorites(visilabsUser: VisilabsUser, actionId: Int? = nil,
+    func getFavorites(visilabsUser: RelatedDigitalUser, actionId: Int? = nil,
                       completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
 
         var props = [String: String]()
@@ -632,7 +632,7 @@ class RelatedDigitalTargetingAction {
     var visilabsStoryHomeViewControllers = [String: RelatedDigitalStoryHomeViewController]()
     var visilabsStoryHomeViews = [String: RelatedDigitalStoryHomeView]()
 
-    func getStories(visilabsUser: VisilabsUser,
+    func getStories(visilabsUser: RelatedDigitalUser,
                     guid: String, actionId: Int? = nil,
                     completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 

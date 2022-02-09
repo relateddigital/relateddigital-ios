@@ -22,7 +22,7 @@ public class RelatedDigitalPersistence {
         return urlUnwrapped
     }
 
-    class func archiveUser(_ visilabsUser: VisilabsUser) {
+    class func archiveUser(_ visilabsUser: RelatedDigitalUser) {
         archiveQueueUtility.sync { [visilabsUser] in
             let propertiesFilePath = filePath(filename: RelatedDigitalConstants.userArchiveKey)
             guard let path = propertiesFilePath else {
@@ -55,8 +55,8 @@ public class RelatedDigitalPersistence {
 
     // TO_DO: bunu ExceptionWrapper içine al
     // swiftlint:disable cyclomatic_complexity
-    class func unarchiveUser() -> VisilabsUser {
-        var visilabsUser = VisilabsUser()
+    class func unarchiveUser() -> RelatedDigitalUser {
+        var visilabsUser = RelatedDigitalUser()
         // Before Visilabs.identity is used as archive key, to retrieve Visilabs.cookieID set by objective-c library
         // we added this control.
         if let cidfp = filePath(filename: RelatedDigitalConstants.identityArchiveKey),
@@ -244,17 +244,17 @@ public class RelatedDigitalPersistence {
         return readUserDefaults(RelatedDigitalConstants.userDefaultsBlockKey) as? Bool ?? false
     }
 
-    static func saveVisilabsProfile(_ visilabsProfile: VisilabsProfile) {
+    static func saveRelatedDigitalProfile(_ visilabsProfile: RelatedDigitalProfile) {
         let encoder = JSONEncoder()
         if let encodedVisilabsProfile = try? encoder.encode(visilabsProfile) {
             saveUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey, withObject: encodedVisilabsProfile)
         }
     }
 
-    static func readVisilabsProfile() -> VisilabsProfile? {
+    static func readVisilabsProfile() -> RelatedDigitalProfile? {
         if let savedVisilabsProfile = readUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey) as? Data {
             let decoder = JSONDecoder()
-            if let loadedVisilabsProfile = try? decoder.decode(VisilabsProfile.self, from: savedVisilabsProfile) {
+            if let loadedVisilabsProfile = try? decoder.decode(RelatedDigitalProfile.self, from: savedVisilabsProfile) {
                 return loadedVisilabsProfile
             }
         }
