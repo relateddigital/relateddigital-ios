@@ -65,7 +65,7 @@ class InAppViewController: FormViewController {
     
 }
 
-extension InAppViewController: VisilabsInappButtonDelegate {
+extension InAppViewController: RelatedDigitalInappButtonDelegate {
     func didTapButton(_ notification: RelatedDigitalInAppNotification) {
         print("notification did tapped...")
         print(notification)
