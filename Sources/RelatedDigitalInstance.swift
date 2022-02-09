@@ -164,11 +164,11 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
         targetingActionQueue = DispatchQueue(label: "\(label).targetingaction)", qos: .utility)
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
-        relatedDigitalEventInstance = RelatedDigitalEvent(visilabsProfile: relatedDigitalProfile)
+        relatedDigitalEventInstance = RelatedDigitalEvent(relatedDigitalProfile: relatedDigitalProfile)
         relatedDigitalSendInstance = RelatedDigitalSend()
         relatedDigitalTargetingActionInstance = RelatedDigitalTargetingAction(lock: readWriteLock,
-                                                                  visilabsProfile: relatedDigitalProfile)
-        relatedDigitalRecommendationInstance = RelatedDigitalRecommendation(visilabsProfile: relatedDigitalProfile)
+                                                                  relatedDigitalProfile: relatedDigitalProfile)
+        relatedDigitalRecommendationInstance = RelatedDigitalRecommendation(relatedDigitalProfile: relatedDigitalProfile)
         relatedDigitalRemoteConfigInstance = RelatedDigitalRemoteConfig(profileId: relatedDigitalProfile.profileId)
         relatedDigitalUser = unarchive()
         relatedDigitalTargetingActionInstance.inAppDelegate = self
@@ -220,16 +220,16 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
     }
 
     convenience init?() {
-        if let visilabsProfile = RelatedDigitalPersistence.readVisilabsProfile() {
-            self.init(organizationId: visilabsProfile.organizationId,
-                      profileId: visilabsProfile.profileId,
-                      dataSource: visilabsProfile.dataSource,
-                      inAppNotificationsEnabled: visilabsProfile.inAppNotificationsEnabled,
-                      channel: visilabsProfile.channel,
-                      requestTimeoutInSeconds: visilabsProfile.requestTimeoutInSeconds,
-                      geofenceEnabled: visilabsProfile.geofenceEnabled,
-                      maxGeofenceCount: visilabsProfile.maxGeofenceCount,
-                      isIDFAEnabled: visilabsProfile.isIDFAEnabled)
+        if let relatedDigitalProfile = RelatedDigitalPersistence.readRelatedDigitalProfile() {
+            self.init(organizationId: relatedDigitalProfile.organizationId,
+                      profileId: relatedDigitalProfile.profileId,
+                      dataSource: relatedDigitalProfile.dataSource,
+                      inAppNotificationsEnabled: relatedDigitalProfile.inAppNotificationsEnabled,
+                      channel: relatedDigitalProfile.channel,
+                      requestTimeoutInSeconds: relatedDigitalProfile.requestTimeoutInSeconds,
+                      geofenceEnabled: relatedDigitalProfile.geofenceEnabled,
+                      maxGeofenceCount: relatedDigitalProfile.maxGeofenceCount,
+                      isIDFAEnabled: relatedDigitalProfile.isIDFAEnabled)
         } else {
             return nil
         }
@@ -334,7 +334,7 @@ extension RelatedDigitalInstance {
             let result = self.relatedDigitalEventInstance.customEvent(pageName: pageName,
                                                                 properties: properties,
                                                                 eventsQueue: eQueue,
-                                                                visilabsUser: vUser,
+                                                                relatedDigitalUser: vUser,
                                                                 channel: chan)
             self.readWriteLock.write {
                 self.eventsQueue = result.eventsQueque
@@ -379,7 +379,7 @@ extension RelatedDigitalInstance {
             }
             let result = strongSelf.relatedDigitalEventInstance.customEvent(properties: properties,
                                                                       eventsQueue: eQueue,
-                                                                      visilabsUser: vUser,
+                                                                      relatedDigitalUser: vUser,
                                                                       channel: chan)
             strongSelf.readWriteLock.write {
                 strongSelf.eventsQueue = result.eventsQueque

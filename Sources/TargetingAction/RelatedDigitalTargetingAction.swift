@@ -11,9 +11,9 @@ class RelatedDigitalTargetingAction {
 
     let visilabsProfile: RelatedDigitalProfile
 
-    required init(lock: RelatedDigitalReadWriteLock, visilabsProfile: RelatedDigitalProfile) {
+    required init(lock: RelatedDigitalReadWriteLock, relatedDigitalProfile: RelatedDigitalProfile) {
         self.notificationsInstance = RelatedDigitalInAppNotifications(lock: lock)
-        self.visilabsProfile = visilabsProfile
+        self.visilabsProfile = relatedDigitalProfile
     }
 
     private func prepareHeaders(_ visilabsUser: RelatedDigitalUser) -> [String: String] {

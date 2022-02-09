@@ -251,7 +251,7 @@ public class RelatedDigitalPersistence {
         }
     }
 
-    static func readVisilabsProfile() -> RelatedDigitalProfile? {
+    static func readRelatedDigitalProfile() -> RelatedDigitalProfile? {
         if let savedVisilabsProfile = readUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey) as? Data {
             let decoder = JSONDecoder()
             if let loadedVisilabsProfile = try? decoder.decode(RelatedDigitalProfile.self, from: savedVisilabsProfile) {

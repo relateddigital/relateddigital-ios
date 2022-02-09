@@ -11,21 +11,21 @@ class RelatedDigitalEvent {
     
     let visilabsProfile: RelatedDigitalProfile
     
-    init(visilabsProfile: RelatedDigitalProfile) {
-        self.visilabsProfile = visilabsProfile
+    init(relatedDigitalProfile: RelatedDigitalProfile) {
+        self.visilabsProfile = relatedDigitalProfile
     }
     
     // swiftlint:disable large_tuple function_body_length cyclomatic_complexity
     func customEvent(pageName: String? = nil,
                      properties: [String: String],
                      eventsQueue: Queue,
-                     visilabsUser: RelatedDigitalUser,
+                     relatedDigitalUser: RelatedDigitalUser,
                      channel: String) -> (eventsQueque: Queue,
                                           visilabsUser: RelatedDigitalUser,
                                           clearUserParameters: Bool,
                                           channel: String) {
         var props = properties
-        var vUser = updateSessionParameters(pageName: pageName, visilabsUser: visilabsUser)
+        var vUser = updateSessionParameters(pageName: pageName, visilabsUser: relatedDigitalUser)
         var chan = channel
         var clearUserParameters = false
         let actualTimeOfevent = Int(Date().timeIntervalSince1970)

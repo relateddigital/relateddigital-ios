@@ -19,7 +19,7 @@ class RelatedDigitalGeofence {
     private var lastSuccessfulGeofenceFetchTime: Date
 
     init?() {
-        if let profile = RelatedDigitalPersistence.readVisilabsProfile() {
+        if let profile = RelatedDigitalPersistence.readRelatedDigitalProfile() {
             self.profile = profile
             RelatedDigitalHelper.setEndpoints(dataSource: self.profile.dataSource)// TO_DO: bunu if içine almaya gerek var mı?
             self.activeGeofenceList = [RelatedDigitalGeofenceEntity]()

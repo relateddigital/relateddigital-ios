@@ -10,8 +10,8 @@ import Foundation
 class RelatedDigitalRecommendation {
     let visilabsProfile: RelatedDigitalProfile
 
-    init(visilabsProfile: RelatedDigitalProfile) {
-        self.visilabsProfile = visilabsProfile
+    init(relatedDigitalProfile: RelatedDigitalProfile) {
+        self.visilabsProfile = relatedDigitalProfile
     }
 
     func recommend(zoneID: String,
