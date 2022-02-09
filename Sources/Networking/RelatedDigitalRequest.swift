@@ -38,7 +38,7 @@ class RelatedDigitalRequest {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, response) in
             
-            var requestUrl = VisilabsBasePath.getEndpoint(visilabsEndpoint: resource.endPoint)
+            var requestUrl = RelatedDigitalBasePath.getEndpoint(visilabsEndpoint: resource.endPoint)
             if let httpResponse = response as? HTTPURLResponse {
                 if let url = httpResponse.url {
                     requestUrl = url.absoluteString
@@ -53,7 +53,7 @@ class RelatedDigitalRequest {
                 let cookies = getCookies(url)
                 completion(cookies)
             } else {
-                let end = VisilabsBasePath.getEndpoint(visilabsEndpoint: resource.endPoint)
+                let end = RelatedDigitalBasePath.getEndpoint(visilabsEndpoint: resource.endPoint)
                 RelatedDigitalLogger.error("\(end) can not convert to HTTPURLResponse")
                 completion(nil)
             }

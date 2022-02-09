@@ -20,7 +20,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
         }
     }
     
-    public weak var urlDelegate: VisilabsStoryURLDelegate?
+    public weak var urlDelegate: RelatedDigitalStoryURLDelegate?
     
     var storyAction: RelatedDigitalStoryAction!
     var storiesLoaded = false
@@ -164,7 +164,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
 }
 
 @objc
-public protocol VisilabsStoryURLDelegate: NSObjectProtocol {
+public protocol RelatedDigitalStoryURLDelegate: NSObjectProtocol {
     @objc
     func urlClicked( _ url: URL)
 }

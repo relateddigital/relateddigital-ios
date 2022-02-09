@@ -338,7 +338,7 @@ extension RelatedDigitalInstance {
                                                                 channel: chan)
             self.readWriteLock.write {
                 self.eventsQueue = result.eventsQueque
-                self.relatedDigitalUser = result.visilabsUser
+                self.relatedDigitalUser = result.relatedDigitalUser
                 self.relatedDigitalProfile.channel = result.channel
             }
             self.readWriteLock.read {
@@ -349,7 +349,7 @@ extension RelatedDigitalInstance {
             }
             if let event = self.eventsQueue.last {
                 RelatedDigitalPersistence.saveTargetParameters(event)
-                if VisilabsBasePath.endpoints[.action] != nil,
+                if RelatedDigitalBasePath.endpoints[.action] != nil,
                    self.relatedDigitalProfile.inAppNotificationsEnabled,
                    pageName != RelatedDigitalConstants.omEvtGif {
                     self.checkInAppNotification(properties: event)
@@ -383,7 +383,7 @@ extension RelatedDigitalInstance {
                                                                       channel: chan)
             strongSelf.readWriteLock.write {
                 strongSelf.eventsQueue = result.eventsQueque
-                strongSelf.relatedDigitalUser = result.visilabsUser
+                strongSelf.relatedDigitalUser = result.relatedDigitalUser
                 strongSelf.relatedDigitalProfile.channel = result.channel
             }
             strongSelf.readWriteLock.read {
@@ -480,8 +480,8 @@ extension RelatedDigitalInstance {
                     self.eventsQueue.removeAll()
                 }
                 let cookie = self.relatedDigitalSendInstance.sendEventsQueue(eQueue,
-                                                                       visilabsUser: vUser,
-                                                                       visilabsCookie: vCookie,
+                                                                       relatedDigitalUser: vUser,
+                                                                       relatedDigitalCookie: vCookie,
                                                                        timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval)
                 self.readWriteLock.write {
                     self.relatedDigitalCookie = cookie
@@ -513,7 +513,7 @@ extension RelatedDigitalInstance {
                 self.readWriteLock.read {
                     vUser = self.relatedDigitalUser
                 }
-                self.relatedDigitalTargetingActionInstance.getFavorites(visilabsUser: vUser,
+                self.relatedDigitalTargetingActionInstance.getFavorites(relatedDigitalUser: vUser,
                                                                   actionId: actionId,
                                                                   completion: completion)
             }
@@ -525,8 +525,8 @@ extension RelatedDigitalInstance {
 
 extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
     // This method added for test purposes
-    public func showNotification(_ visilabsInAppNotification: RelatedDigitalInAppNotification) {
-        relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(visilabsInAppNotification)
+    public func showNotification(_ relatedDigitalInAppNotification: RelatedDigitalInAppNotification) {
+        relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(relatedDigitalInAppNotification)
     }
 
     public func showTargetingAction(_ model: TargetingActionViewModel) {
@@ -539,9 +539,9 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
             self.networkQueue.async { [weak self, properties] in
                 guard let self = self else { return }
                 self.relatedDigitalTargetingActionInstance.checkInAppNotification(properties: properties,
-                                                                            visilabsUser: self.relatedDigitalUser,
-                                                                            completion: { visilabsInAppNotification in
-                                                                                if let notification = visilabsInAppNotification {
+                                                                            relatedDigitalUser: self.relatedDigitalUser,
+                                                                            completion: { relatedDigitalInAppNotification in
+                                                                                if let notification = relatedDigitalInAppNotification {
                                                                                     self.relatedDigitalTargetingActionInstance.notificationsInstance.inappButtonDelegate = self.inappButtonDelegate
                                                                                     self.relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(notification)
                                                                                 }
@@ -577,7 +577,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, properties] in
                 guard let self = self else { return }
-                self.relatedDigitalTargetingActionInstance.checkTargetingActions(properties: properties, visilabsUser: self.relatedDigitalUser, completion: { model in
+                self.relatedDigitalTargetingActionInstance.checkTargetingActions(properties: properties, relatedDigitalUser: self.relatedDigitalUser, completion: { model in
                     if let targetingAction = model {
                         self.showTargetingAction(targetingAction)
                     }
@@ -603,7 +603,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
 
 extension RelatedDigitalInstance {
     
-    public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: VisilabsStoryURLDelegate? = nil
+    public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil
                                   , completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void)) {
         
         if RelatedDigitalPersistence.isBlocked() {
@@ -617,8 +617,8 @@ extension RelatedDigitalInstance {
         let storyHomeViewController = RelatedDigitalStoryHomeViewController()
         storyHomeViewController.urlDelegate = urlDelegate
         storyHomeView.controller = storyHomeViewController
-        relatedDigitalTargetingActionInstance.visilabsStoryHomeViewControllers[guid] = storyHomeViewController
-        relatedDigitalTargetingActionInstance.visilabsStoryHomeViews[guid] = storyHomeView
+        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
+        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
         
@@ -626,7 +626,7 @@ extension RelatedDigitalInstance {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, actionId, guid] in
                 guard let self = self else { return }
-                self.relatedDigitalTargetingActionInstance.getStories(visilabsUser: self.relatedDigitalUser,
+                self.relatedDigitalTargetingActionInstance.getStories(relatedDigitalUser: self.relatedDigitalUser,
                                                                 guid: guid,
                                                                 actionId: actionId,
                                                                 completion: { response in
@@ -635,8 +635,8 @@ extension RelatedDigitalInstance {
                         completion(nil)
                     } else {
                         if let guid = response.guid, response.storyActions.count > 0,
-                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.visilabsStoryHomeViewControllers[guid],
-                           let storyHomeView = self.relatedDigitalTargetingActionInstance.visilabsStoryHomeViews[guid] {
+                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
+                           let storyHomeView = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
                             DispatchQueue.main.async {
                                 storyHomeViewController.loadStoryAction(response.storyActions.first!)
                                 storyHomeView.collectionView.reloadData()
@@ -653,7 +653,7 @@ extension RelatedDigitalInstance {
         }
     }
     
-    public func getStoryView(actionId: Int? = nil, urlDelegate: VisilabsStoryURLDelegate? = nil) -> RelatedDigitalStoryHomeView {
+    public func getStoryView(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil) -> RelatedDigitalStoryHomeView {
         
         if RelatedDigitalPersistence.isBlocked() {
             RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
@@ -665,8 +665,8 @@ extension RelatedDigitalInstance {
         let storyHomeViewController = RelatedDigitalStoryHomeViewController()
         storyHomeViewController.urlDelegate = urlDelegate
         storyHomeView.controller = storyHomeViewController
-        relatedDigitalTargetingActionInstance.visilabsStoryHomeViewControllers[guid] = storyHomeViewController
-        relatedDigitalTargetingActionInstance.visilabsStoryHomeViews[guid] = storyHomeView
+        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
+        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
 
@@ -674,7 +674,7 @@ extension RelatedDigitalInstance {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, actionId, guid] in
                 guard let self = self else { return }
-                self.relatedDigitalTargetingActionInstance.getStories(visilabsUser: self.relatedDigitalUser,
+                self.relatedDigitalTargetingActionInstance.getStories(relatedDigitalUser: self.relatedDigitalUser,
                                                                 guid: guid,
                                                                 actionId: actionId,
                                                                 completion: { response in
@@ -682,8 +682,8 @@ extension RelatedDigitalInstance {
                                                                         RelatedDigitalLogger.error(error)
                                                                     } else {
                                                                         if let guid = response.guid, response.storyActions.count > 0,
-                                                                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.visilabsStoryHomeViewControllers[guid],
-                                                                           let storyHomeView = self.relatedDigitalTargetingActionInstance.visilabsStoryHomeViews[guid] {
+                                                                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
+                                                                           let storyHomeView = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
                                                                             DispatchQueue.main.async {
                                                                                 storyHomeViewController.loadStoryAction(response.storyActions.first!)
                                                                                 storyHomeView.collectionView.reloadData()
@@ -705,9 +705,9 @@ extension RelatedDigitalInstance {
 extension RelatedDigitalInstance {
     public func recommend(zoneID: String,
                           productCode: String? = nil,
-                          filters: [VisilabsRecommendationFilter] = [],
+                          filters: [RelatedDigitalRecommendationFilter] = [],
                           properties: [String: String] = [:],
-                          completion: @escaping ((_ response: VisilabsRecommendationResponse) -> Void)) {
+                          completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void)) {
         
         if RelatedDigitalPersistence.isBlocked() {
             RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
@@ -725,7 +725,7 @@ extension RelatedDigitalInstance {
                 }
                 self.relatedDigitalRecommendationInstance.recommend(zoneID: zoneID,
                                                               productCode: productCode,
-                                                              visilabsUser: vUser,
+                                                              relatedDigitalUser: vUser,
                                                               channel: channel,
                                                               properties: properties,
                                                               filters: filters) { response in

@@ -87,7 +87,7 @@ public enum VisilabsError: Codable {
     case other(errorDescription: String?)
 }
 
-struct VisilabsBasePath {
+struct RelatedDigitalBasePath {
     static var endpoints = [VisilabsEndpoint: String]()
 
     // TO_DO: path parametresini kaldır
@@ -147,7 +147,7 @@ class RelatedDigitalNetwork {
     }
 
     private class func buildURLRequest<A>(resource: VisilabsResource<A>) -> URLRequest? {
-        guard let url = VisilabsBasePath.buildURL(visilabsEndpoint: resource.endPoint,
+        guard let url = RelatedDigitalBasePath.buildURL(visilabsEndpoint: resource.endPoint,
                                                   queryItems: resource.queryItems) else {
             return nil
         }

@@ -16,11 +16,11 @@ class RelatedDigitalRecommendation {
 
     func recommend(zoneID: String,
                    productCode: String?,
-                   visilabsUser: RelatedDigitalUser,
+                   relatedDigitalUser: RelatedDigitalUser,
                    channel: String,
                    properties: [String: String] = [:],
-                   filters: [VisilabsRecommendationFilter] = [],
-                   completion: @escaping ((_ response: VisilabsRecommendationResponse) -> Void)) {
+                   filters: [RelatedDigitalRecommendationFilter] = [],
+                   completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void)) {
 
         var props = cleanProperties(properties)
 
@@ -30,16 +30,16 @@ class RelatedDigitalRecommendation {
 
         props[RelatedDigitalConstants.organizationIdKey] = self.visilabsProfile.organizationId
         props[RelatedDigitalConstants.profileIdKey] = self.visilabsProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = visilabsUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = visilabsUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = visilabsUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = visilabsUser.appId
+        props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
+        props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
+        props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
+        props[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
         
-        props[RelatedDigitalConstants.nrvKey] = String(visilabsUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(visilabsUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(visilabsUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = visilabsUser.lvt
+        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
 
         if zoneID.count > 0 {
             props[RelatedDigitalConstants.zoneIdKey] = zoneID
@@ -60,7 +60,7 @@ class RelatedDigitalRecommendation {
                                                   completion: { (results: [Any]?, error: VisilabsError?) in
             var products = [VisilabsProduct]()
             if error != nil {
-                completion(VisilabsRecommendationResponse(products: [VisilabsProduct](), error: error))
+                completion(RelatedDigitalRecommendationResponse(products: [VisilabsProduct](), error: error))
             } else {
                 var widgetTitle = ""
                 var counter = 0
@@ -73,12 +73,12 @@ class RelatedDigitalRecommendation {
                         counter = counter + 1
                     }
                 }
-                completion(VisilabsRecommendationResponse(products: products, widgetTitle: widgetTitle, error: nil))
+                completion(RelatedDigitalRecommendationResponse(products: products, widgetTitle: widgetTitle, error: nil))
             }
         })
     }
 
-    private func getFiltersQueryStringValue(_ filters: [VisilabsRecommendationFilter]) -> String? {
+    private func getFiltersQueryStringValue(_ filters: [RelatedDigitalRecommendationFilter]) -> String? {
         var queryStringValue: String?
         var abbrevatedFilters: [[String: String]] = []
         for filter in filters where filter.value.count > 0 {

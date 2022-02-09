@@ -102,17 +102,17 @@ internal class RelatedDigitalHelper {
     
     static func setEndpoints(dataSource: String, useInsecureProtocol: Bool = false) {
         let httpProtocol = useInsecureProtocol ? RelatedDigitalConstants.HTTP : RelatedDigitalConstants.HTTPS
-        VisilabsBasePath.endpoints[.logger] =
+        RelatedDigitalBasePath.endpoints[.logger] =
         "\(httpProtocol)://\(RelatedDigitalConstants.loggerEndPoint)/\(dataSource)/\(RelatedDigitalConstants.omGif)"
-        VisilabsBasePath.endpoints[.realtime] =
+        RelatedDigitalBasePath.endpoints[.realtime] =
         "\(httpProtocol)://\(RelatedDigitalConstants.realtimeEndPoint)/\(dataSource)/\(RelatedDigitalConstants.omGif)"
-        VisilabsBasePath.endpoints[.target] = "\(httpProtocol)://\(RelatedDigitalConstants.recommendationEndPoint)"
-        VisilabsBasePath.endpoints[.action] = "\(httpProtocol)://\(RelatedDigitalConstants.actionEndPoint)"
-        VisilabsBasePath.endpoints[.geofence] = "\(httpProtocol)://\(RelatedDigitalConstants.geofenceEndPoint)"
-        VisilabsBasePath.endpoints[.mobile] = "\(httpProtocol)://\(RelatedDigitalConstants.mobileEndPoint)"
-        VisilabsBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RelatedDigitalConstants.subsjsonEndpoint)"
-        VisilabsBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RelatedDigitalConstants.promotionEndpoint)"
-        VisilabsBasePath.endpoints[.remote] = "https://\(RelatedDigitalConstants.remoteConfigEndpoint)"
+        RelatedDigitalBasePath.endpoints[.target] = "\(httpProtocol)://\(RelatedDigitalConstants.recommendationEndPoint)"
+        RelatedDigitalBasePath.endpoints[.action] = "\(httpProtocol)://\(RelatedDigitalConstants.actionEndPoint)"
+        RelatedDigitalBasePath.endpoints[.geofence] = "\(httpProtocol)://\(RelatedDigitalConstants.geofenceEndPoint)"
+        RelatedDigitalBasePath.endpoints[.mobile] = "\(httpProtocol)://\(RelatedDigitalConstants.mobileEndPoint)"
+        RelatedDigitalBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RelatedDigitalConstants.subsjsonEndpoint)"
+        RelatedDigitalBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RelatedDigitalConstants.promotionEndpoint)"
+        RelatedDigitalBasePath.endpoints[.remote] = "https://\(RelatedDigitalConstants.remoteConfigEndpoint)"
     }
     
     static private let dateFormatter = DateFormatter()

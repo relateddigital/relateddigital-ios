@@ -21,7 +21,7 @@ class RelatedDigitalEvent {
                      eventsQueue: Queue,
                      relatedDigitalUser: RelatedDigitalUser,
                      channel: String) -> (eventsQueque: Queue,
-                                          visilabsUser: RelatedDigitalUser,
+                                          relatedDigitalUser: RelatedDigitalUser,
                                           clearUserParameters: Bool,
                                           channel: String) {
         var props = properties

@@ -130,7 +130,7 @@ extension UIView {
     }
 }
 
-extension StoryViewController: VisilabsStoryURLDelegate {
+extension StoryViewController: RelatedDigitalStoryURLDelegate {
     func urlClicked(_ url: URL) {
         print("You can handle url as you like!")
     }

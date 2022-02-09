@@ -44,7 +44,7 @@ final class RelatedDigitalStoryPreviewController: UIViewController, UIGestureRec
         return self._view.snapsCollectionView.cellForItem(at: indexPath) as? RelatedDigitalStoryPreviewCell
     }
 
-    weak var storyUrlDelegate: VisilabsStoryURLDelegate?
+    weak var storyUrlDelegate: RelatedDigitalStoryURLDelegate?
 
     // MARK: - Overriden functions
     override func loadView() {

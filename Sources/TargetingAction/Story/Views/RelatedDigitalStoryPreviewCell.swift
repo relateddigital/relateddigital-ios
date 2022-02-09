@@ -28,7 +28,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         didSet { storyHeaderView.delegate = self }
     }
 
-    weak var storyUrlDelegate: VisilabsStoryURLDelegate?
+    weak var storyUrlDelegate: RelatedDigitalStoryURLDelegate?
 
     // MARK: - Private iVars
     private lazy var storyHeaderView: RelatedDigitalStoryPreviewHeaderView = {

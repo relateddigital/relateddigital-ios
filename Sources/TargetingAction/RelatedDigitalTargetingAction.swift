@@ -36,18 +36,18 @@ class RelatedDigitalTargetingAction {
     }
 
     func checkInAppNotification(properties: [String: String],
-                                visilabsUser: RelatedDigitalUser,
+                                relatedDigitalUser: RelatedDigitalUser,
                                 completion: @escaping ((_ response: RelatedDigitalInAppNotification?) -> Void)) {
         let semaphore = DispatchSemaphore(value: 0)
-        let headers = prepareHeaders(visilabsUser)
+        let headers = prepareHeaders(relatedDigitalUser)
         var notifications = [RelatedDigitalInAppNotification]()
         var props = properties
-        props["OM.vcap"] = visilabsUser.visitData
-        props["OM.viscap"] = visilabsUser.visitorData
-        props[RelatedDigitalConstants.nrvKey] = String(visilabsUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(visilabsUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(visilabsUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = visilabsUser.lvt
+        props["OM.vcap"] = relatedDigitalUser.visitData
+        props["OM.viscap"] = relatedDigitalUser.visitorData
+        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
 
         for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -90,18 +90,18 @@ class RelatedDigitalTargetingAction {
     // MARK: - Targeting Actions
 
     func checkTargetingActions(properties: [String: String],
-                                visilabsUser: RelatedDigitalUser,
+                                relatedDigitalUser: RelatedDigitalUser,
                                 completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
 
         let semaphore = DispatchSemaphore(value: 0)
         var targetingActionViewModel: TargetingActionViewModel?
         var props = properties
-        props["OM.vcap"] = visilabsUser.visitData
-        props["OM.viscap"] = visilabsUser.visitorData
-        props[RelatedDigitalConstants.nrvKey] = String(visilabsUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(visilabsUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(visilabsUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = visilabsUser.lvt
+        props["OM.vcap"] = relatedDigitalUser.visitData
+        props["OM.viscap"] = relatedDigitalUser.visitorData
+        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
         
         
         props[RelatedDigitalConstants.actionType] = "\(RelatedDigitalConstants.mailSubscriptionForm)~\(RelatedDigitalConstants.spinToWin)~\(RelatedDigitalConstants.scratchToWin)~\(RelatedDigitalConstants.productStatNotifier)"
@@ -115,7 +115,7 @@ class RelatedDigitalTargetingAction {
         props[RelatedDigitalConstants.pushPermitPermissionReqKey] = RelatedDigitalConstants.pushPermitStatus
 
         RelatedDigitalRequest.sendMobileRequest(properties: props,
-                                          headers: prepareHeaders(visilabsUser),
+                                          headers: prepareHeaders(relatedDigitalUser),
                                           timeoutInterval: self.visilabsProfile.requestTimeoutInterval,
                                           completion: {(result: [String: Any]?, _: VisilabsError?, _: String?) in
             guard let result = result else {
@@ -563,25 +563,25 @@ class RelatedDigitalTargetingAction {
     //https://s.visilabs.net/mobile?OM.oid=676D325830564761676D453D&OM
     // .siteID=356467332F6533766975593D&OM.cookieID=B220EC66-A746-4130-93FD-53543055E406&
     // OM.exVisitorID=ogun.ozturk%40euromsg.com&action_id=188&action_type=FavoriteAttributeAction&OM.apiver=IOS
-    func getFavorites(visilabsUser: RelatedDigitalUser, actionId: Int? = nil,
+    func getFavorites(relatedDigitalUser: RelatedDigitalUser, actionId: Int? = nil,
                       completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
 
         var props = [String: String]()
         props[RelatedDigitalConstants.organizationIdKey] = self.visilabsProfile.organizationId
         props[RelatedDigitalConstants.profileIdKey] = self.visilabsProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = visilabsUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = visilabsUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = visilabsUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = visilabsUser.appId
+        props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
+        props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
+        props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
+        props[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
         props[RelatedDigitalConstants.actionType] = RelatedDigitalConstants.favoriteAttributeAction
         props[RelatedDigitalConstants.actionId] = actionId == nil ? nil : String(actionId!)
         
         
-        props[RelatedDigitalConstants.nrvKey] = String(visilabsUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(visilabsUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(visilabsUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = visilabsUser.lvt
+        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
 
         for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -629,29 +629,29 @@ class RelatedDigitalTargetingAction {
 
     // MARK: - Story
 
-    var visilabsStoryHomeViewControllers = [String: RelatedDigitalStoryHomeViewController]()
-    var visilabsStoryHomeViews = [String: RelatedDigitalStoryHomeView]()
+    var relatedDigitalStoryHomeViewControllers = [String: RelatedDigitalStoryHomeViewController]()
+    var relatedDigitalStoryHomeViews = [String: RelatedDigitalStoryHomeView]()
 
-    func getStories(visilabsUser: RelatedDigitalUser,
+    func getStories(relatedDigitalUser: RelatedDigitalUser,
                     guid: String, actionId: Int? = nil,
                     completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 
         var props = [String: String]()
         props[RelatedDigitalConstants.organizationIdKey] = self.visilabsProfile.organizationId
         props[RelatedDigitalConstants.profileIdKey] = self.visilabsProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = visilabsUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = visilabsUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = visilabsUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = visilabsUser.appId
+        props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
+        props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
+        props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
+        props[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
         props[RelatedDigitalConstants.actionType] = RelatedDigitalConstants.story
         props[RelatedDigitalConstants.channelKey] = self.visilabsProfile.channel
         props[RelatedDigitalConstants.actionId] = actionId == nil ? nil : String(actionId!)
         
-        props[RelatedDigitalConstants.nrvKey] = String(visilabsUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(visilabsUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(visilabsUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = visilabsUser.lvt
+        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
 
         for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {

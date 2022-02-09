@@ -18,18 +18,18 @@ class RelatedDigitalSend {
     weak var delegate: VisilabsSendDelegate?
 
     // TO_DO: burada internet bağlantısı kontrolü yapmaya gerek var mı?
-    func sendEventsQueue(_ eventsQueue: Queue, visilabsUser: RelatedDigitalUser,
-                         visilabsCookie: RelatedDigitalCookie, timeoutInterval: TimeInterval) -> RelatedDigitalCookie {
-        var mutableCookie = visilabsCookie
+    func sendEventsQueue(_ eventsQueue: Queue, relatedDigitalUser: RelatedDigitalUser,
+                         relatedDigitalCookie: RelatedDigitalCookie, timeoutInterval: TimeInterval) -> RelatedDigitalCookie {
+        var mutableCookie = relatedDigitalCookie
 
         for counter in 0..<eventsQueue.count {
             let event = eventsQueue[counter]
             RelatedDigitalLogger.debug("Sending event")
             RelatedDigitalLogger.debug(event)
-            let loggerHeaders = prepareHeaders(.logger, event: event, visilabsUser: visilabsUser,
-                                               visilabsCookie: visilabsCookie)
-            let realTimeHeaders = prepareHeaders(.realtime, event: event, visilabsUser: visilabsUser,
-                                                 visilabsCookie: visilabsCookie)
+            let loggerHeaders = prepareHeaders(.logger, event: event, visilabsUser: relatedDigitalUser,
+                                               visilabsCookie: relatedDigitalCookie)
+            let realTimeHeaders = prepareHeaders(.realtime, event: event, visilabsUser: relatedDigitalUser,
+                                                 visilabsCookie: relatedDigitalCookie)
 
             let loggerSemaphore = DispatchSemaphore(value: 0)
             let realTimeSemaphore = DispatchSemaphore(value: 0)

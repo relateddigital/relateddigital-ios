@@ -28,8 +28,8 @@ class RecommendationViewController: FormViewController {
             var properties = [String: String]()
             properties["prop1"] = "prop1val"
             properties["prop1"] = "prop2val"
-            var filters = [VisilabsRecommendationFilter]()
-            filters.append(VisilabsRecommendationFilter(attribute:.PRODUCTNAME , filterType: .like, value: "a"))
+            var filters = [RelatedDigitalRecommendationFilter]()
+            filters.append(RelatedDigitalRecommendationFilter(attribute:.PRODUCTNAME , filterType: .like, value: "a"))
             //filters.append(VisilabsRecommendationFilter(attribute: .PRODUCTNAME, filterType: .like, value: "laptop"))
             
             RelatedDigital.callAPI().recommend(zoneID: "1", productCode: "",

@@ -116,7 +116,7 @@ public enum VisilabsProductFilterAttribute: Int, RawRepresentable {
 }
 
 @objc
-public class VisilabsRecommendationFilter: NSObject {
+public class RelatedDigitalRecommendationFilter: NSObject {
     var attribute: VisilabsProductFilterAttribute
     var filterType: RelatedDigitalRecommendationFilterType
     var value: String
@@ -286,7 +286,7 @@ public class VisilabsProduct: Encodable {
     }
 }
 
-public class VisilabsRecommendationResponse {
+public class RelatedDigitalRecommendationResponse {
     public var products: [VisilabsProduct]
     public var error: VisilabsError?
     public var widgetTitle: String = ""
