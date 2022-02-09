@@ -8,6 +8,8 @@
 import UIKit
 import RelatedDigitalIOS
 
+var relatedDigitalProfile = RelatedDigitalProfile()
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
