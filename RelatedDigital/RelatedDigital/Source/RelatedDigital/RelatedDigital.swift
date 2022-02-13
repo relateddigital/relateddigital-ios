@@ -30,6 +30,9 @@ public class RelatedDigital: NSObject {
         }
     }
     
+    
+    private (set) var relatedDigitalInstance: RelatedDigitalInstanceProtocol
+    
     static var _shared: RelatedDigital?
     
     
@@ -41,6 +44,11 @@ public class RelatedDigital: NSObject {
             assertionFailure("Create must be called before accessing RelatedDigital.")
         }
         return _shared!
+    }
+    
+    
+    init(instance: RelatedDigitalInstanceProtocol) {
+        self.relatedDigitalInstance = instance
     }
     
     

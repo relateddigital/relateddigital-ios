@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+
+protocol RelatedDigitalInstanceProtocol  {
+    var config: RuntimeConfig { get }
+
+}
