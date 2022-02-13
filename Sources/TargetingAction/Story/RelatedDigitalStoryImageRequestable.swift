@@ -8,12 +8,12 @@
 import Foundation
 import UIKit
 
-public enum VisilabsStoryImageResult<V, E> {
+public enum RelatedDigitalStoryImageResult<V, E> {
     case success(V)
     case failure(E)
 }
 
-public typealias ImageResponse = (VisilabsStoryImageResult<UIImage, Error>) -> Void
+public typealias ImageResponse = (RelatedDigitalStoryImageResult<UIImage, Error>) -> Void
 
 protocol RelatedDigitalStoryImageRequestable {
     func setImage(urlString: String, placeHolderImage: UIImage?, completionBlock: ImageResponse?)
@@ -57,12 +57,12 @@ enum ImageStyle: Int {
     case squared, rounded
 }
 
-public enum VisilabsStoryImageRequestResult<V, E> {
+public enum RelatedDigitalStoryImageRequestResult<V, E> {
     case success(V)
     case failure(E)
 }
 
-typealias SetImageRequester = (VisilabsStoryImageRequestResult<Bool, Error>) -> Void
+typealias SetImageRequester = (RelatedDigitalStoryImageRequestResult<Bool, Error>) -> Void
 
 extension UIImageView: RelatedDigitalStoryImageRequestable {
     func setImage(url: String,
@@ -86,9 +86,9 @@ extension UIImageView: RelatedDigitalStoryImageRequestable {
             if let completion = completion {
                 switch response {
                 case .success:
-                    completion(VisilabsStoryImageRequestResult.success(true))
+                    completion(RelatedDigitalStoryImageRequestResult.success(true))
                 case .failure(let error):
-                    completion(VisilabsStoryImageRequestResult.failure(error))
+                    completion(RelatedDigitalStoryImageRequestResult.failure(error))
                 }
             }
         }

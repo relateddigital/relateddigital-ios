@@ -110,7 +110,7 @@ class GeofenceViewController: FormViewController {
     }
 
     private func refreshData(firstTime: Bool = false) {
-        visilabsGeofenceHistory = RelatedDigitalPersistence.readVisilabsGeofenceHistory()
+        visilabsGeofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
         locationServicesEnabledForDeviceRow.value = RelatedDigital.callAPI().locationServicesEnabledForDevice ? "YES" : "NO"
         let state = RelatedDigital.callAPI().locationServiceStateStatusForApplication
         locationServiceStatusForAppRow.value = String(describing: state)
@@ -148,7 +148,7 @@ class GeofenceViewController: FormViewController {
     }
 
     private func clearHistory() {
-        RelatedDigitalPersistence.clearVisilabsGeofenceHistory()
+        RelatedDigitalPersistence.clearRelatedDigitalGeofenceHistory()
         historySection.removeAll()
         historySection.reload()
         errorSection.removeAll()
@@ -160,7 +160,7 @@ class GeofenceViewController: FormViewController {
 class GeofenceAlertViewController: CleanyAlertViewController {
     let dateFormatter = DateFormatter()
 
-    init(date: Date, relatedDigitalError: VisilabsError?) {
+    init(date: Date, relatedDigitalError: RelatedDigitalError?) {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let styleSettings = CleanyAlertConfig.getDefaultStyleSettings()
         styleSettings[.cornerRadius] = 18

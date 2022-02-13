@@ -22,30 +22,30 @@ public class RelatedDigitalPersistence {
         return urlUnwrapped
     }
 
-    class func archiveUser(_ visilabsUser: RelatedDigitalUser) {
-        archiveQueueUtility.sync { [visilabsUser] in
+    class func archiveUser(_ relatedDigitalUser: RelatedDigitalUser) {
+        archiveQueueUtility.sync { [relatedDigitalUser] in
             let propertiesFilePath = filePath(filename: RelatedDigitalConstants.userArchiveKey)
             guard let path = propertiesFilePath else {
                 RelatedDigitalLogger.error("bad file path, cant fetch file")
                 return
             }
             var userDic = [String: String?]()
-            userDic[RelatedDigitalConstants.cookieIdKey] = visilabsUser.cookieId
-            userDic[RelatedDigitalConstants.exvisitorIdKey] = visilabsUser.exVisitorId
-            userDic[RelatedDigitalConstants.appidKey] = visilabsUser.appId
-            userDic[RelatedDigitalConstants.tokenIdKey] = visilabsUser.tokenId
-            userDic[RelatedDigitalConstants.userAgentKey] = visilabsUser.userAgent
-            userDic[RelatedDigitalConstants.visitorCappingKey] = visilabsUser.visitorData
-            userDic[RelatedDigitalConstants.visitorData] = visilabsUser.visitorData
-            userDic[RelatedDigitalConstants.mobileIdKey] = visilabsUser.identifierForAdvertising
-            userDic[RelatedDigitalConstants.mobileSdkVersion] = visilabsUser.sdkVersion
-            userDic[RelatedDigitalConstants.mobileAppVersion] = visilabsUser.appVersion
+            userDic[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
+            userDic[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
+            userDic[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
+            userDic[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
+            userDic[RelatedDigitalConstants.userAgentKey] = relatedDigitalUser.userAgent
+            userDic[RelatedDigitalConstants.visitorCappingKey] = relatedDigitalUser.visitorData
+            userDic[RelatedDigitalConstants.visitorData] = relatedDigitalUser.visitorData
+            userDic[RelatedDigitalConstants.mobileIdKey] = relatedDigitalUser.identifierForAdvertising
+            userDic[RelatedDigitalConstants.mobileSdkVersion] = relatedDigitalUser.sdkVersion
+            userDic[RelatedDigitalConstants.mobileAppVersion] = relatedDigitalUser.appVersion
             
-            userDic[RelatedDigitalConstants.lastEventTimeKey] = visilabsUser.lastEventTime
-            userDic[RelatedDigitalConstants.nrvKey] = String(visilabsUser.nrv)
-            userDic[RelatedDigitalConstants.pvivKey] = String(visilabsUser.pviv)
-            userDic[RelatedDigitalConstants.tvcKey] = String(visilabsUser.tvc)
-            userDic[RelatedDigitalConstants.lvtKey] = visilabsUser.lvt
+            userDic[RelatedDigitalConstants.lastEventTimeKey] = relatedDigitalUser.lastEventTime
+            userDic[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
+            userDic[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
+            userDic[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
+            userDic[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
             
             if !NSKeyedArchiver.archiveRootObject(userDic, toFile: path) {
                 RelatedDigitalLogger.error("failed to archive user")
@@ -56,86 +56,86 @@ public class RelatedDigitalPersistence {
     // TO_DO: bunu ExceptionWrapper içine al
     // swiftlint:disable cyclomatic_complexity
     class func unarchiveUser() -> RelatedDigitalUser {
-        var visilabsUser = RelatedDigitalUser()
+        var relatedDigitalUser = RelatedDigitalUser()
         // Before Visilabs.identity is used as archive key, to retrieve Visilabs.cookieID set by objective-c library
         // we added this control.
         if let cidfp = filePath(filename: RelatedDigitalConstants.identityArchiveKey),
            let cid = NSKeyedUnarchiver.unarchiveObject(withFile: cidfp) as? String {
-            visilabsUser.cookieId = cid
+            relatedDigitalUser.cookieId = cid
         }
         if let cidfp = filePath(filename: RelatedDigitalConstants.cookieidArchiveKey),
            let cid = NSKeyedUnarchiver.unarchiveObject(withFile: cidfp) as? String {
-            visilabsUser.cookieId = cid
+            relatedDigitalUser.cookieId = cid
         }
         if let exvidfp = filePath(filename: RelatedDigitalConstants.exvisitorIdArchiveKey),
            let exvid = NSKeyedUnarchiver.unarchiveObject(withFile: exvidfp) as? String {
-            visilabsUser.exVisitorId = exvid
+            relatedDigitalUser.exVisitorId = exvid
         }
         if let appidfp = filePath(filename: RelatedDigitalConstants.appidArchiveKey),
            let aid = NSKeyedUnarchiver.unarchiveObject(withFile: appidfp) as? String {
-            visilabsUser.appId = aid
+            relatedDigitalUser.appId = aid
         }
         if let tidfp = filePath(filename: RelatedDigitalConstants.tokenidArchiveKey),
            let tid = NSKeyedUnarchiver.unarchiveObject(withFile: tidfp) as? String {
-            visilabsUser.tokenId = tid
+            relatedDigitalUser.tokenId = tid
         }
         if let uafp = filePath(filename: RelatedDigitalConstants.useragentArchiveKey),
            let userAgent = NSKeyedUnarchiver.unarchiveObject(withFile: uafp) as? String {
-            visilabsUser.userAgent = userAgent
+            relatedDigitalUser.userAgent = userAgent
         }
 
         if let propsfp = filePath(filename: RelatedDigitalConstants.userArchiveKey),
            let props = NSKeyedUnarchiver.unarchiveObject(withFile: propsfp) as? [String: String?] {
             if let cid = props[RelatedDigitalConstants.cookieIdKey], !cid.isNilOrWhiteSpace {
-                visilabsUser.cookieId = cid
+                relatedDigitalUser.cookieId = cid
             }
             if let exvid = props[RelatedDigitalConstants.exvisitorIdKey], !exvid.isNilOrWhiteSpace {
-                visilabsUser.exVisitorId = exvid
+                relatedDigitalUser.exVisitorId = exvid
             }
             if let aid = props[RelatedDigitalConstants.appidKey], !aid.isNilOrWhiteSpace {
-                visilabsUser.appId = aid
+                relatedDigitalUser.appId = aid
             }
             if let tid = props[RelatedDigitalConstants.tokenIdKey], !tid.isNilOrWhiteSpace {
-                visilabsUser.tokenId = tid
+                relatedDigitalUser.tokenId = tid
             }
             if let userAgent = props[RelatedDigitalConstants.userAgentKey], !userAgent.isNilOrWhiteSpace {
-                visilabsUser.userAgent = userAgent
+                relatedDigitalUser.userAgent = userAgent
             }
             if let visitorData = props[RelatedDigitalConstants.visitorData], !visitorData.isNilOrWhiteSpace {
-                visilabsUser.visitorData = visitorData
+                relatedDigitalUser.visitorData = visitorData
             }
             // TO_DO: visilabsUserda ya üstteki kod gereksiz ya da alttaki yanlış
             if let visitorData = props[RelatedDigitalConstants.visitorCappingKey], !visitorData.isNilOrWhiteSpace {
-                visilabsUser.visitorData = visitorData
+                relatedDigitalUser.visitorData = visitorData
             }
             if let madid = props[RelatedDigitalConstants.mobileIdKey], !madid.isNilOrWhiteSpace {
-                visilabsUser.identifierForAdvertising = madid
+                relatedDigitalUser.identifierForAdvertising = madid
             }
             if let sdkversion = props[RelatedDigitalConstants.mobileSdkVersion], !sdkversion.isNilOrWhiteSpace {
-                visilabsUser.sdkVersion = sdkversion
+                relatedDigitalUser.sdkVersion = sdkversion
             }
             if let appversion = props[RelatedDigitalConstants.mobileAppVersion], !appversion.isNilOrWhiteSpace {
-                visilabsUser.appVersion = appversion
+                relatedDigitalUser.appVersion = appversion
             }
             if let lastEventTime = props[RelatedDigitalConstants.lastEventTimeKey] as? String {
-                visilabsUser.lastEventTime = lastEventTime
+                relatedDigitalUser.lastEventTime = lastEventTime
             }
             if let nrvString = props[RelatedDigitalConstants.nrvKey] as? String, let nrv = Int(nrvString)  {
-                visilabsUser.nrv = nrv
+                relatedDigitalUser.nrv = nrv
             }
             if let pvivString = props[RelatedDigitalConstants.pvivKey] as? String, let pviv = Int(pvivString)  {
-                visilabsUser.pviv = pviv
+                relatedDigitalUser.pviv = pviv
             }
             if let tvcString = props[RelatedDigitalConstants.tvcKey] as? String, let tvc = Int(tvcString)  {
-                visilabsUser.tvc = tvc
+                relatedDigitalUser.tvc = tvc
             }
             if let lvt = props[RelatedDigitalConstants.lvtKey] as? String {
-                visilabsUser.lvt = lvt
+                relatedDigitalUser.lvt = lvt
             }
         } else {
             RelatedDigitalLogger.warn("Visilabs: Error while unarchiving properties.")
         }
-        return visilabsUser
+        return relatedDigitalUser
     }
 
     static func getDateStr() -> String {
@@ -151,11 +151,11 @@ public class RelatedDigitalPersistence {
             let dateString = getDateStr()
             var targetParameters = readTargetParameters()
 
-            for visilabsParameter in RelatedDigitalConstants.visilabsTargetParameters() {
-                let key = visilabsParameter.key
-                let storeKey = visilabsParameter.storeKey
-                let relatedKeys = visilabsParameter.relatedKeys
-                let count = visilabsParameter.count
+            for relatedDigitalParameter in RelatedDigitalConstants.relatedDigitalTargetParameters() {
+                let key = relatedDigitalParameter.key
+                let storeKey = relatedDigitalParameter.storeKey
+                let relatedKeys = relatedDigitalParameter.relatedKeys
+                let count = relatedDigitalParameter.count
                 if let parameterValue = parameters[key], parameterValue.count > 0 {
                     if count == 1 {
                         if relatedKeys != nil && relatedKeys!.count > 0 {
@@ -244,44 +244,44 @@ public class RelatedDigitalPersistence {
         return readUserDefaults(RelatedDigitalConstants.userDefaultsBlockKey) as? Bool ?? false
     }
 
-    static func saveRelatedDigitalProfile(_ visilabsProfile: RelatedDigitalProfile) {
+    static func saveRelatedDigitalProfile(_ relatedDigitalProfile: RelatedDigitalProfile) {
         let encoder = JSONEncoder()
-        if let encodedVisilabsProfile = try? encoder.encode(visilabsProfile) {
-            saveUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey, withObject: encodedVisilabsProfile)
+        if let encodedRelatedDigitalProfile = try? encoder.encode(relatedDigitalProfile) {
+            saveUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey, withObject: encodedRelatedDigitalProfile)
         }
     }
 
     static func readRelatedDigitalProfile() -> RelatedDigitalProfile? {
-        if let savedVisilabsProfile = readUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey) as? Data {
+        if let savedRelatedDigitalProfile = readUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey) as? Data {
             let decoder = JSONDecoder()
-            if let loadedVisilabsProfile = try? decoder.decode(RelatedDigitalProfile.self, from: savedVisilabsProfile) {
-                return loadedVisilabsProfile
+            if let loadedRelatedDigitalProfile = try? decoder.decode(RelatedDigitalProfile.self, from: savedRelatedDigitalProfile) {
+                return loadedRelatedDigitalProfile
             }
         }
         return nil
     }
 
-    static func saveVisilabsGeofenceHistory(_ visilabsGeofenceHistory: RelatedDigitalGeofenceHistory) {
+    static func saveRelatedDigitalGeofenceHistory(_ relatedDigitalGeofenceHistory: RelatedDigitalGeofenceHistory) {
         let encoder = JSONEncoder()
-        if let encodedVisilabsGeofenceHistory = try? encoder.encode(visilabsGeofenceHistory) {
+        if let encodedRelatedDigitalGeofenceHistory = try? encoder.encode(relatedDigitalGeofenceHistory) {
             saveUserDefaults(RelatedDigitalConstants.userDefaultsGeofenceHistoryKey,
-                             withObject: encodedVisilabsGeofenceHistory)
+                             withObject: encodedRelatedDigitalGeofenceHistory)
         }
     }
 
-    public static func readVisilabsGeofenceHistory() -> RelatedDigitalGeofenceHistory {
-        if let savedVisilabsGeofenceHistory =
+    public static func readRelatedDigitalGeofenceHistory() -> RelatedDigitalGeofenceHistory {
+        if let savedRelatedDigitalGeofenceHistory =
             readUserDefaults(RelatedDigitalConstants.userDefaultsGeofenceHistoryKey) as? Data {
             let decoder = JSONDecoder()
-            if let loadedVisilabsGeofenceHistory = try? decoder.decode(RelatedDigitalGeofenceHistory.self,
-                                                                       from: savedVisilabsGeofenceHistory) {
-                return loadedVisilabsGeofenceHistory
+            if let loadedRelatedDigitalGeofenceHistory = try? decoder.decode(RelatedDigitalGeofenceHistory.self,
+                                                                       from: savedRelatedDigitalGeofenceHistory) {
+                return loadedRelatedDigitalGeofenceHistory
             }
         }
         return RelatedDigitalGeofenceHistory()
     }
 
-    public static func clearVisilabsGeofenceHistory() {
+    public static func clearRelatedDigitalGeofenceHistory() {
         removeUserDefaults(RelatedDigitalConstants.userDefaultsGeofenceHistoryKey)
     }
 

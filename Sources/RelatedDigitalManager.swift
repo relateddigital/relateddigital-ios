@@ -10,7 +10,7 @@ class RelatedDigitalManager {
     private var instance: RelatedDigitalInstance?
     
     init() {
-        RelatedDigitalLogger.addLogging(VisilabsPrintLogging())
+        RelatedDigitalLogger.addLogging(RelatedDigitalPrintLogging())
     }
     // swiftlint:disable function_parameter_count
     func initialize(organizationId: String,

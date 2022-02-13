@@ -11,7 +11,7 @@ public struct RelatedDigitalProductStatNotifierViewModel: TargetingActionViewMod
     public var targetingActionType: TargetingActionType
     var content: String
     var timeout: String
-    var position: VisilabsProductStatNotifierPosition
+    var position: RelatedDigitalProductStatNotifierPosition
     var bgcolor: String
     var threshold: Int // TODO: kullanmayalım
     var showclosebtn: Bool

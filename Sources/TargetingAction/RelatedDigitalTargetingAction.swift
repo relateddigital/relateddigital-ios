@@ -9,11 +9,11 @@ import UIKit
 // swiftlint:disable type_body_length
 class RelatedDigitalTargetingAction {
 
-    let visilabsProfile: RelatedDigitalProfile
+    let relatedDigitalProfile: RelatedDigitalProfile
 
     required init(lock: RelatedDigitalReadWriteLock, relatedDigitalProfile: RelatedDigitalProfile) {
         self.notificationsInstance = RelatedDigitalInAppNotifications(lock: lock)
-        self.visilabsProfile = relatedDigitalProfile
+        self.relatedDigitalProfile = relatedDigitalProfile
     }
 
     private func prepareHeaders(_ visilabsUser: RelatedDigitalUser) -> [String: String] {
@@ -59,9 +59,9 @@ class RelatedDigitalTargetingAction {
 
         RelatedDigitalRequest.sendInAppNotificationRequest(properties: props,
                                                      headers: headers,
-                                                     timeoutInterval: self.visilabsProfile.requestTimeoutInterval,
-                                                     completion: { visilabsInAppNotificationResult in
-            guard let result = visilabsInAppNotificationResult else {
+                                                     timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                                     completion: { relatedDigitalInAppNotificationResult in
+            guard let result = relatedDigitalInAppNotificationResult else {
                 semaphore.signal()
                 completion(nil)
                 return
@@ -116,8 +116,8 @@ class RelatedDigitalTargetingAction {
 
         RelatedDigitalRequest.sendMobileRequest(properties: props,
                                           headers: prepareHeaders(relatedDigitalUser),
-                                          timeoutInterval: self.visilabsProfile.requestTimeoutInterval,
-                                          completion: {(result: [String: Any]?, _: VisilabsError?, _: String?) in
+                                          timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                          completion: {(result: [String: Any]?, _: RelatedDigitalError?, _: String?) in
             guard let result = result else {
                 semaphore.signal()
                 completion(nil)
@@ -269,8 +269,8 @@ class RelatedDigitalTargetingAction {
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
         let content = actionData[RelatedDigitalConstants.content] as? String ?? ""
         let timeout = actionData[RelatedDigitalConstants.timeout] as? String ?? ""
-        var position = VisilabsProductStatNotifierPosition.bottom
-        if let positionString = actionData[RelatedDigitalConstants.pos] as? String, let pos = VisilabsProductStatNotifierPosition.init(rawValue: positionString) {
+        var position = RelatedDigitalProductStatNotifierPosition.bottom
+        if let positionString = actionData[RelatedDigitalConstants.pos] as? String, let pos = RelatedDigitalProductStatNotifierPosition.init(rawValue: positionString) {
             position = pos
         }
         let bgcolor = actionData[RelatedDigitalConstants.bgcolor] as? String ?? ""
@@ -567,8 +567,8 @@ class RelatedDigitalTargetingAction {
                       completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
 
         var props = [String: String]()
-        props[RelatedDigitalConstants.organizationIdKey] = self.visilabsProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.visilabsProfile.profileId
+        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
         props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
         props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
         props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
@@ -590,8 +590,8 @@ class RelatedDigitalTargetingAction {
         }
 
         RelatedDigitalRequest.sendMobileRequest(properties: props, headers: [String: String](),
-                                          timeoutInterval: self.visilabsProfile.requestTimeoutInterval,
-                                          completion: { (result: [String: Any]?, error: VisilabsError?, _: String?) in
+                                          timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                          completion: { (result: [String: Any]?, error: RelatedDigitalError?, _: String?) in
             completion(self.parseFavoritesResponse(result, error))
         })
     }
@@ -601,9 +601,9 @@ class RelatedDigitalTargetingAction {
     // "actiondata":{"attributes":["category","brand"],"favorites":{"category":["6","8","2"],
     // "brand":["Kozmo","Luxury Room","OFS"]}}}]}
     private func parseFavoritesResponse(_ result: [String: Any]?,
-                                        _ error: VisilabsError?) -> RelatedDigitalFavoriteAttributeActionResponse {
+                                        _ error: RelatedDigitalError?) -> RelatedDigitalFavoriteAttributeActionResponse {
         var favoritesResponse = [RelatedDigitalFavoriteAttribute: [String]]()
-        var errorResponse: VisilabsError?
+        var errorResponse: RelatedDigitalError?
         if let error = error {
             errorResponse = error
         } else if let res = result {
@@ -622,7 +622,7 @@ class RelatedDigitalTargetingAction {
                 }
             }
         } else {
-            errorResponse = VisilabsError.noData
+            errorResponse = RelatedDigitalError.noData
         }
         return RelatedDigitalFavoriteAttributeActionResponse(favorites: favoritesResponse, error: errorResponse)
     }
@@ -637,15 +637,15 @@ class RelatedDigitalTargetingAction {
                     completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 
         var props = [String: String]()
-        props[RelatedDigitalConstants.organizationIdKey] = self.visilabsProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.visilabsProfile.profileId
+        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
         props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
         props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
         props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
         props[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
         props[RelatedDigitalConstants.actionType] = RelatedDigitalConstants.story
-        props[RelatedDigitalConstants.channelKey] = self.visilabsProfile.channel
+        props[RelatedDigitalConstants.channelKey] = self.relatedDigitalProfile.channel
         props[RelatedDigitalConstants.actionId] = actionId == nil ? nil : String(actionId!)
         
         props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
@@ -661,8 +661,8 @@ class RelatedDigitalTargetingAction {
 
         RelatedDigitalRequest.sendMobileRequest(properties: props,
                                           headers: [String: String](),
-                                          timeoutInterval: self.visilabsProfile.requestTimeoutInterval,
-                                          completion: {(result: [String: Any]?, error: VisilabsError?, guid: String?) in
+                                          timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                          completion: {(result: [String: Any]?, error: RelatedDigitalError?, guid: String?) in
             completion(self.parseStories(result, error, guid))
         }, guid: guid)
     }
@@ -670,15 +670,15 @@ class RelatedDigitalTargetingAction {
     // swiftlint:disable function_body_length cyclomatic_complexity
     // TO_DO: burada storiesResponse kısmı değiştirilmeli. aynı requestte birden fazla story action'ı gelebilir.
     private func parseStories(_ result: [String: Any]?,
-                              _ error: VisilabsError?,
+                              _ error: RelatedDigitalError?,
                               _ guid: String?) -> RelatedDigitalStoryActionResponse {
         var storiesResponse = [RelatedDigitalStoryAction]()
-        var errorResponse: VisilabsError?
+        var errorResponse: RelatedDigitalError?
         if let error = error {
             errorResponse = error
         } else if let res = result {
             if let storyActions = res[RelatedDigitalConstants.story] as? [[String: Any?]] {
-                var visilabsStories = [RelatedDigitalStory]()
+                var relatedDigitalStories = [RelatedDigitalStory]()
                 for storyAction in storyActions {
                     if let actionId = storyAction[RelatedDigitalConstants.actid] as? Int,
                        let actiondata = storyAction[RelatedDigitalConstants.actionData] as? [String: Any?],
@@ -693,14 +693,14 @@ class RelatedDigitalTargetingAction {
                                             storyItems.append(parseStoryItem(item))
                                         }
                                         if storyItems.count > 0 {
-                                            visilabsStories.append(RelatedDigitalStory(title: story[RelatedDigitalConstants.title]
+                                            relatedDigitalStories.append(RelatedDigitalStory(title: story[RelatedDigitalConstants.title]
                                                                                     as? String,
                                             smallImg: story[RelatedDigitalConstants.thumbnail] as? String,
                                             link: story[RelatedDigitalConstants.link] as? String, items: storyItems, actid: actionId))
                                         }
                                     }
                                 } else {
-                                    visilabsStories.append(RelatedDigitalStory(title: story[RelatedDigitalConstants.title]
+                                    relatedDigitalStories.append(RelatedDigitalStory(title: story[RelatedDigitalConstants.title]
                                                                             as? String,
                                     smallImg: story[RelatedDigitalConstants.smallImg] as? String,
                                     link: story[RelatedDigitalConstants.link] as? String, actid: actionId))
@@ -711,7 +711,7 @@ class RelatedDigitalTargetingAction {
                             if stories.count > 0 {
                                 storiesResponse.append(RelatedDigitalStoryAction(actionId: actionId,
                                                                            storyTemplate: template,
-                                                                           stories: visilabsStories,
+                                                                           stories: relatedDigitalStories,
                                                                            clickQueryItems: clickQueryItems,
                                                                            impressionQueryItems: impressionQueryItems,
                         extendedProperties: parseStoryExtendedProps(actiondata[RelatedDigitalConstants.extendedProps]
@@ -722,7 +722,7 @@ class RelatedDigitalTargetingAction {
                 }
             }
         } else {
-            errorResponse = VisilabsError.noData
+            errorResponse = RelatedDigitalError.noData
         }
         return RelatedDigitalStoryActionResponse(storyActions: storiesResponse, error: errorResponse, guid: guid)
     }
@@ -788,19 +788,19 @@ class RelatedDigitalTargetingAction {
                 }
             }
         }
-        let visilabsStoryItem = RelatedDigitalStoryItem(fileType: fileType,
+        let relatedDigitalStoryItem = RelatedDigitalStoryItem(fileType: fileType,
                                                   displayTime: displayTime,
                                                   fileSrc: fileSrc,
                                                   targetUrl: targetUrl,
                                                   buttonText: buttonText,
                                                   buttonTextColor: buttonTextColor,
                                                   buttonColor: buttonColor)
-        return visilabsStoryItem
+        return relatedDigitalStoryItem
     }
 
     // swiftlint:disable cyclomatic_complexity
-    private func parseStoryExtendedProps(_ extendedPropsString: String?) -> VisilabsStoryActionExtendedProperties {
-        let props = VisilabsStoryActionExtendedProperties()
+    private func parseStoryExtendedProps(_ extendedPropsString: String?) -> RelatedDigitalStoryActionExtendedProperties {
+        let props = RelatedDigitalStoryActionExtendedProperties()
         if let propStr = extendedPropsString, let extendedProps = propStr.urlDecode().convertJsonStringToDictionary() {
             if let imageBorderWidthString = extendedProps[RelatedDigitalConstants.storylbImgBorderWidth] as? String,
                let imageBorderWidth = Int(imageBorderWidthString) {

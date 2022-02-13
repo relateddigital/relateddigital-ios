@@ -12,10 +12,10 @@ enum RelatedDigitalStoryTemplate: String {
 
 class RelatedDigitalStoryActionResponse {
     public var storyActions: [RelatedDigitalStoryAction]
-    public var error: VisilabsError?
+    public var error: RelatedDigitalError?
     var guid: String?
 
-    internal init(storyActions: [RelatedDigitalStoryAction], error: VisilabsError? = nil, guid: String?) {
+    internal init(storyActions: [RelatedDigitalStoryAction], error: RelatedDigitalError? = nil, guid: String?) {
         self.storyActions = storyActions
         self.error = error
         self.guid = guid

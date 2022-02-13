@@ -9,10 +9,10 @@ import Foundation
 
 class RelatedDigitalEvent {
     
-    let visilabsProfile: RelatedDigitalProfile
+    let relatedDigitalProfile: RelatedDigitalProfile
     
     init(relatedDigitalProfile: RelatedDigitalProfile) {
-        self.visilabsProfile = relatedDigitalProfile
+        self.relatedDigitalProfile = relatedDigitalProfile
     }
     
     // swiftlint:disable large_tuple function_body_length cyclomatic_complexity
@@ -25,7 +25,7 @@ class RelatedDigitalEvent {
                                           clearUserParameters: Bool,
                                           channel: String) {
         var props = properties
-        var vUser = updateSessionParameters(pageName: pageName, visilabsUser: relatedDigitalUser)
+        var vUser = updateSessionParameters(pageName: pageName, relatedDigitalUser: relatedDigitalUser)
         var chan = channel
         var clearUserParameters = false
         let actualTimeOfevent = Int(Date().timeIntervalSince1970)
@@ -74,8 +74,8 @@ class RelatedDigitalEvent {
             props.removeValue(forKey: RelatedDigitalConstants.channelKey)
         }
         
-        props[RelatedDigitalConstants.organizationIdKey] = self.visilabsProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.visilabsProfile.profileId
+        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
         props[RelatedDigitalConstants.cookieIdKey] = vUser.cookieId ?? ""
         props[RelatedDigitalConstants.channelKey] = chan
         if let pageNm = pageName {
@@ -116,10 +116,10 @@ class RelatedDigitalEvent {
         return (eQueue, vUser, clearUserParameters, chan)
     }
     
-    private func updateSessionParameters(pageName: String?, visilabsUser: RelatedDigitalUser) -> RelatedDigitalUser {
-        var vUser = visilabsUser
+    private func updateSessionParameters(pageName: String?, relatedDigitalUser: RelatedDigitalUser) -> RelatedDigitalUser {
+        var vUser = relatedDigitalUser
         let dateNowString = RelatedDigitalHelper.formatDate(Date())
-        if let lastEventTimeString = visilabsUser.lastEventTime {
+        if let lastEventTimeString = relatedDigitalUser.lastEventTime {
             if isPreviousSessionOver(lastEventTimeString: lastEventTimeString, dateNowString: dateNowString) {
                 vUser.pviv = 1
                 vUser.tvc = vUser.tvc + 1

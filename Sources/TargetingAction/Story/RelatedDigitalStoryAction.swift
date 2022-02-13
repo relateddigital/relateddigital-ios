@@ -13,14 +13,14 @@ class RelatedDigitalStoryAction {
     var stories: [RelatedDigitalStory]
     let clickQueryItems: [String: String]
     let impressionQueryItems: [String: String]
-    let extendedProperties: VisilabsStoryActionExtendedProperties
+    let extendedProperties: RelatedDigitalStoryActionExtendedProperties
 
     init(actionId: Int,
          storyTemplate: RelatedDigitalStoryTemplate,
          stories: [RelatedDigitalStory],
          clickQueryItems: [String: String],
          impressionQueryItems: [String: String],
-         extendedProperties: VisilabsStoryActionExtendedProperties) {
+         extendedProperties: RelatedDigitalStoryActionExtendedProperties) {
         self.actionId = actionId
         self.storyTemplate = storyTemplate
         self.stories = [RelatedDigitalStory]()
@@ -35,7 +35,7 @@ class RelatedDigitalStoryAction {
     }
 }
 
-class VisilabsStoryActionExtendedProperties {
+class RelatedDigitalStoryActionExtendedProperties {
     var imageBorderWidth = 2  // 0,1,2,3
     var imageBorderRadius = 0.5 // "","50%","10%"
     var imageBoxShadow = false

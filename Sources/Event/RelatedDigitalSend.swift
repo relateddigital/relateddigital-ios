@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol VisilabsSendDelegate: AnyObject {
+protocol RelatedDigitalSendDelegate: AnyObject {
     func send(completion: (() -> Void)?)
     func updateNetworkActivityIndicator(_ isOn: Bool)
 }
@@ -15,7 +15,7 @@ protocol VisilabsSendDelegate: AnyObject {
 class RelatedDigitalSend {
 
     // TO_DO: bu delegate kullanılmıyor. kaldır.
-    weak var delegate: VisilabsSendDelegate?
+    weak var delegate: RelatedDigitalSendDelegate?
 
     // TO_DO: burada internet bağlantısı kontrolü yapmaya gerek var mı?
     func sendEventsQueue(_ eventsQueue: Queue, relatedDigitalUser: RelatedDigitalUser,
@@ -26,15 +26,15 @@ class RelatedDigitalSend {
             let event = eventsQueue[counter]
             RelatedDigitalLogger.debug("Sending event")
             RelatedDigitalLogger.debug(event)
-            let loggerHeaders = prepareHeaders(.logger, event: event, visilabsUser: relatedDigitalUser,
-                                               visilabsCookie: relatedDigitalCookie)
-            let realTimeHeaders = prepareHeaders(.realtime, event: event, visilabsUser: relatedDigitalUser,
-                                                 visilabsCookie: relatedDigitalCookie)
+            let loggerHeaders = prepareHeaders(.logger, event: event, relatedDigitalUser: relatedDigitalUser,
+                                               relatedDigitalCookie: relatedDigitalCookie)
+            let realTimeHeaders = prepareHeaders(.realtime, event: event, relatedDigitalUser: relatedDigitalUser,
+                                                 relatedDigitalCookie: relatedDigitalCookie)
 
             let loggerSemaphore = DispatchSemaphore(value: 0)
             let realTimeSemaphore = DispatchSemaphore(value: 0)
             // delegate?.updateNetworkActivityIndicator(true)
-            RelatedDigitalRequest.sendEventRequest(visilabsEndpoint: .logger, properties: event,
+            RelatedDigitalRequest.sendEventRequest(relatedDigitalEndpoint: .logger, properties: event,
                                              headers: loggerHeaders, timeoutInterval: timeoutInterval,
                                              completion: { [loggerSemaphore] cookies in
                                         // self.delegate?.updateNetworkActivityIndicator(false)
@@ -54,7 +54,7 @@ class RelatedDigitalSend {
                                         loggerSemaphore.signal()
             })
 
-            RelatedDigitalRequest.sendEventRequest(visilabsEndpoint: .realtime, properties: event,
+            RelatedDigitalRequest.sendEventRequest(relatedDigitalEndpoint: .realtime, properties: event,
                                              headers: realTimeHeaders, timeoutInterval: timeoutInterval,
                                              completion: { [realTimeSemaphore] cookies in
                                         // self.delegate?.updateNetworkActivityIndicator(false)
@@ -81,24 +81,24 @@ class RelatedDigitalSend {
         return mutableCookie
     }
 
-    private func prepareHeaders(_ visilabsEndpoint: VisilabsEndpoint, event: [String: String],
-                                visilabsUser: RelatedDigitalUser, visilabsCookie: RelatedDigitalCookie) -> [String: String] {
+    private func prepareHeaders(_ relatedDigitalEndpoint: RelatedDigitalEndpoint, event: [String: String],
+                                relatedDigitalUser: RelatedDigitalUser, relatedDigitalCookie: RelatedDigitalCookie) -> [String: String] {
         var headers = [String: String]()
         headers["Referer"] = event[RelatedDigitalConstants.uriKey] ?? ""
-        headers["User-Agent"] = visilabsUser.userAgent
-        if let cookie = prepareCookie(visilabsEndpoint, visilabsCookie: visilabsCookie) {
+        headers["User-Agent"] = relatedDigitalUser.userAgent
+        if let cookie = prepareCookie(relatedDigitalEndpoint, relatedDigitalCookie: relatedDigitalCookie) {
             headers["Cookie"] = cookie
         }
         return headers
     }
 
-    private func prepareCookie(_ visilabsEndpoint: VisilabsEndpoint, visilabsCookie: RelatedDigitalCookie) -> String? {
+    private func prepareCookie(_ relatedDigitalEndpoint: RelatedDigitalEndpoint, relatedDigitalCookie: RelatedDigitalCookie) -> String? {
         var cookieString: String?
-        if visilabsEndpoint == .logger {
-            if let key = visilabsCookie.loggerCookieKey, let value = visilabsCookie.loggerCookieValue {
+        if relatedDigitalEndpoint == .logger {
+            if let key = relatedDigitalCookie.loggerCookieKey, let value = relatedDigitalCookie.loggerCookieValue {
                 cookieString = "\(key)=\(value)"
             }
-            if let om3rdValue = visilabsCookie.loggerOM3rdCookieValue {
+            if let om3rdValue = relatedDigitalCookie.loggerOM3rdCookieValue {
                 if !cookieString.isNilOrWhiteSpace {
                     cookieString = cookieString! + ";"
                 } else { // TO_DO: bu kısmı güzelleştir
@@ -107,11 +107,11 @@ class RelatedDigitalSend {
                 cookieString = cookieString! + "\(RelatedDigitalConstants.om3Key)=\(om3rdValue)"
             }
         }
-        if visilabsEndpoint == .realtime {
-            if let key = visilabsCookie.realTimeCookieKey, let value = visilabsCookie.realTimeCookieValue {
+        if relatedDigitalEndpoint == .realtime {
+            if let key = relatedDigitalCookie.realTimeCookieKey, let value = relatedDigitalCookie.realTimeCookieValue {
                 cookieString = "\(key)=\(value)"
             }
-            if let om3rdValue = visilabsCookie.realTimeOM3rdCookieValue {
+            if let om3rdValue = relatedDigitalCookie.realTimeOM3rdCookieValue {
                 if !cookieString.isNilOrWhiteSpace {
                     cookieString = cookieString! + ";"
                 } else { // TO_DO: bu kısmı güzelleştir

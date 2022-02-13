@@ -7,9 +7,9 @@
 
 public class RelatedDigitalFavoriteAttributeActionResponse {
     public var favorites: [RelatedDigitalFavoriteAttribute: [String]]
-    public var error: VisilabsError?
+    public var error: RelatedDigitalError?
 
-    internal init(favorites: [RelatedDigitalFavoriteAttribute: [String]], error: VisilabsError? = nil) {
+    internal init(favorites: [RelatedDigitalFavoriteAttribute: [String]], error: RelatedDigitalError? = nil) {
         self.favorites = favorites
         self.error = error
     }

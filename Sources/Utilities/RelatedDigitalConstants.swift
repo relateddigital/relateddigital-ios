@@ -343,7 +343,7 @@ struct RelatedDigitalConstants {
 
     private static var targetParameters = [RelatedDigitalParameter]()
 
-    static func visilabsTargetParameters() -> [RelatedDigitalParameter] {
+    static func relatedDigitalTargetParameters() -> [RelatedDigitalParameter] {
         if targetParameters.count == 0 {
             targetParameters.append(RelatedDigitalParameter(key: targetPrefVossKey, storeKey: targetPrefVossStoreKey,
                                                       count: 1, relatedKeys: nil))
