@@ -277,7 +277,7 @@ extension RelatedDigitalStoryPreviewController {
 }
 
 // MARK: - StoryPreview Protocol implementation
-extension RelatedDigitalStoryPreviewController: VisilabsStoryPreviewProtocol {
+extension RelatedDigitalStoryPreviewController: RelatedDigitalStoryPreviewProtocol {
     func didCompletePreview() {
         let number = handPickedStoryIndex+nStoryIndex+1
         if number < stories.count {

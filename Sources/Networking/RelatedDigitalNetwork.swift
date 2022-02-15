@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum VisilabsRequestMethod: String {
+enum RelatedDigitalRequestMethod: String {
     case get
     case post
 }
 
-enum VisilabsEndpoint {
+enum RelatedDigitalEndpoint {
     case logger
     case realtime
     case target
@@ -24,9 +24,9 @@ enum VisilabsEndpoint {
     case remote
 }
 
-struct VisilabsResource<A> {
-    let endPoint: VisilabsEndpoint
-    let method: VisilabsRequestMethod
+struct RelatedDigitalResource<A> {
+    let endPoint: RelatedDigitalEndpoint
+    let method: RelatedDigitalRequestMethod
     let timeoutInterval: TimeInterval
     let requestBody: Data?
     let queryItems: [URLQueryItem]?
@@ -35,7 +35,7 @@ struct VisilabsResource<A> {
     let guid: String?
 }
 
-public enum VisilabsError: Codable {
+public enum RelatedDigitalError: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: Key.self)
         let rawValue = try container.decode(Int.self, forKey: .rawValue)
@@ -88,11 +88,11 @@ public enum VisilabsError: Codable {
 }
 
 struct RelatedDigitalBasePath {
-    static var endpoints = [VisilabsEndpoint: String]()
+    static var endpoints = [RelatedDigitalEndpoint: String]()
 
     // TO_DO: path parametresini kaldır
-    static func buildURL(visilabsEndpoint: VisilabsEndpoint, queryItems: [URLQueryItem]?) -> URL? {
-        guard let endpoint = endpoints[visilabsEndpoint], let url = URL(string: endpoint) else {
+    static func buildURL(relatedDigitalEndpoint: RelatedDigitalEndpoint, queryItems: [URLQueryItem]?) -> URL? {
+        guard let endpoint = endpoints[relatedDigitalEndpoint], let url = URL(string: endpoint) else {
             return nil
         }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
@@ -102,15 +102,15 @@ struct RelatedDigitalBasePath {
 
     }
 
-    static func getEndpoint(visilabsEndpoint: VisilabsEndpoint) -> String {
-        return endpoints[visilabsEndpoint] ?? ""
+    static func getEndpoint(relatedDigitalEndpoint: RelatedDigitalEndpoint) -> String {
+        return endpoints[relatedDigitalEndpoint] ?? ""
     }
 }
 
 class RelatedDigitalNetwork {
 
-    class func apiRequest<A>(resource: VisilabsResource<A>,
-                             failure: @escaping (VisilabsError, Data?, URLResponse?) -> Void,
+    class func apiRequest<A>(resource: RelatedDigitalResource<A>,
+                             failure: @escaping (RelatedDigitalError, Data?, URLResponse?) -> Void,
                              success: @escaping (A, URLResponse?) -> Void) {
         guard let request = buildURLRequest(resource: resource) else {
             return
@@ -146,8 +146,8 @@ class RelatedDigitalNetwork {
         }.resume()
     }
 
-    private class func buildURLRequest<A>(resource: VisilabsResource<A>) -> URLRequest? {
-        guard let url = RelatedDigitalBasePath.buildURL(visilabsEndpoint: resource.endPoint,
+    private class func buildURLRequest<A>(resource: RelatedDigitalResource<A>) -> URLRequest? {
+        guard let url = RelatedDigitalBasePath.buildURL(relatedDigitalEndpoint: resource.endPoint,
                                                   queryItems: resource.queryItems) else {
             return nil
         }
@@ -166,15 +166,15 @@ class RelatedDigitalNetwork {
         return request as URLRequest
     }
 
-    class func buildResource<A>(endPoint: VisilabsEndpoint,
-                                method: VisilabsRequestMethod,
+    class func buildResource<A>(endPoint: RelatedDigitalEndpoint,
+                                method: RelatedDigitalRequestMethod,
                                 timeoutInterval: TimeInterval,
                                 requestBody: Data? = nil,
                                 queryItems: [URLQueryItem]? = nil,
                                 headers: [String: String],
                                 parse: @escaping (Data) -> A?,
-                                guid: String? = nil) -> VisilabsResource<A> {
-        return VisilabsResource(endPoint: endPoint,
+                                guid: String? = nil) -> RelatedDigitalResource<A> {
+        return RelatedDigitalResource(endPoint: endPoint,
                                 method: method,
                                 timeoutInterval: timeoutInterval,
                                 requestBody: requestBody,

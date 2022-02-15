@@ -39,7 +39,7 @@ public enum VisilabsHalfScreenPosition: String, CaseIterable {
     case bottom = "bottom"
 }
 
-public enum VisilabsProductStatNotifierPosition: String, CaseIterable {
+public enum RelatedDigitalProductStatNotifierPosition: String, CaseIterable {
     case top = "top"
     case bottom = "bottom"
 }

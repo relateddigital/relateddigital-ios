@@ -22,7 +22,7 @@ public enum RelatedDigitalRecommendationFilterType: Int {
 }
 
 @objc
-public enum VisilabsProductFilterAttribute: Int, RawRepresentable {
+public enum RelatedDigitalProductFilterAttribute: Int, RawRepresentable {
     case PRODUCTNAME
     case COLOR
     case AGEGROUP
@@ -117,12 +117,12 @@ public enum VisilabsProductFilterAttribute: Int, RawRepresentable {
 
 @objc
 public class RelatedDigitalRecommendationFilter: NSObject {
-    var attribute: VisilabsProductFilterAttribute
+    var attribute: RelatedDigitalProductFilterAttribute
     var filterType: RelatedDigitalRecommendationFilterType
     var value: String
     
     @objc
-    public init(attribute: VisilabsProductFilterAttribute,
+    public init(attribute: RelatedDigitalProductFilterAttribute,
                 filterType: RelatedDigitalRecommendationFilterType, value: String) {
         self.attribute = attribute
         self.filterType = filterType
@@ -130,7 +130,7 @@ public class RelatedDigitalRecommendationFilter: NSObject {
     }
 }
 
-public class VisilabsProduct: Encodable {
+public class RelatedDigitalProduct: Encodable {
     
     public enum PayloadKey {
         public static let code = "code"
@@ -287,11 +287,11 @@ public class VisilabsProduct: Encodable {
 }
 
 public class RelatedDigitalRecommendationResponse {
-    public var products: [VisilabsProduct]
-    public var error: VisilabsError?
+    public var products: [RelatedDigitalProduct]
+    public var error: RelatedDigitalError?
     public var widgetTitle: String = ""
     
-    internal init(products: [VisilabsProduct], widgetTitle: String = "", error: VisilabsError? = nil) {
+    internal init(products: [RelatedDigitalProduct], widgetTitle: String = "", error: RelatedDigitalError? = nil) {
         self.products = products
         self.widgetTitle = widgetTitle
         self.error = error

@@ -8,7 +8,7 @@
 import UIKit
 import AVKit
 
-protocol VisilabsStoryPreviewProtocol: AnyObject {
+protocol RelatedDigitalStoryPreviewProtocol: AnyObject {
     func didCompletePreview()
     func moveToPreviousStory()
     func didTapCloseButton()
@@ -24,7 +24,7 @@ private let snapViewTagIndicator: Int = 8
 final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
 
     // MARK: - Delegate
-    public weak var delegate: VisilabsStoryPreviewProtocol? {
+    public weak var delegate: RelatedDigitalStoryPreviewProtocol? {
         didSet { storyHeaderView.delegate = self }
     }
 
@@ -600,10 +600,10 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         }
         return nil
     }
-    func getProgressIndicatorView(with index: Int) -> VisilabsSnapProgressIndicatorView? {
+    func getProgressIndicatorView(with index: Int) -> RelatedDigitalSnapProgressIndicatorView? {
         let progressView = storyHeaderView.getProgressView
         let indicatorView = progressView.subviews.filter({view in view.tag == index+progressIndicatorViewTag}).first
-            as? VisilabsSnapProgressIndicatorView
+            as? RelatedDigitalSnapProgressIndicatorView
         return indicatorView ?? nil
     }
     func adjustPreviousSnapProgressorsWidth(with index: Int) {

@@ -14,7 +14,7 @@ class RelatedDigitalStoryHomeViewCell: UICollectionViewCell {
         self.profileImageView.imageView.image = RelatedDigitalHelper.getUIImage(named: "loading")
     }
 
-    func setProperties(_ properties: VisilabsStoryActionExtendedProperties, _ actId: Int) {
+    func setProperties(_ properties: RelatedDigitalStoryActionExtendedProperties, _ actId: Int) {
         self.profileNameLabel.textColor = properties.labelColor
         var shown = false
         

@@ -279,7 +279,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                         props["promoauth"] = "\(self.spinToWin!.promoAuth)"
                         self.sliceText = randomDisplay
                         
-                        RelatedDigitalRequest.sendPromotionCodeRequest(properties: props, completion: { (result: [String: Any]?, error: VisilabsError?) in
+                        RelatedDigitalRequest.sendPromotionCodeRequest(properties: props, completion: { (result: [String: Any]?, error: RelatedDigitalError?) in
                             var selectedIndex = randomIndex as Int
                             var selectedPromoCode = ""
                             if error == nil, let res = result, let success = res["success"] as? Bool, success, let promocode = res["promocode"] as? String, !promocode.isEmptyOrWhitespace {

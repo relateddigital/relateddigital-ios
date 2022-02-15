@@ -23,7 +23,7 @@ class RelatedDigitalGeofence {
             self.profile = profile
             RelatedDigitalHelper.setEndpoints(dataSource: self.profile.dataSource)// TO_DO: bunu if içine almaya gerek var mı?
             self.activeGeofenceList = [RelatedDigitalGeofenceEntity]()
-            self.geofenceHistory = RelatedDigitalPersistence.readVisilabsGeofenceHistory()
+            self.geofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
             self.lastGeofenceFetchTime = Date(timeIntervalSince1970: 0)
             self.lastSuccessfulGeofenceFetchTime = Date(timeIntervalSince1970: 0)
         } else {
@@ -52,7 +52,7 @@ class RelatedDigitalGeofence {
 
     private func startMonitorGeofences(geofences: [RelatedDigitalGeofenceEntity]) {
         RelatedDigitalLocationManager.sharedManager.stopMonitorRegions()
-        self.activeGeofenceList = sortAndTakeVisilabsGeofenceEntitiesToMonitor(geofences)
+        self.activeGeofenceList = sortAndTakeRelatedDigitalGeofenceEntitiesToMonitor(geofences)
         if self.profile.geofenceEnabled
             && self.locationServicesEnabledForDevice
             && self.locationServiceEnabledForApplication {
@@ -66,7 +66,7 @@ class RelatedDigitalGeofence {
         }
     }
 
-    private func sortAndTakeVisilabsGeofenceEntitiesToMonitor(_ geofences: [RelatedDigitalGeofenceEntity])
+    private func sortAndTakeRelatedDigitalGeofenceEntitiesToMonitor(_ geofences: [RelatedDigitalGeofenceEntity])
                                                                     -> [RelatedDigitalGeofenceEntity] {
         let geofencesSortedAscending = geofences.sorted { (first, second) -> Bool in
             let firstDistance = first.distanceFromCurrentLastKnownLocation ?? Double.greatestFiniteMagnitude
@@ -93,7 +93,7 @@ class RelatedDigitalGeofence {
 
             self.lastGeofenceFetchTime = now
             let user = RelatedDigitalPersistence.unarchiveUser()
-            let geofenceHistory = RelatedDigitalPersistence.readVisilabsGeofenceHistory()
+            let geofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
             var props = [String: String]()
             props[RelatedDigitalConstants.organizationIdKey] = profile.organizationId
             props[RelatedDigitalConstants.profileIdKey] = profile.profileId
@@ -138,7 +138,7 @@ class RelatedDigitalGeofence {
                             self.geofenceHistory.errorHistory[key] = nil
                         }
                     }
-                    RelatedDigitalPersistence.saveVisilabsGeofenceHistory(self.geofenceHistory)
+                    RelatedDigitalPersistence.saveRelatedDigitalGeofenceHistory(self.geofenceHistory)
                     return
                 }
                 (self.lastSuccessfulGeofenceFetchTime, self.geofenceHistory.lastFetchTime) = (now, now)
@@ -188,7 +188,7 @@ class RelatedDigitalGeofence {
                     }
                 }
                 // self.geofenceHistory = geofenceHistory
-                RelatedDigitalPersistence.saveVisilabsGeofenceHistory(self.geofenceHistory)
+                RelatedDigitalPersistence.saveRelatedDigitalGeofenceHistory(self.geofenceHistory)
                 self.startMonitorGeofences(geofences: fetchedGeofences)
             }
         }

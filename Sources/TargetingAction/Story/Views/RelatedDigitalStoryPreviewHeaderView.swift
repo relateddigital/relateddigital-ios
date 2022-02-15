@@ -217,7 +217,7 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
     public func clearSnapProgressor(at index: Int) {
         getProgressView.subviews[index].removeFromSuperview()
     }
-    fileprivate func setConstraintsForIndicator(_ pvIndicatorArray: inout [VisilabsSnapProgressIndicatorView],
+    fileprivate func setConstraintsForIndicator(_ pvIndicatorArray: inout [RelatedDigitalSnapProgressIndicatorView],
                                                 _ padding: CGFloat, _ height: CGFloat) {
         // Setting Constraints for all progressView indicators
         for index in 0..<pvIndicatorArray.count {
@@ -258,7 +258,7 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
     }
 
     fileprivate func setConstraintsForProgress(_ pvArray: inout [RelatedDigitalSnapProgressView],
-                                               _ pvIndicatorArray: inout [VisilabsSnapProgressIndicatorView]) {
+                                               _ pvIndicatorArray: inout [RelatedDigitalSnapProgressIndicatorView]) {
         // Setting Constraints for all progressViews
         for index in 0..<pvArray.count {
             let prgView = pvArray[index]
@@ -273,11 +273,11 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
         }
     }
 
-    fileprivate func addIndicatorAndProgressViews(_ pvIndicatorArray: inout [VisilabsSnapProgressIndicatorView],
+    fileprivate func addIndicatorAndProgressViews(_ pvIndicatorArray: inout [RelatedDigitalSnapProgressIndicatorView],
                                                   _ pvArray: inout [RelatedDigitalSnapProgressView]) {
         // Adding all ProgressView Indicator and ProgressView to seperate arrays
         for counter in 0 ..< snapsPerStory {
-            let pvIndicator = VisilabsSnapProgressIndicatorView()
+            let pvIndicator = RelatedDigitalSnapProgressIndicatorView()
             pvIndicator.translatesAutoresizingMaskIntoConstraints = false
             getProgressView.addSubview(applyProperties(pvIndicator, with: counter+progressIndicatorViewTag, alpha: 0.2))
             pvIndicatorArray.append(pvIndicator)
@@ -293,7 +293,7 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
         print("Progressor count: \(getProgressView.subviews.count)")
         let padding: CGFloat = 8 // GUI-Padding
         let height: CGFloat = 3
-        var pvIndicatorArray: [VisilabsSnapProgressIndicatorView] = []
+        var pvIndicatorArray: [RelatedDigitalSnapProgressIndicatorView] = []
         var pvArray: [RelatedDigitalSnapProgressView] = []
 
         addIndicatorAndProgressViews(&pvIndicatorArray, &pvArray)

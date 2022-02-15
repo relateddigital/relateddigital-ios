@@ -11,7 +11,7 @@ class RelatedDigitalRequest {
     
     // MARK: - EVENT
     
-    class func sendEventRequest(visilabsEndpoint: VisilabsEndpoint,
+    class func sendEventRequest(relatedDigitalEndpoint: RelatedDigitalEndpoint,
                                 properties: [String: String],
                                 headers: [String: String],
                                 timeoutInterval: TimeInterval,
@@ -22,7 +22,7 @@ class RelatedDigitalRequest {
             queryItems.append(URLQueryItem(name: property.key, value: property.value))
         }
         
-        let resource = RelatedDigitalNetwork.buildResource(endPoint: visilabsEndpoint,
+        let resource = RelatedDigitalNetwork.buildResource(endPoint: relatedDigitalEndpoint,
                                                      method: .get,
                                                      timeoutInterval: timeoutInterval,
                                                      requestBody: nil,
@@ -33,12 +33,12 @@ class RelatedDigitalRequest {
         sendEventRequestHandler(resource: resource, completion: { success in completion(success) })
     }
     
-    private class func sendEventRequestHandler(resource: VisilabsResource<Bool>,
+    private class func sendEventRequestHandler(resource: RelatedDigitalResource<Bool>,
                                                completion: @escaping ([String: String]?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, response) in
             
-            var requestUrl = RelatedDigitalBasePath.getEndpoint(visilabsEndpoint: resource.endPoint)
+            var requestUrl = RelatedDigitalBasePath.getEndpoint(relatedDigitalEndpoint: resource.endPoint)
             if let httpResponse = response as? HTTPURLResponse {
                 if let url = httpResponse.url {
                     requestUrl = url.absoluteString
@@ -53,7 +53,7 @@ class RelatedDigitalRequest {
                 let cookies = getCookies(url)
                 completion(cookies)
             } else {
-                let end = RelatedDigitalBasePath.getEndpoint(visilabsEndpoint: resource.endPoint)
+                let end = RelatedDigitalBasePath.getEndpoint(relatedDigitalEndpoint: resource.endPoint)
                 RelatedDigitalLogger.error("\(end) can not convert to HTTPURLResponse")
                 completion(nil)
             }
@@ -80,7 +80,7 @@ class RelatedDigitalRequest {
     class func sendRecommendationRequest(properties: [String: String],
                                          headers: [String: String],
                                          timeoutInterval: TimeInterval,
-                                         completion: @escaping ([Any]?, VisilabsError?) -> Void) {
+                                         completion: @escaping ([Any]?, RelatedDigitalError?) -> Void) {
         
         var queryItems = [URLQueryItem]()
         for property in properties {
@@ -109,8 +109,8 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendRecommendationRequestHandler(resource: VisilabsResource<[Any]>,
-                                                        completion: @escaping ([Any]?, VisilabsError?) -> Void) {
+    private class func sendRecommendationRequestHandler(resource: RelatedDigitalResource<[Any]>,
+                                                        completion: @escaping ([Any]?, RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
             RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
@@ -127,7 +127,7 @@ class RelatedDigitalRequest {
     class func sendGeofenceRequest(properties: [String: String],
                                    headers: [String: String],
                                    timeoutInterval: TimeInterval,
-                                   completion: @escaping ([[String: Any]]?, VisilabsError?) -> Void) {
+                                   completion: @escaping ([[String: Any]]?, RelatedDigitalError?) -> Void) {
         
         var queryItems = [URLQueryItem]()
         for property in properties {
@@ -165,8 +165,8 @@ class RelatedDigitalRequest {
         }
     }
     
-    private class func sendGeofencePushRequestHandler(resource: VisilabsResource<String>,
-                                                      completion: @escaping (String?, VisilabsError?) -> Void) {
+    private class func sendGeofencePushRequestHandler(resource: RelatedDigitalResource<String>,
+                                                      completion: @escaping (String?, RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
             RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
@@ -176,8 +176,8 @@ class RelatedDigitalRequest {
         })
     }
     
-    private class func sendGeofenceRequestHandler(resource: VisilabsResource<[[String: Any]]>,
-                                                  completion: @escaping ([[String: Any]]?, VisilabsError?) -> Void) {
+    private class func sendGeofenceRequestHandler(resource: RelatedDigitalResource<[[String: Any]]>,
+                                                  completion: @escaping ([[String: Any]]?, RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
             RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
@@ -222,7 +222,7 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendInAppNotificationRequestHandler(resource: VisilabsResource<[[String: Any]]>,
+    private class func sendInAppNotificationRequestHandler(resource: RelatedDigitalResource<[[String: Any]]>,
                                                            completion: @escaping ([[String: Any]]?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
@@ -238,7 +238,7 @@ class RelatedDigitalRequest {
     class func sendMobileRequest(properties: [String: String],
                                  headers: [String: String],
                                  timeoutInterval: TimeInterval,
-                                 completion: @escaping ([String: Any]?, VisilabsError?, String?) -> Void,
+                                 completion: @escaping ([String: Any]?, RelatedDigitalError?, String?) -> Void,
                                  guid: String? = nil) {
         
         var queryItems = [URLQueryItem]()
@@ -270,9 +270,9 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendMobileRequestHandler(resource: VisilabsResource<[String: Any]>,
+    private class func sendMobileRequestHandler(resource: RelatedDigitalResource<[String: Any]>,
                                                 completion: @escaping ([String: Any]?,
-                                                                       VisilabsError?, String?) -> Void) {
+                                                                       RelatedDigitalError?, String?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
             RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
@@ -283,7 +283,7 @@ class RelatedDigitalRequest {
     }
     
     class func sendPromotionCodeRequest(properties: [String: String],
-                                        completion: @escaping ([String: Any]?, VisilabsError?) -> Void) {
+                                        completion: @escaping ([String: Any]?, RelatedDigitalError?) -> Void) {
         
         let props = getDefaultQueryStringParameters().merging(properties) { (_, new) in new }
         
@@ -315,9 +315,9 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendPromotionCodeRequestHandler(resource: VisilabsResource<[String: Any]>,
+    private class func sendPromotionCodeRequestHandler(resource: RelatedDigitalResource<[String: Any]>,
                                                        completion: @escaping ([String: Any]?,
-                                                                              VisilabsError?) -> Void) {
+                                                                              RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
             RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
@@ -358,7 +358,7 @@ class RelatedDigitalRequest {
         
     }
     
-    class func sendRemoteConfigRequest(completion: @escaping ([String]?, VisilabsError?) -> Void) {
+    class func sendRemoteConfigRequest(completion: @escaping ([String]?, RelatedDigitalError?) -> Void) {
 
         
         let responseParser: (Data) -> [String]? = { data in
@@ -386,9 +386,9 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendRemoteConfigRequestHandler(resource: VisilabsResource<[String]>,
+    private class func sendRemoteConfigRequestHandler(resource: RelatedDigitalResource<[String]>,
                                                       completion: @escaping ([String]?,
-                                                                             VisilabsError?) -> Void) {
+                                                                             RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
             RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")

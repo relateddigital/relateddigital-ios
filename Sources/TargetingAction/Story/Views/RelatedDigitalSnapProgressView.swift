@@ -90,7 +90,7 @@ final class RelatedDigitalSnapProgressView: UIView, ViewAnimator {
     public var state: ProgressorState = .notStarted
 }
 
-final class VisilabsSnapProgressIndicatorView: UIView {
+final class RelatedDigitalSnapProgressIndicatorView: UIView {
     public var widthConstraint: NSLayoutConstraint?
     public var leftConstraiant: NSLayoutConstraint?
      public var rightConstraiant: NSLayoutConstraint?

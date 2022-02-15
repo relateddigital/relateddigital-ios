@@ -8,10 +8,10 @@
 import Foundation
 
 class RelatedDigitalRecommendation {
-    let visilabsProfile: RelatedDigitalProfile
+    let relatedDigitalProfile: RelatedDigitalProfile
 
     init(relatedDigitalProfile: RelatedDigitalProfile) {
-        self.visilabsProfile = relatedDigitalProfile
+        self.relatedDigitalProfile = relatedDigitalProfile
     }
 
     func recommend(zoneID: String,
@@ -28,8 +28,8 @@ class RelatedDigitalRecommendation {
             props[RelatedDigitalConstants.filterKey] = getFiltersQueryStringValue(filters)
         }
 
-        props[RelatedDigitalConstants.organizationIdKey] = self.visilabsProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.visilabsProfile.profileId
+        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
         props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
         props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
         props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
@@ -56,16 +56,16 @@ class RelatedDigitalRecommendation {
 
         RelatedDigitalRequest.sendRecommendationRequest(properties: props,
                                                   headers: [String: String](),
-                                                  timeoutInterval: visilabsProfile.requestTimeoutInterval,
-                                                  completion: { (results: [Any]?, error: VisilabsError?) in
-            var products = [VisilabsProduct]()
+                                                  timeoutInterval: relatedDigitalProfile.requestTimeoutInterval,
+                                                  completion: { (results: [Any]?, error: RelatedDigitalError?) in
+            var products = [RelatedDigitalProduct]()
             if error != nil {
-                completion(RelatedDigitalRecommendationResponse(products: [VisilabsProduct](), error: error))
+                completion(RelatedDigitalRecommendationResponse(products: [RelatedDigitalProduct](), error: error))
             } else {
                 var widgetTitle = ""
                 var counter = 0
                 for result in results! {
-                    if let jsonObject = result as? [String: Any?], let product = VisilabsProduct(JSONObject: jsonObject) {
+                    if let jsonObject = result as? [String: Any?], let product = RelatedDigitalProduct(JSONObject: jsonObject) {
                         products.append(product)
                         if counter == 0 {
                             widgetTitle = jsonObject["wdt"] as? String ?? ""
