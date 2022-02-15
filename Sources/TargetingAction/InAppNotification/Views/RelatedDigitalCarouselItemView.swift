@@ -271,12 +271,6 @@ extension RelatedDigitalCarouselItemView {
         if let bgColor = carouselItem.backgroundColor {
             self.backgroundColor = bgColor
         }
-        if let bgImage = carouselItem.backgroundImage {
-            //self.backgroundColor = UIColor(patternImage: UIImage(named: "background.png"))
-        }
         
     }
-
-
-
 }
