@@ -51,9 +51,9 @@ extension RelatedDigitalPopupDialogDefaultView {
     internal func setCopyCodeText() -> UIButton {
         let copyCodeText = UIButton(frame: .zero)
         copyCodeText.translatesAutoresizingMaskIntoConstraints = false
-        copyCodeText.setTitle(self.visilabsInAppNotification?.promotionCode, for: .normal)
-        copyCodeText.backgroundColor = self.visilabsInAppNotification?.promotionBackgroundColor
-        copyCodeText.setTitleColor(self.visilabsInAppNotification?.promotionTextColor, for: .normal)
+        copyCodeText.setTitle(self.relatedDigitalInAppNotification?.promotionCode, for: .normal)
+        copyCodeText.backgroundColor = self.relatedDigitalInAppNotification?.promotionBackgroundColor
+        copyCodeText.setTitleColor(self.relatedDigitalInAppNotification?.promotionTextColor, for: .normal)
         copyCodeText.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
 
         return copyCodeText
@@ -64,7 +64,7 @@ extension RelatedDigitalPopupDialogDefaultView {
         let copyIconImage = RelatedDigitalHelper.getUIImage(named: "RelatedCopyButton")
         copyCodeImage.setImage(copyIconImage, for: .normal)
         copyCodeImage.translatesAutoresizingMaskIntoConstraints = false
-        copyCodeImage.backgroundColor = self.visilabsInAppNotification?.promotionBackgroundColor
+        copyCodeImage.backgroundColor = self.relatedDigitalInAppNotification?.promotionBackgroundColor
         copyCodeImage.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
         return copyCodeImage
     }
@@ -166,9 +166,9 @@ extension RelatedDigitalPopupDialogDefaultView {
 
     internal func setImageButton() -> UIButton {
         let button = UIButton(frame: .zero)
-        button.backgroundColor = self.visilabsInAppNotification?.buttonColor ?? .black
-        button.setTitle(self.visilabsInAppNotification?.buttonText, for: .normal)
-        button.setTitleColor(self.visilabsInAppNotification?.buttonTextColor, for: .normal)
+        button.backgroundColor = self.relatedDigitalInAppNotification?.buttonColor ?? .black
+        button.setTitle(self.relatedDigitalInAppNotification?.buttonText, for: .normal)
+        button.setTitleColor(self.relatedDigitalInAppNotification?.buttonTextColor, for: .normal)
         button.addTarget(self, action: #selector(imageButtonTapped), for: .touchUpInside)
         return button
     }
@@ -259,9 +259,9 @@ extension RelatedDigitalPopupDialogDefaultView {
         titleLabel.topToBottom(of: imageView, offset: 10.0)
         messageLabel.topToBottom(of: titleLabel, offset: 8.0)
 
-        if let promo = self.visilabsInAppNotification?.promotionCode,
-           let _ = self.visilabsInAppNotification?.promotionBackgroundColor,
-           let _ = self.visilabsInAppNotification?.promotionTextColor,
+        if let promo = self.relatedDigitalInAppNotification?.promotionCode,
+           let _ = self.relatedDigitalInAppNotification?.promotionBackgroundColor,
+           let _ = self.relatedDigitalInAppNotification?.promotionTextColor,
            !promo.isEmpty {
 
             addSubview(copyCodeTextButton)
@@ -334,7 +334,7 @@ extension RelatedDigitalPopupDialogDefaultView {
         addSubview(messageLabel)
         addSubview(numberRating)
         self.numberBorderColor = self.setBorderColorOfCell()
-        guard let numberColors = self.visilabsInAppNotification?.numberColors else { return }
+        guard let numberColors = self.relatedDigitalInAppNotification?.numberColors else { return }
         if numberColors.count == 3 {
             self.colors = UIColor.getGradientColorArray(numberColors[0], numberColors[1], numberColors[2])
         } else if numberColors.count == 2 {

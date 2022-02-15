@@ -13,16 +13,16 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
     var mailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
 
-    convenience init(visilabsInAppNotification: RelatedDigitalInAppNotification? = nil,
+    convenience init(relatedDigitalInAppNotification: RelatedDigitalInAppNotification? = nil,
                      emailForm: MailSubscriptionViewModel? = nil,
                      scratchToWin: ScratchToWinModel? = nil) {
         self.init()
-        self.relatedDigitalInAppNotification = visilabsInAppNotification
+        self.relatedDigitalInAppNotification = relatedDigitalInAppNotification
         self.mailForm = emailForm
         self.scratchToWin = scratchToWin
 
         
-        if let image = visilabsInAppNotification?.image {
+        if let image = relatedDigitalInAppNotification?.image {
             if let imageGif = UIImage.gif(data: image) {
                 self.image = imageGif
             } else {
@@ -34,7 +34,7 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
             self.image = UIImage(data: img)
         }
 
-        if let secondImage = visilabsInAppNotification?.secondImage2 {
+        if let secondImage = relatedDigitalInAppNotification?.secondImage2 {
             self.secondImage = UIImage.gif(data: secondImage)
         }
     }

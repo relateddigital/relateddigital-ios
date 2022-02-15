@@ -11,7 +11,7 @@ import UIKit
 class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificationViewController {
     /// First init flag
     fileprivate var initialized = false
-    weak var visilabsInAppNotification: RelatedDigitalInAppNotification?
+    weak var relatedDigitalInAppNotification: RelatedDigitalInAppNotification?
 
     /// StatusBar display related
     fileprivate let hideStatusBar: Bool
@@ -61,7 +61,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
     }
     @objc func closeButtonTapped(tapGestureRecognizer: UITapGestureRecognizer) {
     
-        if let closeButtonActionType = visilabsInAppNotification?.closePopupActionType {
+        if let closeButtonActionType = relatedDigitalInAppNotification?.closePopupActionType {
             if closeButtonActionType == "closebutton" || closeButtonActionType == "all"  {
                 dismiss(animated: true) {
                     self.delegate?.notificationShouldDismiss(controller: self,
@@ -185,9 +185,8 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
                             mailForm: MailSubscriptionViewModel? = nil,
                             scratchToWin: ScratchToWinModel? = nil) {
 
-        let viewController = RelatedDigitalDefaultPopupNotificationViewController(visilabsInAppNotification: notification,
-                                                                            emailForm: mailForm,
-                                                                            scratchToWin: scratchToWin)
+        let viewController = RelatedDigitalDefaultPopupNotificationViewController(relatedDigitalInAppNotification: notification,emailForm: mailForm, scratchToWin: scratchToWin)
+        
         self.init(notification: notification,
                   mailForm: mailForm,
                   scratchToWin: scratchToWin,
@@ -201,7 +200,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
         initForInAppNotification(viewController)
         initForEmailForm(viewController)
         initForScratchToWin(viewController)
-        self.visilabsInAppNotification = notification
+        self.relatedDigitalInAppNotification = notification
         let closeTapGestureRecognizer = UITapGestureRecognizer(target: self,
                                         action: #selector(closeButtonTapped(tapGestureRecognizer:)))
         viewController.standardView.closeButton.isUserInteractionEnabled = true
@@ -565,7 +564,7 @@ extension UIColor {
     }
 }
 
-extension RelatedDigitalPopupNotificationViewController: VisilabsPopupDialogDefaultViewDelegate {
+extension RelatedDigitalPopupNotificationViewController: RelatedDigitalPopupDialogDefaultViewDelegate {
     func viewExpanded() {
         guard let scratchTW = self.scratchToWin else { return }
         let button = RelatedDigitalPopupDialogButton(title: scratchTW.copyButtonText ?? "",

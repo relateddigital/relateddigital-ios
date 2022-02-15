@@ -82,22 +82,22 @@ public class RelatedDigitalPopupDialogDefaultView: UIView {
     internal var imageHeightConstraint: NSLayoutConstraint?
     internal var secondImageHeight: NSLayoutConstraint?
 
-    weak var visilabsInAppNotification: RelatedDigitalInAppNotification?
+    weak var relatedDigitalInAppNotification: RelatedDigitalInAppNotification?
     var emailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
     var consentCheckboxAdded = false
     weak var imgButtonDelegate: ImageButtonImageDelegate?
-    weak var delegate: VisilabsPopupDialogDefaultViewDelegate?
+    weak var delegate: RelatedDigitalPopupDialogDefaultViewDelegate?
     weak var npsDelegate: NPSDelegate?
     // MARK: - CONSTRUCTOR
     init(frame: CGRect, visilabsInAppNotification: RelatedDigitalInAppNotification?,
                         emailForm: MailSubscriptionViewModel? = nil,
                         scratchTW: ScratchToWinModel? = nil) {
-        self.visilabsInAppNotification = visilabsInAppNotification
+        self.relatedDigitalInAppNotification = visilabsInAppNotification
         self.emailForm = emailForm
         self.scratchToWin = scratchTW
         super.init(frame: frame)
-        if self.visilabsInAppNotification != nil {
+        if self.relatedDigitalInAppNotification != nil {
             setupViews()
         } else if self.emailForm != nil {
             setupInitialViewForEmailForm()
@@ -293,7 +293,7 @@ public class RelatedDigitalPopupDialogDefaultView: UIView {
 
     internal func setupViews() {
 
-        guard let notification = visilabsInAppNotification else {
+        guard let notification = relatedDigitalInAppNotification else {
             return
         }
 
@@ -391,7 +391,7 @@ extension RelatedDigitalPopupDialogDefaultView: UITextFieldDelegate {
     }
 
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if self.visilabsInAppNotification?.type == .emailForm {
+        if self.relatedDigitalInAppNotification?.type == .emailForm {
             return emailTF.resignFirstResponder()
         } else {
             return feedbackTF.resignFirstResponder()
@@ -510,7 +510,7 @@ extension RelatedDigitalPopupDialogDefaultView: ScratchUIViewDelegate {
     }
 }
 
-protocol VisilabsPopupDialogDefaultViewDelegate: AnyObject {
+protocol RelatedDigitalPopupDialogDefaultViewDelegate: AnyObject {
     func viewExpanded()
     func dismissSctw()
 }

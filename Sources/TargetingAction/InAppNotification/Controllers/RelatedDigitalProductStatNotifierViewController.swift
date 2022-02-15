@@ -14,7 +14,7 @@ class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotific
         return super.productStatNotifier
     }
     
-    var visilabsProductStatNotifierView: RelatedDigitalProductStatNotifierView!
+    var relatedDigitalProductStatNotifierView: RelatedDigitalProductStatNotifierView!
     var halfScreenHeight = 0.0
     
     var isDismissing = false
@@ -24,15 +24,15 @@ class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotific
     init(productStatNotifier: RelatedDigitalProductStatNotifierViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.productStatNotifier = productStatNotifier
-        visilabsProductStatNotifierView = RelatedDigitalProductStatNotifierView(frame: UIScreen.main.bounds, productStatNotifier: productStatNotifier)
-        view = visilabsProductStatNotifierView
+        relatedDigitalProductStatNotifierView = RelatedDigitalProductStatNotifierView(frame: UIScreen.main.bounds, productStatNotifier: productStatNotifier)
+        view = relatedDigitalProductStatNotifierView
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))
         tapGesture.numberOfTapsRequired = 1
-        visilabsProductStatNotifierView.addGestureRecognizer(tapGesture)
+        relatedDigitalProductStatNotifierView.addGestureRecognizer(tapGesture)
         
         let closeTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeButtonTapped(tapGestureRecognizer:)))
-        visilabsProductStatNotifierView.closeButton.isUserInteractionEnabled = true
-        visilabsProductStatNotifierView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
+        relatedDigitalProductStatNotifierView.closeButton.isUserInteractionEnabled = true
+        relatedDigitalProductStatNotifierView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
     }
     
 
@@ -80,7 +80,7 @@ class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotific
         
         let bottomInset = Double(RelatedDigitalHelper.getSafeAreaInsets().bottom)
         let topInset = Double(RelatedDigitalHelper.getSafeAreaInsets().top)
-        halfScreenHeight = Double(visilabsProductStatNotifierView.titleLabel.frame.height)
+        halfScreenHeight = Double(relatedDigitalProductStatNotifierView.titleLabel.frame.height)
         
         let frameY = notifier.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
         
