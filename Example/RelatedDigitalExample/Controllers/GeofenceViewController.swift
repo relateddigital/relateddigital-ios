@@ -18,7 +18,7 @@ class GeofenceViewController: FormViewController {
     let lastKnownLongitude = "Last Known Longitude"
 
     let dateFormatter = DateFormatter()
-    var visilabsGeofenceHistory: RelatedDigitalGeofenceHistory!
+    var relatedDigitalGeofenceHistory: RelatedDigitalGeofenceHistory!
     var historySection = Section("Geofence Server Checks".uppercased(with: Locale(identifier: "en_US")))
     var errorSection = Section("Geofence Server Checks With Error".uppercased(with: Locale(identifier: "en_US")))
     var refreshSection = Section()
@@ -88,7 +88,7 @@ class GeofenceViewController: FormViewController {
             $0.value = date
         }
         .onCellSelection { _, row in
-            let entities = self.visilabsGeofenceHistory.fetchHistory[row.value!]
+            let entities = self.relatedDigitalGeofenceHistory.fetchHistory[row.value!]
             let alert = GeofenceAlertViewController(date: row.value!, relatedDigitalGeofenceEntities: entities)
             alert.addAction(title: "Dismiss", style: .default)
             self.present(alert, animated: true, completion: nil)
@@ -101,7 +101,7 @@ class GeofenceViewController: FormViewController {
             $0.value = date
         }
         .onCellSelection { _, row in
-            let errorHistory = self.visilabsGeofenceHistory.errorHistory[row.value!]
+            let errorHistory = self.relatedDigitalGeofenceHistory.errorHistory[row.value!]
             let alert = GeofenceAlertViewController(date: row.value!,
                                                     relatedDigitalError: errorHistory)
             alert.addAction(title: "Dismiss", style: .default)
@@ -110,16 +110,16 @@ class GeofenceViewController: FormViewController {
     }
 
     private func refreshData(firstTime: Bool = false) {
-        visilabsGeofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
+        relatedDigitalGeofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
         locationServicesEnabledForDeviceRow.value = RelatedDigital.callAPI().locationServicesEnabledForDevice ? "YES" : "NO"
         let state = RelatedDigital.callAPI().locationServiceStateStatusForApplication
         locationServiceStatusForAppRow.value = String(describing: state)
-        let time = visilabsGeofenceHistory.lastFetchTime
+        let time = relatedDigitalGeofenceHistory.lastFetchTime
         lastFetchTimeRow.value = dateFormatter.string(from: time ?? Date(timeIntervalSince1970: 0))
-        lastKnownLatitudeRow.value = String(format: "%.013f", visilabsGeofenceHistory.lastKnownLatitude ?? 0.0)
-        lastKnownLongitudeRow.value = String(format: "%.013f", visilabsGeofenceHistory.lastKnownLongitude ?? 0.0)
+        lastKnownLatitudeRow.value = String(format: "%.013f", relatedDigitalGeofenceHistory.lastKnownLatitude ?? 0.0)
+        lastKnownLongitudeRow.value = String(format: "%.013f", relatedDigitalGeofenceHistory.lastKnownLongitude ?? 0.0)
         refreshSection.reload()
-        for date in visilabsGeofenceHistory.fetchHistory.keys.sorted(by: >) {
+        for date in relatedDigitalGeofenceHistory.fetchHistory.keys.sorted(by: >) {
             let tag = String(Int64((date.timeIntervalSince1970 * 1000.0).rounded()))
             if currentHistoryRowTags[tag] != nil {
                 return
@@ -131,7 +131,7 @@ class GeofenceViewController: FormViewController {
             }
             currentHistoryRowTags[tag] = true
         }
-        for date in visilabsGeofenceHistory.errorHistory.keys.sorted(by: >) {
+        for date in relatedDigitalGeofenceHistory.errorHistory.keys.sorted(by: >) {
             let tag = String(Int64((date.timeIntervalSince1970 * 1000.0).rounded()))
             if currentErrorRowTags[tag] != nil {
                 return

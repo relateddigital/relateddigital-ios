@@ -71,8 +71,8 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
 
         let duration = animated ? 0.1 : 0
         UIView.animate(withDuration: duration, animations: {
-            self.window?.frame.origin.y -= (VisilabsInAppNotificationsConstants.miniInAppHeight
-                                                + VisilabsInAppNotificationsConstants.miniBottomPadding)
+            self.window?.frame.origin.y -= (RelatedDigitalInAppNotificationsConstants.miniInAppHeight
+                                                + RelatedDigitalInAppNotificationsConstants.miniBottomPadding)
             self.canPan = true
         }, completion: { _ in
             self.position = self.window?.layer.position
@@ -98,15 +98,15 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
         let frame: CGRect
         if sharedUIApplication.statusBarOrientation.isPortrait
             && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.phone {
-            frame = CGRect(x: VisilabsInAppNotificationsConstants.miniSidePadding,
+            frame = CGRect(x: RelatedDigitalInAppNotificationsConstants.miniSidePadding,
                            y: bounds.size.height,
-                           width: bounds.size.width - (VisilabsInAppNotificationsConstants.miniSidePadding * 2),
-                           height: VisilabsInAppNotificationsConstants.miniInAppHeight)
+                           width: bounds.size.width - (RelatedDigitalInAppNotificationsConstants.miniSidePadding * 2),
+                           height: RelatedDigitalInAppNotificationsConstants.miniInAppHeight)
         } else { // Is iPad or Landscape mode
             frame = CGRect(x: bounds.size.width / 4,
                            y: bounds.size.height,
                            width: bounds.size.width / 2,
-                           height: VisilabsInAppNotificationsConstants.miniInAppHeight)
+                           height: RelatedDigitalInAppNotificationsConstants.miniInAppHeight)
         }
         if #available(iOS 13.0, *) {
             let windowScene = sharedUIApplication
@@ -130,8 +130,8 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
             isDismissing = true
             let duration = animated ? 0.5 : 0
             UIView.animate(withDuration: duration, animations: {
-                self.window?.frame.origin.y += (VisilabsInAppNotificationsConstants.miniInAppHeight
-                                            + VisilabsInAppNotificationsConstants.miniBottomPadding)
+                self.window?.frame.origin.y += (RelatedDigitalInAppNotificationsConstants.miniInAppHeight
+                                            + RelatedDigitalInAppNotificationsConstants.miniBottomPadding)
                 }, completion: { _ in
                     self.window?.isHidden = true
                     self.window?.removeFromSuperview()
@@ -161,7 +161,7 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
                 position.y = max(position.y, position.y + diffY)
                 window.layer.position = CGPoint(x: window.layer.position.x, y: position.y)
             case UIGestureRecognizer.State.ended, UIGestureRecognizer.State.cancelled:
-                if window.layer.position.y > position.y + (VisilabsInAppNotificationsConstants.miniInAppHeight / 2) {
+                if window.layer.position.y > position.y + (RelatedDigitalInAppNotificationsConstants.miniInAppHeight / 2) {
                     delegate?.notificationShouldDismiss(controller: self,
                                                         callToActionURL: miniNotification.callToActionUrl,
                                                         shouldTrack: false,
@@ -186,20 +186,20 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
             let frame: CGRect
             if  UIDevice.current.orientation.isPortrait
                 && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.phone {
-                frame = CGRect(x: VisilabsInAppNotificationsConstants.miniSidePadding,
+                frame = CGRect(x: RelatedDigitalInAppNotificationsConstants.miniSidePadding,
                                y: UIScreen.main.bounds.size.height -
-                                (VisilabsInAppNotificationsConstants.miniInAppHeight
-                                + VisilabsInAppNotificationsConstants.miniBottomPadding),
+                                (RelatedDigitalInAppNotificationsConstants.miniInAppHeight
+                                + RelatedDigitalInAppNotificationsConstants.miniBottomPadding),
                                width: UIScreen.main.bounds.size.width -
-                                (VisilabsInAppNotificationsConstants.miniSidePadding * 2),
-                               height: VisilabsInAppNotificationsConstants.miniInAppHeight)
+                                (RelatedDigitalInAppNotificationsConstants.miniSidePadding * 2),
+                               height: RelatedDigitalInAppNotificationsConstants.miniInAppHeight)
             } else { // Is iPad or Landscape mode
                 frame = CGRect(x: UIScreen.main.bounds.size.width / 4,
                                y: UIScreen.main.bounds.size.height -
-                                (VisilabsInAppNotificationsConstants.miniInAppHeight
-                                + VisilabsInAppNotificationsConstants.miniBottomPadding),
+                                (RelatedDigitalInAppNotificationsConstants.miniInAppHeight
+                                + RelatedDigitalInAppNotificationsConstants.miniBottomPadding),
                                width: UIScreen.main.bounds.size.width / 2,
-                               height: VisilabsInAppNotificationsConstants.miniInAppHeight)
+                               height: RelatedDigitalInAppNotificationsConstants.miniInAppHeight)
             }
             self.window?.frame = frame
 

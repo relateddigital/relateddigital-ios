@@ -9,7 +9,7 @@ import UIKit
 // swiftlint:disable type_name
 final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewController {
 
-    weak var visilabsInAppNotification: RelatedDigitalInAppNotification?
+    weak var relatedDigitalInAppNotification: RelatedDigitalInAppNotification?
     var mailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
 
@@ -17,7 +17,7 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
                      emailForm: MailSubscriptionViewModel? = nil,
                      scratchToWin: ScratchToWinModel? = nil) {
         self.init()
-        self.visilabsInAppNotification = visilabsInAppNotification
+        self.relatedDigitalInAppNotification = visilabsInAppNotification
         self.mailForm = emailForm
         self.scratchToWin = scratchToWin
 
@@ -46,7 +46,7 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
     override public func loadView() {
         super.loadView()
         view = RelatedDigitalPopupDialogDefaultView(frame: .zero,
-                                              visilabsInAppNotification: visilabsInAppNotification,
+                                              visilabsInAppNotification: relatedDigitalInAppNotification,
                                               emailForm: mailForm,
                                               scratchTW: scratchToWin)
     }

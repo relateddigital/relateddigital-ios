@@ -16,9 +16,9 @@ class RelatedDigitalTargetingAction {
         self.relatedDigitalProfile = relatedDigitalProfile
     }
 
-    private func prepareHeaders(_ visilabsUser: RelatedDigitalUser) -> [String: String] {
+    private func prepareHeaders(_ relatedDigitalUser: RelatedDigitalUser) -> [String: String] {
         var headers = [String: String]()
-        headers["User-Agent"] = visilabsUser.userAgent
+        headers["User-Agent"] = relatedDigitalUser.userAgent
         return headers
     }
 

@@ -28,13 +28,13 @@ public enum RelatedDigitalInAppNotificationType: String, CaseIterable {
     case productStatNotifier = "product_stat_notifier"
 }
 
-public enum VisilabsSecondPopupType: String, CaseIterable {
+public enum RelatedDigitalSecondPopupType: String, CaseIterable {
     case imageTextButton = "image_text_button"
     case imageButtonImage = "image_text_button_image"
     case feedback = "feedback_form"
 }
 
-public enum VisilabsHalfScreenPosition: String, CaseIterable {
+public enum RelatedDigitalHalfScreenPosition: String, CaseIterable {
     case top = "top"
     case bottom = "bottom"
 }

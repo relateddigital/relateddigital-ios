@@ -13,7 +13,7 @@ class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationView
         return super.notification
     }
     
-    var visilabsHalfScreenView: RelatedDigitalHalfScreenView!
+    var relatedDigitalHalfScreenView: RelatedDigitalHalfScreenView!
     var halfScreenHeight = 0.0
     
     var isDismissing = false
@@ -22,16 +22,16 @@ class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationView
     init(notification: RelatedDigitalInAppNotification) {
         super.init(nibName: nil, bundle: nil)
         self.notification = notification
-        visilabsHalfScreenView = RelatedDigitalHalfScreenView(frame: UIScreen.main.bounds, notification: halfScreenNotification)
-        view = visilabsHalfScreenView
+        relatedDigitalHalfScreenView = RelatedDigitalHalfScreenView(frame: UIScreen.main.bounds, notification: halfScreenNotification)
+        view = relatedDigitalHalfScreenView
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))
         tapGesture.numberOfTapsRequired = 1
-        visilabsHalfScreenView.addGestureRecognizer(tapGesture)
+        relatedDigitalHalfScreenView.addGestureRecognizer(tapGesture)
         
         let closeTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeButtonTapped(tapGestureRecognizer:)))
-        visilabsHalfScreenView.closeButton.isUserInteractionEnabled = true
-        visilabsHalfScreenView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
+        relatedDigitalHalfScreenView.closeButton.isUserInteractionEnabled = true
+        relatedDigitalHalfScreenView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
     }
     
     required init?(coder: NSCoder) {
@@ -78,7 +78,7 @@ class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationView
         
         let bottomInset = Double(RelatedDigitalHelper.getSafeAreaInsets().bottom)
         let topInset = Double(RelatedDigitalHelper.getSafeAreaInsets().top)
-        halfScreenHeight = Double(visilabsHalfScreenView.imageView.frame.height) + Double(visilabsHalfScreenView.titleLabel.frame.height)
+        halfScreenHeight = Double(relatedDigitalHalfScreenView.imageView.frame.height) + Double(relatedDigitalHalfScreenView.titleLabel.frame.height)
         
         let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
         

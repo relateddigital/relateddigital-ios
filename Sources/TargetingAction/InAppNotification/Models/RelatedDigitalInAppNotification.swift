@@ -78,7 +78,7 @@ public class RelatedDigitalInAppNotification {
     let promotionBackgroundColor: UIColor?
     let numberColors: [UIColor]?
     let waitingTime: Int?
-    let secondPopupType: VisilabsSecondPopupType?
+    let secondPopupType: RelatedDigitalSecondPopupType?
     let secondPopupTitle: String?
     let secondPopupBody: String?
     let secondPopupBodyTextSize: String?
@@ -87,7 +87,7 @@ public class RelatedDigitalInAppNotification {
     let secondImageUrlString2: String?
     let secondPopupMinPoint: String?
     let previousPopupPoint: Double?
-    let position: VisilabsHalfScreenPosition?
+    let position: RelatedDigitalHalfScreenPosition?
     let closePopupActionType : String?
 
     var imageUrl: URL?
@@ -165,7 +165,7 @@ public class RelatedDigitalInAppNotification {
                 promotionBackgroundColor: String?,
                 numberColors: [String]?,
                 waitingTime: Int?,
-                secondPopupType: VisilabsSecondPopupType?,
+                secondPopupType: RelatedDigitalSecondPopupType?,
                 secondPopupTitle: String?,
                 secondPopupBody: String?,
                 secondPopupBodyTextSize: String?,
@@ -174,7 +174,7 @@ public class RelatedDigitalInAppNotification {
                 secondImageUrlString2: String?,
                 secondPopupMinPoint: String?,
                 previousPopupPoint: Double? = nil,
-                position: VisilabsHalfScreenPosition?) {
+                position: RelatedDigitalHalfScreenPosition?) {
 
         self.actId = actId
         self.messageType = type.rawValue
@@ -324,7 +324,7 @@ public class RelatedDigitalInAppNotification {
 
         // Second Popup Variables
         if let secondType = actionData[PayloadKey.secondPopupType] as? String {
-            self.secondPopupType = VisilabsSecondPopupType.init(rawValue: secondType)
+            self.secondPopupType = RelatedDigitalSecondPopupType.init(rawValue: secondType)
         } else {
             self.secondPopupType = nil
         }
@@ -344,7 +344,7 @@ public class RelatedDigitalInAppNotification {
         self.previousPopupPoint = nil
         
         if let positionString = actionData[PayloadKey.position] as? String
-            , let position = VisilabsHalfScreenPosition.init(rawValue: positionString) {
+            , let position = RelatedDigitalHalfScreenPosition.init(rawValue: positionString) {
             self.position = position
         } else {
             self.position = .bottom
