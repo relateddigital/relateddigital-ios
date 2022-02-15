@@ -1,5 +1,5 @@
 //
-//  VisilabsBaseNotificationViewController.swift
+//  RelatedDigitalBaseNotificationViewController.swift
 //  VisilabsIOS
 //
 //  Created by Egemen on 12.05.2020.
@@ -9,16 +9,27 @@ import UIKit
 
 protocol RelatedDigitalNotificationViewControllerDelegate: AnyObject {
     @discardableResult
-    func notificationShouldDismiss(controller: RelatedDigitalBaseNotificationViewController,
+    func notificationShouldDismiss(controller: RelatedDigitalBaseViewProtocol,
                                    callToActionURL: URL?,
                                    shouldTrack: Bool,
                                    additionalTrackingProperties: [String: String]?) -> Bool
-    
-    // kullanılmıyor
-    // func mailFormShouldDismiss(controller: VisilabsBaseNotificationViewController, click: String)
 }
 
-class RelatedDigitalBaseNotificationViewController: UIViewController {
+public protocol RelatedDigitalBaseViewProtocol {
+    var notification: RelatedDigitalInAppNotification? { get set }
+    func hide(animated: Bool, completion: @escaping () -> Void)
+}
+
+public class RelatedDigitalBasePageViewController: UIPageViewController, RelatedDigitalBaseViewProtocol {
+    public func hide(animated: Bool, completion: @escaping () -> Void) {
+        
+    }
+    
+    weak var relatedDigitalDelegate: RelatedDigitalNotificationViewControllerDelegate?
+    public var notification: RelatedDigitalInAppNotification? = nil
+}
+
+class RelatedDigitalBaseNotificationViewController: UIViewController, RelatedDigitalBaseViewProtocol {
     
     var notification: RelatedDigitalInAppNotification?
     var mailForm: MailSubscriptionViewModel?

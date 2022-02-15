@@ -499,13 +499,13 @@ class RelatedDigitalTargetingAction {
             parsedConsent = consent.parsePermissionText()
         }
         let parsedPermit = emailForm.emailPermitText.parsePermissionText()
-        let titleFont = RelatedDigitalInAppNotification.getFont(fontFamily: emailForm.extendedProps.titleFontFamily,
+        let titleFont = RelatedDigitalHelper.getFont(fontFamily: emailForm.extendedProps.titleFontFamily,
                                                           fontSize: emailForm.extendedProps.titleTextSize,
                                                           style: .title2,customFont: emailForm.extendedProps.titleCustomFontFamilyIos)
-        let messageFont = RelatedDigitalInAppNotification.getFont(fontFamily: emailForm.extendedProps.textFontFamily,
+        let messageFont = RelatedDigitalHelper.getFont(fontFamily: emailForm.extendedProps.textFontFamily,
                                                             fontSize: emailForm.extendedProps.textSize,
                                                             style: .body,customFont: emailForm.extendedProps.textCustomFontFamilyIos)
-        let buttonFont = RelatedDigitalInAppNotification.getFont(fontFamily: emailForm.extendedProps.buttonFontFamily,
+        let buttonFont = RelatedDigitalHelper.getFont(fontFamily: emailForm.extendedProps.buttonFontFamily,
                                                            fontSize: emailForm.extendedProps.buttonTextSize,
                                                            style: .title2,customFont: emailForm.extendedProps.buttonCustomFontFamilyIos)
         let closeButtonColor = getCloseButtonColor(from: emailForm.extendedProps.closeButtonColor)

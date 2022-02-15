@@ -13,7 +13,7 @@ protocol RelatedDigitalInAppNotificationsDelegate: AnyObject {
     func trackNotification(_ notification: RelatedDigitalInAppNotification, event: String, properties: [String: String])
 }
 
-class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewControllerDelegate  {
+class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewControllerDelegate {
     let lock: RelatedDigitalReadWriteLock
     var checkForNotificationOnActive = true
     var showNotificationOnActive = true
@@ -49,7 +49,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
                         shownNotification = self.showFullNotification(notification)
                     case .halfScreenImage:
                         shownNotification = self.showHalfScreenNotification(notification)
-                    case .carousel:
+                    case .inappcarousel:
                         shownNotification = self.showCarousel(notification)
                     case .alert:
                         shownNotification = true
@@ -126,10 +126,26 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     }
     
     func showCarousel(_ notification: RelatedDigitalInAppNotification) -> Bool {
-        let carousel = RelatedDigitalCarouselNotificationViewController(notification: notification)
-        carousel.delegate = self
-        carousel.show(animated: true)
-        return true
+        if notification.carouselItems.count < 2 {
+            RelatedDigitalLogger.error("Carousel Item Count is less than 2.")
+            return false
+        }
+        let vc = RelatedDigitalCarouselNotificationViewController(startIndex: 0, notification: notification)
+        vc.relatedDigitalDelegate = self
+        vc.launchedCompletion = { RelatedDigitalLogger.info("Carousel Launched") }
+        vc.closedCompletion = {
+            RelatedDigitalLogger.info("Carousel Closed")
+            vc.relatedDigitalDelegate?.notificationShouldDismiss(controller: vc, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+        }
+        vc.landedPageAtIndexCompletion = { index in
+            RelatedDigitalLogger.info("LANDED AT INDEX: \(index)")
+        }
+        if let rootViewController = RelatedDigitalHelper.getRootViewController() {
+            rootViewController.presentCarouselNotification(vc)
+            return true
+        } else {
+            return false
+        }
     }
     
     func showAlert(_ notification: RelatedDigitalInAppNotification) {
@@ -232,7 +248,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     }
     
     @discardableResult
-    func notificationShouldDismiss(controller: RelatedDigitalBaseNotificationViewController,
+    func notificationShouldDismiss(controller: RelatedDigitalBaseViewProtocol,
                                    callToActionURL: URL?, shouldTrack: Bool,
                                    additionalTrackingProperties: [String: String]?) -> Bool {
         

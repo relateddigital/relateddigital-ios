@@ -48,6 +48,7 @@ public class RelatedDigitalInAppNotification {
         public static let position = "pos"
         public static let customFont = "custom_font_family_ios"
         public static let closePopupActionType = "close_event_trigger"
+        public static let carouselItems = "carousel_items"
     }
 
     let actId: Int
@@ -89,6 +90,7 @@ public class RelatedDigitalInAppNotification {
     let previousPopupPoint: Double?
     let position: RelatedDigitalHalfScreenPosition?
     let closePopupActionType : String?
+    public var carouselItems: [RelatedDigitalCarouselItem] = [RelatedDigitalCarouselItem]()
 
     var imageUrl: URL?
     lazy var image: Data? = {
@@ -174,7 +176,8 @@ public class RelatedDigitalInAppNotification {
                 secondImageUrlString2: String?,
                 secondPopupMinPoint: String?,
                 previousPopupPoint: Double? = nil,
-                position: RelatedDigitalHalfScreenPosition?) {
+                position: RelatedDigitalHalfScreenPosition?,
+                carouselItems: [RelatedDigitalCarouselItem]? = nil) {
 
         self.actId = actId
         self.messageType = type.rawValue
@@ -209,7 +212,7 @@ public class RelatedDigitalInAppNotification {
         self.buttonTextColor = UIColor(hex: buttonTextColor)
         self.buttonColor = UIColor(hex: buttonColor)
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RelatedDigitalInAppNotification.getImageUrl(imageUrlString!, type: self.type)
+            self.imageUrl = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
         }
 
         var callToActionUrl: URL?
@@ -233,13 +236,18 @@ public class RelatedDigitalInAppNotification {
         self.secondImageUrlString2 = secondImageUrlString2
         self.secondPopupMinPoint = secondPopupMinPoint
         if !secondImageUrlString1.isNilOrWhiteSpace {
-            self.secondImageUrl1 = RelatedDigitalInAppNotification.getImageUrl(secondImageUrlString1!, type: self.type)
+            self.secondImageUrl1 = RelatedDigitalHelper.getImageUrl(secondImageUrlString1!, type: self.type)
         }
         if !secondImageUrlString2.isNilOrWhiteSpace {
-            self.secondImageUrl2 = RelatedDigitalInAppNotification.getImageUrl(secondImageUrlString2!, type: self.type)
+            self.secondImageUrl2 = RelatedDigitalHelper.getImageUrl(secondImageUrlString2!, type: self.type)
         }
         self.previousPopupPoint = previousPopupPoint
         self.position = position
+        
+        if let carouselItems = carouselItems {
+            self.carouselItems = carouselItems
+        }
+        
         setFonts()
     }
     
@@ -305,7 +313,7 @@ public class RelatedDigitalInAppNotification {
         self.buttonColor = UIColor(hex: actionData[PayloadKey.buttonColor] as? String)
 
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RelatedDigitalInAppNotification.getImageUrl(imageUrlString!, type: self.type)
+            self.imageUrl = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
         }
 
         var callToActionUrl: URL?
@@ -335,10 +343,10 @@ public class RelatedDigitalInAppNotification {
         self.secondImageUrlString1 = actionData[PayloadKey.secondImageUrlString1] as? String
         self.secondImageUrlString2 = actionData[PayloadKey.secondImageUrlString2] as? String
         if !secondImageUrlString1.isNilOrWhiteSpace {
-            self.secondImageUrl1 = RelatedDigitalInAppNotification.getImageUrl(imageUrlString!, type: self.type)
+            self.secondImageUrl1 = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
         }
         if !secondImageUrlString2.isNilOrWhiteSpace {
-            self.secondImageUrl2 = RelatedDigitalInAppNotification.getImageUrl(imageUrlString!, type: self.type)
+            self.secondImageUrl2 = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
         }
         self.secondPopupMinPoint = actionData[PayloadKey.secondPopupMinPoint] as? String
         self.previousPopupPoint = nil
@@ -350,69 +358,33 @@ public class RelatedDigitalInAppNotification {
             self.position = .bottom
         }
         
+        var carouselItems = [RelatedDigitalCarouselItem]()
+        
+        if let carouselItemObjects = actionData[PayloadKey.carouselItems] as? [[String: Any]] {
+            for carouselItemObject in carouselItemObjects {
+                if let carouselItem = RelatedDigitalCarouselItem.init(JSONObject: carouselItemObject) {
+                    carouselItems.append(carouselItem)
+                }
+            }
+        }
+        
+        self.carouselItems = carouselItems.map { (item) -> RelatedDigitalCarouselItem in
+            item.closeButtonColor = closeButtonColor
+            return item
+        }
+        
         setFonts()
     }
 
     private func setFonts() {
-        self.messageTitleFont = RelatedDigitalInAppNotification.getFont(fontFamily: self.fontFamily,
+        self.messageTitleFont = RelatedDigitalHelper.getFont(fontFamily: self.fontFamily,
                                                                   fontSize: self.messageTitleTextSize,
                                                                   style: .title2, customFont: self.customFont)
-        self.messageBodyFont = RelatedDigitalInAppNotification.getFont(fontFamily: self.fontFamily,
+        self.messageBodyFont = RelatedDigitalHelper.getFont(fontFamily: self.fontFamily,
                                                                  fontSize: self.messageBodyTextSize,
                                                                  style: .body, customFont: self.customFont)
-        self.buttonTextFont = RelatedDigitalInAppNotification.getFont(fontFamily: self.fontFamily,
+        self.buttonTextFont = RelatedDigitalHelper.getFont(fontFamily: self.fontFamily,
                                                                 fontSize: self.messageBodyTextSize,
                                                                 style: .title2, customFont: self.customFont)
-    }
-
-    static func getFont(fontFamily: String?, fontSize: String?, style: UIFont.TextStyle,customFont:String? = "") -> UIFont {
-        var size = style == .title2 ? 12 : 8
-        if let fSize = fontSize, let siz = Int(fSize), siz > 0 {
-            size += siz
-        }
-        var finalFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: style),
-                               size: CGFloat(size))
-        if let font = fontFamily {
-            if #available(iOS 13.0, *) {
-                var systemDesign: UIFontDescriptor.SystemDesign  = .default
-                if font.lowercased() == "serif" || font.lowercased() == "sansserif" {
-                    systemDesign = .serif
-                } else if font.lowercased() == "monospace" {
-                    systemDesign = .monospaced
-                }
-                if let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: style)
-                    .withDesign(systemDesign) {
-                    finalFont = UIFont(descriptor: fontDescriptor, size: CGFloat(size))
-                }
-            } else {
-                if font.lowercased() == "serif" || font.lowercased() == "sansserif" {
-                    let fontName = style == .title2 ? "GillSans-Bold": "GillSans"
-                    finalFont = UIFont(name: fontName, size: CGFloat(size))!
-                } else if font.lowercased() == "monospace" {
-                    let fontName = style == .title2 ? "CourierNewPS-BoldMT": "CourierNewPSMT"
-                    finalFont = UIFont(name: fontName, size: CGFloat(size))!
-                }
-            }
-
-            if let uiCustomFont = UIFont(name: customFont ?? "", size: CGFloat(size)) {
-                return uiCustomFont
-            }
-       }
-        return finalFont
-    }
-
-    private static func getImageUrl(_ imageUrlString: String, type: RelatedDigitalInAppNotificationType) -> URL? {
-        var imageUrl: URL?
-        var urlString = imageUrlString
-        if type == .mini {
-            urlString = imageUrlString.getUrlWithoutExtension() + "@2x." + imageUrlString.getUrlExtension()
-        }
-        if let escapedImageUrlString = urlString.addingPercentEncoding(withAllowedCharacters:
-                                                                     NSCharacterSet.urlQueryAllowed),
-           let imageUrlComponents = URLComponents(string: escapedImageUrlString),
-           let imageUrlParsed = imageUrlComponents.url {
-            imageUrl = imageUrlParsed
-        }
-        return imageUrl
     }
 }

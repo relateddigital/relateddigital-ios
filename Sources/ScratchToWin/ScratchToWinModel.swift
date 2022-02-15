@@ -169,19 +169,19 @@ public class ScratchToWinModel: TargetingActionViewModel {
         self.promocodeCustomFontFamilyIos = promocodeCustomFontFamilyIos
         self.copybuttonCustomFontFamilyIos = copybuttonCustomFontFamilyIos
 
-        titleFont = RelatedDigitalInAppNotification.getFont(fontFamily: titleFontFamily,
+        titleFont = RelatedDigitalHelper.getFont(fontFamily: titleFontFamily,
                                                                   fontSize: titleTextSize,
                                                                   style: .title2,customFont: contentTitleCustomFontFamilyIos)
-        messageFont = RelatedDigitalInAppNotification.getFont(fontFamily: messageFontFamily,
+        messageFont = RelatedDigitalHelper.getFont(fontFamily: messageFontFamily,
                                                         fontSize: messageTextSize,
                                                         style: .body,customFont: contentBodyCustomFontFamilyIos)
-        mailButtonFont = RelatedDigitalInAppNotification.getFont(fontFamily: mailButtonFontFamily,
+        mailButtonFont = RelatedDigitalHelper.getFont(fontFamily: mailButtonFontFamily,
                                                            fontSize: mailButtonTextSize,
                                                            style: .title2,customFont: buttonCustomFontFamilyIos)
-        promoFont = RelatedDigitalInAppNotification.getFont(fontFamily: promocodeTextFamily,
+        promoFont = RelatedDigitalHelper.getFont(fontFamily: promocodeTextFamily,
                                                       fontSize: promocodeTextSize,
                                                       style: .title2,customFont: promocodeCustomFontFamilyIos)
-        copyButtonTextFont = RelatedDigitalInAppNotification.getFont(fontFamily: copyButtonFontFamily,
+        copyButtonTextFont = RelatedDigitalHelper.getFont(fontFamily: copyButtonFontFamily,
                                                               fontSize: copyButtonTextSize,
                                                               style: .title2,customFont: copybuttonCustomFontFamilyIos)
         emailPermitTextFont = UIFont.systemFont(ofSize: CGFloat(8 + (Int(emailPermitTextSize ?? "0") ?? 0)))

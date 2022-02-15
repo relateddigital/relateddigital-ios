@@ -25,11 +25,11 @@ public struct RelatedDigitalProductStatNotifierViewModel: TargetingActionViewMod
     var attributedString: NSAttributedString? = nil
     
     func getContentFont() -> UIFont {
-        return RelatedDigitalInAppNotification.getFont(fontFamily: content_font_family, fontSize: content_text_size, style: .title2)
+        return RelatedDigitalHelper.getFont(fontFamily: content_font_family, fontSize: content_text_size, style: .title2)
     }
     
     func getContentCountFont() -> UIFont {
-        return RelatedDigitalInAppNotification.getFont(fontFamily: content_font_family, fontSize: contentcount_text_size, style: .title2)
+        return RelatedDigitalHelper.getFont(fontFamily: content_font_family, fontSize: contentcount_text_size, style: .title2)
     }
     
     mutating func setAttributedString() {
