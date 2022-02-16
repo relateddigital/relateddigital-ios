@@ -31,7 +31,7 @@ class FavoriteViewController: FormViewController {
 
 
     private func getFavoriteAttributeActions() {
-        RelatedDigital.callAPI().getFavoriteAttributeActions { (response) in
+        RelatedDigital.getFavoriteAttributeActions { (response) in
             if let error = response.error {
                 print(error)
             } else {
@@ -50,7 +50,7 @@ class FavoriteViewController: FormViewController {
     }
 
     private func getFavoriteAttributeActions2() {
-        RelatedDigital.callAPI().getFavoriteAttributeActions(actionId: 188) { (response) in
+        RelatedDigital.getFavoriteAttributeActions(actionId: 188) { (response) in
             if let error = response.error {
                 print(error)
             } else {

@@ -1,10 +1,11 @@
 //
-//  VisilabsManager.swift
+//  RelatedDigitalManager.swift
 //  VisilabsIOS
 //
 //  Created by Egemen on 14.07.2020.
 //
 
+/*
 class RelatedDigitalManager {
     static let sharedInstance = RelatedDigitalManager()
     private var instance: RelatedDigitalInstance?
@@ -33,8 +34,7 @@ class RelatedDigitalManager {
                                         requestTimeoutInSeconds: requestTimeoutInSeconds,
                                         geofenceEnabled: geofenceEnabled,
                                         maxGeofenceCount: maxGeofenceCount,
-                                        isIDFAEnabled: isIDFAEnabled,
-                                        loggingEnabled: loggingEnabled)
+                                        isIDFAEnabled: isIDFAEnabled)
         self.instance = instance
         return instance
     }
@@ -55,3 +55,4 @@ class RelatedDigitalManager {
         return instance
     }
 }
+*/

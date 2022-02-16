@@ -39,8 +39,8 @@ class InAppViewController: FormViewController {
         if queryStringFilter.lowercased() == RelatedDigitalInAppNotificationType.productStatNotifier.rawValue {
             properties["OM.pv"] = "CV7933-837-837"
         }
-        RelatedDigital.callAPI().customEvent("InAppTest", properties: properties)
-        RelatedDigital.callAPI().inappButtonDelegate = self
+        RelatedDigital.customEvent("InAppTest", properties: properties)
+        RelatedDigital.inappButtonDelegate = self
     }
     
     private func getInApps() -> [RelatedDigitalInAppNotificationType: [String: Int]]{

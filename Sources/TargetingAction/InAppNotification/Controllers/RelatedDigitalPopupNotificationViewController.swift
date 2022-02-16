@@ -297,7 +297,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
             not = createSecondPopup()
         }
         if let n = not {
-            RelatedDigital.callAPI().showNotification(n)
+            RelatedDigital.showNotification(n)
         }
     }
 
@@ -415,7 +415,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
                     defaultView.resultLabel.text = self.mailForm?.successMessage ?? "Succesful!"
                     defaultView.resultLabel.textColor = .systemGreen
                     defaultView.resultLabel.isHidden = false
-                    RelatedDigital.callAPI().subscribeMail(click: self.mailForm!.report.click,
+                    RelatedDigital.subscribeMail(click: self.mailForm!.report.click,
                                                      actid: "\(self.mailForm!.actId)",
                                                      auth: self.mailForm!.auth,
                                                      mail: mail)

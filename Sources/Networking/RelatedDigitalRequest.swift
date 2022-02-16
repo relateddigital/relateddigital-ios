@@ -304,7 +304,7 @@ class RelatedDigitalRequest {
         
         let resource = RelatedDigitalNetwork.buildResource(endPoint: .promotion,
                                                      method: .get,
-                                                     timeoutInterval: RelatedDigital.callAPI().relatedDigitalProfile.requestTimeoutInterval,
+                                                     timeoutInterval: RelatedDigital.relatedDigitalProfile.requestTimeoutInterval,
                                                      requestBody: nil,
                                                      queryItems: queryItems,
                                                      headers: [String: String](),
@@ -342,7 +342,7 @@ class RelatedDigitalRequest {
         
         let resource  = RelatedDigitalNetwork.buildResource(endPoint: .subsjson,
                                                       method: .get,
-                                                      timeoutInterval: RelatedDigital.callAPI().relatedDigitalProfile.requestTimeoutInterval,
+                                                      timeoutInterval: RelatedDigital.relatedDigitalProfile.requestTimeoutInterval,
                                                       requestBody: nil,
                                                       queryItems: queryItems,
                                                       headers: [String: String]() ,
@@ -372,13 +372,13 @@ class RelatedDigitalRequest {
         }
         
         var headers = [String: String]()
-        if let userAgent = RelatedDigital.callAPI().relatedDigitalUser.userAgent {
+        if let userAgent = RelatedDigital.relatedDigitalUser.userAgent {
             headers =  ["User-Agent": userAgent]
         }
         
         let resource = RelatedDigitalNetwork.buildResource(endPoint: .remote ,
                                                      method: .get,
-                                                     timeoutInterval: RelatedDigital.callAPI().relatedDigitalProfile.requestTimeoutInterval,
+                                                     timeoutInterval: RelatedDigital.relatedDigitalProfile.requestTimeoutInterval,
                                                      headers: headers,
                                                      parse: responseParser)
         
@@ -402,25 +402,25 @@ class RelatedDigitalRequest {
         
         var props = [String: String]()
         
-        if let vProfile = RelatedDigital.callAPI().relatedDigitalProfile {
-            props[RelatedDigitalConstants.organizationIdKey] = vProfile.organizationId
-            props[RelatedDigitalConstants.profileIdKey] = vProfile.profileId
-            props[RelatedDigitalConstants.channelKey] = vProfile.channel
-            props[RelatedDigitalConstants.mobileApplicationKey] = RelatedDigitalConstants.isTrue
-            props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.ios
-        }
+        let profile = RelatedDigital.relatedDigitalProfile
+        let user = RelatedDigital.relatedDigitalUser
         
-        if let vUser = RelatedDigital.callAPI().relatedDigitalUser {
-            props[RelatedDigitalConstants.cookieIdKey] = vUser.cookieId
-            props[RelatedDigitalConstants.exvisitorIdKey] = vUser.exVisitorId
-            props[RelatedDigitalConstants.mobileSdkVersion] = vUser.sdkVersion
-            props[RelatedDigitalConstants.mobileAppVersion] = vUser.appVersion
-            props[RelatedDigitalConstants.mobileIdKey] = vUser.identifierForAdvertising ?? ""
-            props[RelatedDigitalConstants.nrvKey] = String(vUser.nrv)
-            props[RelatedDigitalConstants.pvivKey] = String(vUser.pviv)
-            props[RelatedDigitalConstants.tvcKey] = String(vUser.tvc)
-            props[RelatedDigitalConstants.lvtKey] = vUser.lvt
-        }
+        props[RelatedDigitalConstants.organizationIdKey] = profile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = profile.profileId
+        props[RelatedDigitalConstants.channelKey] = profile.channel
+        props[RelatedDigitalConstants.mobileApplicationKey] = RelatedDigitalConstants.isTrue
+        props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.ios
+        
+        props[RelatedDigitalConstants.cookieIdKey] = user.cookieId
+        props[RelatedDigitalConstants.exvisitorIdKey] = user.exVisitorId
+        props[RelatedDigitalConstants.mobileSdkVersion] = user.sdkVersion
+        props[RelatedDigitalConstants.mobileAppVersion] = user.appVersion
+        props[RelatedDigitalConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
+        props[RelatedDigitalConstants.nrvKey] = String(user.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(user.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(user.tvc)
+        props[RelatedDigitalConstants.lvtKey] = user.lvt
+        
         return props
     }
     

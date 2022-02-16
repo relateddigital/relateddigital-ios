@@ -193,7 +193,7 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
         if !self.sliceText.isEmptyOrWhitespace {
             properties[RelatedDigitalConstants.promoSlice] = promoSlice
         }
-        RelatedDigital.callAPI().customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+        RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
     }
     
 }
@@ -253,7 +253,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.callAPI().subscribeSpinToWinMail(actid: "\(self.spinToWin!.actId)", auth: self.spinToWin!.auth, mail: email)
+                    RelatedDigital.subscribeSpinToWinMail(actid: "\(self.spinToWin!.actId)", auth: self.spinToWin!.auth, mail: email)
                     subsEmail = email
                 }
                 
@@ -302,7 +302,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "sendReport" {
-                    RelatedDigital.callAPI().trackSpinToWinClick(spinToWinReport: self.spinToWin!.report)
+                    RelatedDigital.trackSpinToWinClick(spinToWinReport: self.spinToWin!.report)
                 }
                 
                 if method == "copyToClipboard", let couponCode = event["couponCode"] as? String {

@@ -16,8 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        RelatedDigital.createAPI(organizationId: "orgID", profileId: "profId", dataSource: "dSo")
-        RelatedDigital.callAPI().loggingEnabled = true
+        
+        RelatedDigital.initialize(organizationId: "676D325830564761676D453D", profileId: "356467332F6533766975593D",
+                                  dataSource: "visistore", launchOptions: launchOptions)
+        RelatedDigital.loggingEnabled = true
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white

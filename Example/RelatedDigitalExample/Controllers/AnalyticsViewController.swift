@@ -57,14 +57,14 @@ class AnalyticsViewController: FormViewController {
             }
                             .onCellSelection { _, row in
                 if row.title == RelatedDigitalEventType.logout.rawValue {
-                    RelatedDigital.callAPI().logout()
+                    RelatedDigital.logout()
                     print("log out!!")
                 } else if row.title == RelatedDigitalEventType.getExVisitorId.rawValue {
-                    print(RelatedDigital.callAPI().getExVisitorId() ?? "")
+                    print(RelatedDigital.exVisitorId ?? "")
                 } else if row.title == RelatedDigitalEventType.requestIDFA.rawValue {
-                    RelatedDigital.callAPI().requestIDFA()
+                    RelatedDigital.requestIDFA()
                 } else if row.title == RelatedDigitalEventType.sendLocationPermission.rawValue {
-                    RelatedDigital.callAPI().sendLocationPermission()
+                    RelatedDigital.sendLocationPermission()
                 } else {
                     self.customEvent(eventType)
                 }
@@ -93,9 +93,9 @@ class AnalyticsViewController: FormViewController {
                 relatedDigitalProfile.userEmail = email
                 DataManager.saveRelatedDigitalProfile(relatedDigitalProfile)
                 if eventType == .login {
-                    RelatedDigital.callAPI().login(exVisitorId: relatedDigitalProfile.userKey, properties: properties)
+                    RelatedDigital.login(exVisitorId: relatedDigitalProfile.userKey, properties: properties)
                 } else if eventType == .signUp {
-                    RelatedDigital.callAPI().signUp(exVisitorId: relatedDigitalProfile.userKey, properties: properties)
+                    RelatedDigital.signUp(exVisitorId: relatedDigitalProfile.userKey, properties: properties)
                 } else {
                     properties["OM.vseg1"] = "seg1val" // Visitor Segment 1
                     properties["OM.vseg2"] = "seg2val" // Visitor Segment 2
@@ -105,14 +105,14 @@ class AnalyticsViewController: FormViewController {
                     properties["OM.bd"] = "1977-03-15" // Birthday
                     properties["OM.gn"] = randomValues.randomGender // Gender
                     properties["OM.loc"] = "Bursa" // Location
-                    RelatedDigital.callAPI().login(exVisitorId: relatedDigitalProfile.userKey, properties: properties)
+                    RelatedDigital.login(exVisitorId: relatedDigitalProfile.userKey, properties: properties)
                 }
 //                Euromsg.setEuroUserId(userKey: relatedDigitalProfile.userKey)
 //                Euromsg.setEmail(email: relatedDigitalProfile.userEmail, permission: true)
                 return
             }
         case .pageView:
-            RelatedDigital.callAPI().customEvent("Page Name", properties: [String: String]())
+            RelatedDigital.customEvent("Page Name", properties: [String: String]())
             return
         case .productView:
             properties["OM.pv"] = "\(randomValues.randomProductCode1)" // Product Code
@@ -120,7 +120,7 @@ class AnalyticsViewController: FormViewController {
             properties["OM.ppr"] = randomValues.randomProductPrice1.formatPrice() // Product Price
             properties["OM.pv.1"] = "Brand" //Product Brand
             properties["OM.inv"] = "\(randomValues.randomInventory)" //Number of items in stock
-            RelatedDigital.callAPI().customEvent("Product View", properties: properties)
+            RelatedDigital.customEvent("Product View", properties: properties)
             return
         case .productAddToCart:
             properties["OM.pbid"] = "\(randomValues.randomBasketID)" // Basket ID
@@ -131,7 +131,7 @@ class AnalyticsViewController: FormViewController {
             let price1 = (randomValues.randomProductPrice1 * Double(randomValues.randomProductQuantity1)).formatPrice()
             let price2 = (randomValues.randomProductPrice2 * Double(randomValues.randomProductQuantity2)).formatPrice()
             properties["OM.ppr"] = "\(price1);\(price2)"
-            RelatedDigital.callAPI().customEvent("Cart", properties: properties)
+            RelatedDigital.customEvent("Cart", properties: properties)
             return
         case .productPurchase:
             properties["OM.tid"] = "\(randomValues.randomOrderID)" // Order ID
@@ -142,32 +142,32 @@ class AnalyticsViewController: FormViewController {
             let price1 = (randomValues.randomProductPrice1 * Double(randomValues.randomProductQuantity1)).formatPrice()
             let price2 = (randomValues.randomProductPrice2 * Double(randomValues.randomProductQuantity2)).formatPrice()
             properties["OM.ppr"] = "\(price1);\(price2)"
-            RelatedDigital.callAPI().customEvent("Purchase", properties: properties)
+            RelatedDigital.customEvent("Purchase", properties: properties)
             return
         case .productCategoryPageView:
             properties["OM.clist"] = "\(randomValues.randomCategoryID)" // Category Code/Category ID
-            RelatedDigital.callAPI().customEvent("Category View", properties: properties)
+            RelatedDigital.customEvent("Category View", properties: properties)
             return
         case .inAppSearch:
             properties["OM.OSS"] = "laptop" // Search Keyword
             properties["OM.OSSR"] = "\(randomValues.randomNumberOfSearchResults)" // Number of Search Results
-            RelatedDigital.callAPI().customEvent("In App Search", properties: properties)
+            RelatedDigital.customEvent("In App Search", properties: properties)
             return
         case .bannerClick:
             properties["OM.OSB"] = "\(randomValues.randomBannerCode)" // Banner Name/Banner Code
-            RelatedDigital.callAPI().customEvent("Banner Click", properties: properties)
+            RelatedDigital.customEvent("Banner Click", properties: properties)
             return
         case .addToFavorites:
             properties["OM.pf"] = "\(randomValues.randomProductCode1)" // Product Code
             properties["OM.pfu"] = "1"
             properties["OM.ppr"] = randomValues.randomProductPrice1.formatPrice() // Product Price
-            RelatedDigital.callAPI().customEvent("Add To Favorites", properties: properties)
+            RelatedDigital.customEvent("Add To Favorites", properties: properties)
             return
         case .removeFromFavorites:
             properties["OM.pf"] = "\(randomValues.randomProductCode1)" // Product Code
             properties["OM.pfu"] = "-1"
             properties["OM.ppr"] = randomValues.randomProductPrice1.formatPrice() // Product Price
-            RelatedDigital.callAPI().customEvent("Add To Favorites", properties: properties)
+            RelatedDigital.customEvent("Add To Favorites", properties: properties)
             return
         case .sendingCampaignParameters:
             properties["utm_source"] = "euromsg"
@@ -176,12 +176,12 @@ class AnalyticsViewController: FormViewController {
             properties["OM.csource"] = "euromsg"
             properties["OM.cmedium"] = "push"
             properties["OM.cname"] = "euromsg campaign"
-            RelatedDigital.callAPI().customEvent("Login Page", properties: properties)
+            RelatedDigital.customEvent("Login Page", properties: properties)
             return
         case .pushMessage:
             properties["OM.sys.TokenID"] = relatedDigitalProfile.appToken //"Token ID to use for push messages"
             properties["OM.sys.AppID"] = relatedDigitalProfile.appAlias // "App ID to use for push messages"
-            RelatedDigital.callAPI().customEvent("RegisterToken", properties: properties)
+            RelatedDigital.customEvent("RegisterToken", properties: properties)
             return
         default:
             return

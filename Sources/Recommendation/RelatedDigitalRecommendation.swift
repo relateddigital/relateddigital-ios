@@ -14,7 +14,7 @@ class RelatedDigitalRecommendation {
         self.relatedDigitalProfile = relatedDigitalProfile
     }
 
-    func recommend(zoneID: String,
+    func recommend(zoneId: String,
                    productCode: String?,
                    relatedDigitalUser: RelatedDigitalUser,
                    channel: String,
@@ -41,8 +41,8 @@ class RelatedDigitalRecommendation {
         props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
         props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
 
-        if zoneID.count > 0 {
-            props[RelatedDigitalConstants.zoneIdKey] = zoneID
+        if zoneId.count > 0 {
+            props[RelatedDigitalConstants.zoneIdKey] = zoneId
         }
         if !productCode.isNilOrWhiteSpace {
             props[RelatedDigitalConstants.bodyKey] = productCode

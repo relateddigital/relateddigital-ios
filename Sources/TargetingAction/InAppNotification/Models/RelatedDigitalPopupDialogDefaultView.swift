@@ -483,7 +483,7 @@ extension RelatedDigitalPopupDialogDefaultView: UITextFieldDelegate {
         sctwButton.addTarget(self, action: #selector(copyCodeAndDismiss), for: .touchDown)
         let actid = String(scratchToWin?.actId ?? 0)
         let auth = scratchToWin?.auth ?? ""
-        RelatedDigital.callAPI().subscribeSpinToWinMail(actid: actid, auth: auth, mail: sctwMail)
+        RelatedDigital.subscribeSpinToWinMail(actid: actid, auth: auth, mail: sctwMail)
         sctwButton.allEdges(to: self, excluding: .top)
         sctwButton.height(50)
 

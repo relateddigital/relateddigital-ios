@@ -52,7 +52,7 @@ class RelatedDigitalPrintLogging: RelatedDigitalLogging {
 }
 
 class RelatedDigitalLogger {
-    private static let readWriteLock: RelatedDigitalReadWriteLock = RelatedDigitalReadWriteLock(label: "visilabsLoggerLock")
+    private static let readWriteLock: RelatedDigitalReadWriteLock = RelatedDigitalReadWriteLock(label: "RelatedDigitalLoggerLock")
     private static var enabledLevels = Set<RelatedDigitalLogLevel>()
     private static var loggers = [RelatedDigitalLogging]()
 

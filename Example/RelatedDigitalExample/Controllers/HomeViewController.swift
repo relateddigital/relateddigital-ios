@@ -76,6 +76,7 @@ class HomeViewController: FormViewController {
             relatedDigitalProfile.maxGeofenceCount = maxGeofenceCountRow?.value ?? 20
             relatedDigitalProfile.appAlias = appAliasRow?.value ?? "VisilabsIOSExample"
             DataManager.saveRelatedDigitalProfile(relatedDigitalProfile)
+            /*
             RelatedDigital.createAPI(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId,
                                dataSource: relatedDigitalProfile.dataSource,
                                inAppNotificationsEnabled: relatedDigitalProfile.inAppNotificationsEnabled,
@@ -86,6 +87,7 @@ class HomeViewController: FormViewController {
                                isIDFAEnabled: relatedDigitalProfile.isIDFAEnabled,
                                loggingEnabled: true,isTest: relatedDigitalProfile.IsTest)
             RelatedDigital.callAPI().useInsecureProtocol = false
+             */
 //            self.configureEuromessage()
             self.goToTabBarController()
         }

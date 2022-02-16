@@ -1,6 +1,6 @@
 //
-//  VisilabsInstance.swift
-//  VisilabsIOS
+//  RelatedDigitalInstance.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 4.05.2020.
 //
@@ -10,60 +10,38 @@ import SystemConfiguration
 import UIKit
 import UserNotifications
 
-
-typealias Queue = [[String: String]]
-
-struct RelatedDigitalUser: Codable {
-    var cookieId: String?
-    var exVisitorId: String?
-    var tokenId: String?
-    var appId: String?
-    var visitData: String?
-    var visitorData: String?
-    var userAgent: String?
-    var identifierForAdvertising: String?
-    var sdkVersion: String?
-    var lastEventTime: String?
-    var nrv = 0
-    var pviv = 0
-    var tvc = 0
-    var lvt: String?
-    var appVersion: String?
+protocol RelatedDigitalInstanceProtocol {
+    var exVisitorId: String? { get }
+    var relatedDigitalUser: RelatedDigitalUser { get }
+    var relatedDigitalProfile: RelatedDigitalProfile { get }
+    var locationServicesEnabledForDevice: Bool { get }
+    var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus { get }
+    var inappButtonDelegate: RelatedDigitalInappButtonDelegate? { get set }
+    var loggingEnabled: Bool { get set }
+    func requestIDFA()
+    func sendLocationPermission()
+    func customEvent(_ pageName: String, properties: [String: String])
+    func login(exVisitorId: String, properties: [String: String])
+    func signUp(exVisitorId: String, properties: [String: String])
+    func logout()
+    func showNotification(_ relatedDigitalInAppNotification: RelatedDigitalInAppNotification)
+    func subscribeSpinToWinMail(actid: String, auth: String, mail: String)
+    func subscribeMail(click: String, actid: String, auth: String, mail: String)
+    func trackSpinToWinClick(spinToWinReport: SpinToWinReport)
+    func trackRecommendationClick(qs: String)
+    func getStoryView(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?) -> RelatedDigitalStoryHomeView
+    func getStoryViewAsync(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?, completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void))
+    func recommend(zoneId: String, productCode: String?, filters: [RelatedDigitalRecommendationFilter], properties: [String: String],
+                          completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void))
+    func getFavoriteAttributeActions(actionId: Int?, completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void))
 }
 
-struct RelatedDigitalProfile: Codable {
-    var organizationId: String
-    var profileId: String
-    var dataSource: String
-    var channel: String
-    var requestTimeoutInSeconds: Int
-    var geofenceEnabled: Bool
-    var inAppNotificationsEnabled: Bool
-    var maxGeofenceCount: Int
-    var isIDFAEnabled: Bool
-    var requestTimeoutInterval: TimeInterval {
-        return TimeInterval(requestTimeoutInSeconds)
-    }
 
-    var useInsecureProtocol = false
-}
-
-class urlConstant {
-    static var shared = urlConstant()
-    var urlPrefix = "s.visilabs.net"
-    var securityTag = "https"
-    var organizationId = "676D325830564761676D453D"
-    var profileId = "356467332F6533766975593D"
+public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol, CustomDebugStringConvertible {
     
-    func setTest() {
-        urlPrefix = "tests.visilabs.net"
-        securityTag = "http"
-    }
-}
-
-public class RelatedDigitalInstance: CustomDebugStringConvertible {
-    var relatedDigitalUser: RelatedDigitalUser!
-    var relatedDigitalProfile: RelatedDigitalProfile!
+    var exVisitorId: String? { return relatedDigitalUser.exVisitorId }
+    var relatedDigitalUser = RelatedDigitalUser()
+    var relatedDigitalProfile: RelatedDigitalProfile
     var relatedDigitalCookie = RelatedDigitalCookie()
     var eventsQueue = Queue()
     var trackingQueue: DispatchQueue!
@@ -71,22 +49,22 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
     var recommendationQueue: DispatchQueue!
     var networkQueue: DispatchQueue!
     let readWriteLock: RelatedDigitalReadWriteLock
-    private var observers: [NSObjectProtocol]?
-
+    private var observers: [NSObjectProtocol]? = []
+    
     // TO_DO: www.relateddigital.com ı değiştirmeli miyim?
     static let reachability = SCNetworkReachabilityCreateWithName(nil, "www.relateddigital.com")
-
+    
     let relatedDigitalEventInstance: RelatedDigitalEvent
     let relatedDigitalSendInstance: RelatedDigitalSend
     let relatedDigitalTargetingActionInstance: RelatedDigitalTargetingAction
     let relatedDigitalRecommendationInstance: RelatedDigitalRecommendation
     let relatedDigitalRemoteConfigInstance: RelatedDigitalRemoteConfig
-
+    
     public var debugDescription: String {
         return "Visilabs(siteId : \(relatedDigitalProfile.profileId)" +
-            "organizationId: \(relatedDigitalProfile.organizationId)"
+        "organizationId: \(relatedDigitalProfile.organizationId)"
     }
-
+    
     public var loggingEnabled: Bool = false {
         didSet {
             if loggingEnabled {
@@ -98,18 +76,18 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
             }
         }
     }
-
+    
     public var useInsecureProtocol: Bool = false {
         didSet {
             relatedDigitalProfile.useInsecureProtocol = useInsecureProtocol
             RelatedDigitalHelper.setEndpoints(dataSource: relatedDigitalProfile.dataSource,
-                                        useInsecureProtocol: useInsecureProtocol)
+                                              useInsecureProtocol: useInsecureProtocol)
             RelatedDigitalPersistence.saveRelatedDigitalProfile(relatedDigitalProfile)
         }
     }
-
+    
     public weak var inappButtonDelegate: RelatedDigitalInappButtonDelegate?
-
+    
     // swiftlint:disable function_body_length
     init(organizationId: String,
          profileId: String,
@@ -119,24 +97,19 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
          requestTimeoutInSeconds: Int,
          geofenceEnabled: Bool,
          maxGeofenceCount: Int,
-         isIDFAEnabled: Bool = true,
-         loggingEnabled: Bool = false) {
+         isIDFAEnabled: Bool = false) {
         
-        if loggingEnabled {
-            RelatedDigitalLogger.enableLevels([.debug, .info, .warning, .error])
-            RelatedDigitalLogger.info("Logging Enabled")
-        }
         
         // TO_DO: bu reachability doğru çalışıyor mu kontrol et
         if let reachability = RelatedDigitalInstance.reachability {
             var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil,
                                                        release: nil, copyDescription: nil)
-
+            
             func reachabilityCallback(reachability: SCNetworkReachability,
                                       flags: SCNetworkReachabilityFlags,
                                       unsafePointer: UnsafeMutableRawPointer?) {
                 let wifi = flags.contains(SCNetworkReachabilityFlags.reachable)
-                    && !flags.contains(SCNetworkReachabilityFlags.isWWAN)
+                && !flags.contains(SCNetworkReachabilityFlags.isWWAN)
                 RelatedDigitalLogger.info("reachability changed, wifi=\(wifi)")
             }
             if SCNetworkReachabilitySetCallback(reachability, reachabilityCallback, &context) {
@@ -146,19 +119,19 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
                 }
             }
         }
-
+        
         relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId,
-                                          profileId: profileId,
-                                          dataSource: dataSource,
-                                          channel: channel,
-                                          requestTimeoutInSeconds: requestTimeoutInSeconds,
-                                          geofenceEnabled: geofenceEnabled,
-                                          inAppNotificationsEnabled: inAppNotificationsEnabled,
-                                          maxGeofenceCount: (maxGeofenceCount < 0 && maxGeofenceCount > 20) ? 20 : maxGeofenceCount,
-                                          isIDFAEnabled: isIDFAEnabled)
+                                                      profileId: profileId,
+                                                      dataSource: dataSource,
+                                                      channel: channel,
+                                                      requestTimeoutInSeconds: requestTimeoutInSeconds,
+                                                      geofenceEnabled: geofenceEnabled,
+                                                      inAppNotificationsEnabled: inAppNotificationsEnabled,
+                                                      maxGeofenceCount: (maxGeofenceCount < 0 && maxGeofenceCount > 20) ? 20 : maxGeofenceCount,
+                                                      isIDFAEnabled: isIDFAEnabled)
         RelatedDigitalPersistence.saveRelatedDigitalProfile(relatedDigitalProfile)
-
-        readWriteLock = RelatedDigitalReadWriteLock(label: "VisilabsInstanceLock")
+        
+        readWriteLock = RelatedDigitalReadWriteLock(label: "RelatedDigitalInstanceLock")
         let label = "com.relateddigital.\(relatedDigitalProfile.profileId)"
         trackingQueue = DispatchQueue(label: "\(label).tracking)", qos: .utility)
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
@@ -167,16 +140,26 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
         relatedDigitalEventInstance = RelatedDigitalEvent(relatedDigitalProfile: relatedDigitalProfile)
         relatedDigitalSendInstance = RelatedDigitalSend()
         relatedDigitalTargetingActionInstance = RelatedDigitalTargetingAction(lock: readWriteLock,
-                                                                  relatedDigitalProfile: relatedDigitalProfile)
+                                                                              relatedDigitalProfile: relatedDigitalProfile)
         relatedDigitalRecommendationInstance = RelatedDigitalRecommendation(relatedDigitalProfile: relatedDigitalProfile)
         relatedDigitalRemoteConfigInstance = RelatedDigitalRemoteConfig(profileId: relatedDigitalProfile.profileId)
+        
+        
+        RelatedDigitalHelper.setEndpoints(dataSource: relatedDigitalProfile.dataSource)
+        
+        
+        
+        
         relatedDigitalUser = unarchive()
-        relatedDigitalTargetingActionInstance.inAppDelegate = self
-
         relatedDigitalUser.sdkVersion = RelatedDigitalHelper.getSdkVersion()
         
         if let appVersion = RelatedDigitalHelper.getAppVersion() {
             relatedDigitalUser.appVersion = appVersion
+        }
+        
+        if relatedDigitalUser.cookieId.isNilOrWhiteSpace {
+            relatedDigitalUser.cookieId = RelatedDigitalHelper.generateCookieId()
+            RelatedDigitalPersistence.archiveUser(relatedDigitalUser)
         }
         
         if isIDFAEnabled {
@@ -187,17 +170,16 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
             }
         }
         
-        if relatedDigitalUser.cookieId.isNilOrWhiteSpace {
-            relatedDigitalUser.cookieId = RelatedDigitalHelper.generateCookieId()
-            RelatedDigitalPersistence.archiveUser(relatedDigitalUser)
-        }
-
         if relatedDigitalProfile.geofenceEnabled {
             startGeofencing()
         }
-
-        RelatedDigitalHelper.setEndpoints(dataSource: relatedDigitalProfile.dataSource)
-
+        
+        
+        
+        relatedDigitalTargetingActionInstance.inAppDelegate = self
+        
+        
+        
         RelatedDigitalHelper.computeWebViewUserAgent { userAgentString in
             self.relatedDigitalUser.userAgent = userAgentString
         }
@@ -207,18 +189,18 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
         
         if !RelatedDigitalHelper.isiOSAppExtension() {
             observers?.append(ncd.addObserver(
-                                forName: UIApplication.didBecomeActiveNotification,
-                                object: nil,
-                                queue: nil,
-                                using: self.applicationDidBecomeActive(_:)))
+                forName: UIApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: nil,
+                using: self.applicationDidBecomeActive(_:)))
             observers?.append(ncd.addObserver(
-                                forName: UIApplication.willResignActiveNotification,
-                                object: nil,
-                                queue: nil,
-                                using: self.applicationWillResignActive(_:)))
+                forName: UIApplication.willResignActiveNotification,
+                object: nil,
+                queue: nil,
+                using: self.applicationWillResignActive(_:)))
         }
     }
-
+    
     convenience init?() {
         if let relatedDigitalProfile = RelatedDigitalPersistence.readRelatedDigitalProfile() {
             self.init(organizationId: relatedDigitalProfile.organizationId,
@@ -243,7 +225,7 @@ public class RelatedDigitalInstance: CustomDebugStringConvertible {
                                                   name: UIApplication.willResignActiveNotification,
                                                   object: nil)
     }
-
+    
     static func sharedUIApplication() -> UIApplication? {
         let shared = UIApplication.perform(NSSelectorFromString("sharedApplication"))?.takeUnretainedValue()
         guard let sharedApplication = shared as? UIApplication else {
@@ -279,32 +261,32 @@ extension RelatedDigitalInstance {
 extension RelatedDigitalInstance {
     
     private func checkPushPermission() {
-            let current = UNUserNotificationCenter.current()
-            current.getNotificationSettings(completionHandler: { permission in
-                switch permission.authorizationStatus {
-                case .authorized:
-                    RelatedDigitalConstants.pushPermitStatus = "granted"
-                case .denied:
-                    RelatedDigitalConstants.pushPermitStatus = "denied"
-                case .notDetermined:
-                    RelatedDigitalConstants.pushPermitStatus = "denied"
-                case .provisional:
-                    RelatedDigitalConstants.pushPermitStatus = "default"
-                case .ephemeral:
-                    RelatedDigitalConstants.pushPermitStatus = "denied"
-                @unknown default:
-                    RelatedDigitalConstants.pushPermitStatus = "denied"
-                }
-            })
-        }
+        let current = UNUserNotificationCenter.current()
+        current.getNotificationSettings(completionHandler: { permission in
+            switch permission.authorizationStatus {
+            case .authorized:
+                RelatedDigitalConstants.pushPermitStatus = "granted"
+            case .denied:
+                RelatedDigitalConstants.pushPermitStatus = "denied"
+            case .notDetermined:
+                RelatedDigitalConstants.pushPermitStatus = "denied"
+            case .provisional:
+                RelatedDigitalConstants.pushPermitStatus = "default"
+            case .ephemeral:
+                RelatedDigitalConstants.pushPermitStatus = "denied"
+            @unknown default:
+                RelatedDigitalConstants.pushPermitStatus = "denied"
+            }
+        })
+    }
     
     private func sideBarTest(imageData:UIImage) {
-
+        
         let model = SideBarModel()
         model.dataImage = imageData
         let sideBar = RelatedDigitalSideBarViewController(model:model)
         sideBar.show(animated: true)
-
+        
     }
     
     public func customEvent(_ pageName: String, properties: [String: String]) {
@@ -313,7 +295,7 @@ extension RelatedDigitalInstance {
             RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
             return
         }
-
+        
         if pageName.isEmptyOrWhitespace {
             RelatedDigitalLogger.error("customEvent can not be called with empty page name.")
             return
@@ -332,10 +314,10 @@ extension RelatedDigitalInstance {
                 chan = self.relatedDigitalProfile.channel
             }
             let result = self.relatedDigitalEventInstance.customEvent(pageName: pageName,
-                                                                properties: properties,
-                                                                eventsQueue: eQueue,
-                                                                relatedDigitalUser: vUser,
-                                                                channel: chan)
+                                                                      properties: properties,
+                                                                      eventsQueue: eQueue,
+                                                                      relatedDigitalUser: vUser,
+                                                                      channel: chan)
             self.readWriteLock.write {
                 self.eventsQueue = result.eventsQueque
                 self.relatedDigitalUser = result.relatedDigitalUser
@@ -359,14 +341,14 @@ extension RelatedDigitalInstance {
             self.send()
         }
     }
-
+    
     public func sendCampaignParameters(properties: [String: String]) {
         
         if RelatedDigitalPersistence.isBlocked() {
             RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
             return
         }
-
+        
         trackingQueue.async { [weak self, properties] in
             guard let strongSelf = self else { return }
             var eQueue = Queue()
@@ -378,9 +360,9 @@ extension RelatedDigitalInstance {
                 chan = strongSelf.relatedDigitalProfile.channel
             }
             let result = strongSelf.relatedDigitalEventInstance.customEvent(properties: properties,
-                                                                      eventsQueue: eQueue,
-                                                                      relatedDigitalUser: vUser,
-                                                                      channel: chan)
+                                                                            eventsQueue: eQueue,
+                                                                            relatedDigitalUser: vUser,
+                                                                            channel: chan)
             strongSelf.readWriteLock.write {
                 strongSelf.eventsQueue = result.eventsQueque
                 strongSelf.relatedDigitalUser = result.relatedDigitalUser
@@ -398,7 +380,7 @@ extension RelatedDigitalInstance {
             strongSelf.send()
         }
     }
-
+    
     public func login(exVisitorId: String, properties: [String: String] = [String: String]()) {
         
         if RelatedDigitalPersistence.isBlocked() {
@@ -416,7 +398,7 @@ extension RelatedDigitalInstance {
         props["OM.b_login"] = "Login"
         customEvent("LoginPage", properties: props)
     }
-
+    
     public func signUp(exVisitorId: String, properties: [String: String] = [String: String]()) {
         
         if RelatedDigitalPersistence.isBlocked() {
@@ -434,11 +416,7 @@ extension RelatedDigitalInstance {
         props["OM.b_sgnp"] = "SignUp"
         customEvent("SignUpPage", properties: props)
     }
-
-    public func getExVisitorId() -> String? {
-        return relatedDigitalUser.exVisitorId
-    }
-
+    
     public func logout() {
         RelatedDigitalPersistence.clearUserDefaults()
         relatedDigitalUser.cookieId = nil
@@ -454,7 +432,7 @@ extension RelatedDigitalInstance {
 extension RelatedDigitalInstance {
     private func archive() {
     }
-
+    
     // TO_DO: kontrol et sıra doğru mu? gelen değerler null ise set'lemeli miyim?
     private func unarchive() -> RelatedDigitalUser {
         return RelatedDigitalPersistence.unarchiveUser()
@@ -480,9 +458,9 @@ extension RelatedDigitalInstance {
                     self.eventsQueue.removeAll()
                 }
                 let cookie = self.relatedDigitalSendInstance.sendEventsQueue(eQueue,
-                                                                       relatedDigitalUser: vUser,
-                                                                       relatedDigitalCookie: vCookie,
-                                                                       timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval)
+                                                                             relatedDigitalUser: vUser,
+                                                                             relatedDigitalCookie: vCookie,
+                                                                             timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval)
                 self.readWriteLock.write {
                     self.relatedDigitalCookie = cookie
                 }
@@ -498,7 +476,7 @@ extension RelatedDigitalInstance {
 extension RelatedDigitalInstance {
     public func getFavoriteAttributeActions(actionId: Int? = nil,
                                             completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse)
-                                                -> Void)) {
+                                                                   -> Void)) {
         
         if RelatedDigitalPersistence.isBlocked() {
             RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
@@ -514,8 +492,8 @@ extension RelatedDigitalInstance {
                     vUser = self.relatedDigitalUser
                 }
                 self.relatedDigitalTargetingActionInstance.getFavorites(relatedDigitalUser: vUser,
-                                                                  actionId: actionId,
-                                                                  completion: completion)
+                                                                        actionId: actionId,
+                                                                        completion: completion)
             }
         }
     }
@@ -528,34 +506,34 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
     public func showNotification(_ relatedDigitalInAppNotification: RelatedDigitalInAppNotification) {
         relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(relatedDigitalInAppNotification)
     }
-
+    
     public func showTargetingAction(_ model: TargetingActionViewModel) {
         relatedDigitalTargetingActionInstance.notificationsInstance.showTargetingAction(model)
     }
-
+    
     func checkInAppNotification(properties: [String: String]) {
         trackingQueue.async { [weak self, properties] in
             guard let self = self else { return }
             self.networkQueue.async { [weak self, properties] in
                 guard let self = self else { return }
                 self.relatedDigitalTargetingActionInstance.checkInAppNotification(properties: properties,
-                                                                            relatedDigitalUser: self.relatedDigitalUser,
-                                                                            completion: { relatedDigitalInAppNotification in
-                                                                                if let notification = relatedDigitalInAppNotification {
-                                                                                    self.relatedDigitalTargetingActionInstance.notificationsInstance.inappButtonDelegate = self.inappButtonDelegate
-                                                                                    self.relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(notification)
-                                                                                }
-                                                                            })
+                                                                                  relatedDigitalUser: self.relatedDigitalUser,
+                                                                                  completion: { relatedDigitalInAppNotification in
+                    if let notification = relatedDigitalInAppNotification {
+                        self.relatedDigitalTargetingActionInstance.notificationsInstance.inappButtonDelegate = self.inappButtonDelegate
+                        self.relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(notification)
+                    }
+                })
             }
         }
     }
-
+    
     func notificationDidShow(_ notification: RelatedDigitalInAppNotification) {
         relatedDigitalUser.visitData = notification.visitData
         relatedDigitalUser.visitorData = notification.visitorData
         RelatedDigitalPersistence.archiveUser(relatedDigitalUser)
     }
-
+    
     func trackNotification(_ notification: RelatedDigitalInAppNotification, event: String, properties: [String: String]) {
         if notification.queryString == nil || notification.queryString == "" {
             RelatedDigitalLogger.info("Notification or query string is nil or empty")
@@ -569,7 +547,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
         properties["OM.zpc"] = qsArr[1].components(separatedBy: "=")[1]
         customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
     }
-
+    
     // İleride inapp de s.visilabs.net/mobile üzerinden geldiğinde sadece bu metod kullanılacak
     // checkInAppNotification metodu kaldırılacak.
     func checkTargetingActions(properties: [String: String]) {
@@ -585,11 +563,11 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
             }
         }
     }
-
+    
     func subscribeSpinToWinMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "spin_to_win_email")
     }
-
+    
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
         var properties = [String: String]()
         properties[RelatedDigitalConstants.domainkey] = "\(relatedDigitalProfile.dataSource)_IOS"
@@ -627,9 +605,9 @@ extension RelatedDigitalInstance {
             self.networkQueue.async { [weak self, actionId, guid] in
                 guard let self = self else { return }
                 self.relatedDigitalTargetingActionInstance.getStories(relatedDigitalUser: self.relatedDigitalUser,
-                                                                guid: guid,
-                                                                actionId: actionId,
-                                                                completion: { response in
+                                                                      guid: guid,
+                                                                      actionId: actionId,
+                                                                      completion: { response in
                     if let error = response.error {
                         RelatedDigitalLogger.error(error)
                         completion(nil)
@@ -669,33 +647,33 @@ extension RelatedDigitalInstance {
         relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
-
+        
         trackingQueue.async { [weak self, actionId, guid] in
             guard let self = self else { return }
             self.networkQueue.async { [weak self, actionId, guid] in
                 guard let self = self else { return }
                 self.relatedDigitalTargetingActionInstance.getStories(relatedDigitalUser: self.relatedDigitalUser,
-                                                                guid: guid,
-                                                                actionId: actionId,
-                                                                completion: { response in
-                                                                    if let error = response.error {
-                                                                        RelatedDigitalLogger.error(error)
-                                                                    } else {
-                                                                        if let guid = response.guid, response.storyActions.count > 0,
-                                                                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
-                                                                           let storyHomeView = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
-                                                                            DispatchQueue.main.async {
-                                                                                storyHomeViewController.loadStoryAction(response.storyActions.first!)
-                                                                                storyHomeView.collectionView.reloadData()
-                                                                                storyHomeView.setDelegates()
-                                                                                storyHomeViewController.collectionView = storyHomeView.collectionView
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                })
+                                                                      guid: guid,
+                                                                      actionId: actionId,
+                                                                      completion: { response in
+                    if let error = response.error {
+                        RelatedDigitalLogger.error(error)
+                    } else {
+                        if let guid = response.guid, response.storyActions.count > 0,
+                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
+                           let storyHomeView = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
+                            DispatchQueue.main.async {
+                                storyHomeViewController.loadStoryAction(response.storyActions.first!)
+                                storyHomeView.collectionView.reloadData()
+                                storyHomeView.setDelegates()
+                                storyHomeViewController.collectionView = storyHomeView.collectionView
+                            }
+                        }
+                    }
+                })
             }
         }
-
+        
         return storyHomeView
     }
 }
@@ -703,7 +681,7 @@ extension RelatedDigitalInstance {
 // MARK: - RECOMMENDATION
 
 extension RelatedDigitalInstance {
-    public func recommend(zoneID: String,
+    public func recommend(zoneId: String,
                           productCode: String? = nil,
                           filters: [RelatedDigitalRecommendationFilter] = [],
                           properties: [String: String] = [:],
@@ -714,8 +692,8 @@ extension RelatedDigitalInstance {
         }
         
         
-        recommendationQueue.async { [weak self, zoneID, productCode, filters, properties, completion] in
-            self?.networkQueue.async { [weak self, zoneID, productCode, filters, properties, completion] in
+        recommendationQueue.async { [weak self, zoneId, productCode, filters, properties, completion] in
+            self?.networkQueue.async { [weak self, zoneId, productCode, filters, properties, completion] in
                 guard let self = self else { return }
                 var vUser = RelatedDigitalUser()
                 var channel = "IOS"
@@ -723,12 +701,12 @@ extension RelatedDigitalInstance {
                     vUser = self.relatedDigitalUser
                     channel = self.relatedDigitalProfile.channel
                 }
-                self.relatedDigitalRecommendationInstance.recommend(zoneID: zoneID,
-                                                              productCode: productCode,
-                                                              relatedDigitalUser: vUser,
-                                                              channel: channel,
-                                                              properties: properties,
-                                                              filters: filters) { response in
+                self.relatedDigitalRecommendationInstance.recommend(zoneId: zoneId,
+                                                                    productCode: productCode,
+                                                                    relatedDigitalUser: vUser,
+                                                                    channel: channel,
+                                                                    properties: properties,
+                                                                    filters: filters) { response in
                     completion(response)
                 }
             }
@@ -766,11 +744,11 @@ extension RelatedDigitalInstance {
     private func startGeofencing() {
         RelatedDigitalGeofence.sharedManager?.startGeofencing()
     }
-
+    
     public var locationServicesEnabledForDevice: Bool {
         return RelatedDigitalGeofence.sharedManager?.locationServicesEnabledForDevice ?? false
     }
-
+    
     public var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus {
         return RelatedDigitalGeofence.sharedManager?.locationServiceStateStatusForApplication ?? .none
     }
@@ -778,7 +756,7 @@ extension RelatedDigitalInstance {
     public func sendLocationPermission() {
         RelatedDigitalLocationManager.sharedManager.sendLocationPermission(geofenceEnabled: relatedDigitalProfile.geofenceEnabled)
     }
-
+    
     // swiftlint:disable file_length
 }
 
@@ -790,7 +768,7 @@ extension RelatedDigitalInstance {
             RelatedDigitalLogger.info("Notification or query string is nil or empty")
             return
         }
-
+        
         var properties = [String: String]()
         properties[RelatedDigitalConstants.domainkey] = "\(relatedDigitalProfile.dataSource)_IOS"
         properties["OM.zn"] = click.parseClick().omZn
@@ -798,7 +776,7 @@ extension RelatedDigitalInstance {
         customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail)
     }
-
+    
     private func createSubsJsonRequest(actid: String, auth: String, mail: String, type: String = "subscription_email") {
         var props = [String: String]()
         props[RelatedDigitalConstants.type] = type
@@ -813,7 +791,7 @@ extension RelatedDigitalInstance {
 
 
 extension RelatedDigitalInstance {
-
+    
     @objc private func applicationDidBecomeActive(_ notification: Notification) {
         relatedDigitalRemoteConfigInstance.applicationDidBecomeActive()
     }

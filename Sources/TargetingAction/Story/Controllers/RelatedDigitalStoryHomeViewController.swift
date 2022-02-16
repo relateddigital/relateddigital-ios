@@ -84,7 +84,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
         } else {
             
             if self.storyAction.clickQueryItems.count > 0 {
-                RelatedDigital.callAPI().customEvent(RelatedDigitalConstants.omEvtGif, properties: self.storyAction.clickQueryItems)
+                RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: self.storyAction.clickQueryItems)
             }
             let story = self.storyAction.stories[indexPath.row]
             if let storyLink = story.link, let storyUrl = URL(string: storyLink) {

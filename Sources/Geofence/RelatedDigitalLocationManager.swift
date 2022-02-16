@@ -105,7 +105,7 @@ class RelatedDigitalLocationManager: NSObject {
         if authorizationStatus != lastKnownCLAuthorizationStatus {
             var properties = [String: String]()
             properties[RelatedDigitalConstants.locationPermissionReqKey] = authorizationStatus.queryStringValue
-            RelatedDigital.callAPI().customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+            RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
             lastKnownCLAuthorizationStatus = authorizationStatus
         }
         if !geofenceEnabled {

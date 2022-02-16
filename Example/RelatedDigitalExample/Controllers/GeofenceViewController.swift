@@ -111,8 +111,8 @@ class GeofenceViewController: FormViewController {
 
     private func refreshData(firstTime: Bool = false) {
         relatedDigitalGeofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
-        locationServicesEnabledForDeviceRow.value = RelatedDigital.callAPI().locationServicesEnabledForDevice ? "YES" : "NO"
-        let state = RelatedDigital.callAPI().locationServiceStateStatusForApplication
+        locationServicesEnabledForDeviceRow.value = RelatedDigital.locationServicesEnabledForDevice ? "YES" : "NO"
+        let state = RelatedDigital.locationServiceStateStatusForApplication
         locationServiceStatusForAppRow.value = String(describing: state)
         let time = relatedDigitalGeofenceHistory.lastFetchTime
         lastFetchTimeRow.value = dateFormatter.string(from: time ?? Date(timeIntervalSince1970: 0))
