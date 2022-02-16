@@ -58,6 +58,9 @@ class RelatedDigitalLogger {
 
     class func addLogging(_ logging: RelatedDigitalLogging) {
         readWriteLock.write {
+            if loggers.count > 0 {
+                return
+            }
             loggers.append(logging)
         }
     }

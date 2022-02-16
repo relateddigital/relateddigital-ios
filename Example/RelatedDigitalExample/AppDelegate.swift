@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         RelatedDigital.initialize(organizationId: "676D325830564761676D453D", profileId: "356467332F6533766975593D",
                                   dataSource: "visistore", launchOptions: launchOptions)
         RelatedDigital.loggingEnabled = true
+        RelatedDigital.inAppNotificationsEnabled = true
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white

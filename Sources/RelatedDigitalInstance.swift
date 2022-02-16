@@ -18,6 +18,7 @@ protocol RelatedDigitalInstanceProtocol {
     var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus { get }
     var inappButtonDelegate: RelatedDigitalInappButtonDelegate? { get set }
     var loggingEnabled: Bool { get set }
+    var inAppNotificationsEnabled: Bool { get set }
     func requestIDFA()
     func sendLocationPermission()
     func customEvent(_ pageName: String, properties: [String: String])
@@ -50,9 +51,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol, CustomDebug
     var networkQueue: DispatchQueue!
     let readWriteLock: RelatedDigitalReadWriteLock
     private var observers: [NSObjectProtocol]? = []
-    
-    // TO_DO: www.relateddigital.com ı değiştirmeli miyim?
-    static let reachability = SCNetworkReachabilityCreateWithName(nil, "www.relateddigital.com")
+
     
     let relatedDigitalEventInstance: RelatedDigitalEvent
     let relatedDigitalSendInstance: RelatedDigitalSend
@@ -68,12 +67,23 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol, CustomDebug
     public var loggingEnabled: Bool = false {
         didSet {
             if loggingEnabled {
+                RelatedDigitalLogger.addLogging(RelatedDigitalPrintLogging())
                 RelatedDigitalLogger.enableLevels([.debug, .info, .warning, .error])
                 RelatedDigitalLogger.info("Logging Enabled")
             } else {
                 RelatedDigitalLogger.info("Logging Disabled")
                 RelatedDigitalLogger.disableLevels([.debug, .info, .warning, .error])
             }
+        }
+    }
+    
+    public var inAppNotificationsEnabled: Bool {
+        get {
+            return relatedDigitalProfile.inAppNotificationsEnabled
+        }
+        set {
+            relatedDigitalProfile.inAppNotificationsEnabled = newValue
+            RelatedDigitalPersistence.saveRelatedDigitalProfile(relatedDigitalProfile)
         }
     }
     
@@ -89,46 +99,15 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol, CustomDebug
     public weak var inappButtonDelegate: RelatedDigitalInappButtonDelegate?
     
     // swiftlint:disable function_body_length
-    init(organizationId: String,
-         profileId: String,
-         dataSource: String,
-         inAppNotificationsEnabled: Bool,
-         channel: String,
-         requestTimeoutInSeconds: Int,
-         geofenceEnabled: Bool,
-         maxGeofenceCount: Int,
-         isIDFAEnabled: Bool = false) {
+    init(organizationId: String, profileId: String, dataSource: String) {
+        
+        relatedDigitalProfile = RelatedDigitalPersistence.readRelatedDigitalProfile() ?? RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, channel: "IOS", requestTimeoutInSeconds: 30, geofenceEnabled: false, inAppNotificationsEnabled: false, maxGeofenceCount: 20, isIDFAEnabled: false)
+        relatedDigitalProfile.organizationId = organizationId
+        relatedDigitalProfile.profileId = profileId
+        relatedDigitalProfile.dataSource = dataSource
+ 
         
         
-        // TO_DO: bu reachability doğru çalışıyor mu kontrol et
-        if let reachability = RelatedDigitalInstance.reachability {
-            var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil,
-                                                       release: nil, copyDescription: nil)
-            
-            func reachabilityCallback(reachability: SCNetworkReachability,
-                                      flags: SCNetworkReachabilityFlags,
-                                      unsafePointer: UnsafeMutableRawPointer?) {
-                let wifi = flags.contains(SCNetworkReachabilityFlags.reachable)
-                && !flags.contains(SCNetworkReachabilityFlags.isWWAN)
-                RelatedDigitalLogger.info("reachability changed, wifi=\(wifi)")
-            }
-            if SCNetworkReachabilitySetCallback(reachability, reachabilityCallback, &context) {
-                if !SCNetworkReachabilitySetDispatchQueue(reachability, trackingQueue) {
-                    // cleanup callback if setting dispatch queue failed
-                    SCNetworkReachabilitySetCallback(reachability, nil, nil)
-                }
-            }
-        }
-        
-        relatedDigitalProfile = RelatedDigitalProfile(organizationId: organizationId,
-                                                      profileId: profileId,
-                                                      dataSource: dataSource,
-                                                      channel: channel,
-                                                      requestTimeoutInSeconds: requestTimeoutInSeconds,
-                                                      geofenceEnabled: geofenceEnabled,
-                                                      inAppNotificationsEnabled: inAppNotificationsEnabled,
-                                                      maxGeofenceCount: (maxGeofenceCount < 0 && maxGeofenceCount > 20) ? 20 : maxGeofenceCount,
-                                                      isIDFAEnabled: isIDFAEnabled)
         RelatedDigitalPersistence.saveRelatedDigitalProfile(relatedDigitalProfile)
         
         readWriteLock = RelatedDigitalReadWriteLock(label: "RelatedDigitalInstanceLock")
@@ -162,7 +141,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol, CustomDebug
             RelatedDigitalPersistence.archiveUser(relatedDigitalUser)
         }
         
-        if isIDFAEnabled {
+        if relatedDigitalProfile.isIDFAEnabled {
             RelatedDigitalHelper.getIDFA { uuid in
                 if let idfa = uuid {
                     self.relatedDigitalUser.identifierForAdvertising = idfa
@@ -203,15 +182,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol, CustomDebug
     
     convenience init?() {
         if let relatedDigitalProfile = RelatedDigitalPersistence.readRelatedDigitalProfile() {
-            self.init(organizationId: relatedDigitalProfile.organizationId,
-                      profileId: relatedDigitalProfile.profileId,
-                      dataSource: relatedDigitalProfile.dataSource,
-                      inAppNotificationsEnabled: relatedDigitalProfile.inAppNotificationsEnabled,
-                      channel: relatedDigitalProfile.channel,
-                      requestTimeoutInSeconds: relatedDigitalProfile.requestTimeoutInSeconds,
-                      geofenceEnabled: relatedDigitalProfile.geofenceEnabled,
-                      maxGeofenceCount: relatedDigitalProfile.maxGeofenceCount,
-                      isIDFAEnabled: relatedDigitalProfile.isIDFAEnabled)
+            self.init(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource)
         } else {
             return nil
         }
@@ -430,9 +401,7 @@ extension RelatedDigitalInstance {
 // MARK: - PERSISTENCE
 
 extension RelatedDigitalInstance {
-    private func archive() {
-    }
-    
+
     // TO_DO: kontrol et sıra doğru mu? gelen değerler null ise set'lemeli miyim?
     private func unarchive() -> RelatedDigitalUser {
         return RelatedDigitalPersistence.unarchiveUser()

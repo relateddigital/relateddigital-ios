@@ -110,7 +110,7 @@ public class RelatedDigital {
             fatalError("organizationId, profileId and dataSource must have value.")
         }
         
-        _shared = RelatedDigital(instance: RelatedDigitalInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource, inAppNotificationsEnabled: false, channel: "IOS", requestTimeoutInSeconds: 30, geofenceEnabled: false, maxGeofenceCount: 20))
+        _shared = RelatedDigital(instance: RelatedDigitalInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource))
         
     }
     
@@ -150,6 +150,15 @@ public class RelatedDigital {
         }
         set {
             shared.relatedDigitalInstance.loggingEnabled = newValue
+        }
+    }
+    
+    public static var inAppNotificationsEnabled: Bool {
+        get {
+            return shared.relatedDigitalInstance.inAppNotificationsEnabled
+        }
+        set {
+            shared.relatedDigitalInstance.inAppNotificationsEnabled = newValue
         }
     }
     

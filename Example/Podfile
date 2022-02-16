@@ -1,8 +1,8 @@
-platform :ios, '10.0'
+platform :ios, '11.0'
 
 target 'RelatedDigitalExample' do
   use_frameworks!
- pod 'RelatedDigitalIOS', :path => '../'
+  pod 'RelatedDigitalIOS', :path => '../'
   pod 'CleanyModal'
 end
 
