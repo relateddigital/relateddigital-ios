@@ -6,7 +6,9 @@
 //
 
 import XCTest
+
 @testable import RelatedDigitalExample
+@testable import RelatedDigitalIOS
 
 class RelatedDigitalExampleTests: XCTestCase {
 
@@ -18,9 +20,9 @@ class RelatedDigitalExampleTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testRelatedDigitalInitializeInAppNotificationsEnabledFalse() throws {
+        RelatedDigital.initialize(organizationId: "oid", profileId: "pid", dataSource: "ds", launchOptions: nil)
+        XCTAssertFalse(RelatedDigital.inAppNotificationsEnabled)
     }
 
     func testPerformanceExample() throws {

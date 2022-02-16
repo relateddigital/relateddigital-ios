@@ -6,4 +6,10 @@ target 'RelatedDigitalExample' do
   pod 'CleanyModal'
 end
 
+target 'RelatedDigitalExampleTests' do
+  use_frameworks!
+  pod 'RelatedDigitalIOS', :path => '../'
+  pod 'CleanyModal'
+end
+
 

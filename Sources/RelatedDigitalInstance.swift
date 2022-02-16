@@ -60,7 +60,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol, CustomDebug
     let relatedDigitalRemoteConfigInstance: RelatedDigitalRemoteConfig
     
     public var debugDescription: String {
-        return "Visilabs(siteId : \(relatedDigitalProfile.profileId)" +
+        return "RelatedDigital(siteId : \(relatedDigitalProfile.profileId)" +
         "organizationId: \(relatedDigitalProfile.organizationId)"
     }
     

@@ -20,6 +20,34 @@
                ReferencedContainer = "container:RelatedDigitalExample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "88680B1E2694FC0D004B8DE8"
+               BuildableName = "RelatedDigitalExampleTests.xctest"
+               BlueprintName = "RelatedDigitalExampleTests"
+               ReferencedContainer = "container:RelatedDigitalExample.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "88680B292694FC0D004B8DE8"
+               BuildableName = "RelatedDigitalExampleUITests.xctest"
+               BlueprintName = "RelatedDigitalExampleUITests"
+               ReferencedContainer = "container:RelatedDigitalExample.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
