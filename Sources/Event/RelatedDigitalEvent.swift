@@ -25,38 +25,38 @@ class RelatedDigitalEvent {
                                           clearUserParameters: Bool,
                                           channel: String) {
         var props = properties
-        var vUser = updateSessionParameters(pageName: pageName, rdUser: rdUser)
+        var user = updateSessionParameters(pageName: pageName, rdUser: rdUser)
         var chan = channel
         var clearUserParameters = false
         let actualTimeOfevent = Int(Date().timeIntervalSince1970)
         
         if let cookieId = props[RelatedDigitalConstants.cookieIdKey] {
-            if vUser.cookieId != cookieId {
+            if user.cookieId != cookieId {
                 clearUserParameters = true
             }
-            vUser.cookieId = cookieId
+            user.cookieId = cookieId
             props.removeValue(forKey: RelatedDigitalConstants.cookieIdKey)
         }
         
         if let exVisitorId = props[RelatedDigitalConstants.exvisitorIdKey] {
-            if vUser.exVisitorId != exVisitorId {
+            if user.exVisitorId != exVisitorId {
                 clearUserParameters = true
             }
-            if vUser.exVisitorId != nil && vUser.exVisitorId != exVisitorId {
+            if user.exVisitorId != nil && user.exVisitorId != exVisitorId {
                 // TO_DO: burada cookieId generate etmek doğru mu tekrar kontrol et
-                vUser.cookieId = RelatedDigitalHelper.generateCookieId()
+                user.cookieId = RelatedDigitalHelper.generateCookieId()
             }
-            vUser.exVisitorId = exVisitorId
+            user.exVisitorId = exVisitorId
             props.removeValue(forKey: RelatedDigitalConstants.exvisitorIdKey)
         }
         
         if let tokenId = props[RelatedDigitalConstants.tokenIdKey] {
-            vUser.tokenId = tokenId
+            user.tokenId = tokenId
             props.removeValue(forKey: RelatedDigitalConstants.tokenIdKey)
         }
         
         if let appId = props[RelatedDigitalConstants.appidKey] {
-            vUser.appId = appId
+            user.appId = appId
             props.removeValue(forKey: RelatedDigitalConstants.appidKey)
         }
         
@@ -76,32 +76,32 @@ class RelatedDigitalEvent {
         
         props[RelatedDigitalConstants.organizationIdKey] = self.rdProfile.organizationId
         props[RelatedDigitalConstants.profileIdKey] = self.rdProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = vUser.cookieId ?? ""
+        props[RelatedDigitalConstants.cookieIdKey] = user.cookieId ?? ""
         props[RelatedDigitalConstants.channelKey] = chan
         if let pageNm = pageName {
             props[RelatedDigitalConstants.uriKey] = pageNm
         }
         props[RelatedDigitalConstants.mobileApplicationKey] = RelatedDigitalConstants.isTrue
-        props[RelatedDigitalConstants.mobileIdKey] = vUser.identifierForAdvertising ?? ""
+        props[RelatedDigitalConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.ios
-        props[RelatedDigitalConstants.mobileSdkVersion] = vUser.sdkVersion
-        props[RelatedDigitalConstants.mobileAppVersion] = vUser.appVersion
+        props[RelatedDigitalConstants.mobileSdkVersion] = user.sdkVersion
+        props[RelatedDigitalConstants.mobileAppVersion] = user.appVersion
         
-        props[RelatedDigitalConstants.nrvKey] = String(vUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(vUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(vUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = vUser.lvt
+        props[RelatedDigitalConstants.nrvKey] = String(user.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(user.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(user.tvc)
+        props[RelatedDigitalConstants.lvtKey] = user.lvt
         
-        if !vUser.exVisitorId.isNilOrWhiteSpace {
-            props[RelatedDigitalConstants.exvisitorIdKey] = vUser.exVisitorId
+        if !user.exVisitorId.isNilOrWhiteSpace {
+            props[RelatedDigitalConstants.exvisitorIdKey] = user.exVisitorId
         }
         
-        if !vUser.tokenId.isNilOrWhiteSpace {
-            props[RelatedDigitalConstants.tokenIdKey] = vUser.tokenId
+        if !user.tokenId.isNilOrWhiteSpace {
+            props[RelatedDigitalConstants.tokenIdKey] = user.tokenId
         }
         
-        if !vUser.appId.isNilOrWhiteSpace {
-            props[RelatedDigitalConstants.appidKey] = vUser.appId
+        if !user.appId.isNilOrWhiteSpace {
+            props[RelatedDigitalConstants.appidKey] = user.appId
         }
         
         props[RelatedDigitalConstants.datKey] = String(actualTimeOfevent)
@@ -113,7 +113,7 @@ class RelatedDigitalEvent {
             eQueue.remove(at: 0)
         }
         
-        return (eQueue, vUser, clearUserParameters, chan)
+        return (eQueue, user, clearUserParameters, chan)
     }
     
     private func updateSessionParameters(pageName: String?, rdUser: RelatedDigitalUser) -> RelatedDigitalUser {

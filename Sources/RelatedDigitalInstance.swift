@@ -37,13 +37,12 @@ protocol RelatedDigitalInstanceProtocol {
     func getFavoriteAttributeActions(actionId: Int?, completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void))
 }
 
-
 public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RelatedDigitalUser()
     var rdProfile: RelatedDigitalProfile
-    var relatedDigitalCookie = RelatedDigitalCookie()
+    var rdCookie = RelatedDigitalCookie()
     var eventsQueue = Queue()
     var trackingQueue: DispatchQueue!
     var targetingActionQueue: DispatchQueue!
@@ -52,12 +51,11 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     let readWriteLock: RelatedDigitalReadWriteLock
     private var observers: [NSObjectProtocol]? = []
 
-    
-    let relatedDigitalEventInstance: RelatedDigitalEvent
-    let relatedDigitalSendInstance: RelatedDigitalSend
-    let relatedDigitalTargetingActionInstance: RelatedDigitalTargetingAction
-    let relatedDigitalRecommendationInstance: RelatedDigitalRecommendation
-    let relatedDigitalRemoteConfigInstance: RelatedDigitalRemoteConfig
+    let rdEventInstance: RelatedDigitalEvent
+    let rdSendInstance: RelatedDigitalSend
+    let rdTargetingActionInstance: RelatedDigitalTargetingAction
+    let rdRecommendationInstance: RelatedDigitalRecommendation
+    let rdRemoteConfigInstance: RelatedDigitalRemoteConfig
     
     public var loggingEnabled: Bool = false {
         didSet {
@@ -107,11 +105,11 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
         targetingActionQueue = DispatchQueue(label: "\(label).targetingaction)", qos: .utility)
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
-        relatedDigitalEventInstance = RelatedDigitalEvent(rdProfile: rdProfile)
-        relatedDigitalSendInstance = RelatedDigitalSend()
-        relatedDigitalTargetingActionInstance = RelatedDigitalTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
-        relatedDigitalRecommendationInstance = RelatedDigitalRecommendation(relatedDigitalProfile: rdProfile)
-        relatedDigitalRemoteConfigInstance = RelatedDigitalRemoteConfig(profileId: rdProfile.profileId)
+        rdEventInstance = RelatedDigitalEvent(rdProfile: rdProfile)
+        rdSendInstance = RelatedDigitalSend()
+        rdTargetingActionInstance = RelatedDigitalTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
+        rdRecommendationInstance = RelatedDigitalRecommendation(relatedDigitalProfile: rdProfile)
+        rdRemoteConfigInstance = RelatedDigitalRemoteConfig(profileId: rdProfile.profileId)
         
         
         RelatedDigitalHelper.setEndpoints(dataSource: rdProfile.dataSource)
@@ -140,7 +138,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
             startGeofencing()
         }
 
-        relatedDigitalTargetingActionInstance.inAppDelegate = self
+        rdTargetingActionInstance.inAppDelegate = self
         
         
         
@@ -269,7 +267,7 @@ extension RelatedDigitalInstance {
                 user = self.rdUser
                 chan = self.rdProfile.channel
             }
-            let result = self.relatedDigitalEventInstance.customEvent(pageName: pageName,
+            let result = self.rdEventInstance.customEvent(pageName: pageName,
                                                                       properties: properties,
                                                                       eventsQueue: eQueue,
                                                                       rdUser: user,
@@ -315,7 +313,7 @@ extension RelatedDigitalInstance {
                 user = strongSelf.rdUser
                 chan = strongSelf.rdProfile.channel
             }
-            let result = strongSelf.relatedDigitalEventInstance.customEvent(properties: properties,
+            let result = strongSelf.rdEventInstance.customEvent(properties: properties,
                                                                             eventsQueue: eQueue,
                                                                             rdUser: user,
                                                                             channel: chan)
@@ -401,22 +399,22 @@ extension RelatedDigitalInstance {
             self?.networkQueue.async { [weak self] in
                 guard let self = self else { return }
                 var eQueue = Queue()
-                var vUser = RelatedDigitalUser()
+                var user = RelatedDigitalUser()
                 var vCookie = RelatedDigitalCookie()
                 self.readWriteLock.read {
                     eQueue = self.eventsQueue
-                    vUser = self.rdUser
-                    vCookie = self.relatedDigitalCookie
+                    user = self.rdUser
+                    vCookie = self.rdCookie
                 }
                 self.readWriteLock.write {
                     self.eventsQueue.removeAll()
                 }
-                let cookie = self.relatedDigitalSendInstance.sendEventsQueue(eQueue,
-                                                                             rdUser: vUser,
+                let cookie = self.rdSendInstance.sendEventsQueue(eQueue,
+                                                                             rdUser: user,
                                                                              relatedDigitalCookie: vCookie,
                                                                              timeoutInterval: self.rdProfile.requestTimeoutInterval)
                 self.readWriteLock.write {
-                    self.relatedDigitalCookie = cookie
+                    self.rdCookie = cookie
                 }
             }
         }
@@ -445,7 +443,7 @@ extension RelatedDigitalInstance {
                 self.readWriteLock.read {
                     user = self.rdUser
                 }
-                self.relatedDigitalTargetingActionInstance.getFavorites(rdUser: user,
+                self.rdTargetingActionInstance.getFavorites(rdUser: user,
                                                                         actionId: actionId,
                                                                         completion: completion)
             }
@@ -458,11 +456,11 @@ extension RelatedDigitalInstance {
 extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
     // This method added for test purposes
     public func showNotification(_ relatedDigitalInAppNotification: RelatedDigitalInAppNotification) {
-        relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(relatedDigitalInAppNotification)
+        rdTargetingActionInstance.notificationsInstance.showNotification(relatedDigitalInAppNotification)
     }
     
     public func showTargetingAction(_ model: TargetingActionViewModel) {
-        relatedDigitalTargetingActionInstance.notificationsInstance.showTargetingAction(model)
+        rdTargetingActionInstance.notificationsInstance.showTargetingAction(model)
     }
     
     func checkInAppNotification(properties: [String: String]) {
@@ -470,12 +468,12 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, properties] in
                 guard let self = self else { return }
-                self.relatedDigitalTargetingActionInstance.checkInAppNotification(properties: properties,
+                self.rdTargetingActionInstance.checkInAppNotification(properties: properties,
                                                                                   rdUser: self.rdUser,
                                                                                   completion: { relatedDigitalInAppNotification in
                     if let notification = relatedDigitalInAppNotification {
-                        self.relatedDigitalTargetingActionInstance.notificationsInstance.inappButtonDelegate = self.inappButtonDelegate
-                        self.relatedDigitalTargetingActionInstance.notificationsInstance.showNotification(notification)
+                        self.rdTargetingActionInstance.notificationsInstance.inappButtonDelegate = self.inappButtonDelegate
+                        self.rdTargetingActionInstance.notificationsInstance.showNotification(notification)
                     }
                 })
             }
@@ -509,7 +507,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, properties] in
                 guard let self = self else { return }
-                self.relatedDigitalTargetingActionInstance.checkTargetingActions(properties: properties, relatedDigitalUser: self.rdUser, completion: { model in
+                self.rdTargetingActionInstance.checkTargetingActions(properties: properties, relatedDigitalUser: self.rdUser, completion: { model in
                     if let targetingAction = model {
                         self.showTargetingAction(targetingAction)
                     }
@@ -549,8 +547,8 @@ extension RelatedDigitalInstance {
         let storyHomeViewController = RelatedDigitalStoryHomeViewController()
         storyHomeViewController.urlDelegate = urlDelegate
         storyHomeView.controller = storyHomeViewController
-        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
-        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
+        rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
+        rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
         
@@ -558,7 +556,7 @@ extension RelatedDigitalInstance {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, actionId, guid] in
                 guard let self = self else { return }
-                self.relatedDigitalTargetingActionInstance.getStories(rdUser: self.rdUser,
+                self.rdTargetingActionInstance.getStories(rdUser: self.rdUser,
                                                                       guid: guid,
                                                                       actionId: actionId,
                                                                       completion: { response in
@@ -567,8 +565,8 @@ extension RelatedDigitalInstance {
                         completion(nil)
                     } else {
                         if let guid = response.guid, response.storyActions.count > 0,
-                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
-                           let storyHomeView = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
+                           let storyHomeViewController = self.rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
+                           let storyHomeView = self.rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
                             DispatchQueue.main.async {
                                 storyHomeViewController.loadStoryAction(response.storyActions.first!)
                                 storyHomeView.collectionView.reloadData()
@@ -597,8 +595,8 @@ extension RelatedDigitalInstance {
         let storyHomeViewController = RelatedDigitalStoryHomeViewController()
         storyHomeViewController.urlDelegate = urlDelegate
         storyHomeView.controller = storyHomeViewController
-        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
-        relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
+        rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
+        rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
         
@@ -606,7 +604,7 @@ extension RelatedDigitalInstance {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, actionId, guid] in
                 guard let self = self else { return }
-                self.relatedDigitalTargetingActionInstance.getStories(rdUser: self.rdUser,
+                self.rdTargetingActionInstance.getStories(rdUser: self.rdUser,
                                                                       guid: guid,
                                                                       actionId: actionId,
                                                                       completion: { response in
@@ -614,8 +612,8 @@ extension RelatedDigitalInstance {
                         RelatedDigitalLogger.error(error)
                     } else {
                         if let guid = response.guid, response.storyActions.count > 0,
-                           let storyHomeViewController = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
-                           let storyHomeView = self.relatedDigitalTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
+                           let storyHomeViewController = self.rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
+                           let storyHomeView = self.rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
                             DispatchQueue.main.async {
                                 storyHomeViewController.loadStoryAction(response.storyActions.first!)
                                 storyHomeView.collectionView.reloadData()
@@ -655,7 +653,7 @@ extension RelatedDigitalInstance {
                     user = self.rdUser
                     channel = self.rdProfile.channel
                 }
-                self.relatedDigitalRecommendationInstance.recommend(zoneId: zoneId,
+                self.rdRecommendationInstance.recommend(zoneId: zoneId,
                                                                     productCode: productCode,
                                                                     relatedDigitalUser: user,
                                                                     channel: channel,
@@ -747,11 +745,11 @@ extension RelatedDigitalInstance {
 extension RelatedDigitalInstance {
     
     @objc private func applicationDidBecomeActive(_ notification: Notification) {
-        relatedDigitalRemoteConfigInstance.applicationDidBecomeActive()
+        rdRemoteConfigInstance.applicationDidBecomeActive()
     }
     
     @objc private func applicationWillResignActive(_ notification: Notification) {
-        relatedDigitalRemoteConfigInstance.applicationWillResignActive()
+        rdRemoteConfigInstance.applicationWillResignActive()
     }
 }
 
