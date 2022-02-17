@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
+class SpinToWinViewController: RDBaseNotificationViewController {
     
     weak var webView: WKWebView!
     var subsEmail = ""

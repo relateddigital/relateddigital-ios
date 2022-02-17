@@ -1,43 +1,40 @@
 //
-//  RelatedDigitalBaseNotificationViewController.swift
-//  VisilabsIOS
+//  RDBaseNotificationViewController.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 12.05.2020.
+//  Created by Egemen Gülkılık on 14.11.2021.
 //
 
 import UIKit
 
-protocol RelatedDigitalNotificationViewControllerDelegate: AnyObject {
+protocol RDNotificationViewControllerDelegate: AnyObject {
     @discardableResult
-    func notificationShouldDismiss(controller: RelatedDigitalBaseViewProtocol,
-                                   callToActionURL: URL?,
-                                   shouldTrack: Bool,
-                                   additionalTrackingProperties: Properties?) -> Bool
+    func notificationShouldDismiss(controller: RDBaseViewControllerProtocol, callToActionURL: URL?, shouldTrack: Bool, additionalTrackingProperties: Properties?) -> Bool
 }
 
-public protocol RelatedDigitalBaseViewProtocol {
+public protocol RDBaseViewControllerProtocol {
     var notification: RDInAppNotification? { get set }
     func hide(animated: Bool, completion: @escaping () -> Void)
 }
 
-public class RelatedDigitalBasePageViewController: UIPageViewController, RelatedDigitalBaseViewProtocol {
+public class RDBasePageViewController: UIPageViewController, RDBaseViewControllerProtocol {
     public func hide(animated: Bool, completion: @escaping () -> Void) {
         
     }
     
-    weak var relatedDigitalDelegate: RelatedDigitalNotificationViewControllerDelegate?
+    weak var rdDelegate: RDNotificationViewControllerDelegate?
     public var notification: RDInAppNotification? = nil
 }
 
-class RelatedDigitalBaseNotificationViewController: UIViewController, RelatedDigitalBaseViewProtocol {
+class RDBaseNotificationViewController: UIViewController, RDBaseViewControllerProtocol {
     
     var notification: RDInAppNotification?
     var mailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
     var spinToWin: SpinToWinViewModel?
-    var productStatNotifier: RelatedDigitalProductStatNotifierViewModel?
+    var productStatNotifier: RDProductStatNotifierViewModel?
     
-    weak var delegate: RelatedDigitalNotificationViewControllerDelegate?
+    weak var delegate: RDNotificationViewControllerDelegate?
     weak var inappButtonDelegate: RDInappButtonDelegate?
     var window: UIWindow?
     var panStartPoint: CGPoint!

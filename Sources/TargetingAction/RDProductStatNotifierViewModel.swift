@@ -1,17 +1,17 @@
 //
-//  VisilabsProductStatNotifierViewModel.swift
-//  VisilabsIOS
+//  RDProductStatNotifierViewModel.swift
+//  RelatedDigitalIOS
 //
-//  Created by Said Alır on 21.02.2021.
+//  Created by Said Alır on 21.05.2021.
 //
 
 import UIKit
 
-public struct RelatedDigitalProductStatNotifierViewModel: TargetingActionViewModel {
+public struct RDProductStatNotifierViewModel: TargetingActionViewModel {
     public var targetingActionType: TargetingActionType
     var content: String
     var timeout: String
-    var position: RelatedDigitalProductStatNotifierPosition
+    var position: RDProductStatNotifierPosition
     var bgcolor: String
     var threshold: Int // TODO: kullanmayalım
     var showclosebtn: Bool

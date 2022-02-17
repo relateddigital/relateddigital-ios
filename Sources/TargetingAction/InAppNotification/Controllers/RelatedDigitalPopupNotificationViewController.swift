@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificationViewController {
+class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewController {
     /// First init flag
     fileprivate var initialized = false
     weak var relatedDigitalInAppNotification: RDInAppNotification?
@@ -27,7 +27,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
     fileprivate var presentationManager: RelatedDigitalPresentationManager!
 
     /// Interactor class for pan gesture dismissal
-    fileprivate lazy var interactor = RelatedDigitalInteractiveTransition()
+    fileprivate lazy var interactor = RDInteractiveTransition()
 
     /// Returns the controllers view
     internal var popupContainerView: RelatedDigitalPopupDialogContainerView {
@@ -274,7 +274,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
         // Allow for dialog dismissal on dialog pan gesture
         if panGestureDismissal {
             let panRecognizer = UIPanGestureRecognizer(target: interactor,
-                                                       action: #selector(RelatedDigitalInteractiveTransition.handlePan))
+                                                       action: #selector(RDInteractiveTransition.handlePan))
             panRecognizer.cancelsTouchesInView = false
             popupContainerView.stackView.addGestureRecognizer(panRecognizer)
         }

@@ -44,7 +44,7 @@ final public class RelatedDigitalPopupDialogOverlayView: UIView {
 
 
 
-class RelatedDigitalBlurView: UIView {
+class RDBlurView: UIView {
 
     var blurPresentDuration: TimeInterval = 0.5
     var blurPresentDelay: TimeInterval = 0

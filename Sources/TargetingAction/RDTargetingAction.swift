@@ -12,7 +12,7 @@ class RDTargetingAction {
     let rdProfile: RDProfile
 
     required init(lock: RDReadWriteLock, rdProfile: RDProfile) {
-        self.notificationsInstance = RelatedDigitalInAppNotifications(lock: lock)
+        self.notificationsInstance = RDInAppNotifications(lock: lock)
         self.rdProfile = rdProfile
     }
 
@@ -24,9 +24,9 @@ class RDTargetingAction {
 
     // MARK: - InApp Notifications
 
-    var notificationsInstance: RelatedDigitalInAppNotifications
+    var notificationsInstance: RDInAppNotifications
 
-    var inAppDelegate: RelatedDigitalInAppNotificationsDelegate? {
+    var inAppDelegate: RDInAppNotificationsDelegate? {
         get {
             return notificationsInstance.delegate
         }
@@ -253,14 +253,14 @@ class RDTargetingAction {
 
     // MARK: ProductStatNotifier
 
-    private func parseProductStatNotifier(_ productStatNotifier: [String: Any?]) -> RelatedDigitalProductStatNotifierViewModel? {
+    private func parseProductStatNotifier(_ productStatNotifier: [String: Any?]) -> RDProductStatNotifierViewModel? {
         guard let actionData = productStatNotifier[RDConstants.actionData] as? [String: Any] else { return nil }
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
         let content = actionData[RDConstants.content] as? String ?? ""
         let timeout = actionData[RDConstants.timeout] as? String ?? ""
-        var position = RelatedDigitalProductStatNotifierPosition.bottom
-        if let positionString = actionData[RDConstants.pos] as? String, let pos = RelatedDigitalProductStatNotifierPosition.init(rawValue: positionString) {
+        var position = RDProductStatNotifierPosition.bottom
+        if let positionString = actionData[RDConstants.pos] as? String, let pos = RDProductStatNotifierPosition.init(rawValue: positionString) {
             position = pos
         }
         let bgcolor = actionData[RDConstants.bgcolor] as? String ?? ""
@@ -275,7 +275,7 @@ class RDTargetingAction {
         let contentcount_text_size = extendedProps[RDConstants.contentcount_text_size] as? String ?? ""
         let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
         
-        var productStatNotifier = RelatedDigitalProductStatNotifierViewModel(targetingActionType: .productStatNotifier, content: content, timeout: timeout, position: position, bgcolor: bgcolor, threshold: threshold, showclosebtn: showclosebtn, content_text_color: content_text_color, content_font_family: content_font_family, content_text_size: content_text_size, contentcount_text_color: contentcount_text_color, contentcount_text_size: contentcount_text_size, closeButtonColor: closeButtonColor)
+        var productStatNotifier = RDProductStatNotifierViewModel(targetingActionType: .productStatNotifier, content: content, timeout: timeout, position: position, bgcolor: bgcolor, threshold: threshold, showclosebtn: showclosebtn, content_text_color: content_text_color, content_font_family: content_font_family, content_text_size: content_text_size, contentcount_text_color: contentcount_text_color, contentcount_text_size: contentcount_text_size, closeButtonColor: closeButtonColor)
         productStatNotifier.setAttributedString()
         return productStatNotifier
     }

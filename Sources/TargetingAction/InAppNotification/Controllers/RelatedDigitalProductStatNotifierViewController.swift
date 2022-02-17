@@ -7,10 +7,10 @@
 
 import UIKit
 
-class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotificationViewController {
+class RelatedDigitalProductStatNotifierViewController: RDBaseNotificationViewController {
     
     
-    var notifier: RelatedDigitalProductStatNotifierViewModel! {
+    var notifier: RDProductStatNotifierViewModel! {
         return super.productStatNotifier
     }
     
@@ -21,7 +21,7 @@ class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotific
     var position: CGPoint!
 
     
-    init(productStatNotifier: RelatedDigitalProductStatNotifierViewModel) {
+    init(productStatNotifier: RDProductStatNotifierViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.productStatNotifier = productStatNotifier
         relatedDigitalProductStatNotifierView = RelatedDigitalProductStatNotifierView(frame: UIScreen.main.bounds, productStatNotifier: productStatNotifier)

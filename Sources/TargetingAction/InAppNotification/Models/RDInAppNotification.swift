@@ -79,7 +79,7 @@ public class RDInAppNotification {
     let promotionBackgroundColor: UIColor?
     let numberColors: [UIColor]?
     let waitingTime: Int?
-    let secondPopupType: RelatedDigitalSecondPopupType?
+    let secondPopupType: RDSecondPopupType?
     let secondPopupTitle: String?
     let secondPopupBody: String?
     let secondPopupBodyTextSize: String?
@@ -88,9 +88,9 @@ public class RDInAppNotification {
     let secondImageUrlString2: String?
     let secondPopupMinPoint: String?
     let previousPopupPoint: Double?
-    let position: RelatedDigitalHalfScreenPosition?
+    let position: RDHalfScreenPosition?
     let closePopupActionType : String?
-    public var carouselItems: [RelatedDigitalCarouselItem] = [RelatedDigitalCarouselItem]()
+    public var carouselItems: [RDCarouselItem] = [RDCarouselItem]()
 
     var imageUrl: URL?
     lazy var image: Data? = {
@@ -167,7 +167,7 @@ public class RDInAppNotification {
                 promotionBackgroundColor: String?,
                 numberColors: [String]?,
                 waitingTime: Int?,
-                secondPopupType: RelatedDigitalSecondPopupType?,
+                secondPopupType: RDSecondPopupType?,
                 secondPopupTitle: String?,
                 secondPopupBody: String?,
                 secondPopupBodyTextSize: String?,
@@ -176,8 +176,8 @@ public class RDInAppNotification {
                 secondImageUrlString2: String?,
                 secondPopupMinPoint: String?,
                 previousPopupPoint: Double? = nil,
-                position: RelatedDigitalHalfScreenPosition?,
-                carouselItems: [RelatedDigitalCarouselItem]? = nil) {
+                position: RDHalfScreenPosition?,
+                carouselItems: [RDCarouselItem]? = nil) {
 
         self.actId = actId
         self.messageType = type.rawValue
@@ -332,7 +332,7 @@ public class RDInAppNotification {
 
         // Second Popup Variables
         if let secondType = actionData[PayloadKey.secondPopupType] as? String {
-            self.secondPopupType = RelatedDigitalSecondPopupType.init(rawValue: secondType)
+            self.secondPopupType = RDSecondPopupType.init(rawValue: secondType)
         } else {
             self.secondPopupType = nil
         }
@@ -352,23 +352,23 @@ public class RDInAppNotification {
         self.previousPopupPoint = nil
         
         if let positionString = actionData[PayloadKey.position] as? String
-            , let position = RelatedDigitalHalfScreenPosition.init(rawValue: positionString) {
+            , let position = RDHalfScreenPosition.init(rawValue: positionString) {
             self.position = position
         } else {
             self.position = .bottom
         }
         
-        var carouselItems = [RelatedDigitalCarouselItem]()
+        var carouselItems = [RDCarouselItem]()
         
         if let carouselItemObjects = actionData[PayloadKey.carouselItems] as? [[String: Any]] {
             for carouselItemObject in carouselItemObjects {
-                if let carouselItem = RelatedDigitalCarouselItem.init(JSONObject: carouselItemObject) {
+                if let carouselItem = RDCarouselItem.init(JSONObject: carouselItemObject) {
                     carouselItems.append(carouselItem)
                 }
             }
         }
         
-        self.carouselItems = carouselItems.map { (item) -> RelatedDigitalCarouselItem in
+        self.carouselItems = carouselItems.map { (item) -> RDCarouselItem in
             item.closeButtonColor = closeButtonColor
             return item
         }

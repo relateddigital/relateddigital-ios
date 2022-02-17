@@ -1,13 +1,13 @@
 //
-//  VisilabsInteractiveTransition.swift
-//  VisilabsIOS
+//  RDInteractiveTransition.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.06.2020.
+//  Created by Egemen Gülkılık on 15.02.2022.
 //
 
 import UIKit
 
-class RelatedDigitalInteractiveTransition: UIPercentDrivenInteractiveTransition {
+class RDInteractiveTransition: UIPercentDrivenInteractiveTransition {
 
     // If the interactive transition was started
     var hasStarted = false
@@ -45,7 +45,7 @@ class RelatedDigitalInteractiveTransition: UIPercentDrivenInteractiveTransition 
     }
 }
 
-internal extension RelatedDigitalInteractiveTransition {
+internal extension RDInteractiveTransition {
 
     /*!
      Translates the pan gesture recognizer position to the progress percentage

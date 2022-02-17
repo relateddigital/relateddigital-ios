@@ -1,5 +1,5 @@
 //
-//  RelatedDigitalCarouselItemView.swift
+//  RDCarouselItemView.swift
 //  RelatedDigitalIOS
 //
 //  Created by Egemen Gülkılık on 15.02.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class RelatedDigitalCarouselItemView: UIView, DisplaceableView {
+public class RDCarouselItemView: UIView, DisplaceableView {
 
     // MARK: - VARIABLES
     internal lazy var closeButton = setCloseButton()
@@ -58,10 +58,10 @@ public class RelatedDigitalCarouselItemView: UIView, DisplaceableView {
 
     internal var imageHeightConstraint: NSLayoutConstraint?
 
-    public weak var relatedDigitalCarouselItem: RelatedDigitalCarouselItem?
+    public weak var relatedDigitalCarouselItem: RDCarouselItem?
     
     // MARK: - CONSTRUCTOR
-    public init(frame: CGRect, relatedDigitalCarouselItem: RelatedDigitalCarouselItem?) {
+    public init(frame: CGRect, relatedDigitalCarouselItem: RDCarouselItem?) {
         self.relatedDigitalCarouselItem = relatedDigitalCarouselItem
         super.init(frame: frame)
         if self.relatedDigitalCarouselItem != nil {
@@ -91,14 +91,14 @@ public class RelatedDigitalCarouselItemView: UIView, DisplaceableView {
 }
 
 
-extension RelatedDigitalCarouselItemView {
+extension RDCarouselItemView {
     @objc func copyCodeTextButtonTapped(_ sender: UIButton) {
         UIPasteboard.general.string = copyCodeTextButton.currentTitle
         RDHelper.showCopiedClipboardMessage()
     }
 }
 
-extension RelatedDigitalCarouselItemView {
+extension RDCarouselItemView {
     
     internal func setButton() -> UIButton {
         let button = UIButton()
@@ -179,7 +179,7 @@ extension RelatedDigitalCarouselItemView {
         return UIImage(named: named, in: bundle, compatibleWith: nil)!.resized(withPercentage: CGFloat(0.75))
     }
 
-    internal func setup(_ carouselItem: RelatedDigitalCarouselItem) {
+    internal func setup(_ carouselItem: RDCarouselItem) {
 
         if let closeButtonColor = carouselItem.closeButtonColor {
             closeButton.setTitleColor(closeButtonColor, for: .normal)

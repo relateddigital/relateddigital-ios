@@ -9,11 +9,11 @@ import UIKit
 
 class RelatedDigitalProductStatNotifierView: UIView {
     
-    var productStatNotifier: RelatedDigitalProductStatNotifierViewModel
+    var productStatNotifier: RDProductStatNotifierViewModel
     var titleLabel: UILabel!
     var closeButton: UIButton!
     
-    init(frame: CGRect, productStatNotifier: RelatedDigitalProductStatNotifierViewModel) {
+    init(frame: CGRect, productStatNotifier: RDProductStatNotifierViewModel) {
         self.productStatNotifier = productStatNotifier
         super.init(frame: frame)
         setupTitle()

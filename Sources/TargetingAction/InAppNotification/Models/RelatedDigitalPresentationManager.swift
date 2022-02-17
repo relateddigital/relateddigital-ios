@@ -11,9 +11,9 @@ import UIKit
 final internal class RelatedDigitalPresentationManager: NSObject, UIViewControllerTransitioningDelegate {
 
     var transitionStyle: PopupDialogTransitionStyle
-    var interactor: RelatedDigitalInteractiveTransition
+    var interactor: RDInteractiveTransition
 
-    init(transitionStyle: PopupDialogTransitionStyle, interactor: RelatedDigitalInteractiveTransition) {
+    init(transitionStyle: PopupDialogTransitionStyle, interactor: RDInteractiveTransition) {
         self.transitionStyle = transitionStyle
         self.interactor = interactor
         super.init()

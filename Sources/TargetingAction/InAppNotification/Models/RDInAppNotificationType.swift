@@ -28,18 +28,18 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case productStatNotifier = "product_stat_notifier"
 }
 
-public enum RelatedDigitalSecondPopupType: String, CaseIterable {
+public enum RDSecondPopupType: String, CaseIterable {
     case imageTextButton = "image_text_button"
     case imageButtonImage = "image_text_button_image"
     case feedback = "feedback_form"
 }
 
-public enum RelatedDigitalHalfScreenPosition: String, CaseIterable {
+public enum RDHalfScreenPosition: String, CaseIterable {
     case top = "top"
     case bottom = "bottom"
 }
 
-public enum RelatedDigitalProductStatNotifierPosition: String, CaseIterable {
+public enum RDProductStatNotifierPosition: String, CaseIterable {
     case top = "top"
     case bottom = "bottom"
 }

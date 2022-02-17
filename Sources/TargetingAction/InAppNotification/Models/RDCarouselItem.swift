@@ -1,5 +1,5 @@
 //
-//  RelatedDigitalCarouselItem.swift
+//  RDCarouselItem.swift
 //  RelatedDigitalIOS
 //
 //  Created by Egemen Gülkılık on 15.02.2022.
@@ -8,7 +8,7 @@
 import UIKit
 
 // swiftlint:disable type_body_length
-public class RelatedDigitalCarouselItem {
+public class RDCarouselItem {
     
     public enum PayloadKey {
         public static let imageUrlString = "image"
@@ -210,13 +210,6 @@ public class RelatedDigitalCarouselItem {
         
         self.closeButtonColor = UIColor(hex: object[PayloadKey.close_button_color] as? String)
         
-        self.titleFont = RDHelper.getFont(fontFamily: self.titleFontFamily, fontSize: self.titleTextsize
-                                                , style: .title2, customFont: self.titleCustomFontFamily)
-        self.bodyFont = RDHelper.getFont(fontFamily: self.bodyFontFamily, fontSize: self.bodyTextsize
-                                               , style: .body, customFont: self.bodyCustomFontFamily)
-        self.buttonFont = RDHelper.getFont(fontFamily: self.buttonFontFamily, fontSize: self.buttonTextsize
-                                                 , style: .title2, customFont: self.buttonCustomFontFamily)
-        
         self.setFonts()
         
         self.fetchImageBlock = { imageCompletion in
@@ -232,17 +225,12 @@ public class RelatedDigitalCarouselItem {
             
             imageCompletion(image, backgroundImage, self)
         }
-        
     }
-
     
     private func setFonts() {
-        self.titleFont = RDHelper.getFont(fontFamily: self.titleFontFamily, fontSize: self.titleTextsize
-                                                , style: .title2, customFont: self.titleCustomFontFamily)
-        self.bodyFont = RDHelper.getFont(fontFamily: self.bodyFontFamily, fontSize: self.bodyTextsize
-                                               , style: .body, customFont: self.bodyCustomFontFamily)
-        self.buttonFont = RDHelper.getFont(fontFamily: self.buttonFontFamily, fontSize: self.buttonTextsize
-                                                 , style: .title2, customFont: self.buttonCustomFontFamily)
+        self.titleFont = RDHelper.getFont(fontFamily: titleFontFamily, fontSize: titleTextsize, style: .title2, customFont: titleCustomFontFamily)
+        self.bodyFont = RDHelper.getFont(fontFamily: bodyFontFamily, fontSize: bodyTextsize, style: .body, customFont: bodyCustomFontFamily)
+        self.buttonFont = RDHelper.getFont(fontFamily: buttonFontFamily, fontSize: buttonTextsize, style: .title2, customFont: buttonCustomFontFamily)
     }
     
     

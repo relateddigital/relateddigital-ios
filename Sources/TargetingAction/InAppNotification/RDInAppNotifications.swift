@@ -1,19 +1,19 @@
 //
-//  VisilabsInAppNotifications.swift
-//  VisilabsIOS
+//  RDInAppNotifications.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 12.05.2020.
+//  Created by Egemen Gülkılık on 14.11.2021.
 //
 
 import Foundation
 import UIKit
 
-protocol RelatedDigitalInAppNotificationsDelegate: AnyObject {
+protocol RDInAppNotificationsDelegate: AnyObject {
     func notificationDidShow(_ notification: RDInAppNotification)
     func trackNotification(_ notification: RDInAppNotification, event: String, properties: Properties)
 }
 
-class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewControllerDelegate {
+class RDInAppNotifications: RDNotificationViewControllerDelegate {
     let lock: RDReadWriteLock
     var checkForNotificationOnActive = true
     var showNotificationOnActive = true
@@ -22,7 +22,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     var inAppNotification: RDInAppNotification?
     var currentlyShowingNotification: RDInAppNotification?
     var currentlyShowingTargetingAction: TargetingActionViewModel?
-    weak var delegate: RelatedDigitalInAppNotificationsDelegate?
+    weak var delegate: RDInAppNotificationsDelegate?
     weak var inappButtonDelegate: RDInappButtonDelegate?
     weak var currentViewController: UIViewController?
     
@@ -84,7 +84,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
                     if self.showScratchToWin(sctw) {
                         self.markTargetingActionShown(model: sctw)
                     }
-                } else if model.targetingActionType == .productStatNotifier, let psn = model as? RelatedDigitalProductStatNotifierViewModel {
+                } else if model.targetingActionType == .productStatNotifier, let psn = model as? RDProductStatNotifierViewModel {
                     if self.showProductStatNotifier(psn) {
                         self.markTargetingActionShown(model: psn)
                     }
@@ -93,7 +93,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         }
     }
     
-    func showProductStatNotifier(_ model: RelatedDigitalProductStatNotifierViewModel) -> Bool {
+    func showProductStatNotifier(_ model: RDProductStatNotifierViewModel) -> Bool {
         let productStatNotifierVC = RelatedDigitalProductStatNotifierViewController(productStatNotifier: model)
         productStatNotifierVC.delegate = self
         productStatNotifierVC.show(animated: true)
@@ -112,8 +112,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         miniNotificationVC.delegate = self
         miniNotificationVC.show(animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + miniNotificationPresentationTime) {
-            self.notificationShouldDismiss(controller: miniNotificationVC, callToActionURL: nil,
-                                           shouldTrack: false, additionalTrackingProperties: nil)
+            self.notificationShouldDismiss(controller: miniNotificationVC, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
         }
         return true
     }
@@ -130,12 +129,12 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
             RDLogger.error("Carousel Item Count is less than 2.")
             return false
         }
-        let vc = RelatedDigitalCarouselNotificationViewController(startIndex: 0, notification: notification)
-        vc.relatedDigitalDelegate = self
+        let vc = RDCarouselNotificationViewController(startIndex: 0, notification: notification)
+        vc.rdDelegate = self
         vc.launchedCompletion = { RDLogger.info("Carousel Launched") }
         vc.closedCompletion = {
             RDLogger.info("Carousel Closed")
-            vc.relatedDigitalDelegate?.notificationShouldDismiss(controller: vc, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            vc.rdDelegate?.notificationShouldDismiss(controller: vc, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
         }
         vc.landedPageAtIndexCompletion = { index in
             RDLogger.info("LANDED AT INDEX: \(index)")
@@ -248,9 +247,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     }
     
     @discardableResult
-    func notificationShouldDismiss(controller: RelatedDigitalBaseViewProtocol,
-                                   callToActionURL: URL?, shouldTrack: Bool,
-                                   additionalTrackingProperties: Properties?) -> Bool {
+    func notificationShouldDismiss(controller: RDBaseViewControllerProtocol, callToActionURL: URL?, shouldTrack: Bool, additionalTrackingProperties: Properties?) -> Bool {
         
         if currentlyShowingNotification?.actId != controller.notification?.actId {
             return false
@@ -285,7 +282,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         return true
     }
     
-    func mailFormShouldDismiss(controller: RelatedDigitalBaseNotificationViewController, click: String) {
+    func mailFormShouldDismiss(controller: RDBaseNotificationViewController, click: String) {
         
     }
     

@@ -1,8 +1,8 @@
 //
-//  RelatedDigitalCarouselNotificationViewController.swift
+//  RDCarouselNotificationViewController.swift
 //  RelatedDigitalIOS
 //
-//  Created by Related Digital on 30.03.2021.
+//  Created by Egemen Gülkılık on 14.11.2021.
 //
 
 import UIKit
@@ -88,7 +88,7 @@ public extension UIScreen {
 }
 
 public extension UIViewController {
-    func presentCarouselNotification(_ gallery: RelatedDigitalCarouselNotificationViewController, completion: (() -> Void)? = {}) {
+    func presentCarouselNotification(_ gallery: RDCarouselNotificationViewController, completion: (() -> Void)? = {}) {
         present(gallery, animated: false, completion: completion)
     }
 }
@@ -123,20 +123,20 @@ extension CGSize {
     }
 }
 
-public typealias ImageCompletion = (UIImage?, UIImage?, RelatedDigitalCarouselItem) -> Void
+public typealias ImageCompletion = (UIImage?, UIImage?, RDCarouselItem) -> Void
 public typealias FetchImageBlock = (@escaping ImageCompletion) -> Void
 
 public struct RelatedDigitalCarouselItemBlock {
     public var fetchImageBlock: FetchImageBlock?
-    public var relatedDigitalCarouselItemView: RelatedDigitalCarouselItemView
-    public init(fetchImageBlock: FetchImageBlock?, relatedDigitalCarouselItemView: RelatedDigitalCarouselItemView) {
+    public var relatedDigitalCarouselItemView: RDCarouselItemView
+    public init(fetchImageBlock: FetchImageBlock?, relatedDigitalCarouselItemView: RDCarouselItemView) {
         self.fetchImageBlock = fetchImageBlock
         self.relatedDigitalCarouselItemView = relatedDigitalCarouselItemView
     }
 }
 
 public protocol DisplaceableView {
-    var relatedDigitalCarouselItem: RelatedDigitalCarouselItem? { get }
+    var relatedDigitalCarouselItem: RDCarouselItem? { get }
     var bounds: CGRect { get }
     var center: CGPoint { get }
     var boundsCenter: CGPoint { get }
@@ -147,7 +147,7 @@ public protocol DisplaceableView {
 
 extension DisplaceableView {
     func getView() -> UIView {
-        let view = RelatedDigitalCarouselItemView(frame: .zero, relatedDigitalCarouselItem: self.relatedDigitalCarouselItem)
+        let view = RDCarouselItemView(frame: .zero, relatedDigitalCarouselItem: self.relatedDigitalCarouselItem)
         view.bounds = self.bounds
         view.center = self.center
         return view
@@ -166,7 +166,7 @@ public protocol GalleryDisplacedViewsDataSource: AnyObject {
 
 public protocol ItemController: AnyObject {
     
-    var itemView: RelatedDigitalCarouselItemView { get set}
+    var itemView: RDCarouselItemView { get set}
     
     var index: Int { get }
     var isInitialController: Bool { get set }
@@ -189,9 +189,7 @@ public protocol ItemControllerDelegate: AnyObject {
     func itemControllerWillAppear(_ controller: ItemController)
     func itemControllerWillDisappear(_ controller: ItemController)
     func itemControllerDidAppear(_ controller: ItemController)
-    
     func fetchedImage(_ controller: ItemController)
-    
     func closeCarousel(shouldTrack: Bool, callToActionURL: URL?)
 }
 
@@ -201,14 +199,14 @@ public protocol RelatedDigitalCarouselItemsDataSource: AnyObject {
 }
 
 
-public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBasePageViewController, ItemControllerDelegate {
+public class RDCarouselNotificationViewController: RDBasePageViewController, ItemControllerDelegate {
     
     var carouselNotification: RDInAppNotification! {
         return super.notification
     }
     
     // UI
-    fileprivate let overlayView = RelatedDigitalBlurView()
+    fileprivate let overlayView = RDBlurView()
     
     /// A custom view at the bottom of the gallery with layout using default (or custom) pinning settings for footer.
     public var footerView: UIPageControl?
@@ -224,7 +222,7 @@ public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBas
     fileprivate var initialPresentationDone = false
     
     // DATASOURCE/DELEGATE
-    fileprivate var pagingDataSource: RelatedDigitalCarouselPagingDataSource!
+    fileprivate var pagingDataSource: RDCarouselPagingDataSource!
     
     // CONFIGURATION
     fileprivate var spineDividerWidth:         Float = 30
@@ -263,7 +261,7 @@ public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBas
                    options: [UIPageViewController.OptionsKey.interPageSpacing : NSNumber(value: spineDividerWidth as Float)])
         
         self.notification = notification
-        pagingDataSource = RelatedDigitalCarouselPagingDataSource(itemsDataSource: self, displacedViewsDataSource: self, notification: notification)
+        pagingDataSource = RDCarouselPagingDataSource(itemsDataSource: self, displacedViewsDataSource: self, notification: notification)
         pagingDataSource.itemControllerDelegate = self
         
         ///This feels out of place, one would expect even the first presented(paged) item controller to be provided by the paging dataSource but there is nothing we can do as Apple requires the first controller to be set via this "setViewControllers" method.
@@ -281,7 +279,7 @@ public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBas
         
         UIApplication.applicationWindow.windowLevel = (statusBarHidden) ? UIWindow.Level.statusBar + 1 : UIWindow.Level.normal
         
-        NotificationCenter.default.addObserver(self, selector: #selector(RelatedDigitalCarouselNotificationViewController.rotate), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(RDCarouselNotificationViewController.rotate), name: UIDevice.orientationDidChangeNotification, object: nil)
         
         
         if notification.closePopupActionType?.lowercased() != "closebutton" {
@@ -583,7 +581,7 @@ public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBas
     
     public func closeCarousel(shouldTrack: Bool, callToActionURL: URL?) {
         
-        self.relatedDigitalDelegate?.notificationShouldDismiss(controller: self,
+        self.rdDelegate?.notificationShouldDismiss(controller: self,
                                             callToActionURL: callToActionURL,
                                             shouldTrack: shouldTrack,
                                             additionalTrackingProperties: nil)
@@ -598,7 +596,7 @@ public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBas
 }
 
 
-extension RelatedDigitalCarouselNotificationViewController: RelatedDigitalCarouselItemsDataSource {
+extension RDCarouselNotificationViewController: RelatedDigitalCarouselItemsDataSource {
     
     public func itemCount() -> Int {
         return carouselNotification.carouselItems.count
@@ -606,14 +604,14 @@ extension RelatedDigitalCarouselNotificationViewController: RelatedDigitalCarous
     
     public func provideGalleryItem(_ index: Int) -> RelatedDigitalCarouselItemBlock {
         let carouselItem = carouselNotification.carouselItems[index]
-        return RelatedDigitalCarouselItemBlock(fetchImageBlock: carouselItem.fetchImageBlock, relatedDigitalCarouselItemView: RelatedDigitalCarouselItemView(frame: .zero, relatedDigitalCarouselItem: carouselItem))
+        return RelatedDigitalCarouselItemBlock(fetchImageBlock: carouselItem.fetchImageBlock, relatedDigitalCarouselItemView: RDCarouselItemView(frame: .zero, relatedDigitalCarouselItem: carouselItem))
     }
 }
 
-extension RelatedDigitalCarouselNotificationViewController: GalleryDisplacedViewsDataSource {
+extension RDCarouselNotificationViewController: GalleryDisplacedViewsDataSource {
     public func provideDisplacementItem(atIndex index: Int) -> DisplaceableView? {
         if index < carouselNotification.carouselItems.count {
-            return RelatedDigitalCarouselItemView(frame: .zero, relatedDigitalCarouselItem: carouselNotification.carouselItems[index])
+            return RDCarouselItemView(frame: .zero, relatedDigitalCarouselItem: carouselNotification.carouselItems[index])
         } else {
             return nil
         }
@@ -622,7 +620,7 @@ extension RelatedDigitalCarouselNotificationViewController: GalleryDisplacedView
 
 
 
-final class RelatedDigitalCarouselPagingDataSource: NSObject, UIPageViewControllerDataSource {
+final class RDCarouselPagingDataSource: NSObject, UIPageViewControllerDataSource {
     
     
     weak var notification: RDInAppNotification?
@@ -667,7 +665,7 @@ final class RelatedDigitalCarouselPagingDataSource: NSObject, UIPageViewControll
 
 
 public class ItemBaseController: UIViewController, ItemController, UIGestureRecognizerDelegate, UIScrollViewDelegate {
-    public var itemView: RelatedDigitalCarouselItemView
+    public var itemView: RDCarouselItemView
     public var relatedDigitalInAppNotification: RDInAppNotification!
     
     let scrollView = UIScrollView()
@@ -696,7 +694,7 @@ public class ItemBaseController: UIViewController, ItemController, UIGestureReco
     
     // MARK: - Initializers
     
-    public init(index: Int, itemCount: Int, fetchImageBlock: FetchImageBlock?, relatedDigitalCarouselItemView: RelatedDigitalCarouselItemView
+    public init(index: Int, itemCount: Int, fetchImageBlock: FetchImageBlock?, relatedDigitalCarouselItemView: RDCarouselItemView
                 , isInitialController: Bool = false, relatedDigitalInAppNotification: RDInAppNotification?) {
         
         self.relatedDigitalInAppNotification = relatedDigitalInAppNotification
@@ -775,7 +773,7 @@ public class ItemBaseController: UIViewController, ItemController, UIGestureReco
             
             DispatchQueue.main.async { [self] in
                 if let s = self {
-                    s.itemView = RelatedDigitalCarouselItemView(frame: .zero, relatedDigitalCarouselItem: carouselItem)
+                    s.itemView = RDCarouselItemView(frame: .zero, relatedDigitalCarouselItem: carouselItem)
                     s.scrollView.addSubview(s.itemView)
                     
                     s.itemView.titleColor = carouselItem.titleColor

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationViewController {
+class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
 
     var halfScreenNotification: RDInAppNotification! {
         return super.notification

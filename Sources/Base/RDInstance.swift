@@ -393,7 +393,7 @@ extension RDInstance {
 
 // MARK: - InAppNotification
 
-extension RDInstance: RelatedDigitalInAppNotificationsDelegate {
+extension RDInstance: RDInAppNotificationsDelegate {
     
     // This method added for test purposes
     public func showNotification(_ rdInAppNotification: RDInAppNotification) {

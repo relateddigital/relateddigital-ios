@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RelatedDigitalFullNotificationViewController: RelatedDigitalBaseNotificationViewController {
+class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewController {
 
     var fullNotification: RDInAppNotification! {
         return super.notification
