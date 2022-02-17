@@ -110,7 +110,7 @@ class GeofenceViewController: FormViewController {
     }
 
     private func refreshData(firstTime: Bool = false) {
-        relatedDigitalGeofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
+        relatedDigitalGeofenceHistory = RDPersistence.readRDGeofenceHistory()
         locationServicesEnabledForDeviceRow.value = RelatedDigital.locationServicesEnabledForDevice ? "YES" : "NO"
         let state = RelatedDigital.locationServiceStateStatusForApplication
         locationServiceStatusForAppRow.value = String(describing: state)
@@ -148,7 +148,7 @@ class GeofenceViewController: FormViewController {
     }
 
     private func clearHistory() {
-        RelatedDigitalPersistence.clearRelatedDigitalGeofenceHistory()
+        RDPersistence.clearRDGeofenceHistory()
         historySection.removeAll()
         historySection.reload()
         errorSection.removeAll()

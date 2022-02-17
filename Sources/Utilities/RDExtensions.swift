@@ -1,6 +1,6 @@
 //
-//  VisilabsExtensions.swift
-//  VisilabsIOS
+//  RDExtensions.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 14.04.2020.
 //

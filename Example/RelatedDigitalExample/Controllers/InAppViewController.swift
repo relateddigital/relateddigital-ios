@@ -36,30 +36,30 @@ class InAppViewController: FormViewController {
     private func inAppEvent(_ queryStringFilter: String) {
         var properties = [String: String]()
         properties["OM.inapptype"] = queryStringFilter
-        if queryStringFilter.lowercased() == RelatedDigitalInAppNotificationType.productStatNotifier.rawValue {
+        if queryStringFilter.lowercased() == RDInAppNotificationType.productStatNotifier.rawValue {
             properties["OM.pv"] = "CV7933-837-837"
         }
         RelatedDigital.customEvent("InAppTest", properties: properties)
         RelatedDigital.inappButtonDelegate = self
     }
     
-    private func getInApps() -> [RelatedDigitalInAppNotificationType: [String: Int]]{
+    private func getInApps() -> [RDInAppNotificationType: [String: Int]]{
         return [
-            .mini: [RelatedDigitalInAppNotificationType.mini.rawValue: 491],
-            .full: [RelatedDigitalInAppNotificationType.full.rawValue: 485],
-            .imageTextButton: [RelatedDigitalInAppNotificationType.imageTextButton.rawValue: 490],
-            .fullImage: [RelatedDigitalInAppNotificationType.fullImage.rawValue: 495],
-            .nps: [RelatedDigitalInAppNotificationType.nps.rawValue: 492],
-            .imageButton: [RelatedDigitalInAppNotificationType.imageButton.rawValue: 489],
-            .smileRating: [RelatedDigitalInAppNotificationType.smileRating.rawValue: 494],
-            .emailForm: [RelatedDigitalInAppNotificationType.emailForm.rawValue: 417],
+            .mini: [RDInAppNotificationType.mini.rawValue: 491],
+            .full: [RDInAppNotificationType.full.rawValue: 485],
+            .imageTextButton: [RDInAppNotificationType.imageTextButton.rawValue: 490],
+            .fullImage: [RDInAppNotificationType.fullImage.rawValue: 495],
+            .nps: [RDInAppNotificationType.nps.rawValue: 492],
+            .imageButton: [RDInAppNotificationType.imageButton.rawValue: 489],
+            .smileRating: [RDInAppNotificationType.smileRating.rawValue: 494],
+            .emailForm: [RDInAppNotificationType.emailForm.rawValue: 417],
             .alert: ["alert_actionsheet": 487, "alert_native": 540],
-            .npsWithNumbers: [RelatedDigitalInAppNotificationType.npsWithNumbers.rawValue: 493],
-            .halfScreenImage: [RelatedDigitalInAppNotificationType.halfScreenImage.rawValue: 704],
-            .scratchToWin: [RelatedDigitalInAppNotificationType.scratchToWin.rawValue: 592],
+            .npsWithNumbers: [RDInAppNotificationType.npsWithNumbers.rawValue: 493],
+            .halfScreenImage: [RDInAppNotificationType.halfScreenImage.rawValue: 704],
+            .scratchToWin: [RDInAppNotificationType.scratchToWin.rawValue: 592],
             .secondNps: ["nps-image-text-button": 585,  "nps-image-text-button-image": 586, "nps-feedback": 587],
-            .spintowin: [RelatedDigitalInAppNotificationType.spintowin.rawValue: 130],
-            .productStatNotifier: [RelatedDigitalInAppNotificationType.productStatNotifier.rawValue: 703]
+            .spintowin: [RDInAppNotificationType.spintowin.rawValue: 130],
+            .productStatNotifier: [RDInAppNotificationType.productStatNotifier.rawValue: 703]
         ]
     }
     

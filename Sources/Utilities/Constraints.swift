@@ -1,8 +1,8 @@
 //
 //  Constraints.swift
-//  VisilabsIOS
+//  RelatedDigitalIOS
 //
-//  Created by Said Alır on 15.10.2020.
+//  Created by Said Alır on 22.02.2021.
 //
 
 import Foundation
@@ -17,14 +17,12 @@ internal enum ConstraintRelation: Int {
 internal extension Collection where Iterator.Element == Constraint {
 
     func activate() {
-
         if let constraints = self as? Constraints {
             Constraint.activate(constraints)
         }
     }
 
     func deActivate() {
-
         if let constraints = self as? Constraints {
             Constraint.deactivate(constraints)
         }

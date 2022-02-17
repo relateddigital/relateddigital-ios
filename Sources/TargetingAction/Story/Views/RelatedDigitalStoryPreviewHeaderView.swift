@@ -50,7 +50,7 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         // TO_DO: server'dan siyah ya da beyaz seçeneği gelecek.
-        if let closeButtonImage = RelatedDigitalHelper.getUIImage(named: "VisilabsCloseButton") {
+        if let closeButtonImage = RDHelper.getUIImage(named: "VisilabsCloseButton") {
             button.setImage(closeButtonImage, for: .normal)
         }
         button.addTarget(self, action: #selector(didTapClose(_:)), for: .touchUpInside)

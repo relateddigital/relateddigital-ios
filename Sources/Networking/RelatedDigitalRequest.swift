@@ -11,7 +11,7 @@ class RelatedDigitalRequest {
     
     // MARK: - EVENT
     
-    class func sendEventRequest(relatedDigitalEndpoint: RelatedDigitalEndpoint,
+    class func sendEventRequest(relatedDigitalEndpoint: RDEndpoint,
                                 properties: [String: String],
                                 headers: [String: String],
                                 timeoutInterval: TimeInterval,
@@ -33,7 +33,7 @@ class RelatedDigitalRequest {
         sendEventRequestHandler(resource: resource, completion: { success in completion(success) })
     }
     
-    private class func sendEventRequestHandler(resource: RelatedDigitalResource<Bool>,
+    private class func sendEventRequestHandler(resource: RDResource<Bool>,
                                                completion: @escaping ([String: String]?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, response) in
@@ -44,17 +44,17 @@ class RelatedDigitalRequest {
                     requestUrl = url.absoluteString
                 }
             }
-            RelatedDigitalLogger.error("API request to \(requestUrl) has failed with error \(error)")
+            RDLogger.error("API request to \(requestUrl) has failed with error \(error)")
             completion(nil)
         }, success: { (_, response) in
             
             if let httpResponse = response as? HTTPURLResponse, let url = httpResponse.url {
-                RelatedDigitalLogger.info("\(url.absoluteString) request sent successfully")
+                RDLogger.info("\(url.absoluteString) request sent successfully")
                 let cookies = getCookies(url)
                 completion(cookies)
             } else {
                 let end = RelatedDigitalBasePath.getEndpoint(relatedDigitalEndpoint: resource.endPoint)
-                RelatedDigitalLogger.error("\(end) can not convert to HTTPURLResponse")
+                RDLogger.error("\(end) can not convert to HTTPURLResponse")
                 completion(nil)
             }
             
@@ -63,11 +63,11 @@ class RelatedDigitalRequest {
     
     private class func getCookies(_ url: URL) -> [String: String] {
         var cookieKeyValues = [String: String]()
-        for cookie in RelatedDigitalHelper.readCookie(url) {
-            if cookie.name.contains(RelatedDigitalConstants.loadBalancePrefix, options: .caseInsensitive) {
+        for cookie in RDHelper.readCookie(url) {
+            if cookie.name.contains(RDConstants.loadBalancePrefix, options: .caseInsensitive) {
                 cookieKeyValues[cookie.name] = cookie.value
             }
-            if cookie.name.contains(RelatedDigitalConstants.om3Key, options: .caseInsensitive) {
+            if cookie.name.contains(RDConstants.om3Key, options: .caseInsensitive) {
                 cookieKeyValues[cookie.name] = cookie.value
             }
         }
@@ -92,7 +92,7 @@ class RelatedDigitalRequest {
             do {
                 response = try JSONSerialization.jsonObject(with: data, options: [])
             } catch {
-                RelatedDigitalLogger.error("exception decoding api data")
+                RDLogger.error("exception decoding api data")
             }
             return response as? [Any]
         }
@@ -109,11 +109,11 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendRecommendationRequestHandler(resource: RelatedDigitalResource<[Any]>,
+    private class func sendRecommendationRequestHandler(resource: RDResource<[Any]>,
                                                         completion: @escaping ([Any]?, RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
             completion(nil, error)
         }, success: { (result, _) in
             completion(result, nil)
@@ -134,13 +134,13 @@ class RelatedDigitalRequest {
             queryItems.append(URLQueryItem(name: property.key, value: property.value))
         }
         
-        if properties[RelatedDigitalConstants.actKey] == RelatedDigitalConstants.getList {
+        if properties[RDConstants.actKey] == RDConstants.getList {
             let responseParserGetList: (Data) -> [[String: Any]]? = { data in
                 var response: Any?
                 do {
                     response = try JSONSerialization.jsonObject(with: data, options: [])
                 } catch {
-                    RelatedDigitalLogger.error("exception decoding api data")
+                    RDLogger.error("exception decoding api data")
                 }
                 return response as? [[String: Any]]
             }
@@ -165,22 +165,22 @@ class RelatedDigitalRequest {
         }
     }
     
-    private class func sendGeofencePushRequestHandler(resource: RelatedDigitalResource<String>,
+    private class func sendGeofencePushRequestHandler(resource: RDResource<String>,
                                                       completion: @escaping (String?, RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
             completion(nil, error)
         }, success: { (result, _) in
             completion(result, nil)
         })
     }
     
-    private class func sendGeofenceRequestHandler(resource: RelatedDigitalResource<[[String: Any]]>,
+    private class func sendGeofenceRequestHandler(resource: RDResource<[[String: Any]]>,
                                                   completion: @escaping ([[String: Any]]?, RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
             completion(nil, error)
         }, success: { (result, _) in
             completion(result, nil)
@@ -205,7 +205,7 @@ class RelatedDigitalRequest {
             do {
                 response = try JSONSerialization.jsonObject(with: data, options: [])
             } catch {
-                RelatedDigitalLogger.error("exception decoding api data")
+                RDLogger.error("exception decoding api data")
             }
             return response as? [[String: Any]]
         }
@@ -222,11 +222,11 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendInAppNotificationRequestHandler(resource: RelatedDigitalResource<[[String: Any]]>,
+    private class func sendInAppNotificationRequestHandler(resource: RDResource<[[String: Any]]>,
                                                            completion: @escaping ([[String: Any]]?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
             completion(nil)
         }, success: { (result, _) in
             completion(result)
@@ -251,7 +251,7 @@ class RelatedDigitalRequest {
             do {
                 response = try JSONSerialization.jsonObject(with: data, options: [])
             } catch {
-                RelatedDigitalLogger.error("exception decoding api data")
+                RDLogger.error("exception decoding api data")
             }
             return response as? [String: Any]
         }
@@ -270,12 +270,12 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendMobileRequestHandler(resource: RelatedDigitalResource<[String: Any]>,
+    private class func sendMobileRequestHandler(resource: RDResource<[String: Any]>,
                                                 completion: @escaping ([String: Any]?,
                                                                        RelatedDigitalError?, String?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
             completion(nil, error, resource.guid)
         }, success: { (result, _) in
             completion(result, nil, resource.guid)
@@ -297,7 +297,7 @@ class RelatedDigitalRequest {
             do {
                 response = try JSONSerialization.jsonObject(with: data, options: [])
             } catch {
-                RelatedDigitalLogger.error("exception decoding api data")
+                RDLogger.error("exception decoding api data")
             }
             return response as? [String: Any]
         }
@@ -315,12 +315,12 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendPromotionCodeRequestHandler(resource: RelatedDigitalResource<[String: Any]>,
+    private class func sendPromotionCodeRequestHandler(resource: RDResource<[String: Any]>,
                                                        completion: @escaping ([String: Any]?,
                                                                               RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
             completion(nil, error)
         }, success: { (result, _) in
             completion(result, nil)
@@ -351,7 +351,7 @@ class RelatedDigitalRequest {
         
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
         }, success: { (_, _) in
             print("Successfully sent!")
         })
@@ -366,7 +366,7 @@ class RelatedDigitalRequest {
             do {
                 response = try JSONSerialization.jsonObject(with: data, options: [])
             } catch {
-                RelatedDigitalLogger.error("exception decoding remote config data")
+                RDLogger.error("exception decoding remote config data")
             }
             return response as? [String]
         }
@@ -386,12 +386,12 @@ class RelatedDigitalRequest {
         
     }
     
-    private class func sendRemoteConfigRequestHandler(resource: RelatedDigitalResource<[String]>,
+    private class func sendRemoteConfigRequestHandler(resource: RDResource<[String]>,
                                                       completion: @escaping ([String]?,
                                                                              RelatedDigitalError?) -> Void) {
         RelatedDigitalNetwork.apiRequest(resource: resource,
                                    failure: { (error, _, _) in
-            RelatedDigitalLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
             completion(nil, error)
         }, success: { (result, _) in
             completion(result, nil)
@@ -405,21 +405,21 @@ class RelatedDigitalRequest {
         let profile = RelatedDigital.rdProfile
         let user = RelatedDigital.rdUser
         
-        props[RelatedDigitalConstants.organizationIdKey] = profile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = profile.profileId
-        props[RelatedDigitalConstants.channelKey] = profile.channel
-        props[RelatedDigitalConstants.mobileApplicationKey] = RelatedDigitalConstants.isTrue
-        props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.ios
+        props[RDConstants.organizationIdKey] = profile.organizationId
+        props[RDConstants.profileIdKey] = profile.profileId
+        props[RDConstants.channelKey] = profile.channel
+        props[RDConstants.mobileApplicationKey] = RDConstants.isTrue
+        props[RDConstants.apiverKey] = RDConstants.ios
         
-        props[RelatedDigitalConstants.cookieIdKey] = user.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = user.exVisitorId
-        props[RelatedDigitalConstants.mobileSdkVersion] = user.sdkVersion
-        props[RelatedDigitalConstants.mobileAppVersion] = user.appVersion
-        props[RelatedDigitalConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
-        props[RelatedDigitalConstants.nrvKey] = String(user.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(user.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(user.tvc)
-        props[RelatedDigitalConstants.lvtKey] = user.lvt
+        props[RDConstants.cookieIdKey] = user.cookieId
+        props[RDConstants.exvisitorIdKey] = user.exVisitorId
+        props[RDConstants.mobileSdkVersion] = user.sdkVersion
+        props[RDConstants.mobileAppVersion] = user.appVersion
+        props[RDConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
+        props[RDConstants.nrvKey] = String(user.nrv)
+        props[RDConstants.pvivKey] = String(user.pviv)
+        props[RDConstants.tvcKey] = String(user.tvc)
+        props[RDConstants.lvtKey] = user.lvt
         
         return props
     }

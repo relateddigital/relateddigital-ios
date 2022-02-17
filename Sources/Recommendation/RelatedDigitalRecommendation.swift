@@ -25,30 +25,30 @@ class RelatedDigitalRecommendation {
         var props = cleanProperties(properties)
 
         if filters.count > 0 {
-            props[RelatedDigitalConstants.filterKey] = getFiltersQueryStringValue(filters)
+            props[RDConstants.filterKey] = getFiltersQueryStringValue(filters)
         }
 
-        props[RelatedDigitalConstants.organizationIdKey] = self.rdProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.rdProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = rdUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = rdUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = rdUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = rdUser.appId
-        props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
+        props[RDConstants.organizationIdKey] = self.rdProfile.organizationId
+        props[RDConstants.profileIdKey] = self.rdProfile.profileId
+        props[RDConstants.cookieIdKey] = rdUser.cookieId
+        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RDConstants.tokenIdKey] = rdUser.tokenId
+        props[RDConstants.appidKey] = rdUser.appId
+        props[RDConstants.apiverKey] = RDConstants.apiverValue
         
-        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
 
         if zoneId.count > 0 {
-            props[RelatedDigitalConstants.zoneIdKey] = zoneId
+            props[RDConstants.zoneIdKey] = zoneId
         }
         if !productCode.isNilOrWhiteSpace {
-            props[RelatedDigitalConstants.bodyKey] = productCode
+            props[RDConstants.bodyKey] = productCode
         }
 
-        for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
+        for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                 props[key] = value
             }
@@ -92,7 +92,7 @@ class RelatedDigitalRecommendation {
             let jsonData = try JSONSerialization.data(withJSONObject: abbrevatedFilters, options: [])
             queryStringValue = String(data: jsonData, encoding: .utf8)
         } catch {
-            RelatedDigitalLogger.warn("exception serializing recommendation filters: \(error.localizedDescription)")
+            RDLogger.warn("exception serializing recommendation filters: \(error.localizedDescription)")
         }
         return queryStringValue
     }
@@ -100,16 +100,16 @@ class RelatedDigitalRecommendation {
     private func cleanProperties(_ properties: [String: String]) -> [String: String] {
         var props = properties
         for propKey in props.keys {
-            if !propKey.isEqual(RelatedDigitalConstants.organizationIdKey)
-                && !propKey.isEqual(RelatedDigitalConstants.profileIdKey)
-                && !propKey.isEqual(RelatedDigitalConstants.exvisitorIdKey)
-                && !propKey.isEqual(RelatedDigitalConstants.cookieIdKey)
-                && !propKey.isEqual(RelatedDigitalConstants.zoneIdKey)
-                && !propKey.isEqual(RelatedDigitalConstants.bodyKey)
-                && !propKey.isEqual(RelatedDigitalConstants.tokenIdKey)
-                && !propKey.isEqual(RelatedDigitalConstants.appidKey)
-                && !propKey.isEqual(RelatedDigitalConstants.apiverKey)
-                && !propKey.isEqual(RelatedDigitalConstants.filterKey) {
+            if !propKey.isEqual(RDConstants.organizationIdKey)
+                && !propKey.isEqual(RDConstants.profileIdKey)
+                && !propKey.isEqual(RDConstants.exvisitorIdKey)
+                && !propKey.isEqual(RDConstants.cookieIdKey)
+                && !propKey.isEqual(RDConstants.zoneIdKey)
+                && !propKey.isEqual(RDConstants.bodyKey)
+                && !propKey.isEqual(RDConstants.tokenIdKey)
+                && !propKey.isEqual(RDConstants.appidKey)
+                && !propKey.isEqual(RDConstants.apiverKey)
+                && !propKey.isEqual(RDConstants.filterKey) {
                 continue
             } else {
                 props.removeValue(forKey: propKey)

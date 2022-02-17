@@ -53,7 +53,7 @@ public class RelatedDigitalInAppNotification {
 
     let actId: Int
     let messageType: String
-    let type: RelatedDigitalInAppNotificationType
+    let type: RDInAppNotificationType
     let messageTitle: String?
     let messageBody: String?
     let buttonText: String?
@@ -99,7 +99,7 @@ public class RelatedDigitalInAppNotification {
             do {
                 data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
             } catch {
-                RelatedDigitalLogger.error("image failed to load from url \(iUrl)")
+                RDLogger.error("image failed to load from url \(iUrl)")
             }
         }
         return data
@@ -112,7 +112,7 @@ public class RelatedDigitalInAppNotification {
             do {
                 data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
             } catch {
-                RelatedDigitalLogger.error("image failed to load from url \(iUrl)")
+                RDLogger.error("image failed to load from url \(iUrl)")
             }
         }
         return data
@@ -125,7 +125,7 @@ public class RelatedDigitalInAppNotification {
             do {
                 data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
             } catch {
-                RelatedDigitalLogger.error("image failed to load from url \(iUrl)")
+                RDLogger.error("image failed to load from url \(iUrl)")
             }
         }
         return data
@@ -140,7 +140,7 @@ public class RelatedDigitalInAppNotification {
                                         size: CGFloat(8))
 
     public init(actId: Int,
-                type: RelatedDigitalInAppNotificationType,
+                type: RDInAppNotificationType,
                 messageTitle: String?,
                 messageBody: String?,
                 buttonText: String?,
@@ -212,7 +212,7 @@ public class RelatedDigitalInAppNotification {
         self.buttonTextColor = UIColor(hex: buttonTextColor)
         self.buttonColor = UIColor(hex: buttonColor)
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
+            self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
 
         var callToActionUrl: URL?
@@ -225,7 +225,7 @@ public class RelatedDigitalInAppNotification {
         self.promotionCode = promotionCode
         self.promotionTextColor = UIColor(hex: promotionTextColor)
         self.promotionBackgroundColor = UIColor(hex: promotionBackgroundColor)
-        self.numberColors = RelatedDigitalHelper.convertColorArray(numberColors)
+        self.numberColors = RDHelper.convertColorArray(numberColors)
         self.waitingTime = waitingTime
         self.secondPopupType = secondPopupType
         self.secondPopupTitle = secondPopupTitle
@@ -236,10 +236,10 @@ public class RelatedDigitalInAppNotification {
         self.secondImageUrlString2 = secondImageUrlString2
         self.secondPopupMinPoint = secondPopupMinPoint
         if !secondImageUrlString1.isNilOrWhiteSpace {
-            self.secondImageUrl1 = RelatedDigitalHelper.getImageUrl(secondImageUrlString1!, type: self.type)
+            self.secondImageUrl1 = RDHelper.getImageUrl(secondImageUrlString1!, type: self.type)
         }
         if !secondImageUrlString2.isNilOrWhiteSpace {
-            self.secondImageUrl2 = RelatedDigitalHelper.getImageUrl(secondImageUrlString2!, type: self.type)
+            self.secondImageUrl2 = RDHelper.getImageUrl(secondImageUrlString2!, type: self.type)
         }
         self.previousPopupPoint = previousPopupPoint
         self.position = position
@@ -254,23 +254,23 @@ public class RelatedDigitalInAppNotification {
     // swiftlint:disable function_body_length disable cyclomatic_complexity
     init?(JSONObject: [String: Any]?) {
         guard let object = JSONObject else {
-            RelatedDigitalLogger.error("notification json object should not be nil")
+            RDLogger.error("notification json object should not be nil")
             return nil
         }
 
         guard let actId = object[PayloadKey.actId] as? Int, actId > 0 else {
-            RelatedDigitalLogger.error("invalid \(PayloadKey.actId)")
+            RDLogger.error("invalid \(PayloadKey.actId)")
             return nil
         }
 
         guard let actionData = object[PayloadKey.actionData] as? [String: Any?] else {
-            RelatedDigitalLogger.error("invalid \(PayloadKey.actionData)")
+            RDLogger.error("invalid \(PayloadKey.actionData)")
             return nil
         }
 
         guard let messageType = actionData[PayloadKey.messageType] as? String,
-              let type = RelatedDigitalInAppNotificationType(rawValue: messageType) else {
-            RelatedDigitalLogger.error("invalid \(PayloadKey.messageType)")
+              let type = RDInAppNotificationType(rawValue: messageType) else {
+            RDLogger.error("invalid \(PayloadKey.messageType)")
             return nil
         }
 
@@ -313,7 +313,7 @@ public class RelatedDigitalInAppNotification {
         self.buttonColor = UIColor(hex: actionData[PayloadKey.buttonColor] as? String)
 
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
+            self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
 
         var callToActionUrl: URL?
@@ -324,7 +324,7 @@ public class RelatedDigitalInAppNotification {
         self.alertType = actionData[PayloadKey.alertType] as? String
         self.closeButtonText = actionData[PayloadKey.closeButtonText] as? String
         if let numColors = actionData[PayloadKey.numberColors] as? [String]? {
-            self.numberColors = RelatedDigitalHelper.convertColorArray(numColors)
+            self.numberColors = RDHelper.convertColorArray(numColors)
         } else {
             self.numberColors = nil
         }
@@ -343,10 +343,10 @@ public class RelatedDigitalInAppNotification {
         self.secondImageUrlString1 = actionData[PayloadKey.secondImageUrlString1] as? String
         self.secondImageUrlString2 = actionData[PayloadKey.secondImageUrlString2] as? String
         if !secondImageUrlString1.isNilOrWhiteSpace {
-            self.secondImageUrl1 = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
+            self.secondImageUrl1 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
         if !secondImageUrlString2.isNilOrWhiteSpace {
-            self.secondImageUrl2 = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: self.type)
+            self.secondImageUrl2 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
         self.secondPopupMinPoint = actionData[PayloadKey.secondPopupMinPoint] as? String
         self.previousPopupPoint = nil
@@ -377,13 +377,13 @@ public class RelatedDigitalInAppNotification {
     }
 
     private func setFonts() {
-        self.messageTitleFont = RelatedDigitalHelper.getFont(fontFamily: self.fontFamily,
+        self.messageTitleFont = RDHelper.getFont(fontFamily: self.fontFamily,
                                                                   fontSize: self.messageTitleTextSize,
                                                                   style: .title2, customFont: self.customFont)
-        self.messageBodyFont = RelatedDigitalHelper.getFont(fontFamily: self.fontFamily,
+        self.messageBodyFont = RDHelper.getFont(fontFamily: self.fontFamily,
                                                                  fontSize: self.messageBodyTextSize,
                                                                  style: .body, customFont: self.customFont)
-        self.buttonTextFont = RelatedDigitalHelper.getFont(fontFamily: self.fontFamily,
+        self.buttonTextFont = RDHelper.getFont(fontFamily: self.fontFamily,
                                                                 fontSize: self.messageBodyTextSize,
                                                                 style: .title2, customFont: self.customFont)
     }

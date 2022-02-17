@@ -1,13 +1,13 @@
 //
-//  VisilabsInAppNotificationType.swift
-//  VisilabsIOS
+//  RDInAppNotificationType.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 14.07.2020.
+//  Created by Egemen Gülkılık on 14.10.2021.
 //
 
 import Foundation
 
-public enum RelatedDigitalInAppNotificationType: String, CaseIterable {
+public enum RDInAppNotificationType: String, CaseIterable {
     case mini
     case full
     case imageTextButton = "image_text_button"

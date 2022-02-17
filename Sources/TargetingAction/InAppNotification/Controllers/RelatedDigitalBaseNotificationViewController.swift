@@ -73,7 +73,7 @@ class RelatedDigitalBaseNotificationViewController: UIViewController, RelatedDig
         }
         
         
-        if let notification = self.notification, RelatedDigitalConstants.backgroundClickCloseDisabledInAppNotificationTypes.contains(notification.type) {
+        if let notification = self.notification, RDConstants.backgroundClickCloseDisabledInAppNotificationTypes.contains(notification.type) {
             return
         }
         

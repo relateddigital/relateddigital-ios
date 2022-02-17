@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum RelatedDigitalRequestMethod: String {
+enum RDRequestMethod: String {
     case get
     case post
 }
 
-enum RelatedDigitalEndpoint {
+enum RDEndpoint {
     case logger
     case realtime
     case target
@@ -24,9 +24,9 @@ enum RelatedDigitalEndpoint {
     case remote
 }
 
-struct RelatedDigitalResource<A> {
-    let endPoint: RelatedDigitalEndpoint
-    let method: RelatedDigitalRequestMethod
+struct RDResource<A> {
+    let endPoint: RDEndpoint
+    let method: RDRequestMethod
     let timeoutInterval: TimeInterval
     let requestBody: Data?
     let queryItems: [URLQueryItem]?
@@ -88,10 +88,10 @@ public enum RelatedDigitalError: Codable {
 }
 
 struct RelatedDigitalBasePath {
-    static var endpoints = [RelatedDigitalEndpoint: String]()
+    static var endpoints = [RDEndpoint: String]()
 
     // TO_DO: path parametresini kaldır
-    static func buildURL(relatedDigitalEndpoint: RelatedDigitalEndpoint, queryItems: [URLQueryItem]?) -> URL? {
+    static func buildURL(relatedDigitalEndpoint: RDEndpoint, queryItems: [URLQueryItem]?) -> URL? {
         guard let endpoint = endpoints[relatedDigitalEndpoint], let url = URL(string: endpoint) else {
             return nil
         }
@@ -102,14 +102,14 @@ struct RelatedDigitalBasePath {
 
     }
 
-    static func getEndpoint(relatedDigitalEndpoint: RelatedDigitalEndpoint) -> String {
+    static func getEndpoint(relatedDigitalEndpoint: RDEndpoint) -> String {
         return endpoints[relatedDigitalEndpoint] ?? ""
     }
 }
 
 class RelatedDigitalNetwork {
 
-    class func apiRequest<A>(resource: RelatedDigitalResource<A>,
+    class func apiRequest<A>(resource: RDResource<A>,
                              failure: @escaping (RelatedDigitalError, Data?, URLResponse?) -> Void,
                              success: @escaping (A, URLResponse?) -> Void) {
         guard let request = buildURLRequest(resource: resource) else {
@@ -146,14 +146,14 @@ class RelatedDigitalNetwork {
         }.resume()
     }
 
-    private class func buildURLRequest<A>(resource: RelatedDigitalResource<A>) -> URLRequest? {
+    private class func buildURLRequest<A>(resource: RDResource<A>) -> URLRequest? {
         guard let url = RelatedDigitalBasePath.buildURL(relatedDigitalEndpoint: resource.endPoint,
                                                   queryItems: resource.queryItems) else {
             return nil
         }
 
-        RelatedDigitalLogger.debug("Fetching URL")
-        RelatedDigitalLogger.debug(url.absoluteURL)
+        RDLogger.debug("Fetching URL")
+        RDLogger.debug(url.absoluteURL)
         var request = URLRequest(url: url)
         request.httpMethod = resource.method.rawValue
         request.httpBody = resource.requestBody
@@ -166,15 +166,15 @@ class RelatedDigitalNetwork {
         return request as URLRequest
     }
 
-    class func buildResource<A>(endPoint: RelatedDigitalEndpoint,
-                                method: RelatedDigitalRequestMethod,
+    class func buildResource<A>(endPoint: RDEndpoint,
+                                method: RDRequestMethod,
                                 timeoutInterval: TimeInterval,
                                 requestBody: Data? = nil,
                                 queryItems: [URLQueryItem]? = nil,
                                 headers: [String: String],
                                 parse: @escaping (Data) -> A?,
-                                guid: String? = nil) -> RelatedDigitalResource<A> {
-        return RelatedDigitalResource(endPoint: endPoint,
+                                guid: String? = nil) -> RDResource<A> {
+        return RDResource(endPoint: endPoint,
                                 method: method,
                                 timeoutInterval: timeoutInterval,
                                 requestBody: requestBody,

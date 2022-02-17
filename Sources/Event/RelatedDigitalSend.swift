@@ -24,8 +24,8 @@ class RelatedDigitalSend {
 
         for counter in 0..<eventsQueue.count {
             let event = eventsQueue[counter]
-            RelatedDigitalLogger.debug("Sending event")
-            RelatedDigitalLogger.debug(event)
+            RDLogger.debug("Sending event")
+            RDLogger.debug(event)
             let loggerHeaders = prepareHeaders(.logger, event: event, rdUser: rdUser,
                                                relatedDigitalCookie: relatedDigitalCookie)
             let realTimeHeaders = prepareHeaders(.realtime, event: event, rdUser: rdUser,
@@ -40,12 +40,12 @@ class RelatedDigitalSend {
                                         // self.delegate?.updateNetworkActivityIndicator(false)
                                         if let cookies = cookies {
                                             for cookie in cookies {
-                                                if cookie.key.contains(RelatedDigitalConstants.loadBalancePrefix,
+                                                if cookie.key.contains(RDConstants.loadBalancePrefix,
                                                                        options: .caseInsensitive) {
                                                     mutableCookie.loggerCookieKey = cookie.key
                                                     mutableCookie.loggerCookieValue = cookie.value
                                                 }
-                                                if cookie.key.contains(RelatedDigitalConstants.om3Key,
+                                                if cookie.key.contains(RDConstants.om3Key,
                                                                        options: .caseInsensitive) {
                                                     mutableCookie.loggerOM3rdCookieValue = cookie.value
                                                 }
@@ -60,12 +60,12 @@ class RelatedDigitalSend {
                                         // self.delegate?.updateNetworkActivityIndicator(false)
                                         if let cookies = cookies {
                                             for cookie in cookies {
-                                                if cookie.key.contains(RelatedDigitalConstants.loadBalancePrefix,
+                                                if cookie.key.contains(RDConstants.loadBalancePrefix,
                                                                        options: .caseInsensitive) {
                                                     mutableCookie.realTimeCookieKey = cookie.key
                                                     mutableCookie.realTimeCookieValue = cookie.value
                                                 }
-                                                if cookie.key.contains(RelatedDigitalConstants.om3Key,
+                                                if cookie.key.contains(RDConstants.om3Key,
                                                                        options: .caseInsensitive) {
                                                     mutableCookie.realTimeOM3rdCookieValue = cookie.value
                                                 }
@@ -81,10 +81,10 @@ class RelatedDigitalSend {
         return mutableCookie
     }
 
-    private func prepareHeaders(_ relatedDigitalEndpoint: RelatedDigitalEndpoint, event: [String: String],
+    private func prepareHeaders(_ relatedDigitalEndpoint: RDEndpoint, event: [String: String],
                                 rdUser: RelatedDigitalUser, relatedDigitalCookie: RelatedDigitalCookie) -> [String: String] {
         var headers = [String: String]()
-        headers["Referer"] = event[RelatedDigitalConstants.uriKey] ?? ""
+        headers["Referer"] = event[RDConstants.uriKey] ?? ""
         headers["User-Agent"] = rdUser.userAgent
         if let cookie = prepareCookie(relatedDigitalEndpoint, relatedDigitalCookie: relatedDigitalCookie) {
             headers["Cookie"] = cookie
@@ -92,7 +92,7 @@ class RelatedDigitalSend {
         return headers
     }
 
-    private func prepareCookie(_ relatedDigitalEndpoint: RelatedDigitalEndpoint, relatedDigitalCookie: RelatedDigitalCookie) -> String? {
+    private func prepareCookie(_ relatedDigitalEndpoint: RDEndpoint, relatedDigitalCookie: RelatedDigitalCookie) -> String? {
         var cookieString: String?
         if relatedDigitalEndpoint == .logger {
             if let key = relatedDigitalCookie.loggerCookieKey, let value = relatedDigitalCookie.loggerCookieValue {
@@ -104,7 +104,7 @@ class RelatedDigitalSend {
                 } else { // TO_DO: bu kısmı güzelleştir
                     cookieString = ""
                 }
-                cookieString = cookieString! + "\(RelatedDigitalConstants.om3Key)=\(om3rdValue)"
+                cookieString = cookieString! + "\(RDConstants.om3Key)=\(om3rdValue)"
             }
         }
         if relatedDigitalEndpoint == .realtime {
@@ -117,7 +117,7 @@ class RelatedDigitalSend {
                 } else { // TO_DO: bu kısmı güzelleştir
                     cookieString = ""
                 }
-                cookieString = cookieString! + "\(RelatedDigitalConstants.om3Key)=\(om3rdValue)"
+                cookieString = cookieString! + "\(RDConstants.om3Key)=\(om3rdValue)"
             }
         }
         return cookieString

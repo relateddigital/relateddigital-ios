@@ -48,7 +48,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     var targetingActionQueue: DispatchQueue!
     var recommendationQueue: DispatchQueue!
     var networkQueue: DispatchQueue!
-    let readWriteLock: RelatedDigitalReadWriteLock
+    let readWriteLock: RDReadWriteLock
     private var observers: [NSObjectProtocol]? = []
     
     let rdEventInstance: RelatedDigitalEvent
@@ -60,12 +60,12 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     public var loggingEnabled: Bool = false {
         didSet {
             if loggingEnabled {
-                RelatedDigitalLogger.addLogging(RelatedDigitalPrintLogging())
-                RelatedDigitalLogger.enableLevels([.debug, .info, .warning, .error])
-                RelatedDigitalLogger.info("Logging Enabled")
+                RDLogger.addLogging(RDPrintLogging())
+                RDLogger.enableLevels([.debug, .info, .warning, .error])
+                RDLogger.info("Logging Enabled")
             } else {
-                RelatedDigitalLogger.info("Logging Disabled")
-                RelatedDigitalLogger.disableLevels([.debug, .info, .warning, .error])
+                RDLogger.info("Logging Disabled")
+                RDLogger.disableLevels([.debug, .info, .warning, .error])
             }
         }
     }
@@ -76,15 +76,15 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         }
         set {
             rdProfile.inAppNotificationsEnabled = newValue
-            RelatedDigitalPersistence.saveRelatedDigitalProfile(rdProfile)
+            RDPersistence.saveRelatedDigitalProfile(rdProfile)
         }
     }
     
     public var useInsecureProtocol: Bool = false {
         didSet {
             rdProfile.useInsecureProtocol = useInsecureProtocol
-            RelatedDigitalHelper.setEndpoints(dataSource: rdProfile.dataSource, useInsecureProtocol: useInsecureProtocol)
-            RelatedDigitalPersistence.saveRelatedDigitalProfile(rdProfile)
+            RDHelper.setEndpoints(dataSource: rdProfile.dataSource, useInsecureProtocol: useInsecureProtocol)
+            RDPersistence.saveRelatedDigitalProfile(rdProfile)
         }
     }
     
@@ -93,13 +93,13 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     // swiftlint:disable function_body_length
     init(organizationId: String, profileId: String, dataSource: String) {
         
-        rdProfile = RelatedDigitalPersistence.readRelatedDigitalProfile() ?? RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, channel: "IOS", requestTimeoutInSeconds: 30, geofenceEnabled: false, inAppNotificationsEnabled: false, maxGeofenceCount: 20, isIDFAEnabled: false)
+        rdProfile = RDPersistence.readRDProfile() ?? RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, channel: "IOS", requestTimeoutInSeconds: 30, geofenceEnabled: false, inAppNotificationsEnabled: false, maxGeofenceCount: 20, isIDFAEnabled: false)
         rdProfile.organizationId = organizationId
         rdProfile.profileId = profileId
         rdProfile.dataSource = dataSource
         
-        RelatedDigitalPersistence.saveRelatedDigitalProfile(rdProfile)
-        readWriteLock = RelatedDigitalReadWriteLock(label: "RelatedDigitalInstanceLock")
+        RDPersistence.saveRelatedDigitalProfile(rdProfile)
+        readWriteLock = RDReadWriteLock(label: "RelatedDigitalInstanceLock")
         let label = "com.relateddigital.\(rdProfile.profileId)"
         trackingQueue = DispatchQueue(label: "\(label).tracking)", qos: .utility)
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
@@ -112,22 +112,22 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         rdRemoteConfigInstance = RelatedDigitalRemoteConfig(profileId: rdProfile.profileId)
         
         
-        RelatedDigitalHelper.setEndpoints(dataSource: rdProfile.dataSource)
+        RDHelper.setEndpoints(dataSource: rdProfile.dataSource)
         
         rdUser = unarchive()
-        rdUser.sdkVersion = RelatedDigitalHelper.getSdkVersion()
+        rdUser.sdkVersion = RDHelper.getSdkVersion()
         
-        if let appVersion = RelatedDigitalHelper.getAppVersion() {
+        if let appVersion = RDHelper.getAppVersion() {
             rdUser.appVersion = appVersion
         }
         
         if rdUser.cookieId.isNilOrWhiteSpace {
-            rdUser.cookieId = RelatedDigitalHelper.generateCookieId()
-            RelatedDigitalPersistence.archiveUser(rdUser)
+            rdUser.cookieId = RDHelper.generateCookieId()
+            RDPersistence.archiveUser(rdUser)
         }
         
         if rdProfile.isIDFAEnabled {
-            RelatedDigitalHelper.getIDFA { uuid in
+            RDHelper.getIDFA { uuid in
                 if let idfa = uuid {
                     self.rdUser.identifierForAdvertising = idfa
                 }
@@ -142,14 +142,14 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         
         
         
-        RelatedDigitalHelper.computeWebViewUserAgent { userAgentString in
+        RDHelper.computeWebViewUserAgent { userAgentString in
             self.rdUser.userAgent = userAgentString
         }
         
         let ncd = NotificationCenter.default
         observers = []
         
-        if !RelatedDigitalHelper.isiOSAppExtension() {
+        if !RDHelper.isiOSAppExtension() {
             observers?.append(ncd.addObserver(
                 forName: UIApplication.didBecomeActiveNotification,
                 object: nil,
@@ -164,7 +164,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     }
     
     convenience init?() {
-        if let relatedDigitalProfile = RelatedDigitalPersistence.readRelatedDigitalProfile() {
+        if let relatedDigitalProfile = RDPersistence.readRDProfile() {
             self.init(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource)
         } else {
             return nil
@@ -195,15 +195,15 @@ extension RelatedDigitalInstance {
     
     public func requestIDFA() {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             return
         }
         
-        RelatedDigitalHelper.getIDFA { uuid in
+        RDHelper.getIDFA { uuid in
             if let idfa = uuid {
                 self.rdUser.identifierForAdvertising = idfa
-                self.customEvent(RelatedDigitalConstants.omEvtGif, properties: [String: String]())
+                self.customEvent(RDConstants.omEvtGif, properties: [String: String]())
             }
         }
     }
@@ -219,17 +219,17 @@ extension RelatedDigitalInstance {
         current.getNotificationSettings(completionHandler: { permission in
             switch permission.authorizationStatus {
             case .authorized:
-                RelatedDigitalConstants.pushPermitStatus = "granted"
+                RDConstants.pushPermitStatus = "granted"
             case .denied:
-                RelatedDigitalConstants.pushPermitStatus = "denied"
+                RDConstants.pushPermitStatus = "denied"
             case .notDetermined:
-                RelatedDigitalConstants.pushPermitStatus = "denied"
+                RDConstants.pushPermitStatus = "denied"
             case .provisional:
-                RelatedDigitalConstants.pushPermitStatus = "default"
+                RDConstants.pushPermitStatus = "default"
             case .ephemeral:
-                RelatedDigitalConstants.pushPermitStatus = "denied"
+                RDConstants.pushPermitStatus = "denied"
             @unknown default:
-                RelatedDigitalConstants.pushPermitStatus = "denied"
+                RDConstants.pushPermitStatus = "denied"
             }
         })
     }
@@ -245,13 +245,13 @@ extension RelatedDigitalInstance {
     
     public func customEvent(_ pageName: String, properties: [String: String]) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             return
         }
         
         if pageName.isEmptyOrWhitespace {
-            RelatedDigitalLogger.error("customEvent can not be called with empty page name.")
+            RDLogger.error("customEvent can not be called with empty page name.")
             return
         }
         
@@ -278,16 +278,16 @@ extension RelatedDigitalInstance {
                 self.rdProfile.channel = result.channel
             }
             self.readWriteLock.read {
-                RelatedDigitalPersistence.archiveUser(self.rdUser)
+                RDPersistence.archiveUser(self.rdUser)
                 if result.clearUserParameters {
-                    RelatedDigitalPersistence.clearTargetParameters()
+                    RDPersistence.clearTargetParameters()
                 }
             }
             if let event = self.eventsQueue.last {
-                RelatedDigitalPersistence.saveTargetParameters(event)
+                RDPersistence.saveTargetParameters(event)
                 if RelatedDigitalBasePath.endpoints[.action] != nil,
                    self.rdProfile.inAppNotificationsEnabled,
-                   pageName != RelatedDigitalConstants.omEvtGif {
+                   pageName != RDConstants.omEvtGif {
                     self.checkInAppNotification(properties: event)
                     self.checkTargetingActions(properties: event)
                 }
@@ -298,8 +298,8 @@ extension RelatedDigitalInstance {
     
     public func sendCampaignParameters(properties: [String: String]) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             return
         }
         
@@ -323,13 +323,13 @@ extension RelatedDigitalInstance {
                 strongSelf.rdProfile.channel = result.channel
             }
             strongSelf.readWriteLock.read {
-                RelatedDigitalPersistence.archiveUser(strongSelf.rdUser)
+                RDPersistence.archiveUser(strongSelf.rdUser)
                 if result.clearUserParameters {
-                    RelatedDigitalPersistence.clearTargetParameters()
+                    RDPersistence.clearTargetParameters()
                 }
             }
             if let event = strongSelf.eventsQueue.last {
-                RelatedDigitalPersistence.saveTargetParameters(event)
+                RDPersistence.saveTargetParameters(event)
             }
             strongSelf.send()
         }
@@ -337,17 +337,17 @@ extension RelatedDigitalInstance {
     
     public func login(exVisitorId: String, properties: [String: String] = [String: String]()) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             return
         }
         
         if exVisitorId.isEmptyOrWhitespace {
-            RelatedDigitalLogger.error("login can not be called with empty exVisitorId.")
+            RDLogger.error("login can not be called with empty exVisitorId.")
             return
         }
         var props = properties
-        props[RelatedDigitalConstants.exvisitorIdKey] = exVisitorId
+        props[RDConstants.exvisitorIdKey] = exVisitorId
         props["Login"] = exVisitorId
         props["OM.b_login"] = "Login"
         customEvent("LoginPage", properties: props)
@@ -355,28 +355,28 @@ extension RelatedDigitalInstance {
     
     public func signUp(exVisitorId: String, properties: [String: String] = [String: String]()) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             return
         }
         
         if exVisitorId.isEmptyOrWhitespace {
-            RelatedDigitalLogger.error("signUp can not be called with empty exVisitorId.")
+            RDLogger.error("signUp can not be called with empty exVisitorId.")
             return
         }
         var props = properties
-        props[RelatedDigitalConstants.exvisitorIdKey] = exVisitorId
+        props[RDConstants.exvisitorIdKey] = exVisitorId
         props["SignUp"] = exVisitorId
         props["OM.b_sgnp"] = "SignUp"
         customEvent("SignUpPage", properties: props)
     }
     
     public func logout() {
-        RelatedDigitalPersistence.clearUserDefaults()
+        RDPersistence.clearUserDefaults()
         rdUser.cookieId = nil
         rdUser.exVisitorId = nil
-        rdUser.cookieId = RelatedDigitalHelper.generateCookieId()
-        RelatedDigitalPersistence.archiveUser(rdUser)
+        rdUser.cookieId = RDHelper.generateCookieId()
+        RDPersistence.archiveUser(rdUser)
     }
     
 }
@@ -387,7 +387,7 @@ extension RelatedDigitalInstance {
     
     // TO_DO: kontrol et sıra doğru mu? gelen değerler null ise set'lemeli miyim?
     private func unarchive() -> RelatedDigitalUser {
-        return RelatedDigitalPersistence.unarchiveUser()
+        return RDPersistence.unarchiveUser()
     }
 }
 
@@ -430,8 +430,8 @@ extension RelatedDigitalInstance {
                                             completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse)
                                                                    -> Void)) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             completion(RelatedDigitalFavoriteAttributeActionResponse(favorites: [RelatedDigitalFavoriteAttribute: [String]](), error: .noData))
             return
         }
@@ -482,21 +482,21 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
     func notificationDidShow(_ notification: RelatedDigitalInAppNotification) {
         rdUser.visitData = notification.visitData
         rdUser.visitorData = notification.visitorData
-        RelatedDigitalPersistence.archiveUser(rdUser)
+        RDPersistence.archiveUser(rdUser)
     }
     
     func trackNotification(_ notification: RelatedDigitalInAppNotification, event: String, properties: [String: String]) {
         if notification.queryString == nil || notification.queryString == "" {
-            RelatedDigitalLogger.info("Notification or query string is nil or empty")
+            RDLogger.info("Notification or query string is nil or empty")
             return
         }
         let queryString = notification.queryString
         let qsArr = queryString!.components(separatedBy: "&")
         var properties = properties
-        properties[RelatedDigitalConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = qsArr[0].components(separatedBy: "=")[1]
         properties["OM.zpc"] = qsArr[1].components(separatedBy: "=")[1]
-        customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+        customEvent(RDConstants.omEvtGif, properties: properties)
     }
     
     // İleride inapp de s.visilabs.net/mobile üzerinden geldiğinde sadece bu metod kullanılacak
@@ -521,10 +521,10 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
     
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
         var properties = [String: String]()
-        properties[RelatedDigitalConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = spinToWinReport.click.parseClick().omZn
         properties["OM.zpc"] = spinToWinReport.click.parseClick().omZpc
-        customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+        customEvent(RDConstants.omEvtGif, properties: properties)
     }
 }
 
@@ -535,8 +535,8 @@ extension RelatedDigitalInstance {
     public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil
                                   , completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void)) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             completion(nil)
             return
         }
@@ -560,7 +560,7 @@ extension RelatedDigitalInstance {
                                                           actionId: actionId,
                                                           completion: { response in
                     if let error = response.error {
-                        RelatedDigitalLogger.error(error)
+                        RDLogger.error(error)
                         completion(nil)
                     } else {
                         if let guid = response.guid, response.storyActions.count > 0,
@@ -584,8 +584,8 @@ extension RelatedDigitalInstance {
     
     public func getStoryView(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil) -> RelatedDigitalStoryHomeView {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
             return RelatedDigitalStoryHomeView()
         }
         
@@ -608,7 +608,7 @@ extension RelatedDigitalInstance {
                                                           actionId: actionId,
                                                           completion: { response in
                     if let error = response.error {
-                        RelatedDigitalLogger.error(error)
+                        RDLogger.error(error)
                     } else {
                         if let guid = response.guid, response.storyActions.count > 0,
                            let storyHomeViewController = self.rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
@@ -638,8 +638,8 @@ extension RelatedDigitalInstance {
                           properties: [String: String] = [:],
                           completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void)) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
         }
         
         
@@ -661,13 +661,13 @@ extension RelatedDigitalInstance {
     
     public func trackRecommendationClick(qs: String) {
         
-        if RelatedDigitalPersistence.isBlocked() {
-            RelatedDigitalLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
         }
         
         let qsArr = qs.components(separatedBy: "&")
         var properties = [String: String]()
-        properties[RelatedDigitalConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         if(qsArr.count > 1) {
             for queryItem in qsArr {
                 let arrComponents = queryItem.components(separatedBy: "=")
@@ -676,10 +676,10 @@ extension RelatedDigitalInstance {
                 }
             }
         } else {
-            RelatedDigitalLogger.info("qs length is less than 2")
+            RDLogger.info("qs length is less than 2")
             return
         }
-        customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+        customEvent(RDConstants.omEvtGif, properties: properties)
     }
     
 }
@@ -711,24 +711,24 @@ extension RelatedDigitalInstance {
 extension RelatedDigitalInstance {
     public func subscribeMail(click: String, actid: String, auth: String, mail: String) {
         if click.isEmpty {
-            RelatedDigitalLogger.info("Notification or query string is nil or empty")
+            RDLogger.info("Notification or query string is nil or empty")
             return
         }
         
         var properties = [String: String]()
-        properties[RelatedDigitalConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = click.parseClick().omZn
         properties["OM.zpc"] = click.parseClick().omZpc
-        customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+        customEvent(RDConstants.omEvtGif, properties: properties)
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail)
     }
     
     private func createSubsJsonRequest(actid: String, auth: String, mail: String, type: String = "subscription_email") {
         var props = [String: String]()
-        props[RelatedDigitalConstants.type] = type
+        props[RDConstants.type] = type
         props["actionid"] = actid
-        props[RelatedDigitalConstants.authentication] = auth
-        props[RelatedDigitalConstants.subscribedEmail] = mail
+        props[RDConstants.authentication] = auth
+        props[RDConstants.subscribedEmail] = mail
         RelatedDigitalRequest.sendSubsJsonRequest(properties: props)
     }
 }

@@ -299,7 +299,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         }
         if let story = self.story, story.items.count > self.snapIndex {
             if story.impressionQueryItems.count > 0 {
-                RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: story.impressionQueryItems)
+                RelatedDigital.customEvent(RDConstants.omEvtGif, properties: story.impressionQueryItems)
             }
             if story.items[self.snapIndex].buttonText.count > 0 {
                 let snap = story.items[self.snapIndex]
@@ -423,13 +423,13 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
     @objc private func didTapLinkButton() {
         if let story = story {
             if story.clickQueryItems.count > 0 {
-                RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: story.clickQueryItems)
+                RelatedDigital.customEvent(RDConstants.omEvtGif, properties: story.clickQueryItems)
             }
             if let del = self.storyUrlDelegate, let url = URL(string: story.items[snapIndex].targetUrl) {
                 del.urlClicked(url)
-                RelatedDigitalLogger.info("Opening Story URL is delegated!! Url: \(url)")
+                RDLogger.info("Opening Story URL is delegated!! Url: \(url)")
             } else if story.items[snapIndex].targetUrl.count > 0, let snapUrl = URL(string: story.items[snapIndex].targetUrl) {
-                RelatedDigitalLogger.info("opening CTA URL: \(snapUrl)")
+                RDLogger.info("opening CTA URL: \(snapUrl)")
                 RelatedDigitalInstance.sharedUIApplication()?.performSelector(onMainThread:
                                     NSSelectorFromString("openURL:"), with: snapUrl, waitUntilDone: true)
             }
@@ -715,7 +715,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
     }
 
     private func setStoryShown(story: RelatedDigitalStory) {
-        var shownStories = UserDefaults.standard.dictionary(forKey: RelatedDigitalConstants.shownStories)
+        var shownStories = UserDefaults.standard.dictionary(forKey: RDConstants.shownStories)
             as? [String: [String]] ?? [String: [String]]()
 
         if shownStories["\(story.actid)"] == nil {
@@ -723,7 +723,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         } else if let st = shownStories["\(story.actid)"], !st.contains(story.title ?? "-") {
             shownStories["\(story.actid)"]?.append(story.title ?? "")
         }
-        UserDefaults.standard.setValue(shownStories, forKey: RelatedDigitalConstants.shownStories)
+        UserDefaults.standard.setValue(shownStories, forKey: RDConstants.shownStories)
     }
 }
 

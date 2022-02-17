@@ -367,7 +367,7 @@ extension RelatedDigitalPopupDialogDefaultView {
 
     @objc func copyCodeTextButtonTapped(_ sender: UIButton) {
         UIPasteboard.general.string = copyCodeTextButton.currentTitle
-        RelatedDigitalHelper.showCopiedClipboardMessage()
+        RDHelper.showCopiedClipboardMessage()
     }
 
     @objc func consentButtonTapped(_ sender: UIButton) {
@@ -437,7 +437,7 @@ extension RelatedDigitalPopupDialogDefaultView: UITextFieldDelegate {
         DispatchQueue.main.async { [self] in
             let email = self.emailTF.text ?? ""
 
-            if !RelatedDigitalHelper.checkEmail(email: email) {
+            if !RDHelper.checkEmail(email: email) {
                 self.resultLabel.text = self.scratchToWin?.invalidEmailMessage
                 self.resultLabel.isHidden = false
             } else if !self.firstCheckBox.isChecked || !self.secondCheckBox.isChecked {
@@ -495,7 +495,7 @@ extension RelatedDigitalPopupDialogDefaultView: UITextFieldDelegate {
 
     @objc func copyCodeAndDismiss() {
         UIPasteboard.general.string = scratchToWin?.promocode
-        RelatedDigitalHelper.showCopiedClipboardMessage()
+        RDHelper.showCopiedClipboardMessage()
         self.delegate?.dismissSctw()
     }
 }

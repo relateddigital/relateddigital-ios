@@ -239,12 +239,12 @@ public class RelatedDigitalProduct: Encodable {
     internal init?(JSONObject: [String: Any?]?) {
         
         guard let object = JSONObject else {
-            RelatedDigitalLogger.error("product json object should not be nil")
+            RDLogger.error("product json object should not be nil")
             return nil
         }
         
         guard let code = object[PayloadKey.code] as? String else {
-            RelatedDigitalLogger.error("invalid \(PayloadKey.code)")
+            RDLogger.error("invalid \(PayloadKey.code)")
             return nil
         }
         
@@ -280,7 +280,7 @@ public class RelatedDigitalProduct: Encodable {
         if self.destUrl.count > 0, let url = URL(string: self.destUrl), let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), let queryItems = urlComponents.queryItems {
             qs = queryItems.map { queryItem in "\(queryItem.name)=\(queryItem.value ?? "")" }.joined(separator: "&")
         } else {
-            RelatedDigitalLogger.warn("destUrl query items are incorrect.")
+            RDLogger.warn("destUrl query items are incorrect.")
         }
         return qs
     }

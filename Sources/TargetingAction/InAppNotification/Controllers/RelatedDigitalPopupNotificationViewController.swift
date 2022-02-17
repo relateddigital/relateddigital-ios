@@ -408,7 +408,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
             let mail = defaultView.emailTF.text ?? ""
 
             DispatchQueue.main.async {
-                if !RelatedDigitalHelper.checkEmail(email: mail) {// If mail is not valid
+                if !RDHelper.checkEmail(email: mail) {// If mail is not valid
                     defaultView.resultLabel.text = self.mailForm?.invalidEmailMessage
                     defaultView.resultLabel.isHidden = false
                 } else if first && second {// Mail valid and checkbox are checked
@@ -525,7 +525,7 @@ internal extension RelatedDigitalPopupNotificationViewController {
                 closeButtonColor = "000000"
             }
             // Convert Second Type To First
-            var type: RelatedDigitalInAppNotificationType = .imageTextButton
+            var type: RDInAppNotificationType = .imageTextButton
             switch not.secondPopupType {
             case .feedback:
                 type = .feedbackForm

@@ -30,86 +30,86 @@ class RelatedDigitalEvent {
         var clearUserParameters = false
         let actualTimeOfevent = Int(Date().timeIntervalSince1970)
         
-        if let cookieId = props[RelatedDigitalConstants.cookieIdKey] {
+        if let cookieId = props[RDConstants.cookieIdKey] {
             if user.cookieId != cookieId {
                 clearUserParameters = true
             }
             user.cookieId = cookieId
-            props.removeValue(forKey: RelatedDigitalConstants.cookieIdKey)
+            props.removeValue(forKey: RDConstants.cookieIdKey)
         }
         
-        if let exVisitorId = props[RelatedDigitalConstants.exvisitorIdKey] {
+        if let exVisitorId = props[RDConstants.exvisitorIdKey] {
             if user.exVisitorId != exVisitorId {
                 clearUserParameters = true
             }
             if user.exVisitorId != nil && user.exVisitorId != exVisitorId {
                 // TO_DO: burada cookieId generate etmek doğru mu tekrar kontrol et
-                user.cookieId = RelatedDigitalHelper.generateCookieId()
+                user.cookieId = RDHelper.generateCookieId()
             }
             user.exVisitorId = exVisitorId
-            props.removeValue(forKey: RelatedDigitalConstants.exvisitorIdKey)
+            props.removeValue(forKey: RDConstants.exvisitorIdKey)
         }
         
-        if let tokenId = props[RelatedDigitalConstants.tokenIdKey] {
+        if let tokenId = props[RDConstants.tokenIdKey] {
             user.tokenId = tokenId
-            props.removeValue(forKey: RelatedDigitalConstants.tokenIdKey)
+            props.removeValue(forKey: RDConstants.tokenIdKey)
         }
         
-        if let appId = props[RelatedDigitalConstants.appidKey] {
+        if let appId = props[RDConstants.appidKey] {
             user.appId = appId
-            props.removeValue(forKey: RelatedDigitalConstants.appidKey)
+            props.removeValue(forKey: RDConstants.appidKey)
         }
         
         // TO_DO: Dışarıdan mobile ad id gelince neden siliyoruz?
-        if props.keys.contains(RelatedDigitalConstants.mobileIdKey) {
-            props.removeValue(forKey: RelatedDigitalConstants.mobileIdKey)
+        if props.keys.contains(RDConstants.mobileIdKey) {
+            props.removeValue(forKey: RDConstants.mobileIdKey)
         }
         
-        if props.keys.contains(RelatedDigitalConstants.apiverKey) {
-            props.removeValue(forKey: RelatedDigitalConstants.apiverKey)
+        if props.keys.contains(RDConstants.apiverKey) {
+            props.removeValue(forKey: RDConstants.apiverKey)
         }
         
-        if props.keys.contains(RelatedDigitalConstants.channelKey) {
-            chan = props[RelatedDigitalConstants.channelKey]!
-            props.removeValue(forKey: RelatedDigitalConstants.channelKey)
+        if props.keys.contains(RDConstants.channelKey) {
+            chan = props[RDConstants.channelKey]!
+            props.removeValue(forKey: RDConstants.channelKey)
         }
         
-        props[RelatedDigitalConstants.organizationIdKey] = self.rdProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.rdProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = user.cookieId ?? ""
-        props[RelatedDigitalConstants.channelKey] = chan
+        props[RDConstants.organizationIdKey] = self.rdProfile.organizationId
+        props[RDConstants.profileIdKey] = self.rdProfile.profileId
+        props[RDConstants.cookieIdKey] = user.cookieId ?? ""
+        props[RDConstants.channelKey] = chan
         if let pageNm = pageName {
-            props[RelatedDigitalConstants.uriKey] = pageNm
+            props[RDConstants.uriKey] = pageNm
         }
-        props[RelatedDigitalConstants.mobileApplicationKey] = RelatedDigitalConstants.isTrue
-        props[RelatedDigitalConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
-        props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.ios
-        props[RelatedDigitalConstants.mobileSdkVersion] = user.sdkVersion
-        props[RelatedDigitalConstants.mobileAppVersion] = user.appVersion
+        props[RDConstants.mobileApplicationKey] = RDConstants.isTrue
+        props[RDConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
+        props[RDConstants.apiverKey] = RDConstants.ios
+        props[RDConstants.mobileSdkVersion] = user.sdkVersion
+        props[RDConstants.mobileAppVersion] = user.appVersion
         
-        props[RelatedDigitalConstants.nrvKey] = String(user.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(user.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(user.tvc)
-        props[RelatedDigitalConstants.lvtKey] = user.lvt
+        props[RDConstants.nrvKey] = String(user.nrv)
+        props[RDConstants.pvivKey] = String(user.pviv)
+        props[RDConstants.tvcKey] = String(user.tvc)
+        props[RDConstants.lvtKey] = user.lvt
         
         if !user.exVisitorId.isNilOrWhiteSpace {
-            props[RelatedDigitalConstants.exvisitorIdKey] = user.exVisitorId
+            props[RDConstants.exvisitorIdKey] = user.exVisitorId
         }
         
         if !user.tokenId.isNilOrWhiteSpace {
-            props[RelatedDigitalConstants.tokenIdKey] = user.tokenId
+            props[RDConstants.tokenIdKey] = user.tokenId
         }
         
         if !user.appId.isNilOrWhiteSpace {
-            props[RelatedDigitalConstants.appidKey] = user.appId
+            props[RDConstants.appidKey] = user.appId
         }
         
-        props[RelatedDigitalConstants.datKey] = String(actualTimeOfevent)
+        props[RDConstants.datKey] = String(actualTimeOfevent)
         
         var eQueue = eventsQueue
         
         eQueue.append(props)
-        if eQueue.count > RelatedDigitalConstants.queueSize {
+        if eQueue.count > RDConstants.queueSize {
             eQueue.remove(at: 0)
         }
         
@@ -118,17 +118,17 @@ class RelatedDigitalEvent {
     
     private func updateSessionParameters(pageName: String?, rdUser: RelatedDigitalUser) -> RelatedDigitalUser {
         var user = rdUser
-        let dateNowString = RelatedDigitalHelper.formatDate(Date())
+        let dateNowString = RDHelper.formatDate(Date())
         if let lastEventTimeString = rdUser.lastEventTime {
             if isPreviousSessionOver(lastEventTimeString: lastEventTimeString, dateNowString: dateNowString) {
                 user.pviv = 1
                 user.tvc = user.tvc + 1
-                if pageName != RelatedDigitalConstants.omEvtGif {
+                if pageName != RDConstants.omEvtGif {
                     user.lastEventTime = dateNowString
                     user.lvt = dateNowString
                 }
             } else {
-                if pageName != RelatedDigitalConstants.omEvtGif {
+                if pageName != RDConstants.omEvtGif {
                     user.pviv = user.pviv + 1
                     user.lastEventTime = dateNowString
                 }
@@ -145,7 +145,7 @@ class RelatedDigitalEvent {
     }
     
     private func isPreviousSessionOver(lastEventTimeString: String, dateNowString: String) -> Bool {
-        if let lastEventTime = RelatedDigitalHelper.parseDate(lastEventTimeString), let dateNow = RelatedDigitalHelper.parseDate(dateNowString) {
+        if let lastEventTime = RDHelper.parseDate(lastEventTimeString), let dateNow = RDHelper.parseDate(dateNowString) {
             if Int(dateNow.timeIntervalSince1970) - Int(lastEventTime.timeIntervalSince1970) > (60 * 30) {
                 return true
             }

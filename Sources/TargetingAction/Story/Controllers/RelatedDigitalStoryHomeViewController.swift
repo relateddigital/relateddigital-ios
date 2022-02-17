@@ -84,11 +84,11 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
         } else {
             
             if self.storyAction.clickQueryItems.count > 0 {
-                RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: self.storyAction.clickQueryItems)
+                RelatedDigital.customEvent(RDConstants.omEvtGif, properties: self.storyAction.clickQueryItems)
             }
             let story = self.storyAction.stories[indexPath.row]
             if let storyLink = story.link, let storyUrl = URL(string: storyLink) {
-                RelatedDigitalLogger.info("opening CTA URL: \(storyUrl)")
+                RDLogger.info("opening CTA URL: \(storyUrl)")
                 let app = RelatedDigitalInstance.sharedUIApplication()
                 app?.performSelector(onMainThread: NSSelectorFromString("openURL:"),
                                      with: storyUrl, waitUntilDone: true)
@@ -111,7 +111,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
         for story in stories {
             var shown = false
             // check story has shown
-            if let shownStories = UserDefaults.standard.dictionary(forKey: RelatedDigitalConstants.shownStories) as? [String: [String]] {
+            if let shownStories = UserDefaults.standard.dictionary(forKey: RDConstants.shownStories) as? [String: [String]] {
                 if let shownStoriesWithAction = shownStories["\(self.storyAction.actionId)"], shownStoriesWithAction.contains(story.title ?? "-") {
                     shown = true
                 }
@@ -127,14 +127,14 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
     
     private func setStoryShown(title: String, actid: Int) {
         // Save UserDefaults as shown
-        var shownStories = UserDefaults.standard.dictionary(forKey: RelatedDigitalConstants.shownStories)
+        var shownStories = UserDefaults.standard.dictionary(forKey: RDConstants.shownStories)
         as? [String: [String]] ?? [String: [String]]()
         if shownStories["\(actid)"] == nil {
             shownStories["\(actid)"] = [title]
         } else if let st = shownStories["\(actid)"], !st.contains(title) {
             shownStories["\(actid)"]?.append(title)
         }
-        UserDefaults.standard.setValue(shownStories, forKey: RelatedDigitalConstants.shownStories)
+        UserDefaults.standard.setValue(shownStories, forKey: RDConstants.shownStories)
     }
     
     func getRootViewController() -> UIViewController? {

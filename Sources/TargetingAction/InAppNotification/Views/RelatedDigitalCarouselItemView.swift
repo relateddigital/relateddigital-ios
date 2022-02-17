@@ -94,7 +94,7 @@ public class RelatedDigitalCarouselItemView: UIView, DisplaceableView {
 extension RelatedDigitalCarouselItemView {
     @objc func copyCodeTextButtonTapped(_ sender: UIButton) {
         UIPasteboard.general.string = copyCodeTextButton.currentTitle
-        RelatedDigitalHelper.showCopiedClipboardMessage()
+        RDHelper.showCopiedClipboardMessage()
     }
 }
 
@@ -162,7 +162,7 @@ extension RelatedDigitalCarouselItemView {
 
     internal func setCopyCodeImage() -> UIButton {
         let copyCodeImage = UIButton(frame: .zero)
-        let copyIconImage = RelatedDigitalHelper.getUIImage(named: "RelatedCopyButton")
+        let copyIconImage = RDHelper.getUIImage(named: "RelatedCopyButton")
         copyCodeImage.setImage(copyIconImage, for: .normal)
         copyCodeImage.translatesAutoresizingMaskIntoConstraints = false
         copyCodeImage.backgroundColor = self.relatedDigitalCarouselItem?.promocodeBackgroundColor

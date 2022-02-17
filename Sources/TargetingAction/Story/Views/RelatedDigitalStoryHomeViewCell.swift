@@ -11,7 +11,7 @@ class RelatedDigitalStoryHomeViewCell: UICollectionViewCell {
 
     func setAsLoadingCell() {
         self.profileNameLabel.text = "Loading"
-        self.profileImageView.imageView.image = RelatedDigitalHelper.getUIImage(named: "loading")
+        self.profileImageView.imageView.image = RDHelper.getUIImage(named: "loading")
     }
 
     func setProperties(_ properties: RelatedDigitalStoryActionExtendedProperties, _ actId: Int) {
@@ -20,7 +20,7 @@ class RelatedDigitalStoryHomeViewCell: UICollectionViewCell {
         
         setStoryTitleLabelProperties(fontFamily: properties.fontFamily,customFont: properties.customFontFamilyIos, labelColor: properties.storyzLabelColor, labelStory: self.profileNameLabel)
         // check story has shown
-        if let shownStories = UserDefaults.standard.dictionary(forKey: RelatedDigitalConstants.shownStories) as? [String: [String]] {
+        if let shownStories = UserDefaults.standard.dictionary(forKey: RDConstants.shownStories) as? [String: [String]] {
             if let shownStoriesWithAction = shownStories["\(actId)"], shownStoriesWithAction.contains(self.story?.title ?? "-") {
                 shown = true
             }

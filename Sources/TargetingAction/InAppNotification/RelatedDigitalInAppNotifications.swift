@@ -14,7 +14,7 @@ protocol RelatedDigitalInAppNotificationsDelegate: AnyObject {
 }
 
 class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewControllerDelegate {
-    let lock: RelatedDigitalReadWriteLock
+    let lock: RDReadWriteLock
     var checkForNotificationOnActive = true
     var showNotificationOnActive = true
     var miniNotificationPresentationTime = 6.0
@@ -26,7 +26,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     weak var inappButtonDelegate: RelatedDigitalInappButtonDelegate?
     weak var currentViewController: UIViewController?
     
-    init(lock: RelatedDigitalReadWriteLock) {
+    init(lock: RDReadWriteLock) {
         self.lock = lock
     }
     
@@ -34,13 +34,13 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         let notification = notification
         let delayTime = notification.waitingTime ?? 0
         DispatchQueue.main.async {
-            self.currentViewController = RelatedDigitalHelper.getRootViewController()
+            self.currentViewController = RDHelper.getRootViewController()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(delayTime), execute: {
             if self.currentlyShowingNotification != nil || self.currentlyShowingTargetingAction != nil {
-                RelatedDigitalLogger.warn("already showing an in-app notification")
+                RDLogger.warn("already showing an in-app notification")
             } else {
-                if notification.waitingTime ?? 0 == 0 || self.currentViewController == RelatedDigitalHelper.getRootViewController() {
+                if notification.waitingTime ?? 0 == 0 || self.currentViewController == RDHelper.getRootViewController() {
                     var shownNotification = false
                     switch notification.type {
                     case .mini:
@@ -70,7 +70,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     func showTargetingAction(_ model: TargetingActionViewModel) {
         DispatchQueue.main.async {
             if self.currentlyShowingNotification != nil || self.currentlyShowingTargetingAction != nil {
-                RelatedDigitalLogger.warn("already showing an notification")
+                RDLogger.warn("already showing an notification")
             } else {
                 if model.targetingActionType == .mailSubscriptionForm, let mailSubscriptionForm = model as? MailSubscriptionViewModel {
                     if self.showMailPopup(mailSubscriptionForm) {
@@ -127,20 +127,20 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     
     func showCarousel(_ notification: RelatedDigitalInAppNotification) -> Bool {
         if notification.carouselItems.count < 2 {
-            RelatedDigitalLogger.error("Carousel Item Count is less than 2.")
+            RDLogger.error("Carousel Item Count is less than 2.")
             return false
         }
         let vc = RelatedDigitalCarouselNotificationViewController(startIndex: 0, notification: notification)
         vc.relatedDigitalDelegate = self
-        vc.launchedCompletion = { RelatedDigitalLogger.info("Carousel Launched") }
+        vc.launchedCompletion = { RDLogger.info("Carousel Launched") }
         vc.closedCompletion = {
-            RelatedDigitalLogger.info("Carousel Closed")
+            RDLogger.info("Carousel Closed")
             vc.relatedDigitalDelegate?.notificationShouldDismiss(controller: vc, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
         }
         vc.landedPageAtIndexCompletion = { index in
-            RelatedDigitalLogger.info("LANDED AT INDEX: \(index)")
+            RDLogger.info("LANDED AT INDEX: \(index)")
         }
-        if let rootViewController = RelatedDigitalHelper.getRootViewController() {
+        if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.presentCarouselNotification(vc)
             return true
         } else {
@@ -172,7 +172,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         alertController.addAction(action)
         alertController.addAction(close)
         
-        if let root = RelatedDigitalHelper.getRootViewController() {
+        if let root = RDHelper.getRootViewController() {
             
             if UIDevice.current.userInterfaceIdiom == .pad, style == .actionSheet {
                 alertController.popoverPresentationController?.sourceView = root.view
@@ -191,7 +191,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         controller.delegate = self
         controller.inappButtonDelegate = self.inappButtonDelegate
         
-        if let rootViewController = RelatedDigitalHelper.getRootViewController() {
+        if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: false, completion: nil)
             return true
         } else {
@@ -203,7 +203,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         let controller = RelatedDigitalPopupNotificationViewController(mailForm: model)
         controller.delegate = self
         
-        if let rootViewController = RelatedDigitalHelper.getRootViewController() {
+        if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: false, completion: nil)
             return true
         } else {
@@ -214,7 +214,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     func showScratchToWin(_ model: ScratchToWinModel) -> Bool {
         let controller = RelatedDigitalPopupNotificationViewController(scratchToWin: model)
         controller.delegate = self
-        if let rootViewController = RelatedDigitalHelper.getRootViewController() {
+        if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: false, completion: nil)
             return true
         } else {
@@ -226,7 +226,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         let controller = SpinToWinViewController(model)
         controller.modalPresentationStyle = .fullScreen
         controller.delegate = self
-        if let rootViewController = RelatedDigitalHelper.getRootViewController() {
+        if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: true, completion: nil)
             return true
         }
@@ -235,7 +235,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     
     func markNotificationShown(notification: RelatedDigitalInAppNotification) {
         lock.write {
-            RelatedDigitalLogger.info("marking notification as seen: \(notification.actId)")
+            RDLogger.info("marking notification as seen: \(notification.actId)")
             currentlyShowingNotification = notification
             // TO_DO: burada customEvent request'i atılmalı
         }

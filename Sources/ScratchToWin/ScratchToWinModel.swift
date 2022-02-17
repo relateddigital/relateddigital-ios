@@ -60,7 +60,7 @@ public class ScratchToWinModel: TargetingActionViewModel {
             do {
                 data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
             } catch {
-                RelatedDigitalLogger.error("image failed to load from url \(iUrl)")
+                RDLogger.error("image failed to load from url \(iUrl)")
             }
         }
         return data
@@ -73,7 +73,7 @@ public class ScratchToWinModel: TargetingActionViewModel {
     var buttonTextFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body),
                                         size: CGFloat(8))
 
-    public init(type: RelatedDigitalInAppNotificationType,
+    public init(type: RDInAppNotificationType,
                 actid: Int,
                 auth: String,
                 hasMailForm: Bool,
@@ -169,19 +169,19 @@ public class ScratchToWinModel: TargetingActionViewModel {
         self.promocodeCustomFontFamilyIos = promocodeCustomFontFamilyIos
         self.copybuttonCustomFontFamilyIos = copybuttonCustomFontFamilyIos
 
-        titleFont = RelatedDigitalHelper.getFont(fontFamily: titleFontFamily,
+        titleFont = RDHelper.getFont(fontFamily: titleFontFamily,
                                                                   fontSize: titleTextSize,
                                                                   style: .title2,customFont: contentTitleCustomFontFamilyIos)
-        messageFont = RelatedDigitalHelper.getFont(fontFamily: messageFontFamily,
+        messageFont = RDHelper.getFont(fontFamily: messageFontFamily,
                                                         fontSize: messageTextSize,
                                                         style: .body,customFont: contentBodyCustomFontFamilyIos)
-        mailButtonFont = RelatedDigitalHelper.getFont(fontFamily: mailButtonFontFamily,
+        mailButtonFont = RDHelper.getFont(fontFamily: mailButtonFontFamily,
                                                            fontSize: mailButtonTextSize,
                                                            style: .title2,customFont: buttonCustomFontFamilyIos)
-        promoFont = RelatedDigitalHelper.getFont(fontFamily: promocodeTextFamily,
+        promoFont = RDHelper.getFont(fontFamily: promocodeTextFamily,
                                                       fontSize: promocodeTextSize,
                                                       style: .title2,customFont: promocodeCustomFontFamilyIos)
-        copyButtonTextFont = RelatedDigitalHelper.getFont(fontFamily: copyButtonFontFamily,
+        copyButtonTextFont = RDHelper.getFont(fontFamily: copyButtonFontFamily,
                                                               fontSize: copyButtonTextSize,
                                                               style: .title2,customFont: copybuttonCustomFontFamilyIos)
         emailPermitTextFont = UIFont.systemFont(ofSize: CGFloat(8 + (Int(emailPermitTextSize ?? "0") ?? 0)))
@@ -189,7 +189,7 @@ public class ScratchToWinModel: TargetingActionViewModel {
 
     }
 
-    private static func getImageUrl(_ imageUrlString: String, type: RelatedDigitalInAppNotificationType) -> URL? {
+    private static func getImageUrl(_ imageUrlString: String, type: RDInAppNotificationType) -> URL? {
         var imageUrl: URL?
         if let escapedImageUrlString = imageUrlString.addingPercentEncoding(withAllowedCharacters:
                                                                      NSCharacterSet.urlQueryAllowed),

@@ -78,8 +78,8 @@ class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotific
             bounds = UIScreen.main.bounds
         }
         
-        let bottomInset = Double(RelatedDigitalHelper.getSafeAreaInsets().bottom)
-        let topInset = Double(RelatedDigitalHelper.getSafeAreaInsets().top)
+        let bottomInset = Double(RDHelper.getSafeAreaInsets().bottom)
+        let topInset = Double(RDHelper.getSafeAreaInsets().top)
         halfScreenHeight = Double(relatedDigitalProductStatNotifierView.titleLabel.frame.height)
         
         let frameY = notifier.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
@@ -122,9 +122,9 @@ class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotific
                 
                 var originY = 0.0
                 if self.notifier.position == .bottom {
-                    originY = self.halfScreenHeight + Double(RelatedDigitalHelper.getSafeAreaInsets().bottom)
+                    originY = self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().bottom)
                 } else {
-                    originY = -(self.halfScreenHeight + Double(RelatedDigitalHelper.getSafeAreaInsets().top))
+                    originY = -(self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().top))
                 }
                 
                 self.window?.frame.origin.y += CGFloat(originY)

@@ -1,5 +1,5 @@
 //
-//  RelatedDigitalConstants.swift
+//  RDConstants.swift
 //  RelatedDigitalIOS
 //
 //  Created by Egemen Gülkılık on 15.12.2021.
@@ -7,19 +7,19 @@
 
 import UIKit
 
-struct RelatedDigitalConstants {
+struct RDConstants {
     
     static let sdkVersion = "4.0.0"
-
+    
     static let HTTP = "http"
     static let HTTPS = urlConstant.shared.securityTag
-
+    
     static let queueSize = 5000
     static let geofenceHistoryMaxCount = 100
     static let geofenceHistoryErrorMaxCount = 100
     static let geofenceFetchTimeInterval = TimeInterval(15 * 60)
     static let remoteConfigFetchTimeInterval = TimeInterval(15 * 60)
-
+    
     static var loggerEndPoint = "lgr.visilabs.net"
     static var realtimeEndPoint = "rt.visilabs.net"
     static var recommendationEndPoint = "\(urlConstant.shared.urlPrefix)/json"
@@ -29,21 +29,21 @@ struct RelatedDigitalConstants {
     static var subsjsonEndpoint = "\(urlConstant.shared.urlPrefix)/subsjson"
     static var promotionEndpoint = "\(urlConstant.shared.urlPrefix)/promotion"
     static var remoteConfigEndpoint = "mbls.visilabs.net/rc.json"
-
+    
     // MARK: - UserDefaults Keys
-
+    
     static let userDefaultsProfileKey = "Visilabs.profile"
     static let userDefaultsUserKey = "Visilabs.user"
     static let userDefaultsGeofenceHistoryKey = "Visilabs.geofenceHistory"
     static let userDefaultsTargetKey = "Visilabs.target"
     static let userDefaultsBlockKey = "Visilabs.block"
-
+    
     // MARK: - Archive Keys
-
+    
     static let geofenceHistoryArchiveKey = "Visilabs.geofenceHistory"
     static let userArchiveKey = "Visilabs.user"
     static let profileArchiveKey = "Visilabs.profile"
-
+    
     static let cookieidArchiveKey = "Visilabs.cookieId"
     // "Visilabs.identity" idi cookieID olarak değiştirmek nasıl sorunlara sebep olur düşün.
     static let identityArchiveKey = "Visilabs.identity"
@@ -51,7 +51,7 @@ struct RelatedDigitalConstants {
     static let tokenidArchiveKey = "Visilabs.tokenId"
     static let appidArchiveKey = "Visilabs.appId"
     static let useragentArchiveKey = "Visilabs.userAgent"
-
+    
     static let maxGeofenceCountKey = "maxGeofenceCount"
     static let inAppNotificaitionsKey = "inAppNotificationsEnabled"
     static let geofenceEnabledKey = "geofenceEnabled"
@@ -59,17 +59,17 @@ struct RelatedDigitalConstants {
     static let dataSourceKey = "dataSource"
     static let userAgentKey = "OM.userAgent"
     static let visitorData = "visitorData"
-
+    
     static let lastGeofenceFetchTimeKey = "lastGeofenceFetchTime"
     static let geofencesKey = "geofences"
-
+    
     static let mobileIdKey = "OM.m_adid"
     static let mobileApplicationKey = "OM.mappl"
     static let mobileSdkVersion = "sdk_version"
     static let mobileAppVersion = "OM.appVersion"
-
+    
     static let isTrue = "true"
-
+    
     static let ios = "IOS"
     static let datKey = "dat"
     static let omGif = "om.gif"
@@ -77,7 +77,7 @@ struct RelatedDigitalConstants {
     static let visitCappingKey = "OM.vcap"
     static let visitorCappingKey = "OM.viscap"
     static let omEvtGif = "OM_evt.gif"
-
+    
     static let organizationIdKey = "OM.oid"
     static let profileIdKey = "OM.siteID"
     static let cookieIdKey = "OM.cookieID"
@@ -99,7 +99,7 @@ struct RelatedDigitalConstants {
     static let geoIdKey = "OM.locationid"
     static let triggerEventKey = "OM.triggerevent"
     static let subscribedEmail = "OM.subsemail"
-
+    
     static let channelKey = "OM.vchannel"
     static let uriKey = "OM.uri"
     
@@ -108,19 +108,19 @@ struct RelatedDigitalConstants {
     static let pvivKey = "OM.pviv"
     static let tvcKey = "OM.tvc"
     static let lvtKey = "OM.lvt"
-
+    
     static let utmSourceKey = "utm_source"
     static let utmCampaignKey = "utm_campaign"
     static let utmMediumKey = "utm_medium"
     static let utmContentKey = "utm_content"
-
+    
     static let getList = "getlist"
     static let processV2 = "processV2"
     static let onEnter = "OnEnter"
     static let onExit = "OnExit"
     static let dwell = "Dwell"
     static let apiverValue = "IOS"
-
+    
     static let actionType = "action_type"
     static let favoriteAttributeAction = "FavoriteAttributeAction"
     static let story = "Story"
@@ -163,7 +163,7 @@ struct RelatedDigitalConstants {
     static let storyzLabelColor = "storyz_label_color"
     static let fontFamily = "font_family"
     static let customFontFamilyIos = "custom_font_family_ios"
-
+    
     
     // Email form constants
     static let message = "message"
@@ -193,8 +193,8 @@ struct RelatedDigitalConstants {
     static let wheelBorderWidth = "wheel_borderWidth"
     static let wheelBorderColor = "wheel_borderColor"
     static let sliceDisplaynameFontFamily = "slice_displayname_font_family"
-
-
+    
+    
     // SpinToWin constants
     static let slices = "slices"
     static let promoAuth = "promoAuth"
@@ -206,8 +206,8 @@ struct RelatedDigitalConstants {
     static let img = "img"
     static let wheelSpinAction = "wheel_spin_action"
     static let promocodesSoldoutMessage = "promocodes_soldout_message"
-
-
+    
+    
     // SpinToWin extended properties
     static let displaynameTextColor = "displayname_text_color"
     static let displaynameFontFamily = "displayname_font_family"
@@ -233,13 +233,13 @@ struct RelatedDigitalConstants {
     static let promocodeTitleCustomFontFamilyIos = "promocode_title_custom_font_family_ios"
     static let copybuttonCustomFontFamilyIos = "copybutton_custom_font_family_ios"
     static let promocodesSoldoutMessageCustomFontFamilyIos = "promocodes_soldout_message_custom_font_family_ios"
-
+    
     
     static let promocodes_soldout_message_text_color = "promocodes_soldout_message_text_color"
     static let promocodes_soldout_message_font_family = "promocodes_soldout_message_font_family"
     static let promocodes_soldout_message_text_size = "promocodes_soldout_message_text_size"
     static let promocodes_soldout_message_background_color = "promocodes_soldout_message_background_color"
-
+    
     // SpinToWin slices
     static let displayName = "displayName"
     static let color = "color"
@@ -252,7 +252,7 @@ struct RelatedDigitalConstants {
     static let promoEmailKey = "OM.promoemail"
     static let promoTitleKey = "OM.promotitle"
     static let promoSlice = "OM.promoslice"
-
+    
     // Scratch To Win constants
     static let scratchColor = "scratch_color"
     static let waitingTime = "waiting_time"
@@ -273,7 +273,7 @@ struct RelatedDigitalConstants {
     static let contentTitleCustomFontFamilyIos = "content_title_custom_font_family_ios"
     static let contentBodyCustomFontFamilyIos = "content_body_custom_font_family_ios"
     static let promocodeCustomFontFamilyIos = "promocode_custom_font_family_ios"
-
+    
     
     
     // ProductStatNotifier constants
@@ -289,11 +289,8 @@ struct RelatedDigitalConstants {
     static let contentcount_text_color = "contentcount_text_color"
     static let contentcount_text_size = "contentcount_text_size"
     
+    static let backgroundClickCloseDisabledInAppNotificationTypes: [RDInAppNotificationType] = [.full, .feedbackForm, .mini, .halfScreenImage]
     
-    
-    static let backgroundClickCloseDisabledInAppNotificationTypes: [RelatedDigitalInAppNotificationType] = [.full, .feedbackForm, .mini, .halfScreenImage]
-    
-
     private static let targetPrefVossStoreKey = "OM.voss"
     private static let targetPrefVcnameStoreKey = "OM.vcname"
     private static let targetPrefVcmediumStoreKey = "OM.vcmedium"
@@ -311,7 +308,7 @@ struct RelatedDigitalConstants {
     private static let targetPrefLPPStoreKey = "OM.lpp"
     private static let targetPrefVQStoreKey = "OM.vq"
     private static let targetPrefVRStoreKey = "OM.vrDomain"
-
+    
     private static let targetPrefVossKey = "OM.OSS"
     private static let targetPrefVcNameKey = "OM.cname"
     private static let targetPrefVcmediumKey = "OM.cmedium"
@@ -338,54 +335,54 @@ struct RelatedDigitalConstants {
     static let locationPermissionNone = "none"
     
     //Push Permission Status
-        static let pushPermitPermissionReqKey = "OM.pushnotifystatus"
-        static var pushPermitStatus = "default"
-
-    private static var targetParameters = [RelatedDigitalParameter]()
-
-    static func relatedDigitalTargetParameters() -> [RelatedDigitalParameter] {
+    static let pushPermitPermissionReqKey = "OM.pushnotifystatus"
+    static var pushPermitStatus = "default"
+    
+    private static var targetParameters = [RDParameter]()
+    
+    static func rdTargetParameters() -> [RDParameter] {
         if targetParameters.count == 0 {
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVossKey, storeKey: targetPrefVossStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVcNameKey, storeKey: targetPrefVcnameStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVcmediumKey, storeKey: targetPrefVcmediumStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVcsourceKey, storeKey: targetPrefVcsourceStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVseg1Key, storeKey: targetPrefVseg1StoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVseg2Key, storeKey: targetPrefVseg2StoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVseg3Key, storeKey: targetPrefVseg3StoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVseg4Key, storeKey: targetPrefVseg4StoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVseg5Key, storeKey: targetPrefVseg5StoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefBDKey, storeKey: targetPrefBdStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefGNKey, storeKey: targetPrefGnStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefLOCKey, storeKey: targetPrefLocStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVPVKey, storeKey: targetPrefVPVStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefLPVSKey, storeKey: targetPrefLPVSStoreKey,
-                                                      count: 10, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefLPPKey, storeKey: targetPrefLPPStoreKey,
-                                                      count: 1, relatedKeys: [targetPrefPPRKey]))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVQKey, storeKey: targetPrefVQStoreKey,
-                                                      count: 1, relatedKeys: nil))
-            targetParameters.append(RelatedDigitalParameter(key: targetPrefVRDomainKey, storeKey: targetPrefVRStoreKey,
-                                                      count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVossKey, storeKey: targetPrefVossStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVcNameKey, storeKey: targetPrefVcnameStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVcmediumKey, storeKey: targetPrefVcmediumStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVcsourceKey, storeKey: targetPrefVcsourceStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVseg1Key, storeKey: targetPrefVseg1StoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVseg2Key, storeKey: targetPrefVseg2StoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVseg3Key, storeKey: targetPrefVseg3StoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVseg4Key, storeKey: targetPrefVseg4StoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVseg5Key, storeKey: targetPrefVseg5StoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefBDKey, storeKey: targetPrefBdStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefGNKey, storeKey: targetPrefGnStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefLOCKey, storeKey: targetPrefLocStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVPVKey, storeKey: targetPrefVPVStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefLPVSKey, storeKey: targetPrefLPVSStoreKey,
+                                                            count: 10, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefLPPKey, storeKey: targetPrefLPPStoreKey,
+                                                            count: 1, relatedKeys: [targetPrefPPRKey]))
+            targetParameters.append(RDParameter(key: targetPrefVQKey, storeKey: targetPrefVQStoreKey,
+                                                            count: 1, relatedKeys: nil))
+            targetParameters.append(RDParameter(key: targetPrefVRDomainKey, storeKey: targetPrefVRStoreKey,
+                                                            count: 1, relatedKeys: nil))
         }
         return targetParameters
     }
-
+    
 }
 
-struct RelatedDigitalInAppNotificationsConstants {
+struct RDInAppNotificationsConstants {
     static let miniInAppHeight: CGFloat = 75
     static let miniBottomPadding: CGFloat = 0 // 10 + (UIDevice.current.iPhoneX ? 34 : 0)
     static let miniSidePadding: CGFloat = 0 // 15

@@ -1,8 +1,8 @@
 //
-//  VisilabsHelper.swift
-//  VisilabsIOS
+//  RDHelper.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 27.04.2020.
+//  Created by Egemen Gülkılık on 27.11.2021.
 //
 
 import Foundation
@@ -12,9 +12,9 @@ import WebKit
 import UIKit
 import AppTrackingTransparency
 
-internal class RelatedDigitalHelper {
+internal class RDHelper {
     
-    // TO_DO: buradaki değerleri VisilabsConfig e aktar, metersPerNauticalMile niye var?
+    // TO_DO: buradaki değerleri RDConfig e aktar, metersPerNauticalMile niye var?
     static func distanceSquared(lat1: Double, lng1: Double, lat2: Double, lng2: Double) -> Double {
         let radius = 0.0174532925199433 // 3.14159265358979323846 / 180.0
         let nauticalMilesPerLatitude = 60.00721
@@ -72,7 +72,7 @@ internal class RelatedDigitalHelper {
                     }
                 }
             } else {
-                RelatedDigitalLogger.warn("NSUserTrackingUsageDescription key is missing")
+                RDLogger.warn("NSUserTrackingUsageDescription key is missing")
             }
         } else {
             if ASIdentifierManager.shared().isAdvertisingTrackingEnabled {
@@ -94,25 +94,25 @@ internal class RelatedDigitalHelper {
                 if error == nil, let userAgentString = userAgent as? String, userAgentString.count > 0 {
                     completion(userAgentString)
                 } else {
-                    RelatedDigitalLogger.error("Visilabs can not compute user agent.")
+                    RDLogger.error("Visilabs can not compute user agent.")
                 }
             })
         }
     }
     
     static func setEndpoints(dataSource: String, useInsecureProtocol: Bool = false) {
-        let httpProtocol = useInsecureProtocol ? RelatedDigitalConstants.HTTP : RelatedDigitalConstants.HTTPS
+        let httpProtocol = useInsecureProtocol ? RDConstants.HTTP : RDConstants.HTTPS
         RelatedDigitalBasePath.endpoints[.logger] =
-        "\(httpProtocol)://\(RelatedDigitalConstants.loggerEndPoint)/\(dataSource)/\(RelatedDigitalConstants.omGif)"
+        "\(httpProtocol)://\(RDConstants.loggerEndPoint)/\(dataSource)/\(RDConstants.omGif)"
         RelatedDigitalBasePath.endpoints[.realtime] =
-        "\(httpProtocol)://\(RelatedDigitalConstants.realtimeEndPoint)/\(dataSource)/\(RelatedDigitalConstants.omGif)"
-        RelatedDigitalBasePath.endpoints[.target] = "\(httpProtocol)://\(RelatedDigitalConstants.recommendationEndPoint)"
-        RelatedDigitalBasePath.endpoints[.action] = "\(httpProtocol)://\(RelatedDigitalConstants.actionEndPoint)"
-        RelatedDigitalBasePath.endpoints[.geofence] = "\(httpProtocol)://\(RelatedDigitalConstants.geofenceEndPoint)"
-        RelatedDigitalBasePath.endpoints[.mobile] = "\(httpProtocol)://\(RelatedDigitalConstants.mobileEndPoint)"
-        RelatedDigitalBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RelatedDigitalConstants.subsjsonEndpoint)"
-        RelatedDigitalBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RelatedDigitalConstants.promotionEndpoint)"
-        RelatedDigitalBasePath.endpoints[.remote] = "https://\(RelatedDigitalConstants.remoteConfigEndpoint)"
+        "\(httpProtocol)://\(RDConstants.realtimeEndPoint)/\(dataSource)/\(RDConstants.omGif)"
+        RelatedDigitalBasePath.endpoints[.target] = "\(httpProtocol)://\(RDConstants.recommendationEndPoint)"
+        RelatedDigitalBasePath.endpoints[.action] = "\(httpProtocol)://\(RDConstants.actionEndPoint)"
+        RelatedDigitalBasePath.endpoints[.geofence] = "\(httpProtocol)://\(RDConstants.geofenceEndPoint)"
+        RelatedDigitalBasePath.endpoints[.mobile] = "\(httpProtocol)://\(RDConstants.mobileEndPoint)"
+        RelatedDigitalBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RDConstants.subsjsonEndpoint)"
+        RelatedDigitalBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RDConstants.promotionEndpoint)"
+        RelatedDigitalBasePath.endpoints[.remote] = "https://\(RDConstants.remoteConfigEndpoint)"
     }
     
     static private let dateFormatter = DateFormatter()
@@ -190,9 +190,9 @@ internal class RelatedDigitalHelper {
     
     static func showCopiedClipboardMessage() {
         if Locale.current.languageCode == "en" {
-            RelatedDigitalHelper.showToast("Copied to clipboard", delay: 1.5)
+            RDHelper.showToast("Copied to clipboard", delay: 1.5)
         } else {
-            RelatedDigitalHelper.showToast("Panoya kopyalandı", delay: 1.5)
+            RDHelper.showToast("Panoya kopyalandı", delay: 1.5)
         }
     }
     
@@ -222,7 +222,7 @@ internal class RelatedDigitalHelper {
                 return shortVersion
             }
         }
-        return RelatedDigitalConstants.sdkVersion
+        return RDConstants.sdkVersion
     }
     
     static func getAppVersion() -> String? {
@@ -301,22 +301,22 @@ internal class RelatedDigitalHelper {
                     }
                     
                     guard let url = Bundle.main.url(forResource: fontName, withExtension: fontExtension) else {
-                        RelatedDigitalLogger.error("UIFont+:  Failed to register font - path for resource not found.")
+                        RDLogger.error("UIFont+:  Failed to register font - path for resource not found.")
                         continue
                     }
 
                     guard let fontDataProvider = CGDataProvider(url: url as CFURL) else {
-                        RelatedDigitalLogger.error("CGDataProvider: ERROR")
+                        RDLogger.error("CGDataProvider: ERROR")
                         continue
                     }
                     
                     if let font = CGFont(fontDataProvider) {
                         var error: Unmanaged<CFError>?
                         guard CTFontManagerRegisterGraphicsFont(font, &error) else {
-                            RelatedDigitalLogger.error("CTFontManagerRegisterGraphicsFont: ERROR")
+                            RDLogger.error("CTFontManagerRegisterGraphicsFont: ERROR")
                             continue
                         }
-                        RelatedDigitalLogger.error("\(String(describing: font.fullName)): registered")
+                        RDLogger.error("\(String(describing: font.fullName)): registered")
                     }
                 }
             }
@@ -359,7 +359,7 @@ internal class RelatedDigitalHelper {
         return finalFont
     }
     
-    static func getImageUrl(_ imageUrlString: String, type: RelatedDigitalInAppNotificationType) -> URL? {
+    static func getImageUrl(_ imageUrlString: String, type: RDInAppNotificationType) -> URL? {
         var imageUrl: URL?
         var urlString = imageUrlString
         if type == .mini {

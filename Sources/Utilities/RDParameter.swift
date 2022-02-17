@@ -1,13 +1,13 @@
 //
-//  VisilabsParameter.swift
-//  VisilabsIOS
+//  RDParameter.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 14.04.2020.
+//  Created by Egemen Gülkılık on 23.11.2021.
 //
 
 import Foundation
 
-class RelatedDigitalParameter {
+class RDParameter {
     var key: String
     var storeKey: String
     var count: UInt8

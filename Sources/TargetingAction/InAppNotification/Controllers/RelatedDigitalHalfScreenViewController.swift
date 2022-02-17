@@ -76,8 +76,8 @@ class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationView
             bounds = UIScreen.main.bounds
         }
         
-        let bottomInset = Double(RelatedDigitalHelper.getSafeAreaInsets().bottom)
-        let topInset = Double(RelatedDigitalHelper.getSafeAreaInsets().top)
+        let bottomInset = Double(RDHelper.getSafeAreaInsets().bottom)
+        let topInset = Double(RDHelper.getSafeAreaInsets().top)
         halfScreenHeight = Double(relatedDigitalHalfScreenView.imageView.frame.height) + Double(relatedDigitalHalfScreenView.titleLabel.frame.height)
         
         let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
@@ -118,9 +118,9 @@ class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationView
                 
                 var originY = 0.0
                 if self.halfScreenNotification.position == .bottom {
-                    originY = self.halfScreenHeight + Double(RelatedDigitalHelper.getSafeAreaInsets().bottom)
+                    originY = self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().bottom)
                 } else {
-                    originY = -(self.halfScreenHeight + Double(RelatedDigitalHelper.getSafeAreaInsets().top))
+                    originY = -(self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().top))
                 }
                 
                 self.window?.frame.origin.y += CGFloat(originY)

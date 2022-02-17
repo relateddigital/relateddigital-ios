@@ -240,7 +240,7 @@ extension ShakeToWinViewController {
             do {
                 data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
             } catch {
-                RelatedDigitalLogger.error("image failed to load from url \(iUrl)")
+                RDLogger.error("image failed to load from url \(iUrl)")
             }
         }
         return data

@@ -23,12 +23,12 @@ class RelatedDigitalLocationManager: NSObject {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.distanceFilter = kCLDistanceFilterNone
-        locationManager.allowsBackgroundLocationUpdates = RelatedDigitalHelper.hasBackgroundLocationCabability() && CLLocationManager.authorizationStatus() == .authorizedAlways
+        locationManager.allowsBackgroundLocationUpdates = RDHelper.hasBackgroundLocationCabability() && CLLocationManager.authorizationStatus() == .authorizedAlways
         lowPowerLocationManager = CLLocationManager()
         lowPowerLocationManager = CLLocationManager()
         lowPowerLocationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         lowPowerLocationManager.distanceFilter = CLLocationDistance(3000)
-        lowPowerLocationManager.allowsBackgroundLocationUpdates = RelatedDigitalHelper.hasBackgroundLocationCabability()
+        lowPowerLocationManager.allowsBackgroundLocationUpdates = RDHelper.hasBackgroundLocationCabability()
         super.init()
         locationManager.delegate = self
     }
@@ -46,9 +46,9 @@ class RelatedDigitalLocationManager: NSObject {
         if !acceptedAuthorizationStatuses.contains(RelatedDigitalLocationManager.locationServiceStateStatus) {
             return
         }
-        locationManager.allowsBackgroundLocationUpdates = RelatedDigitalHelper.hasBackgroundLocationCabability() && CLLocationManager.authorizationStatus() == .authorizedAlways
+        locationManager.allowsBackgroundLocationUpdates = RDHelper.hasBackgroundLocationCabability() && CLLocationManager.authorizationStatus() == .authorizedAlways
         locationManager.pausesLocationUpdatesAutomatically = false
-        lowPowerLocationManager.allowsBackgroundLocationUpdates = RelatedDigitalHelper.hasBackgroundLocationCabability()
+        lowPowerLocationManager.allowsBackgroundLocationUpdates = RDHelper.hasBackgroundLocationCabability()
         lowPowerLocationManager.pausesLocationUpdatesAutomatically = false
         if #available(iOS 11, *) {
             lowPowerLocationManager.showsBackgroundLocationIndicator = false
@@ -68,7 +68,7 @@ class RelatedDigitalLocationManager: NSObject {
         for region in self.locationManager.monitoredRegions {
             if region.identifier.contains("visilabs", options: String.CompareOptions.caseInsensitive) {
                 self.locationManager.stopMonitoring(for: region)
-                RelatedDigitalLogger.info("stopped monitoring region: \(region.identifier)")
+                RDLogger.info("stopped monitoring region: \(region.identifier)")
             }
         }
     }
@@ -104,8 +104,8 @@ class RelatedDigitalLocationManager: NSObject {
         let authorizationStatus = status ?? RelatedDigitalLocationManager.locationServiceStateStatus
         if authorizationStatus != lastKnownCLAuthorizationStatus {
             var properties = [String: String]()
-            properties[RelatedDigitalConstants.locationPermissionReqKey] = authorizationStatus.queryStringValue
-            RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+            properties[RDConstants.locationPermissionReqKey] = authorizationStatus.queryStringValue
+            RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
             lastKnownCLAuthorizationStatus = authorizationStatus
         }
         if !geofenceEnabled {
@@ -131,7 +131,7 @@ class RelatedDigitalLocationManager: NSObject {
         let alwaysIsEnabled = Bundle.main.object(forInfoDictionaryKey: "NSLocationAlwaysAndWhenInUseUsageDescription") != nil
         let onlyInUseEnabled = Bundle.main.object(forInfoDictionaryKey: "NSLocationWhenInUseUsageDescription") != nil
         
-        if alwaysIsEnabled, RelatedDigitalHelper.hasBackgroundLocationCabability() {
+        if alwaysIsEnabled, RDHelper.hasBackgroundLocationCabability() {
             if #available(iOS 13.4, *) {
                 if status == .notDetermined {
                     self.locationManager.requestWhenInUseAuthorization()
@@ -142,12 +142,12 @@ class RelatedDigitalLocationManager: NSObject {
                 self.locationManager.requestAlwaysAuthorization()
             }
         } else if onlyInUseEnabled {
-            RelatedDigitalLogger.warn("Your app does not have background location capability.")
+            RDLogger.warn("Your app does not have background location capability.")
             if status == .notDetermined {
                 self.locationManager.requestWhenInUseAuthorization()
             }
         } else {
-            RelatedDigitalLogger.error("NSLocationAlwaysAndWhenInUseUsageDescription and NSLocationWhenInUseUsageDescription plist keys missing.")
+            RDLogger.error("NSLocationAlwaysAndWhenInUseUsageDescription and NSLocationWhenInUseUsageDescription plist keys missing.")
             return
         }
     }
@@ -163,7 +163,7 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
     
     // TO_DO: buna bak tekrardan
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        RelatedDigitalLogger.info("CLLocationManager didChangeAuthorization: status: \(status.string)")
+        RDLogger.info("CLLocationManager didChangeAuthorization: status: \(status.string)")
         sendLocationPermission(status: status)
         if !self.geofenceEnabled {
             stopUpdates()
@@ -178,7 +178,7 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
     
     func locationManagerDidChangeAuthorization (_ manager: CLLocationManager) {
         if #available(iOS 14.0, *) {
-            RelatedDigitalLogger.info("CLLocationManager didChangeAuthorization: status: \(manager.authorizationStatus.string)")
+            RDLogger.info("CLLocationManager didChangeAuthorization: status: \(manager.authorizationStatus.string)")
             sendLocationPermission(status: manager.authorizationStatus)
             if !self.geofenceEnabled {
                 stopUpdates()
@@ -198,13 +198,13 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
         }
         if locations.count > 0 {
             self.currentGeoLocationValue = locations[0].coordinate
-            RelatedDigitalLogger.info("CLLocationManager didUpdateLocations: lat:\(locations[0].coordinate.latitude) lon:\(locations[0].coordinate.longitude)")
+            RDLogger.info("CLLocationManager didUpdateLocations: lat:\(locations[0].coordinate.latitude) lon:\(locations[0].coordinate.longitude)")
             RelatedDigitalGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: self.currentGeoLocationValue?.latitude, lastKnownLongitude: self.currentGeoLocationValue?.longitude)
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        RelatedDigitalLogger.error("CLLocationManager didFailWithError : \(error.localizedDescription)")
+        RDLogger.error("CLLocationManager didFailWithError : \(error.localizedDescription)")
     }
     
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
@@ -213,9 +213,9 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
             let actionId = elements[1]
             let geofenceId = elements[2]
             let targetEvent = elements[3]
-            if targetEvent == RelatedDigitalConstants.onEnter {
+            if targetEvent == RDConstants.onEnter {
                 RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: false, isEnter: false)
-            } else if targetEvent == RelatedDigitalConstants.dwell {
+            } else if targetEvent == RDConstants.dwell {
                 RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: true, isEnter: true)
             }
         }
@@ -227,26 +227,26 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
             let actionId = elements[1]
             let geofenceId = elements[2]
             let targetEvent = elements[3]
-            if targetEvent == RelatedDigitalConstants.onExit {
+            if targetEvent == RDConstants.onExit {
                 RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: false, isEnter: false)
-            } else if targetEvent == RelatedDigitalConstants.dwell {
+            } else if targetEvent == RDConstants.dwell {
                 RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: true, isEnter: false)
             }
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
-        RelatedDigitalLogger.info("CLLocationManager didStartMonitoringFor: region identifier: \(region.identifier)")
+        RDLogger.info("CLLocationManager didStartMonitoringFor: region identifier: \(region.identifier)")
         self.locationManager.requestState(for: region)
     }
     
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
-        RelatedDigitalLogger.error("CLLocationManager monitoringDidFailFor: region identifier: \(String(describing: region?.identifier)) error: \(error.localizedDescription)")
+        RDLogger.error("CLLocationManager monitoringDidFailFor: region identifier: \(String(describing: region?.identifier)) error: \(error.localizedDescription)")
     }
     
     // TO_DO: buna gerek yok sanırım
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-        RelatedDigitalLogger.info("CLLocationManager didDetermineState: region identifier: \(region.identifier) state: \(state)")
+        RDLogger.info("CLLocationManager didDetermineState: region identifier: \(region.identifier) state: \(state)")
     }
 }
 
@@ -265,11 +265,11 @@ extension CLAuthorizationStatus {
     
     var queryStringValue : String {
         switch self {
-        case .denied: return RelatedDigitalConstants.locationPermissionNone
-        case .authorizedAlways: return RelatedDigitalConstants.locationPermissionAlways
-        case .authorizedWhenInUse: return RelatedDigitalConstants.locationPermissionAppOpen
-        case .notDetermined, .restricted: return RelatedDigitalConstants.locationPermissionNone
-        @unknown default: return RelatedDigitalConstants.locationPermissionNone
+        case .denied: return RDConstants.locationPermissionNone
+        case .authorizedAlways: return RDConstants.locationPermissionAlways
+        case .authorizedWhenInUse: return RDConstants.locationPermissionAppOpen
+        case .notDetermined, .restricted: return RDConstants.locationPermissionNone
+        @unknown default: return RDConstants.locationPermissionNone
         }
     }
 }

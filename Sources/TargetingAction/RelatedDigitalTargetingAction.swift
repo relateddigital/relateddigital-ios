@@ -11,7 +11,7 @@ class RelatedDigitalTargetingAction {
 
     let rdProfile: RelatedDigitalProfile
 
-    required init(lock: RelatedDigitalReadWriteLock, rdProfile: RelatedDigitalProfile) {
+    required init(lock: RDReadWriteLock, rdProfile: RelatedDigitalProfile) {
         self.notificationsInstance = RelatedDigitalInAppNotifications(lock: lock)
         self.rdProfile = rdProfile
     }
@@ -44,18 +44,18 @@ class RelatedDigitalTargetingAction {
         var props = properties
         props["OM.vcap"] = rdUser.visitData
         props["OM.viscap"] = rdUser.visitorData
-        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
 
-        for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
+        for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                props[key] = value
            }
         }
         
-        props[RelatedDigitalConstants.pushPermitPermissionReqKey] = RelatedDigitalConstants.pushPermitStatus
+        props[RDConstants.pushPermitPermissionReqKey] = RDConstants.pushPermitStatus
 
         RelatedDigitalRequest.sendInAppNotificationRequest(properties: props,
                                                      headers: headers,
@@ -70,7 +70,7 @@ class RelatedDigitalTargetingAction {
             for rawNotif in result {
                 if let actionData = rawNotif["actiondata"] as? [String: Any] {
                     if let typeString = actionData["msg_type"] as? String,
-                       RelatedDigitalInAppNotificationType(rawValue: typeString) != nil,
+                       RDInAppNotificationType(rawValue: typeString) != nil,
                        let notification = RelatedDigitalInAppNotification(JSONObject: rawNotif) {
                         notifications.append(notification)
                     }
@@ -80,7 +80,7 @@ class RelatedDigitalTargetingAction {
         })
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
 
-        RelatedDigitalLogger.info("in app notification check: \(notifications.count) found." +
+        RDLogger.info("in app notification check: \(notifications.count) found." +
                             " actid's: \(notifications.map({String($0.actId)}).joined(separator: ","))")
 
         self.notificationsInstance.inAppNotification = notifications.first
@@ -96,21 +96,21 @@ class RelatedDigitalTargetingAction {
         var props = properties
         props["OM.vcap"] = rdUser.visitData
         props["OM.viscap"] = rdUser.visitorData
-        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
         
         
-        props[RelatedDigitalConstants.actionType] = "\(RelatedDigitalConstants.mailSubscriptionForm)~\(RelatedDigitalConstants.spinToWin)~\(RelatedDigitalConstants.scratchToWin)~\(RelatedDigitalConstants.productStatNotifier)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)"
 
-        for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
+        for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                props[key] = value
            }
         }
         
-        props[RelatedDigitalConstants.pushPermitPermissionReqKey] = RelatedDigitalConstants.pushPermitStatus
+        props[RDConstants.pushPermitPermissionReqKey] = RDConstants.pushPermitStatus
 
         RelatedDigitalRequest.sendMobileRequest(properties: props,
                                           headers: prepareHeaders(rdUser),
@@ -130,19 +130,19 @@ class RelatedDigitalTargetingAction {
 
     func parseTargetingAction(_ result: [String: Any]?) -> TargetingActionViewModel? {
         guard let result = result else { return nil }
-        if let mailFormArr = result[RelatedDigitalConstants.mailSubscriptionForm] as? [[String: Any?]], let mailForm = mailFormArr.first {
+        if let mailFormArr = result[RDConstants.mailSubscriptionForm] as? [[String: Any?]], let mailForm = mailFormArr.first {
             return parseMailForm(mailForm)
-        } else if let spinToWinArr = result[RelatedDigitalConstants.spinToWin] as? [[String: Any?]], let spinToWin = spinToWinArr.first {
+        } else if let spinToWinArr = result[RDConstants.spinToWin] as? [[String: Any?]], let spinToWin = spinToWinArr.first {
             return parseSpinToWin(spinToWin)
-        } else if let sctwArr = result[RelatedDigitalConstants.scratchToWin] as? [[String: Any?]], let sctw = sctwArr.first {
+        } else if let sctwArr = result[RDConstants.scratchToWin] as? [[String: Any?]], let sctw = sctwArr.first {
             return parseScratchToWin(sctw)
-        } else if let psnArr = result[RelatedDigitalConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
+        } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
                     return nil
                 }
                 if productStatNotifier.contentCount < productStatNotifier.threshold {
-                    RelatedDigitalLogger.warn("Product stat notifier: content count below threshold.")
+                    RDLogger.warn("Product stat notifier: content count below threshold.")
                     return nil
                 }
                 return productStatNotifier
@@ -154,101 +154,101 @@ class RelatedDigitalTargetingAction {
     // MARK: SpinToWin
 
     private func parseSpinToWin(_ spinToWin: [String: Any?]) -> SpinToWinViewModel? {
-        guard let actionData = spinToWin[RelatedDigitalConstants.actionData] as? [String: Any] else { return nil }
-        guard let slices = actionData[RelatedDigitalConstants.slices] as? [[String: Any]] else { return nil }
-        guard let spinToWinContent = actionData[RelatedDigitalConstants.spinToWinContent] as? [String: Any] else { return nil }
-        let encodedStr = actionData[RelatedDigitalConstants.extendedProps] as? String ?? ""
+        guard let actionData = spinToWin[RDConstants.actionData] as? [String: Any] else { return nil }
+        guard let slices = actionData[RDConstants.slices] as? [[String: Any]] else { return nil }
+        guard let spinToWinContent = actionData[RDConstants.spinToWinContent] as? [String: Any] else { return nil }
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
         // guard let report = actionData[VisilabsConstants.report] as? [String: Any] else { return nil } //mail_subscription false olduğu zaman report gelmiyor.
 
-        let taTemplate = actionData[RelatedDigitalConstants.taTemplate] as? String ?? "half_spin"
-        let img = actionData[RelatedDigitalConstants.img] as? String ?? ""
+        let taTemplate = actionData[RDConstants.taTemplate] as? String ?? "half_spin"
+        let img = actionData[RDConstants.img] as? String ?? ""
 
-        let report = actionData[RelatedDigitalConstants.report] as? [String: Any] ?? [String: Any]()
-        let actid = spinToWin[RelatedDigitalConstants.actid] as? Int ?? 0
-        let auth = actionData[RelatedDigitalConstants.authentication] as? String ?? ""
-        let promoAuth = actionData[RelatedDigitalConstants.promoAuth] as? String ?? ""
-        let type = actionData[RelatedDigitalConstants.type] as? String ?? "spin_to_win_email"
-        let mailSubscription = actionData[RelatedDigitalConstants.mailSubscription] as? Bool ?? false
-        let sliceCount = actionData[RelatedDigitalConstants.sliceCount] as? String ?? ""
-        let promocodesSoldoutMessage = actionData[RelatedDigitalConstants.promocodesSoldoutMessage] as? String ?? ""
+        let report = actionData[RDConstants.report] as? [String: Any] ?? [String: Any]()
+        let actid = spinToWin[RDConstants.actid] as? Int ?? 0
+        let auth = actionData[RDConstants.authentication] as? String ?? ""
+        let promoAuth = actionData[RDConstants.promoAuth] as? String ?? ""
+        let type = actionData[RDConstants.type] as? String ?? "spin_to_win_email"
+        let mailSubscription = actionData[RDConstants.mailSubscription] as? Bool ?? false
+        let sliceCount = actionData[RDConstants.sliceCount] as? String ?? ""
+        let promocodesSoldoutMessage = actionData[RDConstants.promocodesSoldoutMessage] as? String ?? ""
         // report
-        let impression = report[RelatedDigitalConstants.impression] as? String ?? ""
-        let click = report[RelatedDigitalConstants.click] as? String ?? ""
+        let impression = report[RDConstants.impression] as? String ?? ""
+        let click = report[RDConstants.click] as? String ?? ""
         let spinToWinReport = SpinToWinReport(impression: impression, click: click)
 
         // spin_to_win_content
-        let title = spinToWinContent[RelatedDigitalConstants.title] as? String ?? ""
-        let message = spinToWinContent[RelatedDigitalConstants.message] as? String ?? ""
-        let placeholder = spinToWinContent[RelatedDigitalConstants.placeholder] as? String ?? ""
-        let buttonLabel = spinToWinContent[RelatedDigitalConstants.buttonLabel] as? String ?? ""
-        let consentText = spinToWinContent[RelatedDigitalConstants.consentText] as? String ?? ""
-        let invalidEmailMessage = spinToWinContent[RelatedDigitalConstants.invalidEmailMessage] as? String ?? ""
-        let successMessage = spinToWinContent[RelatedDigitalConstants.successMessage] as? String ?? ""
-        let emailPermitText = spinToWinContent[RelatedDigitalConstants.emailPermitText] as? String ?? ""
-        let checkConsentMessage = spinToWinContent[RelatedDigitalConstants.checkConsentMessage] as? String ?? ""
-        let promocodeTitle = actionData[RelatedDigitalConstants.promocodeTitle] as? String ?? ""
-        let copybuttonLabel = actionData[RelatedDigitalConstants.copybuttonLabel] as? String ?? ""
-        let wheelSpinAction = actionData[RelatedDigitalConstants.wheelSpinAction] as? String ?? ""
+        let title = spinToWinContent[RDConstants.title] as? String ?? ""
+        let message = spinToWinContent[RDConstants.message] as? String ?? ""
+        let placeholder = spinToWinContent[RDConstants.placeholder] as? String ?? ""
+        let buttonLabel = spinToWinContent[RDConstants.buttonLabel] as? String ?? ""
+        let consentText = spinToWinContent[RDConstants.consentText] as? String ?? ""
+        let invalidEmailMessage = spinToWinContent[RDConstants.invalidEmailMessage] as? String ?? ""
+        let successMessage = spinToWinContent[RDConstants.successMessage] as? String ?? ""
+        let emailPermitText = spinToWinContent[RDConstants.emailPermitText] as? String ?? ""
+        let checkConsentMessage = spinToWinContent[RDConstants.checkConsentMessage] as? String ?? ""
+        let promocodeTitle = actionData[RDConstants.promocodeTitle] as? String ?? ""
+        let copybuttonLabel = actionData[RDConstants.copybuttonLabel] as? String ?? ""
+        let wheelSpinAction = actionData[RDConstants.wheelSpinAction] as? String ?? ""
 
         // extended properties
-        let displaynameTextColor = extendedProps[RelatedDigitalConstants.displaynameTextColor] as? String ?? ""
-        let displaynameFontFamily = extendedProps[RelatedDigitalConstants.displaynameFontFamily] as? String ?? ""
-        let displaynameTextSize = extendedProps[RelatedDigitalConstants.displaynameTextSize] as? String ?? ""
-        let titleTextColor = extendedProps[RelatedDigitalConstants.titleTextColor] as? String ?? ""
-        let titleFontFamily = extendedProps[RelatedDigitalConstants.titleFontFamily] as? String ?? ""
-        let titleTextSize = extendedProps[RelatedDigitalConstants.titleTextSize] as? String ?? ""
-        let textColor = extendedProps[RelatedDigitalConstants.textColor] as? String ?? ""
-        let textFontFamily = extendedProps[RelatedDigitalConstants.textFontFamily] as? String ?? ""
-        let textSize = extendedProps[RelatedDigitalConstants.textSize] as? String ?? ""
-        let button_color = extendedProps[RelatedDigitalConstants.button_color] as? String ?? ""
-        let button_text_color = extendedProps[RelatedDigitalConstants.button_text_color] as? String ?? ""
-        let buttonFontFamily = extendedProps[RelatedDigitalConstants.buttonFontFamily] as? String ?? ""
-        let buttonTextSize = extendedProps[RelatedDigitalConstants.buttonTextSize] as? String ?? ""
-        let promocodeTitleTextColor = extendedProps[RelatedDigitalConstants.promocodeTitleTextColor] as? String ?? ""
-        let promocodeTitleFontFamily = extendedProps[RelatedDigitalConstants.promocodeTitleFontFamily] as? String ?? ""
-        let promocodeTitleTextSize = extendedProps[RelatedDigitalConstants.promocodeTitleTextSize] as? String ?? ""
-        let promocodeBackgroundColor = extendedProps[RelatedDigitalConstants.promocodeBackgroundColor] as? String ?? ""
-        let promocodeTextColor = extendedProps[RelatedDigitalConstants.promocodeTextColor] as? String ?? ""
-        let copybuttonColor = extendedProps[RelatedDigitalConstants.copybuttonColor] as? String ?? ""
-        let copybuttonTextColor = extendedProps[RelatedDigitalConstants.copybuttonTextColor] as? String ?? ""
-        let copybuttonFontFamily = extendedProps[RelatedDigitalConstants.copybuttonFontFamily] as? String ?? ""
-        let copybuttonTextSize = extendedProps[RelatedDigitalConstants.copybuttonTextSize] as? String ?? ""
-        let emailpermitTextSize = extendedProps[RelatedDigitalConstants.emailpermitTextSize] as? String ?? ""
-        let emailpermitTextUrl = extendedProps[RelatedDigitalConstants.emailpermitTextUrl] as? String ?? ""
+        let displaynameTextColor = extendedProps[RDConstants.displaynameTextColor] as? String ?? ""
+        let displaynameFontFamily = extendedProps[RDConstants.displaynameFontFamily] as? String ?? ""
+        let displaynameTextSize = extendedProps[RDConstants.displaynameTextSize] as? String ?? ""
+        let titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
+        let titleFontFamily = extendedProps[RDConstants.titleFontFamily] as? String ?? ""
+        let titleTextSize = extendedProps[RDConstants.titleTextSize] as? String ?? ""
+        let textColor = extendedProps[RDConstants.textColor] as? String ?? ""
+        let textFontFamily = extendedProps[RDConstants.textFontFamily] as? String ?? ""
+        let textSize = extendedProps[RDConstants.textSize] as? String ?? ""
+        let button_color = extendedProps[RDConstants.button_color] as? String ?? ""
+        let button_text_color = extendedProps[RDConstants.button_text_color] as? String ?? ""
+        let buttonFontFamily = extendedProps[RDConstants.buttonFontFamily] as? String ?? ""
+        let buttonTextSize = extendedProps[RDConstants.buttonTextSize] as? String ?? ""
+        let promocodeTitleTextColor = extendedProps[RDConstants.promocodeTitleTextColor] as? String ?? ""
+        let promocodeTitleFontFamily = extendedProps[RDConstants.promocodeTitleFontFamily] as? String ?? ""
+        let promocodeTitleTextSize = extendedProps[RDConstants.promocodeTitleTextSize] as? String ?? ""
+        let promocodeBackgroundColor = extendedProps[RDConstants.promocodeBackgroundColor] as? String ?? ""
+        let promocodeTextColor = extendedProps[RDConstants.promocodeTextColor] as? String ?? ""
+        let copybuttonColor = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        let copybuttonTextColor = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        let copybuttonFontFamily = extendedProps[RDConstants.copybuttonFontFamily] as? String ?? ""
+        let copybuttonTextSize = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        let emailpermitTextSize = extendedProps[RDConstants.emailpermitTextSize] as? String ?? ""
+        let emailpermitTextUrl = extendedProps[RDConstants.emailpermitTextUrl] as? String ?? ""
         
         
-        let displaynameCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.displaynameCustomFontFamilyIos] as? String ?? ""
-        let titleCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.titleCustomFontFamilyIos] as? String ?? ""
-        let textCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.textCustomFontFamilyIos] as? String ?? ""
-        let buttonCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.buttonCustomFontFamilyIos] as? String ?? ""
-        let promocodeTitleCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.promocodeTitleCustomFontFamilyIos] as? String ?? ""
-        let copybuttonCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.copybuttonCustomFontFamilyIos] as? String ?? ""
-        let promocodesSoldoutMessageCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.promocodesSoldoutMessageCustomFontFamilyIos] as? String ?? ""
+        let displaynameCustomFontFamilyIos = extendedProps[RDConstants.displaynameCustomFontFamilyIos] as? String ?? ""
+        let titleCustomFontFamilyIos = extendedProps[RDConstants.titleCustomFontFamilyIos] as? String ?? ""
+        let textCustomFontFamilyIos = extendedProps[RDConstants.textCustomFontFamilyIos] as? String ?? ""
+        let buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
+        let promocodeTitleCustomFontFamilyIos = extendedProps[RDConstants.promocodeTitleCustomFontFamilyIos] as? String ?? ""
+        let copybuttonCustomFontFamilyIos = extendedProps[RDConstants.copybuttonCustomFontFamilyIos] as? String ?? ""
+        let promocodesSoldoutMessageCustomFontFamilyIos = extendedProps[RDConstants.promocodesSoldoutMessageCustomFontFamilyIos] as? String ?? ""
 
-        let consentTextSize = extendedProps[RelatedDigitalConstants.consentTextSize] as? String ?? ""
-        let consentTextUrl = extendedProps[RelatedDigitalConstants.consentTextUrl] as? String ?? ""
-        let closeButtonColor = extendedProps[RelatedDigitalConstants.closeButtonColor] as? String ?? ""
-        let backgroundColor = extendedProps[RelatedDigitalConstants.backgroundColor] as? String ?? ""
+        let consentTextSize = extendedProps[RDConstants.consentTextSize] as? String ?? ""
+        let consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
+        let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        let backgroundColor = extendedProps[RDConstants.backgroundColor] as? String ?? ""
         
-        let wheelBorderWidth = extendedProps[RelatedDigitalConstants.wheelBorderWidth] as? String ?? ""
-        let wheelBorderColor = extendedProps[RelatedDigitalConstants.wheelBorderColor] as? String ?? ""
-        let sliceDisplaynameFontFamily = extendedProps[RelatedDigitalConstants.sliceDisplaynameFontFamily] as? String ?? ""
+        let wheelBorderWidth = extendedProps[RDConstants.wheelBorderWidth] as? String ?? ""
+        let wheelBorderColor = extendedProps[RDConstants.wheelBorderColor] as? String ?? ""
+        let sliceDisplaynameFontFamily = extendedProps[RDConstants.sliceDisplaynameFontFamily] as? String ?? ""
         
         
-        let promocodesSoldoutMessageTextColor = extendedProps[RelatedDigitalConstants.promocodes_soldout_message_text_color] as? String ?? ""
-        let promocodesSoldoutMessageFontFamily = extendedProps[RelatedDigitalConstants.promocodes_soldout_message_font_family] as? String ?? ""
-        let promocodesSoldoutMessageTextSize = extendedProps[RelatedDigitalConstants.promocodes_soldout_message_text_size] as? String ?? ""
-        let promocodesSoldoutMessageBackgroundColor = extendedProps[RelatedDigitalConstants.promocodes_soldout_message_background_color] as? String ?? ""
+        let promocodesSoldoutMessageTextColor = extendedProps[RDConstants.promocodes_soldout_message_text_color] as? String ?? ""
+        let promocodesSoldoutMessageFontFamily = extendedProps[RDConstants.promocodes_soldout_message_font_family] as? String ?? ""
+        let promocodesSoldoutMessageTextSize = extendedProps[RDConstants.promocodes_soldout_message_text_size] as? String ?? ""
+        let promocodesSoldoutMessageBackgroundColor = extendedProps[RDConstants.promocodes_soldout_message_background_color] as? String ?? ""
 
         var sliceArray = [SpinToWinSliceViewModel]()
 
         for slice in slices {
-            let displayName = slice[RelatedDigitalConstants.displayName] as? String ?? ""
-            let color = slice[RelatedDigitalConstants.color] as? String ?? ""
-            let code = slice[RelatedDigitalConstants.code] as? String ?? ""
-            let type = slice[RelatedDigitalConstants.type] as? String ?? ""
-            let isAvailable = slice[RelatedDigitalConstants.isAvailable] as? Bool ?? true
+            let displayName = slice[RDConstants.displayName] as? String ?? ""
+            let color = slice[RDConstants.color] as? String ?? ""
+            let code = slice[RDConstants.code] as? String ?? ""
+            let type = slice[RDConstants.type] as? String ?? ""
+            let isAvailable = slice[RDConstants.isAvailable] as? Bool ?? true
             let spinToWinSliceViewModel = SpinToWinSliceViewModel(displayName: displayName, color: color, code: code, type: type, isAvailable: isAvailable)
             sliceArray.append(spinToWinSliceViewModel)
         }
@@ -262,26 +262,26 @@ class RelatedDigitalTargetingAction {
     // MARK: ProductStatNotifier
 
     private func parseProductStatNotifier(_ productStatNotifier: [String: Any?]) -> RelatedDigitalProductStatNotifierViewModel? {
-        guard let actionData = productStatNotifier[RelatedDigitalConstants.actionData] as? [String: Any] else { return nil }
-        let encodedStr = actionData[RelatedDigitalConstants.extendedProps] as? String ?? ""
+        guard let actionData = productStatNotifier[RDConstants.actionData] as? [String: Any] else { return nil }
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
-        let content = actionData[RelatedDigitalConstants.content] as? String ?? ""
-        let timeout = actionData[RelatedDigitalConstants.timeout] as? String ?? ""
+        let content = actionData[RDConstants.content] as? String ?? ""
+        let timeout = actionData[RDConstants.timeout] as? String ?? ""
         var position = RelatedDigitalProductStatNotifierPosition.bottom
-        if let positionString = actionData[RelatedDigitalConstants.pos] as? String, let pos = RelatedDigitalProductStatNotifierPosition.init(rawValue: positionString) {
+        if let positionString = actionData[RDConstants.pos] as? String, let pos = RelatedDigitalProductStatNotifierPosition.init(rawValue: positionString) {
             position = pos
         }
-        let bgcolor = actionData[RelatedDigitalConstants.bgcolor] as? String ?? ""
-        let threshold = actionData[RelatedDigitalConstants.threshold] as? Int ?? 0
-        let showclosebtn = actionData[RelatedDigitalConstants.showclosebtn] as? Bool ?? false
+        let bgcolor = actionData[RDConstants.bgcolor] as? String ?? ""
+        let threshold = actionData[RDConstants.threshold] as? Int ?? 0
+        let showclosebtn = actionData[RDConstants.showclosebtn] as? Bool ?? false
         
         // extended properties
-        let content_text_color = extendedProps[RelatedDigitalConstants.content_text_color] as? String ?? ""
-        let content_font_family = extendedProps[RelatedDigitalConstants.content_font_family] as? String ?? ""
-        let content_text_size = extendedProps[RelatedDigitalConstants.content_text_size] as? String ?? ""
-        let contentcount_text_color = extendedProps[RelatedDigitalConstants.contentcount_text_color] as? String ?? ""
-        let contentcount_text_size = extendedProps[RelatedDigitalConstants.contentcount_text_size] as? String ?? ""
-        let closeButtonColor = extendedProps[RelatedDigitalConstants.closeButtonColor] as? String ?? "black"
+        let content_text_color = extendedProps[RDConstants.content_text_color] as? String ?? ""
+        let content_font_family = extendedProps[RDConstants.content_font_family] as? String ?? ""
+        let content_text_size = extendedProps[RDConstants.content_text_size] as? String ?? ""
+        let contentcount_text_color = extendedProps[RDConstants.contentcount_text_color] as? String ?? ""
+        let contentcount_text_size = extendedProps[RDConstants.contentcount_text_size] as? String ?? ""
+        let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
         
         var productStatNotifier = RelatedDigitalProductStatNotifierViewModel(targetingActionType: .productStatNotifier, content: content, timeout: timeout, position: position, bgcolor: bgcolor, threshold: threshold, showclosebtn: showclosebtn, content_text_color: content_text_color, content_font_family: content_font_family, content_text_size: content_text_size, contentcount_text_color: contentcount_text_color, contentcount_text_size: contentcount_text_size, closeButtonColor: closeButtonColor)
         productStatNotifier.setAttributedString()
@@ -291,46 +291,46 @@ class RelatedDigitalTargetingAction {
     // MARK: MailSubscriptionForm
 
     private func parseMailForm(_ mailForm: [String: Any?]) -> MailSubscriptionViewModel? {
-        guard let actionData = mailForm[RelatedDigitalConstants.actionData] as? [String: Any] else { return nil }
-        let encodedStr = actionData[RelatedDigitalConstants.extendedProps] as? String ?? ""
+        guard let actionData = mailForm[RDConstants.actionData] as? [String: Any] else { return nil }
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
-        guard let report = actionData[RelatedDigitalConstants.report] as? [String: Any] else { return nil }
-        let title = actionData[RelatedDigitalConstants.title] as? String ?? ""
-        let message = actionData[RelatedDigitalConstants.message] as? String ?? ""
-        let actid = mailForm[RelatedDigitalConstants.actid] as? Int ?? 0
-        let type = actionData[RelatedDigitalConstants.type] as? String ?? "subscription_email"
-        let buttonText = actionData[RelatedDigitalConstants.buttonLabel] as? String ?? ""
-        let auth = actionData[RelatedDigitalConstants.authentication] as? String ?? ""
-        let consentText = actionData[RelatedDigitalConstants.consentText] as? String
-        let successMsg = actionData[RelatedDigitalConstants.successMessage] as? String ?? ""
-        let invalidMsg = actionData[RelatedDigitalConstants.invalidEmailMessage] as? String ?? ""
-        let emailPermitText = actionData[RelatedDigitalConstants.emailPermitText] as? String ?? ""
-        let checkConsent = actionData[RelatedDigitalConstants.checkConsentMessage] as? String ?? ""
-        let placeholder = actionData[RelatedDigitalConstants.placeholder] as? String ?? ""
+        guard let report = actionData[RDConstants.report] as? [String: Any] else { return nil }
+        let title = actionData[RDConstants.title] as? String ?? ""
+        let message = actionData[RDConstants.message] as? String ?? ""
+        let actid = mailForm[RDConstants.actid] as? Int ?? 0
+        let type = actionData[RDConstants.type] as? String ?? "subscription_email"
+        let buttonText = actionData[RDConstants.buttonLabel] as? String ?? ""
+        let auth = actionData[RDConstants.authentication] as? String ?? ""
+        let consentText = actionData[RDConstants.consentText] as? String
+        let successMsg = actionData[RDConstants.successMessage] as? String ?? ""
+        let invalidMsg = actionData[RDConstants.invalidEmailMessage] as? String ?? ""
+        let emailPermitText = actionData[RDConstants.emailPermitText] as? String ?? ""
+        let checkConsent = actionData[RDConstants.checkConsentMessage] as? String ?? ""
+        let placeholder = actionData[RDConstants.placeholder] as? String ?? ""
 
-        let titleTextColor = extendedProps[RelatedDigitalConstants.titleTextColor] as? String ?? ""
-        let titleFontFamily = extendedProps[RelatedDigitalConstants.titleFontFamily] as? String ?? ""
-        let titleTextSize = extendedProps[RelatedDigitalConstants.titleTextSize] as? String ?? ""
-        let textColor = extendedProps[RelatedDigitalConstants.textColor] as? String ?? ""
-        let textFontFamily = extendedProps[RelatedDigitalConstants.textFontFamily] as? String ?? ""
-        let textSize = extendedProps[RelatedDigitalConstants.textSize] as? String ?? ""
+        let titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
+        let titleFontFamily = extendedProps[RDConstants.titleFontFamily] as? String ?? ""
+        let titleTextSize = extendedProps[RDConstants.titleTextSize] as? String ?? ""
+        let textColor = extendedProps[RDConstants.textColor] as? String ?? ""
+        let textFontFamily = extendedProps[RDConstants.textFontFamily] as? String ?? ""
+        let textSize = extendedProps[RDConstants.textSize] as? String ?? ""
         let buttonColor = extendedProps[RelatedDigitalInAppNotification.PayloadKey.buttonColor] as? String ?? ""
         let buttonTextColor = extendedProps[RelatedDigitalInAppNotification.PayloadKey.buttonTextColor] as? String ?? ""
-        let buttonTextSize = extendedProps[RelatedDigitalConstants.buttonTextSize] as? String ?? ""
-        let buttonFontFamily = extendedProps[RelatedDigitalConstants.buttonFontFamily] as? String ?? ""
-        let emailPermitTextSize = extendedProps[RelatedDigitalConstants.emailPermitTextSize] as? String ?? ""
-        let emailPermitTextUrl = extendedProps[RelatedDigitalConstants.emailPermitTextUrl] as? String ?? ""
-        let consentTextSize = extendedProps[RelatedDigitalConstants.consentTextSize] as? String ?? ""
-        let consentTextUrl = extendedProps[RelatedDigitalConstants.consentTextUrl] as? String ?? ""
-        let closeButtonColor = extendedProps[RelatedDigitalConstants.closeButtonColor] as? String ?? "black"
-        let backgroundColor = extendedProps[RelatedDigitalConstants.backgroundColor] as? String ?? ""
+        let buttonTextSize = extendedProps[RDConstants.buttonTextSize] as? String ?? ""
+        let buttonFontFamily = extendedProps[RDConstants.buttonFontFamily] as? String ?? ""
+        let emailPermitTextSize = extendedProps[RDConstants.emailPermitTextSize] as? String ?? ""
+        let emailPermitTextUrl = extendedProps[RDConstants.emailPermitTextUrl] as? String ?? ""
+        let consentTextSize = extendedProps[RDConstants.consentTextSize] as? String ?? ""
+        let consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
+        let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
+        let backgroundColor = extendedProps[RDConstants.backgroundColor] as? String ?? ""
         
-        let titleCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.titleCustomFontFamilyIos] as? String ?? ""
-        let textCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.textCustomFontFamilyIos] as? String ?? ""
-        let buttonCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.buttonCustomFontFamilyIos] as? String ?? ""
+        let titleCustomFontFamilyIos = extendedProps[RDConstants.titleCustomFontFamilyIos] as? String ?? ""
+        let textCustomFontFamilyIos = extendedProps[RDConstants.textCustomFontFamilyIos] as? String ?? ""
+        let buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
         
-        let impression = report[RelatedDigitalConstants.impression] as? String ?? ""
-        let click = report[RelatedDigitalConstants.click] as? String ?? ""
+        let impression = report[RDConstants.impression] as? String ?? ""
+        let click = report[RDConstants.click] as? String ?? ""
         let mailReport = TargetingActionReport(impression: impression, click: click)
         let extendedProperties = MailSubscriptionExtendedProps(titleTextColor: titleTextColor,
                                                                titleFontFamily: titleFontFamily,
@@ -367,21 +367,21 @@ class RelatedDigitalTargetingAction {
     }
 
     private func parseScratchToWin(_ scratchToWin: [String: Any?]) -> ScratchToWinModel? {
-        guard let actionData = scratchToWin[RelatedDigitalConstants.actionData] as? [String: Any] else { return nil }
-        let encodedStr = actionData[RelatedDigitalConstants.extendedProps] as? String ?? ""
+        guard let actionData = scratchToWin[RDConstants.actionData] as? [String: Any] else { return nil }
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
 
-        let actid = scratchToWin[RelatedDigitalConstants.actid] as? Int ?? 0
-        let auth = actionData[RelatedDigitalConstants.authentication] as? String ?? ""
-        let hasMailForm = actionData[RelatedDigitalConstants.mailSubscription] as? Bool ?? false
-        let scratchColor = actionData[RelatedDigitalConstants.scratchColor] as? String ?? "000000"
-        let waitingTime = actionData[RelatedDigitalConstants.waitingTime] as? Int ?? 0
-        let promotionCode = actionData[RelatedDigitalConstants.code] as? String ?? ""
-        let sendMail = actionData[RelatedDigitalConstants.sendEmail] as? Bool ?? false
-        let copyButtonText = actionData[RelatedDigitalConstants.copybuttonLabel] as? String ?? ""
-        let img = actionData[RelatedDigitalConstants.img] as? String ?? ""
-        let title = actionData[RelatedDigitalConstants.contentTitle] as? String ?? ""
-        let message = actionData[RelatedDigitalConstants.contentBody] as? String ?? ""
+        let actid = scratchToWin[RDConstants.actid] as? Int ?? 0
+        let auth = actionData[RDConstants.authentication] as? String ?? ""
+        let hasMailForm = actionData[RDConstants.mailSubscription] as? Bool ?? false
+        let scratchColor = actionData[RDConstants.scratchColor] as? String ?? "000000"
+        let waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
+        let promotionCode = actionData[RDConstants.code] as? String ?? ""
+        let sendMail = actionData[RDConstants.sendEmail] as? Bool ?? false
+        let copyButtonText = actionData[RDConstants.copybuttonLabel] as? String ?? ""
+        let img = actionData[RDConstants.img] as? String ?? ""
+        let title = actionData[RDConstants.contentTitle] as? String ?? ""
+        let message = actionData[RDConstants.contentBody] as? String ?? ""
         // Email parameters
         var mailPlaceholder: String?
         var mailButtonTxt: String?
@@ -391,53 +391,53 @@ class RelatedDigitalTargetingAction {
         var emailPermitTxt: String?
         var checkConsentMsg: String?
 
-        if let mailForm = actionData[RelatedDigitalConstants.sctwMailSubscriptionForm] as? [String: Any] {
-            mailPlaceholder = mailForm[RelatedDigitalConstants.placeholder] as? String
-            mailButtonTxt = mailForm[RelatedDigitalConstants.buttonLabel] as? String
-            consentText = mailForm[RelatedDigitalConstants.consentText] as? String
-            invalidEmailMsg = mailForm[RelatedDigitalConstants.invalidEmailMessage] as? String
-            successMsg = mailForm[RelatedDigitalConstants.successMessage] as? String
-            emailPermitTxt = mailForm[RelatedDigitalConstants.emailPermitText] as? String
-            checkConsentMsg = mailForm[RelatedDigitalConstants.checkConsentMessage] as? String
+        if let mailForm = actionData[RDConstants.sctwMailSubscriptionForm] as? [String: Any] {
+            mailPlaceholder = mailForm[RDConstants.placeholder] as? String
+            mailButtonTxt = mailForm[RDConstants.buttonLabel] as? String
+            consentText = mailForm[RDConstants.consentText] as? String
+            invalidEmailMsg = mailForm[RDConstants.invalidEmailMessage] as? String
+            successMsg = mailForm[RDConstants.successMessage] as? String
+            emailPermitTxt = mailForm[RDConstants.emailPermitText] as? String
+            checkConsentMsg = mailForm[RDConstants.checkConsentMessage] as? String
         }
 
         // extended props
-        let titleTextColor = extendedProps[RelatedDigitalConstants.contentTitleTextColor] as? String
-        let titleFontFamily = extendedProps[RelatedDigitalConstants.contentTitleFontFamily] as? String
-        let titleTextSize = extendedProps[RelatedDigitalConstants.contentTitleTextSize] as? String
-        let messageTextColor = extendedProps[RelatedDigitalConstants.contentBodyTextColor] as? String
-        let messageTextSize = extendedProps[RelatedDigitalConstants.contentBodyTextSize] as? String
-        let messageTextFontFamily = extendedProps[RelatedDigitalConstants.contentBodyTextFontFamily] as? String
-        let mailButtonColor = extendedProps[RelatedDigitalConstants.button_color] as? String
-        let mailButtonTextColor = extendedProps[RelatedDigitalConstants.button_text_color] as? String
-        let mailButtonFontFamily = extendedProps[RelatedDigitalConstants.buttonFontFamily] as? String
-        let mailButtonTextSize = extendedProps[RelatedDigitalConstants.buttonTextSize] as? String
-        let promocodeTextColor = extendedProps[RelatedDigitalConstants.promocodeTextColor] as? String
-        let promocodeFontFamily = extendedProps[RelatedDigitalConstants.promocodeFontFamily] as? String
-        let promocodeTextSize = extendedProps[RelatedDigitalConstants.promocodeTextSize] as? String
-        let copyButtonColor = extendedProps[RelatedDigitalConstants.copybuttonColor] as? String
-        let copyButtonTextColor = extendedProps[RelatedDigitalConstants.copybuttonTextColor] as? String
-        let copyButtonFontFamily = extendedProps[RelatedDigitalConstants.copybuttonFontFamily] as? String
-        let copyButtonTextSize = extendedProps[RelatedDigitalConstants.copybuttonTextSize] as? String
-        let emailPermitTextSize = extendedProps[RelatedDigitalConstants.emailPermitTextSize] as? String
-        let emailPermitTextUrl = extendedProps[RelatedDigitalConstants.emailPermitTextUrl] as? String
-        let consentTextSize = extendedProps[RelatedDigitalConstants.consentTextSize] as? String
-        let consentTextUrl = extendedProps[RelatedDigitalConstants.consentTextUrl] as? String
-        let closeButtonColor = extendedProps[RelatedDigitalConstants.closeButtonColor] as? String
-        let backgroundColor = extendedProps[RelatedDigitalConstants.backgroundColor] as? String
+        let titleTextColor = extendedProps[RDConstants.contentTitleTextColor] as? String
+        let titleFontFamily = extendedProps[RDConstants.contentTitleFontFamily] as? String
+        let titleTextSize = extendedProps[RDConstants.contentTitleTextSize] as? String
+        let messageTextColor = extendedProps[RDConstants.contentBodyTextColor] as? String
+        let messageTextSize = extendedProps[RDConstants.contentBodyTextSize] as? String
+        let messageTextFontFamily = extendedProps[RDConstants.contentBodyTextFontFamily] as? String
+        let mailButtonColor = extendedProps[RDConstants.button_color] as? String
+        let mailButtonTextColor = extendedProps[RDConstants.button_text_color] as? String
+        let mailButtonFontFamily = extendedProps[RDConstants.buttonFontFamily] as? String
+        let mailButtonTextSize = extendedProps[RDConstants.buttonTextSize] as? String
+        let promocodeTextColor = extendedProps[RDConstants.promocodeTextColor] as? String
+        let promocodeFontFamily = extendedProps[RDConstants.promocodeFontFamily] as? String
+        let promocodeTextSize = extendedProps[RDConstants.promocodeTextSize] as? String
+        let copyButtonColor = extendedProps[RDConstants.copybuttonColor] as? String
+        let copyButtonTextColor = extendedProps[RDConstants.copybuttonTextColor] as? String
+        let copyButtonFontFamily = extendedProps[RDConstants.copybuttonFontFamily] as? String
+        let copyButtonTextSize = extendedProps[RDConstants.copybuttonTextSize] as? String
+        let emailPermitTextSize = extendedProps[RDConstants.emailPermitTextSize] as? String
+        let emailPermitTextUrl = extendedProps[RDConstants.emailPermitTextUrl] as? String
+        let consentTextSize = extendedProps[RDConstants.consentTextSize] as? String
+        let consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String
+        let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String
+        let backgroundColor = extendedProps[RDConstants.backgroundColor] as? String
 
-        let contentTitleCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.contentTitleCustomFontFamilyIos] as? String ?? ""
-        let contentBodyCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.contentBodyCustomFontFamilyIos] as? String ?? ""
-        let buttonCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.buttonCustomFontFamilyIos] as? String ?? ""
-        let promocodeCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.promocodeCustomFontFamilyIos] as? String ?? ""
-        let copybuttonCustomFontFamilyIos = extendedProps[RelatedDigitalConstants.copybuttonCustomFontFamilyIos] as? String
+        let contentTitleCustomFontFamilyIos = extendedProps[RDConstants.contentTitleCustomFontFamilyIos] as? String ?? ""
+        let contentBodyCustomFontFamilyIos = extendedProps[RDConstants.contentBodyCustomFontFamilyIos] as? String ?? ""
+        let buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
+        let promocodeCustomFontFamilyIos = extendedProps[RDConstants.promocodeCustomFontFamilyIos] as? String ?? ""
+        let copybuttonCustomFontFamilyIos = extendedProps[RDConstants.copybuttonCustomFontFamilyIos] as? String
 
         
         var click = ""
         var impression = ""
-        if let report = actionData[RelatedDigitalConstants.report] as? [String: Any] {
-            click = report[RelatedDigitalConstants.click] as? String ?? ""
-            impression = report[RelatedDigitalConstants.impression] as? String ?? ""
+        if let report = actionData[RDConstants.report] as? [String: Any] {
+            click = report[RDConstants.click] as? String ?? ""
+            impression = report[RDConstants.impression] as? String ?? ""
         }
         let rep = TargetingActionReport(impression: impression, click: click)
 
@@ -497,13 +497,13 @@ class RelatedDigitalTargetingAction {
             parsedConsent = consent.parsePermissionText()
         }
         let parsedPermit = emailForm.emailPermitText.parsePermissionText()
-        let titleFont = RelatedDigitalHelper.getFont(fontFamily: emailForm.extendedProps.titleFontFamily,
+        let titleFont = RDHelper.getFont(fontFamily: emailForm.extendedProps.titleFontFamily,
                                                           fontSize: emailForm.extendedProps.titleTextSize,
                                                           style: .title2,customFont: emailForm.extendedProps.titleCustomFontFamilyIos)
-        let messageFont = RelatedDigitalHelper.getFont(fontFamily: emailForm.extendedProps.textFontFamily,
+        let messageFont = RDHelper.getFont(fontFamily: emailForm.extendedProps.textFontFamily,
                                                             fontSize: emailForm.extendedProps.textSize,
                                                             style: .body,customFont: emailForm.extendedProps.textCustomFontFamilyIos)
-        let buttonFont = RelatedDigitalHelper.getFont(fontFamily: emailForm.extendedProps.buttonFontFamily,
+        let buttonFont = RDHelper.getFont(fontFamily: emailForm.extendedProps.buttonFontFamily,
                                                            fontSize: emailForm.extendedProps.buttonTextSize,
                                                            style: .title2,customFont: emailForm.extendedProps.buttonCustomFontFamilyIos)
         let closeButtonColor = getCloseButtonColor(from: emailForm.extendedProps.closeButtonColor)
@@ -560,23 +560,23 @@ class RelatedDigitalTargetingAction {
                       completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
 
         var props = [String: String]()
-        props[RelatedDigitalConstants.organizationIdKey] = self.rdProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.rdProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = rdUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = rdUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = rdUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = rdUser.appId
-        props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
-        props[RelatedDigitalConstants.actionType] = RelatedDigitalConstants.favoriteAttributeAction
-        props[RelatedDigitalConstants.actionId] = actionId == nil ? nil : String(actionId!)
+        props[RDConstants.organizationIdKey] = self.rdProfile.organizationId
+        props[RDConstants.profileIdKey] = self.rdProfile.profileId
+        props[RDConstants.cookieIdKey] = rdUser.cookieId
+        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RDConstants.tokenIdKey] = rdUser.tokenId
+        props[RDConstants.appidKey] = rdUser.appId
+        props[RDConstants.apiverKey] = RDConstants.apiverValue
+        props[RDConstants.actionType] = RDConstants.favoriteAttributeAction
+        props[RDConstants.actionId] = actionId == nil ? nil : String(actionId!)
         
         
-        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
 
-        for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
+        for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                props[key] = value
            }
@@ -596,10 +596,10 @@ class RelatedDigitalTargetingAction {
         if let error = error {
             errorResponse = error
         } else if let res = result {
-            if let favoriteAttributeActions = res[RelatedDigitalConstants.favoriteAttributeAction] as? [[String: Any?]] {
+            if let favoriteAttributeActions = res[RDConstants.favoriteAttributeAction] as? [[String: Any?]] {
                 for favoriteAttributeAction in favoriteAttributeActions {
-                    if let actiondata = favoriteAttributeAction[RelatedDigitalConstants.actionData] as? [String: Any?] {
-                        if let favorites = actiondata[RelatedDigitalConstants.favorites] as? [String: [String]?] {
+                    if let actiondata = favoriteAttributeAction[RDConstants.actionData] as? [String: Any?] {
+                        if let favorites = actiondata[RDConstants.favorites] as? [String: [String]?] {
                             for favorite in favorites {
                                 if let favoriteAttribute = RelatedDigitalFavoriteAttribute(rawValue: favorite.key),
                                    let favoriteValues = favorite.value {
@@ -626,23 +626,23 @@ class RelatedDigitalTargetingAction {
                     completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 
         var props = [String: String]()
-        props[RelatedDigitalConstants.organizationIdKey] = rdProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = rdProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = rdUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = rdUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = rdUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = rdUser.appId
-        props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
-        props[RelatedDigitalConstants.actionType] = RelatedDigitalConstants.story
-        props[RelatedDigitalConstants.channelKey] = rdProfile.channel
-        props[RelatedDigitalConstants.actionId] = actionId == nil ? nil : String(actionId!)
+        props[RDConstants.organizationIdKey] = rdProfile.organizationId
+        props[RDConstants.profileIdKey] = rdProfile.profileId
+        props[RDConstants.cookieIdKey] = rdUser.cookieId
+        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RDConstants.tokenIdKey] = rdUser.tokenId
+        props[RDConstants.appidKey] = rdUser.appId
+        props[RDConstants.apiverKey] = RDConstants.apiverValue
+        props[RDConstants.actionType] = RDConstants.story
+        props[RDConstants.channelKey] = rdProfile.channel
+        props[RDConstants.actionId] = actionId == nil ? nil : String(actionId!)
         
-        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
 
-        for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
+        for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                props[key] = value
            }
@@ -666,44 +666,44 @@ class RelatedDigitalTargetingAction {
         if let error = error {
             errorResponse = error
         } else if let res = result {
-            if let storyActions = res[RelatedDigitalConstants.story] as? [[String: Any?]] {
+            if let storyActions = res[RDConstants.story] as? [[String: Any?]] {
                 var relatedDigitalStories = [RelatedDigitalStory]()
                 for storyAction in storyActions {
-                    if let actionId = storyAction[RelatedDigitalConstants.actid] as? Int,
-                       let actiondata = storyAction[RelatedDigitalConstants.actionData] as? [String: Any?],
-                       let templateString = actiondata[RelatedDigitalConstants.taTemplate] as? String,
+                    if let actionId = storyAction[RDConstants.actid] as? Int,
+                       let actiondata = storyAction[RDConstants.actionData] as? [String: Any?],
+                       let templateString = actiondata[RDConstants.taTemplate] as? String,
                        let template = RelatedDigitalStoryTemplate.init(rawValue: templateString) {
-                        if let stories = actiondata[RelatedDigitalConstants.stories] as? [[String: Any]] {
+                        if let stories = actiondata[RDConstants.stories] as? [[String: Any]] {
                             for story in stories {
                                 if template == .skinBased {
                                     var storyItems = [RelatedDigitalStoryItem]()
-                                    if let items = story[RelatedDigitalConstants.items] as? [[String: Any]] {
+                                    if let items = story[RDConstants.items] as? [[String: Any]] {
                                         for item in items {
                                             storyItems.append(parseStoryItem(item))
                                         }
                                         if storyItems.count > 0 {
-                                            relatedDigitalStories.append(RelatedDigitalStory(title: story[RelatedDigitalConstants.title]
+                                            relatedDigitalStories.append(RelatedDigitalStory(title: story[RDConstants.title]
                                                                                     as? String,
-                                            smallImg: story[RelatedDigitalConstants.thumbnail] as? String,
-                                            link: story[RelatedDigitalConstants.link] as? String, items: storyItems, actid: actionId))
+                                            smallImg: story[RDConstants.thumbnail] as? String,
+                                            link: story[RDConstants.link] as? String, items: storyItems, actid: actionId))
                                         }
                                     }
                                 } else {
-                                    relatedDigitalStories.append(RelatedDigitalStory(title: story[RelatedDigitalConstants.title]
+                                    relatedDigitalStories.append(RelatedDigitalStory(title: story[RDConstants.title]
                                                                             as? String,
-                                    smallImg: story[RelatedDigitalConstants.smallImg] as? String,
-                                    link: story[RelatedDigitalConstants.link] as? String, actid: actionId))
+                                    smallImg: story[RDConstants.smallImg] as? String,
+                                    link: story[RDConstants.link] as? String, actid: actionId))
                                 }
                             }
                             let (clickQueryItems, impressionQueryItems)
-                                = parseStoryReport(actiondata[RelatedDigitalConstants.report] as? [String: Any?])
+                                = parseStoryReport(actiondata[RDConstants.report] as? [String: Any?])
                             if stories.count > 0 {
                                 storiesResponse.append(RelatedDigitalStoryAction(actionId: actionId,
                                                                            storyTemplate: template,
                                                                            stories: relatedDigitalStories,
                                                                            clickQueryItems: clickQueryItems,
                                                                            impressionQueryItems: impressionQueryItems,
-                        extendedProperties: parseStoryExtendedProps(actiondata[RelatedDigitalConstants.extendedProps]
+                        extendedProperties: parseStoryExtendedProps(actiondata[RDConstants.extendedProps]
                                                                                                     as? String)))
                             }
                         }
@@ -721,7 +721,7 @@ class RelatedDigitalTargetingAction {
         var impressionItems = [String: String]()
         // clickItems[VisilabsConstants.domainkey] =  "\(self.visilabsProfile.dataSource)_IOS" // TO_DO: OM.domain ne için gerekiyor?
         if let rep = report {
-            if let click = rep[RelatedDigitalConstants.click] as? String {
+            if let click = rep[RDConstants.click] as? String {
                 let qsArr = click.components(separatedBy: "&")
                 for queryItem in qsArr {
                     let queryItemComponents = queryItem.components(separatedBy: "=")
@@ -730,7 +730,7 @@ class RelatedDigitalTargetingAction {
                     }
                 }
             }
-            if let impression = rep[RelatedDigitalConstants.impression] as? String {
+            if let impression = rep[RDConstants.impression] as? String {
                 let qsArr = impression.components(separatedBy: "&")
                 for queryItem in qsArr {
                     let queryItemComponents = queryItem.components(separatedBy: "=")
@@ -745,17 +745,17 @@ class RelatedDigitalTargetingAction {
     }
 
     private func parseStoryItem(_ item: [String: Any]) -> RelatedDigitalStoryItem {
-        let fileType = (item[RelatedDigitalConstants.fileType] as? String) ?? "photo"
-        let fileSrc = (item[RelatedDigitalConstants.fileSrc] as? String) ?? ""
-        let targetUrl = (item[RelatedDigitalConstants.targetUrl]  as? String) ?? ""
-        let buttonText = (item[RelatedDigitalConstants.buttonText]  as? String) ?? ""
+        let fileType = (item[RDConstants.fileType] as? String) ?? "photo"
+        let fileSrc = (item[RDConstants.fileSrc] as? String) ?? ""
+        let targetUrl = (item[RDConstants.targetUrl]  as? String) ?? ""
+        let buttonText = (item[RDConstants.buttonText]  as? String) ?? ""
         var displayTime = 3
-        if let dTime = item[RelatedDigitalConstants.displayTime] as? Int, dTime > 0 {
+        if let dTime = item[RDConstants.displayTime] as? Int, dTime > 0 {
             displayTime = dTime
         }
         var buttonTextColor = UIColor.white
         var buttonColor = UIColor.black
-        if let buttonTextColorString = item[RelatedDigitalConstants.buttonTextColor] as? String {
+        if let buttonTextColorString = item[RDConstants.buttonTextColor] as? String {
             if buttonTextColorString.starts(with: "rgba") {
                 if let btColor =  UIColor.init(rgbaString: buttonTextColorString) {
                     buttonTextColor = btColor
@@ -766,7 +766,7 @@ class RelatedDigitalTargetingAction {
                 }
             }
         }
-        if let buttonColorString = item[RelatedDigitalConstants.buttonColor] as? String {
+        if let buttonColorString = item[RDConstants.buttonColor] as? String {
             if buttonColorString.starts(with: "rgba") {
                 if let bColor =  UIColor.init(rgbaString: buttonColorString) {
                     buttonColor = bColor
@@ -791,32 +791,32 @@ class RelatedDigitalTargetingAction {
     private func parseStoryExtendedProps(_ extendedPropsString: String?) -> RelatedDigitalStoryActionExtendedProperties {
         let props = RelatedDigitalStoryActionExtendedProperties()
         if let propStr = extendedPropsString, let extendedProps = propStr.urlDecode().convertJsonStringToDictionary() {
-            if let imageBorderWidthString = extendedProps[RelatedDigitalConstants.storylbImgBorderWidth] as? String,
+            if let imageBorderWidthString = extendedProps[RDConstants.storylbImgBorderWidth] as? String,
                let imageBorderWidth = Int(imageBorderWidthString) {
                 props.imageBorderWidth = imageBorderWidth
             }
-            if let imageBorderRadiusString = extendedProps[RelatedDigitalConstants.storylbImgBorderRadius] as? String
-                ?? extendedProps[RelatedDigitalConstants.storyzImgBorderRadius] as? String,
+            if let imageBorderRadiusString = extendedProps[RDConstants.storylbImgBorderRadius] as? String
+                ?? extendedProps[RDConstants.storyzImgBorderRadius] as? String,
                let imageBorderRadius = Double(imageBorderRadiusString.trimmingCharacters(in:
                                                                         CharacterSet(charactersIn: "%"))) {
                 props.imageBorderRadius = imageBorderRadius / 100.0
             }
-            let storyzLabelColor = extendedProps[RelatedDigitalConstants.storyzLabelColor] as? String ?? ""
+            let storyzLabelColor = extendedProps[RDConstants.storyzLabelColor] as? String ?? ""
             props.storyzLabelColor = storyzLabelColor
             storyCustomVariables.shared.storyzLabelColor = storyzLabelColor
 
-            let fontFamily = extendedProps[RelatedDigitalConstants.fontFamily] as? String ?? ""
+            let fontFamily = extendedProps[RDConstants.fontFamily] as? String ?? ""
             props.fontFamily = fontFamily
             storyCustomVariables.shared.fontFamily = fontFamily
 
 
-            let customFontFamilyIos = extendedProps[RelatedDigitalConstants.customFontFamilyIos] as? String ?? ""
+            let customFontFamilyIos = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
             props.customFontFamilyIos = customFontFamilyIos
             storyCustomVariables.shared.customFontFamilyIos = customFontFamilyIos
 
             
-            if let imageBorderColorString = extendedProps[RelatedDigitalConstants.storylbImgBorderColor] as? String
-                ?? extendedProps[RelatedDigitalConstants.storyzimgBorderColor] as? String {
+            if let imageBorderColorString = extendedProps[RDConstants.storylbImgBorderColor] as? String
+                ?? extendedProps[RDConstants.storyzimgBorderColor] as? String {
                 if imageBorderColorString.starts(with: "rgba") {
                     if let imageBorderColor =  UIColor.init(rgbaString: imageBorderColorString) {
                         props.imageBorderColor = imageBorderColor
@@ -827,7 +827,7 @@ class RelatedDigitalTargetingAction {
                     }
                 }
             }
-            if let labelColorString = extendedProps[RelatedDigitalConstants.storylbLabelColor] as? String {
+            if let labelColorString = extendedProps[RDConstants.storylbLabelColor] as? String {
                 if labelColorString.starts(with: "rgba") {
                     if let labelColor =  UIColor.init(rgbaString: labelColorString) {
                         props.labelColor = labelColor
@@ -838,12 +838,12 @@ class RelatedDigitalTargetingAction {
                     }
                 }
             }
-            if let boxShadowString = extendedProps[RelatedDigitalConstants.storylbImgBoxShadow] as? String,
+            if let boxShadowString = extendedProps[RDConstants.storylbImgBoxShadow] as? String,
                boxShadowString.count > 0 {
                 props.imageBoxShadow = true
             }
 
-            if let moveEnd = extendedProps[RelatedDigitalConstants.moveShownToEnd] as? String, moveEnd.lowercased() == "false" {
+            if let moveEnd = extendedProps[RDConstants.moveShownToEnd] as? String, moveEnd.lowercased() == "false" {
                 props.moveShownToEnd = false
             } else {
                 props.moveShownToEnd = true

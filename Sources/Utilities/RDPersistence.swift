@@ -1,18 +1,18 @@
 //
-//  VisilabsPersistence.swift
-//  VisilabsIOS
+//  RDPersistence.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 15.04.2020.
+//  Created by Egemen Gülkılık on 23.12.2021.
 //
 
 import Foundation
 
-public class RelatedDigitalPersistence {
-
+public class RDPersistence {
+    
     // MARK: - ARCHIVE
-
+    
     private static let archiveQueueUtility = DispatchQueue(label: "com.relateddigital.archiveQueue", qos: .utility)
-
+    
     private class func filePath(filename: String) -> String? {
         let manager = FileManager.default
         let url = manager.urls(for: .libraryDirectory, in: .userDomainMask).last
@@ -21,123 +21,123 @@ public class RelatedDigitalPersistence {
         }
         return urlUnwrapped
     }
-
-    class func archiveUser(_ relatedDigitalUser: RelatedDigitalUser) {
-        archiveQueueUtility.sync { [relatedDigitalUser] in
-            let propertiesFilePath = filePath(filename: RelatedDigitalConstants.userArchiveKey)
+    
+    class func archiveUser(_ rdUser: RelatedDigitalUser) {
+        archiveQueueUtility.sync { [rdUser] in
+            let propertiesFilePath = filePath(filename: RDConstants.userArchiveKey)
             guard let path = propertiesFilePath else {
-                RelatedDigitalLogger.error("bad file path, cant fetch file")
+                RDLogger.error("bad file path, cant fetch file")
                 return
             }
             var userDic = [String: String?]()
-            userDic[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
-            userDic[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
-            userDic[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
-            userDic[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
-            userDic[RelatedDigitalConstants.userAgentKey] = relatedDigitalUser.userAgent
-            userDic[RelatedDigitalConstants.visitorCappingKey] = relatedDigitalUser.visitorData
-            userDic[RelatedDigitalConstants.visitorData] = relatedDigitalUser.visitorData
-            userDic[RelatedDigitalConstants.mobileIdKey] = relatedDigitalUser.identifierForAdvertising
-            userDic[RelatedDigitalConstants.mobileSdkVersion] = relatedDigitalUser.sdkVersion
-            userDic[RelatedDigitalConstants.mobileAppVersion] = relatedDigitalUser.appVersion
+            userDic[RDConstants.cookieIdKey] = rdUser.cookieId
+            userDic[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+            userDic[RDConstants.appidKey] = rdUser.appId
+            userDic[RDConstants.tokenIdKey] = rdUser.tokenId
+            userDic[RDConstants.userAgentKey] = rdUser.userAgent
+            userDic[RDConstants.visitorCappingKey] = rdUser.visitorData
+            userDic[RDConstants.visitorData] = rdUser.visitorData
+            userDic[RDConstants.mobileIdKey] = rdUser.identifierForAdvertising
+            userDic[RDConstants.mobileSdkVersion] = rdUser.sdkVersion
+            userDic[RDConstants.mobileAppVersion] = rdUser.appVersion
             
-            userDic[RelatedDigitalConstants.lastEventTimeKey] = relatedDigitalUser.lastEventTime
-            userDic[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
-            userDic[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
-            userDic[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
-            userDic[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
+            userDic[RDConstants.lastEventTimeKey] = rdUser.lastEventTime
+            userDic[RDConstants.nrvKey] = String(rdUser.nrv)
+            userDic[RDConstants.pvivKey] = String(rdUser.pviv)
+            userDic[RDConstants.tvcKey] = String(rdUser.tvc)
+            userDic[RDConstants.lvtKey] = rdUser.lvt
             
             if !NSKeyedArchiver.archiveRootObject(userDic, toFile: path) {
-                RelatedDigitalLogger.error("failed to archive user")
+                RDLogger.error("failed to archive user")
             }
         }
     }
-
+    
     // TO_DO: bunu ExceptionWrapper içine al
     // swiftlint:disable cyclomatic_complexity
     class func unarchiveUser() -> RelatedDigitalUser {
         var relatedDigitalUser = RelatedDigitalUser()
         // Before Visilabs.identity is used as archive key, to retrieve Visilabs.cookieID set by objective-c library
         // we added this control.
-        if let cidfp = filePath(filename: RelatedDigitalConstants.identityArchiveKey),
+        if let cidfp = filePath(filename: RDConstants.identityArchiveKey),
            let cid = NSKeyedUnarchiver.unarchiveObject(withFile: cidfp) as? String {
             relatedDigitalUser.cookieId = cid
         }
-        if let cidfp = filePath(filename: RelatedDigitalConstants.cookieidArchiveKey),
+        if let cidfp = filePath(filename: RDConstants.cookieidArchiveKey),
            let cid = NSKeyedUnarchiver.unarchiveObject(withFile: cidfp) as? String {
             relatedDigitalUser.cookieId = cid
         }
-        if let exvidfp = filePath(filename: RelatedDigitalConstants.exvisitorIdArchiveKey),
+        if let exvidfp = filePath(filename: RDConstants.exvisitorIdArchiveKey),
            let exvid = NSKeyedUnarchiver.unarchiveObject(withFile: exvidfp) as? String {
             relatedDigitalUser.exVisitorId = exvid
         }
-        if let appidfp = filePath(filename: RelatedDigitalConstants.appidArchiveKey),
+        if let appidfp = filePath(filename: RDConstants.appidArchiveKey),
            let aid = NSKeyedUnarchiver.unarchiveObject(withFile: appidfp) as? String {
             relatedDigitalUser.appId = aid
         }
-        if let tidfp = filePath(filename: RelatedDigitalConstants.tokenidArchiveKey),
+        if let tidfp = filePath(filename: RDConstants.tokenidArchiveKey),
            let tid = NSKeyedUnarchiver.unarchiveObject(withFile: tidfp) as? String {
             relatedDigitalUser.tokenId = tid
         }
-        if let uafp = filePath(filename: RelatedDigitalConstants.useragentArchiveKey),
+        if let uafp = filePath(filename: RDConstants.useragentArchiveKey),
            let userAgent = NSKeyedUnarchiver.unarchiveObject(withFile: uafp) as? String {
             relatedDigitalUser.userAgent = userAgent
         }
-
-        if let propsfp = filePath(filename: RelatedDigitalConstants.userArchiveKey),
+        
+        if let propsfp = filePath(filename: RDConstants.userArchiveKey),
            let props = NSKeyedUnarchiver.unarchiveObject(withFile: propsfp) as? [String: String?] {
-            if let cid = props[RelatedDigitalConstants.cookieIdKey], !cid.isNilOrWhiteSpace {
+            if let cid = props[RDConstants.cookieIdKey], !cid.isNilOrWhiteSpace {
                 relatedDigitalUser.cookieId = cid
             }
-            if let exvid = props[RelatedDigitalConstants.exvisitorIdKey], !exvid.isNilOrWhiteSpace {
+            if let exvid = props[RDConstants.exvisitorIdKey], !exvid.isNilOrWhiteSpace {
                 relatedDigitalUser.exVisitorId = exvid
             }
-            if let aid = props[RelatedDigitalConstants.appidKey], !aid.isNilOrWhiteSpace {
+            if let aid = props[RDConstants.appidKey], !aid.isNilOrWhiteSpace {
                 relatedDigitalUser.appId = aid
             }
-            if let tid = props[RelatedDigitalConstants.tokenIdKey], !tid.isNilOrWhiteSpace {
+            if let tid = props[RDConstants.tokenIdKey], !tid.isNilOrWhiteSpace {
                 relatedDigitalUser.tokenId = tid
             }
-            if let userAgent = props[RelatedDigitalConstants.userAgentKey], !userAgent.isNilOrWhiteSpace {
+            if let userAgent = props[RDConstants.userAgentKey], !userAgent.isNilOrWhiteSpace {
                 relatedDigitalUser.userAgent = userAgent
             }
-            if let visitorData = props[RelatedDigitalConstants.visitorData], !visitorData.isNilOrWhiteSpace {
+            if let visitorData = props[RDConstants.visitorData], !visitorData.isNilOrWhiteSpace {
                 relatedDigitalUser.visitorData = visitorData
             }
             // TO_DO: visilabsUserda ya üstteki kod gereksiz ya da alttaki yanlış
-            if let visitorData = props[RelatedDigitalConstants.visitorCappingKey], !visitorData.isNilOrWhiteSpace {
+            if let visitorData = props[RDConstants.visitorCappingKey], !visitorData.isNilOrWhiteSpace {
                 relatedDigitalUser.visitorData = visitorData
             }
-            if let madid = props[RelatedDigitalConstants.mobileIdKey], !madid.isNilOrWhiteSpace {
+            if let madid = props[RDConstants.mobileIdKey], !madid.isNilOrWhiteSpace {
                 relatedDigitalUser.identifierForAdvertising = madid
             }
-            if let sdkversion = props[RelatedDigitalConstants.mobileSdkVersion], !sdkversion.isNilOrWhiteSpace {
+            if let sdkversion = props[RDConstants.mobileSdkVersion], !sdkversion.isNilOrWhiteSpace {
                 relatedDigitalUser.sdkVersion = sdkversion
             }
-            if let appversion = props[RelatedDigitalConstants.mobileAppVersion], !appversion.isNilOrWhiteSpace {
+            if let appversion = props[RDConstants.mobileAppVersion], !appversion.isNilOrWhiteSpace {
                 relatedDigitalUser.appVersion = appversion
             }
-            if let lastEventTime = props[RelatedDigitalConstants.lastEventTimeKey] as? String {
+            if let lastEventTime = props[RDConstants.lastEventTimeKey] as? String {
                 relatedDigitalUser.lastEventTime = lastEventTime
             }
-            if let nrvString = props[RelatedDigitalConstants.nrvKey] as? String, let nrv = Int(nrvString)  {
+            if let nrvString = props[RDConstants.nrvKey] as? String, let nrv = Int(nrvString)  {
                 relatedDigitalUser.nrv = nrv
             }
-            if let pvivString = props[RelatedDigitalConstants.pvivKey] as? String, let pviv = Int(pvivString)  {
+            if let pvivString = props[RDConstants.pvivKey] as? String, let pviv = Int(pvivString)  {
                 relatedDigitalUser.pviv = pviv
             }
-            if let tvcString = props[RelatedDigitalConstants.tvcKey] as? String, let tvc = Int(tvcString)  {
+            if let tvcString = props[RDConstants.tvcKey] as? String, let tvc = Int(tvcString)  {
                 relatedDigitalUser.tvc = tvc
             }
-            if let lvt = props[RelatedDigitalConstants.lvtKey] as? String {
+            if let lvt = props[RDConstants.lvtKey] as? String {
                 relatedDigitalUser.lvt = lvt
             }
         } else {
-            RelatedDigitalLogger.warn("Visilabs: Error while unarchiving properties.")
+            RDLogger.warn("Related Digital: Error while unarchiving properties.")
         }
         return relatedDigitalUser
     }
-
+    
     static func getDateStr() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -150,12 +150,12 @@ public class RelatedDigitalPersistence {
         archiveQueueUtility.sync {
             let dateString = getDateStr()
             var targetParameters = readTargetParameters()
-
-            for relatedDigitalParameter in RelatedDigitalConstants.relatedDigitalTargetParameters() {
-                let key = relatedDigitalParameter.key
-                let storeKey = relatedDigitalParameter.storeKey
-                let relatedKeys = relatedDigitalParameter.relatedKeys
-                let count = relatedDigitalParameter.count
+            
+            for rdParameter in RDConstants.rdTargetParameters() {
+                let key = rdParameter.key
+                let storeKey = rdParameter.storeKey
+                let relatedKeys = rdParameter.relatedKeys
+                let count = rdParameter.count
                 if let parameterValue = parameters[key], parameterValue.count > 0 {
                     if count == 1 {
                         if relatedKeys != nil && relatedKeys!.count > 0 {
@@ -196,93 +196,86 @@ public class RelatedDigitalPersistence {
                     }
                 }
             }
-
-            saveUserDefaults(RelatedDigitalConstants.userDefaultsTargetKey, withObject: targetParameters)
+            
+            saveUserDefaults(RDConstants.userDefaultsTargetKey, withObject: targetParameters)
         }
     }
-
+    
     class func readTargetParameters() -> [String: String] {
-        guard let targetParameters = readUserDefaults(RelatedDigitalConstants.userDefaultsTargetKey)
+        guard let targetParameters = readUserDefaults(RDConstants.userDefaultsTargetKey)
                 as? [String: String] else {
-            return [String: String]()
-        }
+                    return [String: String]()
+                }
         return targetParameters
     }
-
+    
     class func clearTargetParameters() {
-        removeUserDefaults(RelatedDigitalConstants.userDefaultsTargetKey)
+        removeUserDefaults(RDConstants.userDefaultsTargetKey)
     }
-
+    
     // MARK: - USER DEFAULTS
-
+    
     static func saveUserDefaults(_ key: String, withObject value: Any?) {
         UserDefaults.standard.set(value, forKey: key)
         UserDefaults.standard.synchronize()
     }
-
+    
     static func readUserDefaults(_ key: String) -> Any? {
         return UserDefaults.standard.object(forKey: key)
     }
-
+    
     static func removeUserDefaults(_ key: String) {
         UserDefaults.standard.removeObject(forKey: key)
         UserDefaults.standard.synchronize()
     }
-
+    
     static func clearUserDefaults() {
         let ud = UserDefaults.standard
-        ud.removeObject(forKey: RelatedDigitalConstants.cookieIdKey)
-        ud.removeObject(forKey: RelatedDigitalConstants.exvisitorIdKey)
+        ud.removeObject(forKey: RDConstants.cookieIdKey)
+        ud.removeObject(forKey: RDConstants.exvisitorIdKey)
         ud.synchronize()
     }
     
     static func saveBlock(_ block: Bool) {
-        saveUserDefaults(RelatedDigitalConstants.userDefaultsBlockKey, withObject: block)
+        saveUserDefaults(RDConstants.userDefaultsBlockKey, withObject: block)
     }
     
     static func isBlocked() -> Bool {
-        return readUserDefaults(RelatedDigitalConstants.userDefaultsBlockKey) as? Bool ?? false
+        return readUserDefaults(RDConstants.userDefaultsBlockKey) as? Bool ?? false
     }
-
-    static func saveRelatedDigitalProfile(_ relatedDigitalProfile: RelatedDigitalProfile) {
-        let encoder = JSONEncoder()
-        if let encodedRelatedDigitalProfile = try? encoder.encode(relatedDigitalProfile) {
-            saveUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey, withObject: encodedRelatedDigitalProfile)
+    
+    static func saveRelatedDigitalProfile(_ rdProfile: RelatedDigitalProfile) {
+        if let encodedRDProfile = try? JSONEncoder().encode(rdProfile) {
+            saveUserDefaults(RDConstants.userDefaultsProfileKey, withObject: encodedRDProfile)
         }
     }
-
-    static func readRelatedDigitalProfile() -> RelatedDigitalProfile? {
-        if let savedRelatedDigitalProfile = readUserDefaults(RelatedDigitalConstants.userDefaultsProfileKey) as? Data {
-            let decoder = JSONDecoder()
-            if let loadedRelatedDigitalProfile = try? decoder.decode(RelatedDigitalProfile.self, from: savedRelatedDigitalProfile) {
-                return loadedRelatedDigitalProfile
+    
+    static func readRDProfile() -> RelatedDigitalProfile? {
+        if let savedRDProfile = readUserDefaults(RDConstants.userDefaultsProfileKey) as? Data {
+            if let loadedRDProfile = try? JSONDecoder().decode(RelatedDigitalProfile.self, from: savedRDProfile) {
+                return loadedRDProfile
             }
         }
         return nil
     }
-
-    static func saveRelatedDigitalGeofenceHistory(_ relatedDigitalGeofenceHistory: RelatedDigitalGeofenceHistory) {
-        let encoder = JSONEncoder()
-        if let encodedRelatedDigitalGeofenceHistory = try? encoder.encode(relatedDigitalGeofenceHistory) {
-            saveUserDefaults(RelatedDigitalConstants.userDefaultsGeofenceHistoryKey,
-                             withObject: encodedRelatedDigitalGeofenceHistory)
+    
+    static func saveRDGeofenceHistory(_ rdGeofenceHistory: RelatedDigitalGeofenceHistory) {
+        if let encodedRdGeofenceHistory = try? JSONEncoder().encode(rdGeofenceHistory) {
+            saveUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey, withObject: encodedRdGeofenceHistory)
         }
     }
-
-    public static func readRelatedDigitalGeofenceHistory() -> RelatedDigitalGeofenceHistory {
-        if let savedRelatedDigitalGeofenceHistory =
-            readUserDefaults(RelatedDigitalConstants.userDefaultsGeofenceHistoryKey) as? Data {
-            let decoder = JSONDecoder()
-            if let loadedRelatedDigitalGeofenceHistory = try? decoder.decode(RelatedDigitalGeofenceHistory.self,
-                                                                       from: savedRelatedDigitalGeofenceHistory) {
-                return loadedRelatedDigitalGeofenceHistory
+    
+    public static func readRDGeofenceHistory() -> RelatedDigitalGeofenceHistory {
+        if let savedRDGeofenceHistory = readUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey) as? Data {
+            if let loadedRDGeofenceHistory = try? JSONDecoder().decode(RelatedDigitalGeofenceHistory.self, from: savedRDGeofenceHistory) {
+                return loadedRDGeofenceHistory
             }
         }
         return RelatedDigitalGeofenceHistory()
     }
-
-    public static func clearRelatedDigitalGeofenceHistory() {
-        removeUserDefaults(RelatedDigitalConstants.userDefaultsGeofenceHistoryKey)
+    
+    public static func clearRDGeofenceHistory() {
+        removeUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey)
     }
-
+    
 }

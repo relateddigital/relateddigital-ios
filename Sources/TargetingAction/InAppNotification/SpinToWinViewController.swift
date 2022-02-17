@@ -55,7 +55,7 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
     private func createSpinToWinFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
-            RelatedDigitalLogger.error("Can not create documentDirectory")
+            RDLogger.error("Can not create documentDirectory")
             return nil
         }
         let htmlUrl = docUrl.appendingPathComponent("spintowin.html")
@@ -71,7 +71,7 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
         let bundleJsUrl = URL(fileURLWithPath: bundleJsPath)
         
-        RelatedDigitalHelper.registerFonts(fontNames: getCustomFontNames())
+        RDHelper.registerFonts(fontNames: getCustomFontNames())
         let fontUrls = getSpinToWinFonts(fontNames: getCustomFontNames())
 
         do {
@@ -85,8 +85,8 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
             try manager.copyItem(at: bundleJsUrl, to: jsUrl)
         } catch let error {
-            RelatedDigitalLogger.error(error)
-            RelatedDigitalLogger.error(error.localizedDescription)
+            RDLogger.error(error)
+            RDLogger.error(error.localizedDescription)
             return nil
         }
         
@@ -99,8 +99,8 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
                 try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
                 self.spinToWin?.fontFiles.append(fontUrlKeyValue.key)
             } catch let error {
-                RelatedDigitalLogger.error(error)
-                RelatedDigitalLogger.error(error.localizedDescription)
+                RDLogger.error(error)
+                RDLogger.error(error.localizedDescription)
                 continue
             }
         }
@@ -132,7 +132,7 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
                     }
                     
                     guard let url = Bundle.main.url(forResource: fontName, withExtension: fontExtension) else {
-                        RelatedDigitalLogger.error("UIFont+:  Failed to register font - path for resource not found.")
+                        RDLogger.error("UIFont+:  Failed to register font - path for resource not found.")
                         continue
                     }
                     fontUrls[uiAppFont] = url
@@ -184,16 +184,16 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
     
     private func sendPromotionCodeInfo(promo: String, actId: String, email: String? = "", promoTitle: String, promoSlice: String) {
         var properties = [String: String]()
-        properties[RelatedDigitalConstants.promoAction] = promo
-        properties[RelatedDigitalConstants.promoActionID] = actId
+        properties[RDConstants.promoAction] = promo
+        properties[RDConstants.promoActionID] = actId
         if !self.subsEmail.isEmptyOrWhitespace {
-            properties[RelatedDigitalConstants.promoEmailKey] = email
+            properties[RDConstants.promoEmailKey] = email
         }
-        properties[RelatedDigitalConstants.promoTitleKey] = promoTitle
+        properties[RDConstants.promoTitleKey] = promoTitle
         if !self.sliceText.isEmptyOrWhitespace {
-            properties[RelatedDigitalConstants.promoSlice] = promoSlice
+            properties[RDConstants.promoSlice] = promoSlice
         }
-        RelatedDigital.customEvent(RelatedDigitalConstants.omEvtGif, properties: properties)
+        RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
     }
     
 }
@@ -225,8 +225,8 @@ extension SpinToWinViewController: WKScriptMessageHandler {
         DispatchQueue.main.async {
             self.webView.evaluateJavaScript("window.chooseSlice(\(index), \(promoCodeString));") { (_, err) in
                 if let error = err {
-                    RelatedDigitalLogger.error(error)
-                    RelatedDigitalLogger.error(error.localizedDescription)
+                    RDLogger.error(error)
+                    RDLogger.error(error.localizedDescription)
                 }
             }
         }
@@ -237,15 +237,15 @@ extension SpinToWinViewController: WKScriptMessageHandler {
         if message.name == "eventHandler" {
             if let event = message.body as? [String: Any], let method = event["method"] as? String {
                 if method == "console.log", let message = event["message"] as? String {
-                    RelatedDigitalLogger.info("console.log: \(message)")
+                    RDLogger.info("console.log: \(message)")
                 }
                 if method == "initSpinToWin" {
-                    RelatedDigitalLogger.info("initSpinToWin")
+                    RDLogger.info("initSpinToWin")
                     if let json = try? JSONEncoder().encode(self.spinToWin!), let jsonString = String(data: json, encoding: .utf8) {
                         self.webView.evaluateJavaScript("window.initSpinToWin(\(jsonString));") { (_, err) in
                             if let error = err {
-                                RelatedDigitalLogger.error(error)
-                                RelatedDigitalLogger.error(error.localizedDescription)
+                                RDLogger.error(error)
+                                RDLogger.error(error.localizedDescription)
                                 
                             }
                         }
@@ -286,10 +286,10 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                                 selectedPromoCode = promocode
                             } else if let res = result, let success = res["success"] as? Bool, success, let promocode = res["promocode"] as? String  {
                                 let id = res["id"] as? Int ?? 0
-                                RelatedDigitalLogger.error("Promocode request error: {\"id\":\(id),\"success\":\(success),\"promocode\":\"\(promocode)\"}")
+                                RDLogger.error("Promocode request error: {\"id\":\(id),\"success\":\(success),\"promocode\":\"\(promocode)\"}")
                                 selectedIndex = -1
                             } else {
-                                RelatedDigitalLogger.error("Promocode request error")
+                                RDLogger.error("Promocode request error")
                                 selectedIndex = -1
                             }
                             self.chooseSlice(selectedIndex: selectedIndex, selectedPromoCode: selectedPromoCode)
@@ -307,7 +307,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                 
                 if method == "copyToClipboard", let couponCode = event["couponCode"] as? String {
                     UIPasteboard.general.string = couponCode
-                    RelatedDigitalHelper.showCopiedClipboardMessage()
+                    RDHelper.showCopiedClipboardMessage()
                     self.close()
                 }
                 

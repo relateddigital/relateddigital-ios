@@ -1,13 +1,13 @@
 //
-//  VisilabsReadWriteLock.swift
-//  VisilabsIOS
+//  RDReadWriteLock.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 3.05.2020.
+//  Created by Egemen Gülkılık on 19.11.2021.
 //
 
 import Foundation
 
-class RelatedDigitalReadWriteLock {
+class RDReadWriteLock {
     let concurentQueue: DispatchQueue
 
     init(label: String) {

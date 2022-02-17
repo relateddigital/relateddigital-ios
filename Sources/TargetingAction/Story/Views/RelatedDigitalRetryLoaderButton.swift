@@ -19,7 +19,7 @@ public class RelatedDigitalRetryLoaderButton: UIButton {
         self.init()
         self.backgroundColor = .white
         self.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
-        if let closeButtonImage = RelatedDigitalHelper.getUIImage(named: "VisilabsRetryButton") {
+        if let closeButtonImage = RDHelper.getUIImage(named: "VisilabsRetryButton") {
             self.setImage(closeButtonImage, for: .normal)
         }
         self.addTarget(self, action: #selector(didTapRetryBtn), for: .touchUpInside)

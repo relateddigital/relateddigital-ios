@@ -18,8 +18,8 @@ public class RelatedDigitalRemoteConfig {
     
     init(profileId: String) {
         self.profileId = profileId
-        self.remoteConfigFetchTimeInterval = RelatedDigitalConstants.remoteConfigFetchTimeInterval
-        RelatedDigitalPersistence.saveBlock(false)
+        self.remoteConfigFetchTimeInterval = RDConstants.remoteConfigFetchTimeInterval
+        RDPersistence.saveBlock(false)
         startRemoteConfigTimer()
     }
     
@@ -28,18 +28,18 @@ public class RelatedDigitalRemoteConfig {
             return
         }
         firstTime = false
-        RelatedDigitalLogger.info("Sending RemoteConfigRequest")
+        RDLogger.info("Sending RemoteConfigRequest")
         RelatedDigitalRequest.sendRemoteConfigRequest { sIdArr, err in
             if let err = err {
-                RelatedDigitalLogger.error("checkRemoteConfig: Error \(err)")
-                RelatedDigitalPersistence.saveBlock(false)
+                RDLogger.error("checkRemoteConfig: Error \(err)")
+                RDPersistence.saveBlock(false)
             }
             if let sIdArr = sIdArr {
-                RelatedDigitalLogger.info("Blocked profiles: \(sIdArr)")
+                RDLogger.info("Blocked profiles: \(sIdArr)")
                 if sIdArr.contains(self.profileId) {
-                    RelatedDigitalPersistence.saveBlock(true)
+                    RDPersistence.saveBlock(true)
                 } else {
-                    RelatedDigitalPersistence.saveBlock(false)
+                    RDPersistence.saveBlock(false)
                 }
             }
             self.lastCheckTime = Date()

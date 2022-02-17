@@ -102,7 +102,7 @@ public class RelatedDigital {
         }
         
         guard _shared == nil else {
-            RelatedDigitalLogger.error("initialize can only be called once.")
+            RDLogger.error("initialize can only be called once.")
             return
         }
         

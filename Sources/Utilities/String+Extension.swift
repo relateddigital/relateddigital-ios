@@ -1,8 +1,8 @@
 //
 //  String+Extension.swift
-//  VisilabsIOS
+//  RelatedDigitalIOS
 //
-//  Created by Said Alır on 19.11.2020.
+//  Created by Said Alır on 19.04.2021.
 //
 
 import Foundation
@@ -74,7 +74,6 @@ struct ParsedPermissionString {
     var string: String
     var location: Int
     var length: Int
-
 }
 
 struct ParsedClick {

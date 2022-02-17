@@ -25,11 +25,11 @@ public struct RelatedDigitalProductStatNotifierViewModel: TargetingActionViewMod
     var attributedString: NSAttributedString? = nil
     
     func getContentFont() -> UIFont {
-        return RelatedDigitalHelper.getFont(fontFamily: content_font_family, fontSize: content_text_size, style: .title2)
+        return RDHelper.getFont(fontFamily: content_font_family, fontSize: content_text_size, style: .title2)
     }
     
     func getContentCountFont() -> UIFont {
-        return RelatedDigitalHelper.getFont(fontFamily: content_font_family, fontSize: contentcount_text_size, style: .title2)
+        return RDHelper.getFont(fontFamily: content_font_family, fontSize: contentcount_text_size, style: .title2)
     }
     
     mutating func setAttributedString() {
@@ -37,7 +37,7 @@ public struct RelatedDigitalProductStatNotifierViewModel: TargetingActionViewMod
             let results = regex.matches(in: content, range: NSRange(content.startIndex..., in: content))
             if results.isEmpty {
                 if content.contains("<COUNT>"){
-                    RelatedDigitalLogger.error("Product stat notifier: Could not parse the number!")
+                    RDLogger.error("Product stat notifier: Could not parse the number!")
                     return
                 } else {
                     let aString = NSMutableAttributedString(string: content)
@@ -46,7 +46,7 @@ public struct RelatedDigitalProductStatNotifierViewModel: TargetingActionViewMod
                         aString.addAttribute(.foregroundColor, value: contentColor, range: NSRange(location: 0, length: content.count))
                     }
                     attributedString = aString
-                    RelatedDigitalLogger.warn("Product stat notifier: Tag COUNT is not used!");
+                    RDLogger.warn("Product stat notifier: Tag COUNT is not used!");
                 }
             } else {
                 var currentIndex = 0

@@ -77,7 +77,7 @@ public class RelatedDigitalCarouselItem {
             do {
                 data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
             } catch {
-                RelatedDigitalLogger.error("image failed to load from url \(iUrl)")
+                RDLogger.error("image failed to load from url \(iUrl)")
             }
         }
         return data
@@ -91,7 +91,7 @@ public class RelatedDigitalCarouselItem {
             do {
                 data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
             } catch {
-                RelatedDigitalLogger.error("image failed to load from url \(iUrl)")
+                RDLogger.error("image failed to load from url \(iUrl)")
             }
         }
         return data
@@ -137,11 +137,11 @@ public class RelatedDigitalCarouselItem {
         }
         
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: .inappcarousel)
+            self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: .inappcarousel)
         }
         
         if !backgroundImageString.isNilOrWhiteSpace {
-            self.backgroundImageUrl = RelatedDigitalHelper.getImageUrl(backgroundImageString!, type: .inappcarousel)
+            self.backgroundImageUrl = RDHelper.getImageUrl(backgroundImageString!, type: .inappcarousel)
         }
         
         self.closeButtonColor = closeButtonColor
@@ -167,7 +167,7 @@ public class RelatedDigitalCarouselItem {
     // swiftlint:disable function_body_length disable cyclomatic_complexity
     public init?(JSONObject: [String: Any]?) {
         guard let object = JSONObject else {
-            RelatedDigitalLogger.error("carouselitem json object should not be nil")
+            RDLogger.error("carouselitem json object should not be nil")
             return nil
         }
         
@@ -201,20 +201,20 @@ public class RelatedDigitalCarouselItem {
         }
         
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RelatedDigitalHelper.getImageUrl(imageUrlString!, type: .inappcarousel)
+            self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: .inappcarousel)
         }
         
         if !backgroundImageString.isNilOrWhiteSpace {
-            self.backgroundImageUrl = RelatedDigitalHelper.getImageUrl(backgroundImageString!, type: .inappcarousel)
+            self.backgroundImageUrl = RDHelper.getImageUrl(backgroundImageString!, type: .inappcarousel)
         }
         
         self.closeButtonColor = UIColor(hex: object[PayloadKey.close_button_color] as? String)
         
-        self.titleFont = RelatedDigitalHelper.getFont(fontFamily: self.titleFontFamily, fontSize: self.titleTextsize
+        self.titleFont = RDHelper.getFont(fontFamily: self.titleFontFamily, fontSize: self.titleTextsize
                                                 , style: .title2, customFont: self.titleCustomFontFamily)
-        self.bodyFont = RelatedDigitalHelper.getFont(fontFamily: self.bodyFontFamily, fontSize: self.bodyTextsize
+        self.bodyFont = RDHelper.getFont(fontFamily: self.bodyFontFamily, fontSize: self.bodyTextsize
                                                , style: .body, customFont: self.bodyCustomFontFamily)
-        self.buttonFont = RelatedDigitalHelper.getFont(fontFamily: self.buttonFontFamily, fontSize: self.buttonTextsize
+        self.buttonFont = RDHelper.getFont(fontFamily: self.buttonFontFamily, fontSize: self.buttonTextsize
                                                  , style: .title2, customFont: self.buttonCustomFontFamily)
         
         self.setFonts()
@@ -237,11 +237,11 @@ public class RelatedDigitalCarouselItem {
 
     
     private func setFonts() {
-        self.titleFont = RelatedDigitalHelper.getFont(fontFamily: self.titleFontFamily, fontSize: self.titleTextsize
+        self.titleFont = RDHelper.getFont(fontFamily: self.titleFontFamily, fontSize: self.titleTextsize
                                                 , style: .title2, customFont: self.titleCustomFontFamily)
-        self.bodyFont = RelatedDigitalHelper.getFont(fontFamily: self.bodyFontFamily, fontSize: self.bodyTextsize
+        self.bodyFont = RDHelper.getFont(fontFamily: self.bodyFontFamily, fontSize: self.bodyTextsize
                                                , style: .body, customFont: self.bodyCustomFontFamily)
-        self.buttonFont = RelatedDigitalHelper.getFont(fontFamily: self.buttonFontFamily, fontSize: self.buttonTextsize
+        self.buttonFont = RDHelper.getFont(fontFamily: self.buttonFontFamily, fontSize: self.buttonTextsize
                                                  , style: .title2, customFont: self.buttonCustomFontFamily)
     }
     

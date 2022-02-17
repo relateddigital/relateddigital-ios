@@ -61,7 +61,7 @@ extension RelatedDigitalPopupDialogDefaultView {
 
     internal func setCopyCodeImage() -> UIButton {
         let copyCodeImage = UIButton(frame: .zero)
-        let copyIconImage = RelatedDigitalHelper.getUIImage(named: "RelatedCopyButton")
+        let copyIconImage = RDHelper.getUIImage(named: "RelatedCopyButton")
         copyCodeImage.setImage(copyIconImage, for: .normal)
         copyCodeImage.translatesAutoresizingMaskIntoConstraints = false
         copyCodeImage.backgroundColor = self.relatedDigitalInAppNotification?.promotionBackgroundColor

@@ -62,7 +62,7 @@ class RelatedDigitalFullNotificationViewController: RelatedDigitalBaseNotificati
                 imageView.contentMode = UIView.ContentMode.center
             }
         } else {
-            RelatedDigitalLogger.error("notification image failed to load from data")
+            RDLogger.error("notification image failed to load from data")
         }
 
         titleLabel.text = fullNotification.messageTitle?.removeEscapingCharacters()
@@ -144,7 +144,7 @@ class RelatedDigitalFullNotificationViewController: RelatedDigitalBaseNotificati
 
     @IBAction func promotionCodeCopied(_ sender: Any) {
         pasteboard.string = copyTextButton.currentTitle
-        RelatedDigitalHelper.showCopiedClipboardMessage()
+        RDHelper.showCopiedClipboardMessage()
 
     }
 

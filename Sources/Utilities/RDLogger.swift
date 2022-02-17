@@ -1,14 +1,14 @@
 //
-//  VisilabsLogger.swift
-//  VisilabsIOS
+//  RDLogger.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 3.05.2020.
+//  Created by Egemen Gülkılık on 23.11.2021.
 //
 
 import Foundation
 import os.log
 
-enum RelatedDigitalLogLevel: String {
+enum RDLogLevel: String {
     case debug = "▪️"
     case info = "🔷"
     case warning = "🔶"
@@ -26,9 +26,9 @@ struct relatedDigitalLogMessage {
     let text: String
 
     /// The level of the log message
-    let level: RelatedDigitalLogLevel
+    let level: RDLogLevel
 
-    init(path: String, function: String, text: String, level: RelatedDigitalLogLevel) {
+    init(path: String, function: String, text: String, level: RDLogLevel) {
         if let file = path.components(separatedBy: "/").last {
             self.file = file
         } else {
@@ -40,23 +40,23 @@ struct relatedDigitalLogMessage {
     }
 }
 
-protocol RelatedDigitalLogging {
+protocol RDLogging {
     func addMessage(message: relatedDigitalLogMessage)
 }
 
-class RelatedDigitalPrintLogging: RelatedDigitalLogging {
+class RDPrintLogging: RDLogging {
     func addMessage(message: relatedDigitalLogMessage) {
         let msg = "[Visilabs(\(message.level.rawValue))  - \(message.file) - func \(message.function)] : \(message.text)"
         os_log("%@", type: .debug, msg)
     }
 }
 
-class RelatedDigitalLogger {
-    private static let readWriteLock: RelatedDigitalReadWriteLock = RelatedDigitalReadWriteLock(label: "RelatedDigitalLoggerLock")
-    private static var enabledLevels = Set<RelatedDigitalLogLevel>()
-    private static var loggers = [RelatedDigitalLogging]()
+class RDLogger {
+    private static let readWriteLock: RDReadWriteLock = RDReadWriteLock(label: "RDLoggerLock")
+    private static var enabledLevels = Set<RDLogLevel>()
+    private static var loggers = [RDLogging]()
 
-    class func addLogging(_ logging: RelatedDigitalLogging) {
+    class func addLogging(_ logging: RDLogging) {
         readWriteLock.write {
             if loggers.count > 0 {
                 return
@@ -65,7 +65,7 @@ class RelatedDigitalLogger {
         }
     }
 
-    class func enableLevels(_ levels: [RelatedDigitalLogLevel]) {
+    class func enableLevels(_ levels: [RDLogLevel]) {
         readWriteLock.write {
             for level in levels {
                 enabledLevels.insert(level)
@@ -73,7 +73,7 @@ class RelatedDigitalLogger {
         }
     }
 
-    class func disableLevels(_ levels: [RelatedDigitalLogLevel]) {
+    class func disableLevels(_ levels: [RDLogLevel]) {
         readWriteLock.write {
             for level in levels {
                 enabledLevels.remove(level)
@@ -82,7 +82,7 @@ class RelatedDigitalLogger {
     }
 
     class func debug(_ message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
-       var enabledLevels = Set<RelatedDigitalLogLevel>()
+       var enabledLevels = Set<RDLogLevel>()
        readWriteLock.read {
            enabledLevels = self.enabledLevels
        }
@@ -91,7 +91,7 @@ class RelatedDigitalLogger {
    }
 
     class func info(_ message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
-       var enabledLevels = Set<RelatedDigitalLogLevel>()
+       var enabledLevels = Set<RDLogLevel>()
        readWriteLock.read {
            enabledLevels = self.enabledLevels
        }
@@ -100,7 +100,7 @@ class RelatedDigitalLogger {
    }
 
     class func warn(_ message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
-       var enabledLevels = Set<RelatedDigitalLogLevel>()
+       var enabledLevels = Set<RDLogLevel>()
        readWriteLock.read {
            enabledLevels = self.enabledLevels
        }
@@ -109,7 +109,7 @@ class RelatedDigitalLogger {
    }
 
    class func error(_ message: @autoclosure() -> Any, _ path: String = #file, _ function: String = #function) {
-       var enabledLevels = Set<RelatedDigitalLogLevel>()
+       var enabledLevels = Set<RDLogLevel>()
        readWriteLock.read {
            enabledLevels = self.enabledLevels
        }
@@ -118,7 +118,7 @@ class RelatedDigitalLogger {
    }
 
     class private func forwardLogMessage(_ message: relatedDigitalLogMessage) {
-        var loggers = [RelatedDigitalLogging]()
+        var loggers = [RDLogging]()
         readWriteLock.read {
             loggers = self.loggers
         }

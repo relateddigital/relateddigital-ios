@@ -1,8 +1,8 @@
 //
 //  Checkbox.swift
-//  VisilabsIOS
+//  RelatedDigitalIOS
 //
-//  Created by Said Alır on 23.10.2020.
+//  Created by Said Alır on 23.04.2021.
 //
 
 import Foundation

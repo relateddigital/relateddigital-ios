@@ -1,6 +1,6 @@
 //
-//  VisilabsConstraintHelper.swift
-//  constraintApp
+//  RDConstraintHelper.swift
+//  RelatedDigitalIOS
 //
 //  Created by Said Alır on 15.10.2020.
 //

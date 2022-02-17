@@ -19,11 +19,11 @@ class RelatedDigitalGeofence {
     private var lastSuccessfulGeofenceFetchTime: Date
 
     init?() {
-        if let profile = RelatedDigitalPersistence.readRelatedDigitalProfile() {
+        if let profile = RDPersistence.readRDProfile() {
             self.profile = profile
-            RelatedDigitalHelper.setEndpoints(dataSource: self.profile.dataSource)// TO_DO: bunu if içine almaya gerek var mı?
+            RDHelper.setEndpoints(dataSource: self.profile.dataSource)// TO_DO: bunu if içine almaya gerek var mı?
             self.activeGeofenceList = [RelatedDigitalGeofenceEntity]()
-            self.geofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
+            self.geofenceHistory = RDPersistence.readRDGeofenceHistory()
             self.lastGeofenceFetchTime = Date(timeIntervalSince1970: 0)
             self.lastSuccessfulGeofenceFetchTime = Date(timeIntervalSince1970: 0)
         } else {
@@ -87,36 +87,36 @@ class RelatedDigitalGeofence {
         if profile.geofenceEnabled, locationServicesEnabledForDevice, locationServiceEnabledForApplication {
             let now = Date()
             let timeInterval = now.timeIntervalSince1970 - self.lastGeofenceFetchTime.timeIntervalSince1970
-            if timeInterval < RelatedDigitalConstants.geofenceFetchTimeInterval {
+            if timeInterval < RDConstants.geofenceFetchTimeInterval {
                 return
             }
 
             self.lastGeofenceFetchTime = now
-            let user = RelatedDigitalPersistence.unarchiveUser()
-            let geofenceHistory = RelatedDigitalPersistence.readRelatedDigitalGeofenceHistory()
+            let user = RDPersistence.unarchiveUser()
+            let geofenceHistory = RDPersistence.readRDGeofenceHistory()
             var props = [String: String]()
-            props[RelatedDigitalConstants.organizationIdKey] = profile.organizationId
-            props[RelatedDigitalConstants.profileIdKey] = profile.profileId
-            props[RelatedDigitalConstants.cookieIdKey] = user.cookieId
-            props[RelatedDigitalConstants.exvisitorIdKey] = user.exVisitorId
-            props[RelatedDigitalConstants.actKey] = RelatedDigitalConstants.getList
-            props[RelatedDigitalConstants.tokenIdKey] = user.tokenId
-            props[RelatedDigitalConstants.appidKey] = user.appId
-            props[RelatedDigitalConstants.channelKey] = profile.channel
+            props[RDConstants.organizationIdKey] = profile.organizationId
+            props[RDConstants.profileIdKey] = profile.profileId
+            props[RDConstants.cookieIdKey] = user.cookieId
+            props[RDConstants.exvisitorIdKey] = user.exVisitorId
+            props[RDConstants.actKey] = RDConstants.getList
+            props[RDConstants.tokenIdKey] = user.tokenId
+            props[RDConstants.appidKey] = user.appId
+            props[RDConstants.channelKey] = profile.channel
             if let lat = lastKnownLatitude, let lon = lastKnownLongitude {
-                props[RelatedDigitalConstants.latitudeKey] = String(format: "%.013f", lat)
-                props[RelatedDigitalConstants.longitudeKey] = String(format: "%.013f", lon)
+                props[RDConstants.latitudeKey] = String(format: "%.013f", lat)
+                props[RDConstants.longitudeKey] = String(format: "%.013f", lon)
             } else if let lat = geofenceHistory.lastKnownLatitude, let lon = geofenceHistory.lastKnownLongitude {
-                props[RelatedDigitalConstants.latitudeKey] = String(format: "%.013f", lat)
-                props[RelatedDigitalConstants.longitudeKey] = String(format: "%.013f", lon)
+                props[RDConstants.latitudeKey] = String(format: "%.013f", lat)
+                props[RDConstants.longitudeKey] = String(format: "%.013f", lon)
             }
             
-            props[RelatedDigitalConstants.nrvKey] = String(user.nrv)
-            props[RelatedDigitalConstants.pvivKey] = String(user.pviv)
-            props[RelatedDigitalConstants.tvcKey] = String(user.tvc)
-            props[RelatedDigitalConstants.lvtKey] = user.lvt
+            props[RDConstants.nrvKey] = String(user.nrv)
+            props[RDConstants.pvivKey] = String(user.pviv)
+            props[RDConstants.tvcKey] = String(user.tvc)
+            props[RDConstants.lvtKey] = user.lvt
 
-            for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
+            for (key, value) in RDPersistence.readTargetParameters() {
                if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                    props[key] = value
                }
@@ -130,15 +130,15 @@ class RelatedDigitalGeofence {
                 if error != nil {
                     self.geofenceHistory.lastKnownLatitude = lastKnownLatitude ?? geofenceHistory.lastKnownLatitude
                     self.geofenceHistory.lastKnownLongitude = lastKnownLongitude ?? geofenceHistory.lastKnownLongitude
-                    if self.geofenceHistory.errorHistory.count > RelatedDigitalConstants.geofenceHistoryErrorMaxCount {
+                    if self.geofenceHistory.errorHistory.count > RDConstants.geofenceHistoryErrorMaxCount {
                         let ascendingKeys = Array(self.geofenceHistory.errorHistory.keys).sorted(by: { $0 < $1 })
                         let keysToBeDeleted = ascendingKeys[0..<(ascendingKeys.count
-                                            - RelatedDigitalConstants.geofenceHistoryErrorMaxCount)]
+                                            - RDConstants.geofenceHistoryErrorMaxCount)]
                         for key in keysToBeDeleted {
                             self.geofenceHistory.errorHistory[key] = nil
                         }
                     }
-                    RelatedDigitalPersistence.saveRelatedDigitalGeofenceHistory(self.geofenceHistory)
+                    RDPersistence.saveRDGeofenceHistory(self.geofenceHistory)
                     return
                 }
                 (self.lastSuccessfulGeofenceFetchTime, self.geofenceHistory.lastFetchTime) = (now, now)
@@ -157,7 +157,7 @@ class RelatedDigitalGeofence {
                                    let radius = geofence["rds"] as? Double {
                                     var distanceFromCurrentLastKnownLocation: Double?
                                     if let lastLat = lastKnownLatitude, let lastLong = lastKnownLongitude {
-                            distanceFromCurrentLastKnownLocation = RelatedDigitalHelper.distanceSquared(lat1: lastLat,
+                            distanceFromCurrentLastKnownLocation = RDHelper.distanceSquared(lat1: lastLat,
                                                                             lng1: lastLong,
                                                                             lat2: latitude,
                                                                             lng2: longitude)
@@ -179,58 +179,58 @@ class RelatedDigitalGeofence {
                 self.geofenceHistory.lastKnownLatitude = lastKnownLatitude
                 self.geofenceHistory.lastKnownLongitude = lastKnownLongitude
                 self.geofenceHistory.fetchHistory[now] = fetchedGeofences
-                if self.geofenceHistory.fetchHistory.count > RelatedDigitalConstants.geofenceHistoryMaxCount {
+                if self.geofenceHistory.fetchHistory.count > RDConstants.geofenceHistoryMaxCount {
                     let ascendingKeys = Array(self.geofenceHistory.fetchHistory.keys).sorted(by: { $0 < $1 })
                     let keysToBeDeleted = ascendingKeys[0..<(ascendingKeys.count
-                                                            - RelatedDigitalConstants.geofenceHistoryMaxCount)]
+                                                            - RDConstants.geofenceHistoryMaxCount)]
                     for key in keysToBeDeleted {
                         self.geofenceHistory.fetchHistory[key] = nil
                     }
                 }
                 // self.geofenceHistory = geofenceHistory
-                RelatedDigitalPersistence.saveRelatedDigitalGeofenceHistory(self.geofenceHistory)
+                RDPersistence.saveRDGeofenceHistory(self.geofenceHistory)
                 self.startMonitorGeofences(geofences: fetchedGeofences)
             }
         }
     }
 
     func sendPushNotification(actionId: String, geofenceId: String, isDwell: Bool, isEnter: Bool) {
-        let user = RelatedDigitalPersistence.unarchiveUser()
+        let user = RDPersistence.unarchiveUser()
         var props = [String: String]()
-        props[RelatedDigitalConstants.organizationIdKey] = profile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = profile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = user.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = user.exVisitorId
-        props[RelatedDigitalConstants.actKey] = RelatedDigitalConstants.processV2
-        props[RelatedDigitalConstants.actidKey] = actionId
-        props[RelatedDigitalConstants.tokenIdKey] = user.tokenId
-        props[RelatedDigitalConstants.appidKey] = user.appId
-        props[RelatedDigitalConstants.geoIdKey] = geofenceId
+        props[RDConstants.organizationIdKey] = profile.organizationId
+        props[RDConstants.profileIdKey] = profile.profileId
+        props[RDConstants.cookieIdKey] = user.cookieId
+        props[RDConstants.exvisitorIdKey] = user.exVisitorId
+        props[RDConstants.actKey] = RDConstants.processV2
+        props[RDConstants.actidKey] = actionId
+        props[RDConstants.tokenIdKey] = user.tokenId
+        props[RDConstants.appidKey] = user.appId
+        props[RDConstants.geoIdKey] = geofenceId
         
-        props[RelatedDigitalConstants.nrvKey] = String(user.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(user.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(user.tvc)
-        props[RelatedDigitalConstants.lvtKey] = user.lvt
+        props[RDConstants.nrvKey] = String(user.nrv)
+        props[RDConstants.pvivKey] = String(user.pviv)
+        props[RDConstants.tvcKey] = String(user.tvc)
+        props[RDConstants.lvtKey] = user.lvt
 
         if isDwell {
             if isEnter {
-                props[RelatedDigitalConstants.triggerEventKey] = RelatedDigitalConstants.onEnter
+                props[RDConstants.triggerEventKey] = RDConstants.onEnter
             } else {
-                props[RelatedDigitalConstants.triggerEventKey] = RelatedDigitalConstants.onExit
+                props[RDConstants.triggerEventKey] = RDConstants.onExit
             }
         }
 
-        for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
+        for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                props[key] = value
            }
         }
-        RelatedDigitalLogger.info("Geofence Triggerred: actionId: \(actionId) geofenceid: \(geofenceId)")
+        RDLogger.info("Geofence Triggerred: actionId: \(actionId) geofenceid: \(geofenceId)")
         RelatedDigitalRequest.sendGeofenceRequest(properties: props,
                                             headers: [String: String](),
                                             timeoutInterval: profile.requestTimeoutInterval) { (_, error) in
             if let error = error {
-                RelatedDigitalLogger.error("Geofence Push Send Error: \(error)")
+                RDLogger.error("Geofence Push Send Error: \(error)")
             }
         }
     }
