@@ -129,7 +129,7 @@ public class RelatedDigital {
         return shared.relatedDigitalInstance.locationServicesEnabledForDevice
     }
     
-    public static var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus {
+    public static var locationServiceStateStatusForApplication: RDCLAuthorizationStatus {
         return shared.relatedDigitalInstance.locationServiceStateStatusForApplication
     }
     

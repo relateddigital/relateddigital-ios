@@ -258,19 +258,19 @@ public class RDPersistence {
         return nil
     }
     
-    static func saveRDGeofenceHistory(_ rdGeofenceHistory: RelatedDigitalGeofenceHistory) {
+    static func saveRDGeofenceHistory(_ rdGeofenceHistory: RDGeofenceHistory) {
         if let encodedRdGeofenceHistory = try? JSONEncoder().encode(rdGeofenceHistory) {
             saveUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey, withObject: encodedRdGeofenceHistory)
         }
     }
     
-    public static func readRDGeofenceHistory() -> RelatedDigitalGeofenceHistory {
+    public static func readRDGeofenceHistory() -> RDGeofenceHistory {
         if let savedRDGeofenceHistory = readUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey) as? Data {
-            if let loadedRDGeofenceHistory = try? JSONDecoder().decode(RelatedDigitalGeofenceHistory.self, from: savedRDGeofenceHistory) {
+            if let loadedRDGeofenceHistory = try? JSONDecoder().decode(RDGeofenceHistory.self, from: savedRDGeofenceHistory) {
                 return loadedRDGeofenceHistory
             }
         }
-        return RelatedDigitalGeofenceHistory()
+        return RDGeofenceHistory()
     }
     
     public static func clearRDGeofenceHistory() {

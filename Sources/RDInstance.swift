@@ -18,7 +18,7 @@ protocol RDInstanceProtocol {
     var rdUser: RDUser { get }
     var rdProfile: RDProfile { get }
     var locationServicesEnabledForDevice: Bool { get }
-    var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus { get }
+    var locationServiceStateStatusForApplication: RDCLAuthorizationStatus { get }
     var inappButtonDelegate: RelatedDigitalInappButtonDelegate? { get set }
     var loggingEnabled: Bool { get set }
     var inAppNotificationsEnabled: Bool { get set }
@@ -679,19 +679,19 @@ extension RDInstance {
 
 extension RDInstance {
     private func startGeofencing() {
-        RelatedDigitalGeofence.sharedManager?.startGeofencing()
+        RDGeofence.sharedManager?.startGeofencing()
     }
     
     public var locationServicesEnabledForDevice: Bool {
-        return RelatedDigitalGeofence.sharedManager?.locationServicesEnabledForDevice ?? false
+        return RDGeofence.sharedManager?.locationServicesEnabledForDevice ?? false
     }
     
-    public var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus {
-        return RelatedDigitalGeofence.sharedManager?.locationServiceStateStatusForApplication ?? .none
+    public var locationServiceStateStatusForApplication: RDCLAuthorizationStatus {
+        return RDGeofence.sharedManager?.locationServiceStateStatusForApplication ?? .none
     }
     
     public func sendLocationPermission() {
-        RelatedDigitalLocationManager.sharedManager.sendLocationPermission(geofenceEnabled: rdProfile.geofenceEnabled)
+        RDLocationManager.sharedManager.sendLocationPermission(geofenceEnabled: rdProfile.geofenceEnabled)
     }
     
     // swiftlint:disable file_length

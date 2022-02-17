@@ -18,7 +18,7 @@ class GeofenceViewController: FormViewController {
     let lastKnownLongitude = "Last Known Longitude"
 
     let dateFormatter = DateFormatter()
-    var relatedDigitalGeofenceHistory: RelatedDigitalGeofenceHistory!
+    var relatedDigitalGeofenceHistory: RDGeofenceHistory!
     var historySection = Section("Geofence Server Checks".uppercased(with: Locale(identifier: "en_US")))
     var errorSection = Section("Geofence Server Checks With Error".uppercased(with: Locale(identifier: "en_US")))
     var refreshSection = Section()
@@ -170,7 +170,7 @@ class GeofenceAlertViewController: CleanyAlertViewController {
                    styleSettings: styleSettings)
     }
 
-    init(date: Date, relatedDigitalGeofenceEntities: [RelatedDigitalGeofenceEntity]?) {
+    init(date: Date, relatedDigitalGeofenceEntities: [RDGeofenceEntity]?) {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let styleSettings = CleanyAlertConfig.getDefaultStyleSettings()
         styleSettings[.cornerRadius] = 18
@@ -185,7 +185,7 @@ class GeofenceAlertViewController: CleanyAlertViewController {
                    styleSettings: styleSettings)
     }
 
-    private static func getMessageFromGeofenceEntities(_ geofences: [RelatedDigitalGeofenceEntity]) -> String {
+    private static func getMessageFromGeofenceEntities(_ geofences: [RDGeofenceEntity]) -> String {
         var message = ""
         for geofence in geofences {
             message += "actid:\(geofence.actId) geoid\(geofence.geofenceId)" +  "\n"

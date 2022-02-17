@@ -1,13 +1,13 @@
 //
-//  VisilabsCLAuthorizationStatus.swift
-//  VisilabsIOS
+// RDCLAuthorizationStatus.swift
+// RelatedDigitalIOS
 //
-//  Created by Egemen on 2.09.2020.
+// Created by Egemen Gülkılık on 29.01.2022.
 //
 
 import Foundation
 
-public enum RelatedDigitalCLAuthorizationStatus: Int32 {
+public enum RDCLAuthorizationStatus: Int32 {
     case notDetermined = 0
     case restricted = 1
     case denied = 2

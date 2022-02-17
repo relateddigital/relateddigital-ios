@@ -1,16 +1,16 @@
 //
-//  VisilabsLocationManager.swift
-//  VisilabsIOS
+// RDLocationManager.swift
+// RelatedDigitalIOS
 //
-//  Created by Egemen on 11.08.2020.
+// Created by Egemen Gülkılık on 29.01.2022.
 //
 
 import Foundation
 import CoreLocation
 
-class RelatedDigitalLocationManager: NSObject {
+class RDLocationManager: NSObject {
     
-    static let sharedManager = RelatedDigitalLocationManager()
+    static let sharedManager = RDLocationManager()
     
     var locationManager: CLLocationManager
     var lowPowerLocationManager: CLLocationManager
@@ -43,7 +43,7 @@ class RelatedDigitalLocationManager: NSObject {
     func startGeofencing() {
         geofenceEnabled = true
         requestLocationAuthorization()
-        if !acceptedAuthorizationStatuses.contains(RelatedDigitalLocationManager.locationServiceStateStatus) {
+        if !acceptedAuthorizationStatuses.contains(RDLocationManager.locationServiceStateStatus) {
             return
         }
         locationManager.allowsBackgroundLocationUpdates = RDHelper.hasBackgroundLocationCabability() && CLLocationManager.authorizationStatus() == .authorizedAlways
@@ -59,7 +59,7 @@ class RelatedDigitalLocationManager: NSObject {
         self.currentGeoLocationValue = CLLocationCoordinate2DMake(0, 0)
         
         if let loc = self.locationManager.location {
-            RelatedDigitalGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: loc.coordinate.latitude, lastKnownLongitude: loc.coordinate.longitude)
+            RDGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: loc.coordinate.latitude, lastKnownLongitude: loc.coordinate.longitude)
         }
         
     }
@@ -87,7 +87,7 @@ class RelatedDigitalLocationManager: NSObject {
         if locationServicesEnabledForDevice {
             var authorizationStatus: CLAuthorizationStatus = .denied
             if #available(iOS 14.0, *) {
-                authorizationStatus = RelatedDigitalLocationManager.sharedManager.locationManager.authorizationStatus
+                authorizationStatus = RDLocationManager.sharedManager.locationManager.authorizationStatus
             } else {
                 authorizationStatus = CLLocationManager.authorizationStatus()
             }
@@ -101,7 +101,7 @@ class RelatedDigitalLocationManager: NSObject {
     }
     
     func sendLocationPermission(status: CLAuthorizationStatus? = nil, geofenceEnabled: Bool = true) {
-        let authorizationStatus = status ?? RelatedDigitalLocationManager.locationServiceStateStatus
+        let authorizationStatus = status ?? RDLocationManager.locationServiceStateStatus
         if authorizationStatus != lastKnownCLAuthorizationStatus {
             var properties = Properties()
             properties[RDConstants.locationPermissionReqKey] = authorizationStatus.queryStringValue
@@ -157,7 +157,7 @@ class RelatedDigitalLocationManager: NSObject {
     
 }
 
-extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
+extension RDLocationManager: CLLocationManagerDelegate {
     
     // MARK: - CLLocationManagerDelegate implementation
     
@@ -172,7 +172,7 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
         requestLocationAuthorization()
         if acceptedAuthorizationStatuses.contains(status) {
             startGeofencing()
-            RelatedDigitalGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: locationManager.location?.coordinate.latitude, lastKnownLongitude: locationManager.location?.coordinate.longitude)
+            RDGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: locationManager.location?.coordinate.latitude, lastKnownLongitude: locationManager.location?.coordinate.longitude)
         }
     }
     
@@ -187,7 +187,7 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
             requestLocationAuthorization()
             if acceptedAuthorizationStatuses.contains(manager.authorizationStatus) {
                 startGeofencing()
-                RelatedDigitalGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: locationManager.location?.coordinate.latitude, lastKnownLongitude: locationManager.location?.coordinate.longitude)
+                RDGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: locationManager.location?.coordinate.latitude, lastKnownLongitude: locationManager.location?.coordinate.longitude)
             }
         }
     }
@@ -199,7 +199,7 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
         if locations.count > 0 {
             self.currentGeoLocationValue = locations[0].coordinate
             RDLogger.info("CLLocationManager didUpdateLocations: lat:\(locations[0].coordinate.latitude) lon:\(locations[0].coordinate.longitude)")
-            RelatedDigitalGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: self.currentGeoLocationValue?.latitude, lastKnownLongitude: self.currentGeoLocationValue?.longitude)
+            RDGeofence.sharedManager?.getGeofenceList(lastKnownLatitude: self.currentGeoLocationValue?.latitude, lastKnownLongitude: self.currentGeoLocationValue?.longitude)
         }
     }
     
@@ -214,9 +214,9 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
             let geofenceId = elements[2]
             let targetEvent = elements[3]
             if targetEvent == RDConstants.onEnter {
-                RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: false, isEnter: false)
+                RDGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: false, isEnter: false)
             } else if targetEvent == RDConstants.dwell {
-                RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: true, isEnter: true)
+                RDGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: true, isEnter: true)
             }
         }
     }
@@ -228,9 +228,9 @@ extension RelatedDigitalLocationManager: CLLocationManagerDelegate {
             let geofenceId = elements[2]
             let targetEvent = elements[3]
             if targetEvent == RDConstants.onExit {
-                RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: false, isEnter: false)
+                RDGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: false, isEnter: false)
             } else if targetEvent == RDConstants.dwell {
-                RelatedDigitalGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: true, isEnter: false)
+                RDGeofence.sharedManager?.sendPushNotification(actionId: actionId, geofenceId: geofenceId, isDwell: true, isEnter: false)
             }
         }
     }

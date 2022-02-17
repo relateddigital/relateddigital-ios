@@ -1,11 +1,11 @@
 //
-//  VisilabsGeofenceEntity.swift
-//  VisilabsIOS
+// RDGeofenceEntity.swift
+// RelatedDigitalIOS
 //
-//  Created by Egemen on 1.09.2020.
+// Created by Egemen Gülkılık on 29.01.2022.
 //
 
-public class RelatedDigitalGeofenceEntity: Codable {
+public class RDGeofenceEntity: Codable {
     internal init(actId: Int,
                   geofenceId: Int,
                   latitude: Double,
@@ -22,7 +22,7 @@ public class RelatedDigitalGeofenceEntity: Codable {
         self.durationInSeconds = durationInSeconds
         self.targetEvent = targetEvent
         self.distanceFromCurrentLastKnownLocation = distanceFromCurrentLastKnownLocation
-        self.identifier = "visilabs_\(self.actId)_\(self.geofenceId)_\(self.targetEvent)"
+        self.identifier = "relateddigital_\(self.actId)_\(self.geofenceId)_\(self.targetEvent)"
     }
     public var actId: Int
     public var geofenceId: Int

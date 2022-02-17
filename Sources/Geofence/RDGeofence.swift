@@ -1,20 +1,20 @@
 //
-//  VisilabsGeofence.swift
-//  VisilabsIOS
+// RDGeofence.swift
+// RelatedDigitalIOS
 //
-//  Created by Egemen on 10.06.2020.
+// Created by Egemen Gülkılık on 29.01.2022.
 //
 
 import Foundation
 import CoreLocation
 
-class RelatedDigitalGeofence {
+class RDGeofence {
 
-    static let sharedManager = RelatedDigitalGeofence()
+    static let sharedManager = RDGeofence()
 
-    var activeGeofenceList: [RelatedDigitalGeofenceEntity]
-    let profile: RDProfile
-    var geofenceHistory: RelatedDigitalGeofenceHistory
+    var activeGeofenceList: [RDGeofenceEntity]
+    var profile: RDProfile
+    var geofenceHistory: RDGeofenceHistory
     private var lastGeofenceFetchTime: Date
     private var lastSuccessfulGeofenceFetchTime: Date
 
@@ -22,7 +22,7 @@ class RelatedDigitalGeofence {
         if let profile = RDPersistence.readRDProfile() {
             self.profile = profile
             RDHelper.setEndpoints(dataSource: self.profile.dataSource)// TO_DO: bunu if içine almaya gerek var mı?
-            self.activeGeofenceList = [RelatedDigitalGeofenceEntity]()
+            self.activeGeofenceList = [RDGeofenceEntity]()
             self.geofenceHistory = RDPersistence.readRDGeofenceHistory()
             self.lastGeofenceFetchTime = Date(timeIntervalSince1970: 0)
             self.lastSuccessfulGeofenceFetchTime = Date(timeIntervalSince1970: 0)
@@ -32,55 +32,49 @@ class RelatedDigitalGeofence {
     }
 
     var locationServicesEnabledForDevice: Bool {
-        return RelatedDigitalLocationManager.locationServicesEnabledForDevice
+        return RDLocationManager.locationServicesEnabledForDevice
     }
 
     // notDetermined, restricted, denied, authorizedAlways, authorizedWhenInUse
-    var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus {
-        return RelatedDigitalCLAuthorizationStatus(rawValue:
-                            RelatedDigitalLocationManager.locationServiceStateStatus.rawValue) ?? .none
+    var locationServiceStateStatusForApplication: RDCLAuthorizationStatus {
+        return RDCLAuthorizationStatus(rawValue: RDLocationManager.locationServiceStateStatus.rawValue) ?? .none
     }
 
     private var locationServiceEnabledForApplication: Bool {
-        return self.locationServiceStateStatusForApplication == .authorizedAlways
-            || self.locationServiceStateStatusForApplication == .authorizedWhenInUse
+        return self.locationServiceStateStatusForApplication == .authorizedAlways || self.locationServiceStateStatusForApplication == .authorizedWhenInUse
     }
 
     func startGeofencing() {
-        RelatedDigitalLocationManager.sharedManager.startGeofencing()
+        RDLocationManager.sharedManager.startGeofencing()
     }
 
-    private func startMonitorGeofences(geofences: [RelatedDigitalGeofenceEntity]) {
-        RelatedDigitalLocationManager.sharedManager.stopMonitorRegions()
-        self.activeGeofenceList = sortAndTakeRelatedDigitalGeofenceEntitiesToMonitor(geofences)
-        if self.profile.geofenceEnabled
-            && self.locationServicesEnabledForDevice
-            && self.locationServiceEnabledForApplication {
+    private func startMonitorGeofences(geofences: [RDGeofenceEntity]) {
+        RDLocationManager.sharedManager.stopMonitorRegions()
+        self.activeGeofenceList = sortAndTakeRDGeofenceEntitiesToMonitor(geofences)
+        if profile.geofenceEnabled && locationServicesEnabledForDevice && locationServiceEnabledForApplication {
             for geofence in self.activeGeofenceList {
                 let geoRegion = CLCircularRegion(center:
-                    CLLocationCoordinate2DMake(geofence.latitude, geofence.longitude),
-                    radius: geofence.radius,
-                    identifier: geofence.identifier)
-                RelatedDigitalLocationManager.sharedManager.startMonitorRegion(region: geoRegion)
+                    CLLocationCoordinate2DMake(geofence.latitude, geofence.longitude), radius: geofence.radius, identifier: geofence.identifier)
+                RDLocationManager.sharedManager.startMonitorRegion(region: geoRegion)
             }
         }
     }
 
-    private func sortAndTakeRelatedDigitalGeofenceEntitiesToMonitor(_ geofences: [RelatedDigitalGeofenceEntity])
-                                                                    -> [RelatedDigitalGeofenceEntity] {
+    private func sortAndTakeRDGeofenceEntitiesToMonitor(_ geofences: [RDGeofenceEntity])
+                                                                    -> [RDGeofenceEntity] {
         let geofencesSortedAscending = geofences.sorted { (first, second) -> Bool in
             let firstDistance = first.distanceFromCurrentLastKnownLocation ?? Double.greatestFiniteMagnitude
             let secondDistance = second.distanceFromCurrentLastKnownLocation ?? Double.greatestFiniteMagnitude
             return firstDistance < secondDistance
         }
-        var geofencesToMonitor = [RelatedDigitalGeofenceEntity]()
+        var geofencesToMonitor = [RDGeofenceEntity]()
         for geofence in geofencesSortedAscending {
             if geofencesToMonitor.count == self.profile.maxGeofenceCount {
                 break
             }
             geofencesToMonitor.append(geofence)
         }
-        return [RelatedDigitalGeofenceEntity](geofencesToMonitor)
+        return [RDGeofenceEntity](geofencesToMonitor)
     }
     // swiftlint:disable function_body_length cyclomatic_complexity
     func getGeofenceList(lastKnownLatitude: Double?, lastKnownLongitude: Double?) {
@@ -140,7 +134,7 @@ class RelatedDigitalGeofence {
                     return
                 }
                 (self.lastSuccessfulGeofenceFetchTime, self.geofenceHistory.lastFetchTime) = (now, now)
-                var fetchedGeofences = [RelatedDigitalGeofenceEntity]()
+                var fetchedGeofences = [RDGeofenceEntity]()
                 if let res = result {
                     for targetingAction in res {
                         if let actionId = targetingAction["actid"] as? Int,
@@ -160,7 +154,7 @@ class RelatedDigitalGeofence {
                                                                             lat2: latitude,
                                                                             lng2: longitude)
                                     }
-                                    fetchedGeofences.append(RelatedDigitalGeofenceEntity(actId: actionId,
+                                    fetchedGeofences.append(RDGeofenceEntity(actId: actionId,
                                                                                    geofenceId: geofenceId,
                                                                                    latitude: latitude,
                                                                                    longitude: longitude,
