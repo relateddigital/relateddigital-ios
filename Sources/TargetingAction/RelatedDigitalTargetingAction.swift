@@ -89,19 +89,17 @@ class RelatedDigitalTargetingAction {
 
     // MARK: - Targeting Actions
 
-    func checkTargetingActions(properties: [String: String],
-                                relatedDigitalUser: RelatedDigitalUser,
-                                completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
+    func checkTargetingActions(properties: [String: String], rdUser: RelatedDigitalUser, completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
 
         let semaphore = DispatchSemaphore(value: 0)
         var targetingActionViewModel: TargetingActionViewModel?
         var props = properties
-        props["OM.vcap"] = relatedDigitalUser.visitData
-        props["OM.viscap"] = relatedDigitalUser.visitorData
-        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
+        props["OM.vcap"] = rdUser.visitData
+        props["OM.viscap"] = rdUser.visitorData
+        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
         
         
         props[RelatedDigitalConstants.actionType] = "\(RelatedDigitalConstants.mailSubscriptionForm)~\(RelatedDigitalConstants.spinToWin)~\(RelatedDigitalConstants.scratchToWin)~\(RelatedDigitalConstants.productStatNotifier)"
@@ -115,7 +113,7 @@ class RelatedDigitalTargetingAction {
         props[RelatedDigitalConstants.pushPermitPermissionReqKey] = RelatedDigitalConstants.pushPermitStatus
 
         RelatedDigitalRequest.sendMobileRequest(properties: props,
-                                          headers: prepareHeaders(relatedDigitalUser),
+                                          headers: prepareHeaders(rdUser),
                                           timeoutInterval: self.rdProfile.requestTimeoutInterval,
                                           completion: {(result: [String: Any]?, _: RelatedDigitalError?, _: String?) in
             guard let result = result else {

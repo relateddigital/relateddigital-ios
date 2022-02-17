@@ -8,15 +8,15 @@
 import Foundation
 
 class RelatedDigitalRecommendation {
-    let relatedDigitalProfile: RelatedDigitalProfile
+    let rdProfile: RelatedDigitalProfile
 
-    init(relatedDigitalProfile: RelatedDigitalProfile) {
-        self.relatedDigitalProfile = relatedDigitalProfile
+    init(rdProfile: RelatedDigitalProfile) {
+        self.rdProfile = rdProfile
     }
 
     func recommend(zoneId: String,
                    productCode: String?,
-                   relatedDigitalUser: RelatedDigitalUser,
+                   rdUser: RelatedDigitalUser,
                    channel: String,
                    properties: [String: String] = [:],
                    filters: [RelatedDigitalRecommendationFilter] = [],
@@ -28,18 +28,18 @@ class RelatedDigitalRecommendation {
             props[RelatedDigitalConstants.filterKey] = getFiltersQueryStringValue(filters)
         }
 
-        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
+        props[RelatedDigitalConstants.organizationIdKey] = self.rdProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = self.rdProfile.profileId
+        props[RelatedDigitalConstants.cookieIdKey] = rdUser.cookieId
+        props[RelatedDigitalConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RelatedDigitalConstants.tokenIdKey] = rdUser.tokenId
+        props[RelatedDigitalConstants.appidKey] = rdUser.appId
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
         
-        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
+        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
 
         if zoneId.count > 0 {
             props[RelatedDigitalConstants.zoneIdKey] = zoneId
@@ -56,7 +56,7 @@ class RelatedDigitalRecommendation {
 
         RelatedDigitalRequest.sendRecommendationRequest(properties: props,
                                                   headers: [String: String](),
-                                                  timeoutInterval: relatedDigitalProfile.requestTimeoutInterval,
+                                                  timeoutInterval: rdProfile.requestTimeoutInterval,
                                                   completion: { (results: [Any]?, error: RelatedDigitalError?) in
             var products = [RelatedDigitalProduct]()
             if error != nil {

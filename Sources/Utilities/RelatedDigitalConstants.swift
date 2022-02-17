@@ -1,15 +1,15 @@
 //
-//  VisilabsConfig.swift
-//  VisilabsIOS
+//  RelatedDigitalConstants.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 15.04.2020.
+//  Created by Egemen Gülkılık on 15.12.2021.
 //
 
 import UIKit
 
 struct RelatedDigitalConstants {
     
-    static let sdkVersion = "3.4.3"
+    static let sdkVersion = "4.0.0"
 
     static let HTTP = "http"
     static let HTTPS = urlConstant.shared.securityTag
