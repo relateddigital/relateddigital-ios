@@ -16,8 +16,8 @@ class RDTargetingAction {
         self.rdProfile = rdProfile
     }
 
-    private func prepareHeaders(_ rdUser: RDUser) -> [String: String] {
-        var headers = [String: String]()
+    private func prepareHeaders(_ rdUser: RDUser) -> Properties {
+        var headers = Properties()
         headers["User-Agent"] = rdUser.userAgent
         return headers
     }
@@ -84,7 +84,7 @@ class RDTargetingAction {
 
     // MARK: - Targeting Actions
 
-    func checkTargetingActions(properties: [String: String], rdUser: RDUser, completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
+    func checkTargetingActions(properties: Properties, rdUser: RDUser, completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
 
         let semaphore = DispatchSemaphore(value: 0)
         var targetingActionViewModel: TargetingActionViewModel?
@@ -551,7 +551,7 @@ class RDTargetingAction {
     func getFavorites(rdUser: RDUser, actionId: Int? = nil,
                       completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
 
-        var props = [String: String]()
+        var props = Properties()
         props[RDConstants.organizationIdKey] = self.rdProfile.organizationId
         props[RDConstants.profileIdKey] = self.rdProfile.profileId
         props[RDConstants.cookieIdKey] = rdUser.cookieId
@@ -574,7 +574,7 @@ class RDTargetingAction {
            }
         }
 
-        RDRequest.sendMobileRequest(properties: props, headers: [String: String](), completion: { (result: [String: Any]?, error: RDError?, _: String?) in
+        RDRequest.sendMobileRequest(properties: props, headers: Properties(), completion: { (result: [String: Any]?, error: RDError?, _: String?) in
             completion(self.parseFavoritesResponse(result, error))
         })
     }
@@ -611,11 +611,9 @@ class RDTargetingAction {
     var relatedDigitalStoryHomeViewControllers = [String: RelatedDigitalStoryHomeViewController]()
     var relatedDigitalStoryHomeViews = [String: RelatedDigitalStoryHomeView]()
 
-    func getStories(rdUser: RDUser,
-                    guid: String, actionId: Int? = nil,
-                    completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
+    func getStories(rdUser: RDUser, guid: String, actionId: Int? = nil, completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 
-        var props = [String: String]()
+        var props = Properties()
         props[RDConstants.organizationIdKey] = rdProfile.organizationId
         props[RDConstants.profileIdKey] = rdProfile.profileId
         props[RDConstants.cookieIdKey] = rdUser.cookieId
@@ -638,7 +636,7 @@ class RDTargetingAction {
            }
         }
 
-        RDRequest.sendMobileRequest(properties: props, headers: [String: String](), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
+        RDRequest.sendMobileRequest(properties: props, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
             completion(self.parseStories(result, error, guid))
         }, guid: guid)
     }
@@ -701,9 +699,9 @@ class RDTargetingAction {
         return RelatedDigitalStoryActionResponse(storyActions: storiesResponse, error: errorResponse, guid: guid)
     }
 
-    private func parseStoryReport(_ report: [String: Any?]?) -> ([String: String], [String: String]) {
-        var clickItems = [String: String]()
-        var impressionItems = [String: String]()
+    private func parseStoryReport(_ report: [String: Any?]?) -> (Properties, Properties) {
+        var clickItems = Properties()
+        var impressionItems = Properties()
         // clickItems[VisilabsConstants.domainkey] =  "\(self.visilabsProfile.dataSource)_IOS" // TO_DO: OM.domain ne için gerekiyor?
         if let rep = report {
             if let click = rep[RDConstants.click] as? String {

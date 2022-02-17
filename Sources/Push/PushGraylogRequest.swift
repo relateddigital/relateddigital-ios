@@ -27,7 +27,7 @@ struct PushGraylogRequest: PushCodable, PushRequestProtocol {
     var deviceName: String?
     var userAgent: String?
     var identifierForVendor: String?
-    var extra: [String: String]? = [String: String]()
+    var extra: Properties? = Properties()
     
     enum CodingKeys: String, CodingKey {
         case logLevel = "logLevel"

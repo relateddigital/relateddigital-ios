@@ -10,7 +10,7 @@ import UIKit
 
 protocol RelatedDigitalInAppNotificationsDelegate: AnyObject {
     func notificationDidShow(_ notification: RDInAppNotification)
-    func trackNotification(_ notification: RDInAppNotification, event: String, properties: [String: String])
+    func trackNotification(_ notification: RDInAppNotification, event: String, properties: Properties)
 }
 
 class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewControllerDelegate {
@@ -250,7 +250,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     @discardableResult
     func notificationShouldDismiss(controller: RelatedDigitalBaseViewProtocol,
                                    callToActionURL: URL?, shouldTrack: Bool,
-                                   additionalTrackingProperties: [String: String]?) -> Bool {
+                                   additionalTrackingProperties: Properties?) -> Bool {
         
         if currentlyShowingNotification?.actId != controller.notification?.actId {
             return false
@@ -258,7 +258,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         
         let completionBlock = {
             if shouldTrack {
-                var properties = additionalTrackingProperties ?? [String: String]()
+                var properties = additionalTrackingProperties ?? Properties()
                 if additionalTrackingProperties != nil {
                     properties["OM.s_point"] = additionalTrackingProperties!["OM.s_point"]
                     properties["OM.s_cat"] = additionalTrackingProperties!["OM.s_cat"]

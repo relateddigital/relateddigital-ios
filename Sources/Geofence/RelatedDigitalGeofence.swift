@@ -94,7 +94,7 @@ class RelatedDigitalGeofence {
             self.lastGeofenceFetchTime = now
             let user = RDPersistence.unarchiveUser()
             let geofenceHistory = RDPersistence.readRDGeofenceHistory()
-            var props = [String: String]()
+            var props = Properties()
             props[RDConstants.organizationIdKey] = profile.organizationId
             props[RDConstants.profileIdKey] = profile.profileId
             props[RDConstants.cookieIdKey] = user.cookieId
@@ -122,7 +122,7 @@ class RelatedDigitalGeofence {
                }
             }
             // swiftlint:disable closure_parameter_position
-            RDRequest.sendGeofenceRequest(properties: props, headers: [String: String]()) {
+            RDRequest.sendGeofenceRequest(properties: props, headers: Properties()) {
                 [lastKnownLatitude, lastKnownLongitude, geofenceHistory, now] (result, error) in
 
                 if error != nil {
@@ -194,7 +194,7 @@ class RelatedDigitalGeofence {
 
     func sendPushNotification(actionId: String, geofenceId: String, isDwell: Bool, isEnter: Bool) {
         let user = RDPersistence.unarchiveUser()
-        var props = [String: String]()
+        var props = Properties()
         props[RDConstants.organizationIdKey] = profile.organizationId
         props[RDConstants.profileIdKey] = profile.profileId
         props[RDConstants.cookieIdKey] = user.cookieId

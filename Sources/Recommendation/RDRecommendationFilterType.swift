@@ -1,14 +1,14 @@
 //
-// VisilabsRecommendationFilterType.swift
-// VisilabsIOS
+// RDRecommendationFilterType.swift
+// RelatedDigitalIOS
 //
-// Created by Egemen on 29.06.2020.
+// Created by Egemen Gülkılık on 29.01.2022.
 //
 
 import Foundation
 
 @objc
-public enum RelatedDigitalRecommendationFilterType: Int {
+public enum RDRecommendationFilterType: Int {
     case equals = 0
     case notEquals = 1
     case like = 2
@@ -22,7 +22,7 @@ public enum RelatedDigitalRecommendationFilterType: Int {
 }
 
 @objc
-public enum RelatedDigitalProductFilterAttribute: Int, RawRepresentable {
+public enum RDProductFilterAttribute: Int, RawRepresentable {
     case PRODUCTNAME
     case COLOR
     case AGEGROUP
@@ -116,21 +116,20 @@ public enum RelatedDigitalProductFilterAttribute: Int, RawRepresentable {
 }
 
 @objc
-public class RelatedDigitalRecommendationFilter: NSObject {
-    var attribute: RelatedDigitalProductFilterAttribute
-    var filterType: RelatedDigitalRecommendationFilterType
+public class RDRecommendationFilter: NSObject {
+    var attribute: RDProductFilterAttribute
+    var filterType: RDRecommendationFilterType
     var value: String
     
     @objc
-    public init(attribute: RelatedDigitalProductFilterAttribute,
-                filterType: RelatedDigitalRecommendationFilterType, value: String) {
+    public init(attribute: RDProductFilterAttribute, filterType: RDRecommendationFilterType, value: String) {
         self.attribute = attribute
         self.filterType = filterType
         self.value = value
     }
 }
 
-public class RelatedDigitalProduct: Encodable {
+public class RDProduct: Encodable {
     
     public enum PayloadKey {
         public static let code = "code"
@@ -286,12 +285,12 @@ public class RelatedDigitalProduct: Encodable {
     }
 }
 
-public class RelatedDigitalRecommendationResponse {
-    public var products: [RelatedDigitalProduct]
+public class RDRecommendationResponse {
+    public var products: [RDProduct]
     public var error: RDError?
     public var widgetTitle: String = ""
     
-    internal init(products: [RelatedDigitalProduct], widgetTitle: String = "", error: RDError? = nil) {
+    internal init(products: [RDProduct], widgetTitle: String = "", error: RDError? = nil) {
         self.products = products
         self.widgetTitle = widgetTitle
         self.error = error

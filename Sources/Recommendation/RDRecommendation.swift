@@ -1,26 +1,16 @@
 //
-//  VisilabsRecommendation.swift
-//  VisilabsIOS
+// RDRecommendation.swift
+// RelatedDigitalIOS
 //
-//  Created by Egemen on 29.06.2020.
+// Created by Egemen Gülkılık on 29.01.2022.
 //
+
 
 import Foundation
 
-class RelatedDigitalRecommendation {
-    let rdProfile: RDProfile
+class RDRecommendation {
 
-    init(rdProfile: RDProfile) {
-        self.rdProfile = rdProfile
-    }
-
-    func recommend(zoneId: String,
-                   productCode: String?,
-                   rdUser: RDUser,
-                   channel: String,
-                   properties: [String: String] = [:],
-                   filters: [RelatedDigitalRecommendationFilter] = [],
-                   completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void)) {
+    func recommend(zoneId: String, productCode: String?, rdUser: RDUser, properties: Properties = [:], filters: [RDRecommendationFilter] = [], completion: @escaping ((_ response: RDRecommendationResponse) -> Void)) {
 
         var props = cleanProperties(properties)
 
@@ -28,14 +18,14 @@ class RelatedDigitalRecommendation {
             props[RDConstants.filterKey] = getFiltersQueryStringValue(filters)
         }
 
-        props[RDConstants.organizationIdKey] = self.rdProfile.organizationId
-        props[RDConstants.profileIdKey] = self.rdProfile.profileId
+        props[RDConstants.organizationIdKey] = RelatedDigital.rdProfile.organizationId
+        props[RDConstants.profileIdKey] = RelatedDigital.rdProfile.profileId
         props[RDConstants.cookieIdKey] = rdUser.cookieId
         props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
         props[RDConstants.tokenIdKey] = rdUser.tokenId
         props[RDConstants.appidKey] = rdUser.appId
         props[RDConstants.apiverKey] = RDConstants.apiverValue
-        
+        props[RDConstants.channelKey] = RelatedDigital.rdProfile.channel
         props[RDConstants.nrvKey] = String(rdUser.nrv)
         props[RDConstants.pvivKey] = String(rdUser.pviv)
         props[RDConstants.tvcKey] = String(rdUser.tvc)
@@ -54,15 +44,15 @@ class RelatedDigitalRecommendation {
             }
         }
 
-        RDRequest.sendRecommendationRequest(properties: props, headers: [String: String](), completion: { (results: [Any]?, error: RDError?) in
-            var products = [RelatedDigitalProduct]()
+        RDRequest.sendRecommendationRequest(properties: props, completion: { (results: [Any]?, error: RDError?) in
+            var products = [RDProduct]()
             if error != nil {
-                completion(RelatedDigitalRecommendationResponse(products: [RelatedDigitalProduct](), error: error))
+                completion(RDRecommendationResponse(products: [RDProduct](), error: error))
             } else {
                 var widgetTitle = ""
                 var counter = 0
                 for result in results! {
-                    if let jsonObject = result as? [String: Any?], let product = RelatedDigitalProduct(JSONObject: jsonObject) {
+                    if let jsonObject = result as? [String: Any?], let product = RDProduct(JSONObject: jsonObject) {
                         products.append(product)
                         if counter == 0 {
                             widgetTitle = jsonObject["wdt"] as? String ?? ""
@@ -70,16 +60,16 @@ class RelatedDigitalRecommendation {
                         counter = counter + 1
                     }
                 }
-                completion(RelatedDigitalRecommendationResponse(products: products, widgetTitle: widgetTitle, error: nil))
+                completion(RDRecommendationResponse(products: products, widgetTitle: widgetTitle, error: nil))
             }
         })
     }
 
-    private func getFiltersQueryStringValue(_ filters: [RelatedDigitalRecommendationFilter]) -> String? {
+    private func getFiltersQueryStringValue(_ filters: [RDRecommendationFilter]) -> String? {
         var queryStringValue: String?
-        var abbrevatedFilters: [[String: String]] = []
+        var abbrevatedFilters: [Properties] = []
         for filter in filters where filter.value.count > 0 {
-            var abbrevatedFilter = [String: String]()
+            var abbrevatedFilter = Properties()
             abbrevatedFilter["attr"] = filter.attribute.rawValue
             abbrevatedFilter["ft"] = String(filter.filterType.rawValue)
             abbrevatedFilter["fv"] = filter.value
@@ -94,7 +84,7 @@ class RelatedDigitalRecommendation {
         return queryStringValue
     }
 
-    private func cleanProperties(_ properties: [String: String]) -> [String: String] {
+    private func cleanProperties(_ properties: Properties) -> Properties {
         var props = properties
         for propKey in props.keys {
             if !propKey.isEqual(RDConstants.organizationIdKey)

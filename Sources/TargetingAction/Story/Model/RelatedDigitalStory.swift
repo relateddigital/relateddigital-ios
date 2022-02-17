@@ -29,8 +29,8 @@ class RelatedDigitalStory {
     var lastPlayedSnapIndex = 0
     var isCompletelyVisible = false
     var isCancelledAbruptly = false
-    var clickQueryItems = [String: String]()
-    var impressionQueryItems = [String: String]()
+    var clickQueryItems = Properties()
+    var impressionQueryItems = Properties()
     var actid: Int
 }
 

@@ -31,7 +31,7 @@ internal class RDHelper {
     }
     
     // TO_DO: props un boş gelme ihtimalini de düşün
-    static func buildUrl(url: String, props: [String: String] = [:], additionalQueryString: String = "") -> String {
+    static func buildUrl(url: String, props: Properties = [:], additionalQueryString: String = "") -> String {
         var qsKeyValues = [String]()
         props.forEach { (key, value) in
             qsKeyValues.append("\(key)=\(value)")

@@ -10,8 +10,6 @@ import SystemConfiguration
 import UIKit
 import UserNotifications
 
-typealias Queue = [[String: String]]
-
 struct RDUser: Codable {
     var cookieId: String?
     var exVisitorId: String?
@@ -44,7 +42,6 @@ struct RDProfile: Codable {
         let ti = requestTimeoutInSeconds < 5 ? TimeInterval(30) : TimeInterval(requestTimeoutInSeconds)
         return ti
     }
-
     var useInsecureProtocol = false
 }
 
@@ -180,15 +177,15 @@ public class RelatedDigital {
         shared.relatedDigitalInstance.sendLocationPermission()
     }
     
-    public static func customEvent(_ pageName: String, properties: [String: String]) {
+    public static func customEvent(_ pageName: String, properties: Properties) {
         shared.relatedDigitalInstance.customEvent(pageName, properties: properties)
     }
     
-    public static func login(exVisitorId: String, properties: [String: String]) {
+    public static func login(exVisitorId: String, properties: Properties) {
         shared.relatedDigitalInstance.login(exVisitorId: exVisitorId, properties: properties)
     }
     
-    public static func signUp(exVisitorId: String, properties: [String: String]) {
+    public static func signUp(exVisitorId: String, properties: Properties) {
         shared.relatedDigitalInstance.signUp(exVisitorId: exVisitorId, properties: properties)
     }
     
@@ -205,22 +202,15 @@ public class RelatedDigital {
         shared.relatedDigitalInstance.getStoryViewAsync(actionId: actionId, urlDelegate: urlDelegate, completion: completion)
     }
     
-    public static func recommend(zoneId: String,
-                          productCode: String? = nil,
-                          filters: [RelatedDigitalRecommendationFilter] = [],
-                          properties: [String: String] = [:],
-                          completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void)){
-        shared.relatedDigitalInstance.recommend(zoneId: zoneId, productCode: productCode, filters: filters,
-                                                properties: properties, completion: completion)
+    public static func recommend(zoneId: String, productCode: String? = nil, filters: [RDRecommendationFilter] = [], properties: Properties = [:], completion: @escaping ((_ response: RDRecommendationResponse) -> Void)){
+        shared.relatedDigitalInstance.recommend(zoneId: zoneId, productCode: productCode, filters: filters, properties: properties, completion: completion)
     }
     
     public static func trackRecommendationClick(qs: String) {
         shared.relatedDigitalInstance.trackRecommendationClick(qs: qs)
     }
     
-    public static func getFavoriteAttributeActions(actionId: Int? = nil,
-                                            completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse)
-                                                                   -> Void)) {
+    public static func getFavoriteAttributeActions(actionId: Int? = nil, completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
         shared.relatedDigitalInstance.getFavoriteAttributeActions(actionId: actionId, completion: completion)
     }
 

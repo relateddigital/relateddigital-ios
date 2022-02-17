@@ -103,7 +103,7 @@ class RelatedDigitalLocationManager: NSObject {
     func sendLocationPermission(status: CLAuthorizationStatus? = nil, geofenceEnabled: Bool = true) {
         let authorizationStatus = status ?? RelatedDigitalLocationManager.locationServiceStateStatus
         if authorizationStatus != lastKnownCLAuthorizationStatus {
-            var properties = [String: String]()
+            var properties = Properties()
             properties[RDConstants.locationPermissionReqKey] = authorizationStatus.queryStringValue
             RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
             lastKnownCLAuthorizationStatus = authorizationStatus

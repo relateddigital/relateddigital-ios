@@ -118,7 +118,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
     func commonButtonAction() {
         guard let notification = self.notification else { return }
         var returnCallback = true
-        var additionalTrackingProperties = [String: String]()
+        var additionalTrackingProperties = Properties()
         if notification.type == .smileRating {
             additionalTrackingProperties["OM.s_point"]
                 = String(Int(viewController.standardView.sliderStepRating.value))
@@ -419,7 +419,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
                                                      actid: "\(self.mailForm!.actId)",
                                                      auth: self.mailForm!.auth,
                                                      mail: mail)
-                    self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: [String: String]())
+                    self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: Properties())
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         self.dismiss()
                     }

@@ -11,6 +11,7 @@ import UIKit
 import UserNotifications
 
 public typealias Properties = [String: String]
+typealias Queue = [Properties]
 
 protocol RDInstanceProtocol {
     var exVisitorId: String? { get }
@@ -34,8 +35,8 @@ protocol RDInstanceProtocol {
     func trackRecommendationClick(qs: String)
     func getStoryView(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?) -> RelatedDigitalStoryHomeView
     func getStoryViewAsync(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?, completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void))
-    func recommend(zoneId: String, productCode: String?, filters: [RelatedDigitalRecommendationFilter], properties: Properties,
-                   completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void))
+    func recommend(zoneId: String, productCode: String?, filters: [RDRecommendationFilter], properties: Properties,
+                   completion: @escaping ((_ response: RDRecommendationResponse) -> Void))
     func getFavoriteAttributeActions(actionId: Int?, completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void))
 }
 
@@ -53,10 +54,10 @@ public class RDInstance: RDInstanceProtocol {
     let readWriteLock: RDReadWriteLock
     private var observers: [NSObjectProtocol]? = []
     
-    let rdEventInstance: RDEvent
-    let rdSendInstance: RDSend
+    let rdEventInstance = RDEvent()
+    let rdSendInstance = RDSend()
     let rdTargetingActionInstance: RDTargetingAction
-    let rdRecommendationInstance: RelatedDigitalRecommendation
+    let rdRecommendationInstance = RDRecommendation()
     let rdRemoteConfigInstance: RDRemoteConfig
     
     public var loggingEnabled: Bool = false {
@@ -107,10 +108,7 @@ public class RDInstance: RDInstanceProtocol {
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
         targetingActionQueue = DispatchQueue(label: "\(label).targetingaction)", qos: .utility)
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
-        rdEventInstance = RDEvent(rdProfile: rdProfile)
-        rdSendInstance = RDSend()
         rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
-        rdRecommendationInstance = RelatedDigitalRecommendation(rdProfile: rdProfile)
         rdRemoteConfigInstance = RDRemoteConfig(profileId: rdProfile.profileId)
         
         
@@ -631,11 +629,7 @@ extension RDInstance {
 // MARK: - RECOMMENDATION
 
 extension RDInstance {
-    public func recommend(zoneId: String,
-                          productCode: String? = nil,
-                          filters: [RelatedDigitalRecommendationFilter] = [],
-                          properties: Properties = [:],
-                          completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void)) {
+    public func recommend(zoneId: String, productCode: String? = nil, filters: [RDRecommendationFilter] = [], properties: Properties = [:], completion: @escaping ((_ response: RDRecommendationResponse) -> Void)) {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
@@ -646,12 +640,10 @@ extension RDInstance {
             self?.networkQueue.async { [weak self, zoneId, productCode, filters, properties, completion] in
                 guard let self = self else { return }
                 var user = RDUser()
-                var channel = "IOS"
                 self.readWriteLock.read {
                     user = self.rdUser
-                    channel = self.rdProfile.channel
                 }
-                self.rdRecommendationInstance.recommend(zoneId: zoneId, productCode: productCode, rdUser: user, channel: channel, properties: properties, filters: filters) { response in
+                self.rdRecommendationInstance.recommend(zoneId: zoneId, productCode: productCode, rdUser: user, properties: properties, filters: filters) { response in
                     completion(response)
                 }
             }

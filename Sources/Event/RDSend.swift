@@ -65,8 +65,8 @@ class RDSend {
         return mutableCookie
     }
 
-    private func prepareHeaders(_ rdEndpoint: RDEndpoint, event: [String: String], rdUser: RDUser, rdCookie: RDCookie) -> [String: String] {
-        var headers = [String: String]()
+    private func prepareHeaders(_ rdEndpoint: RDEndpoint, event: Properties, rdUser: RDUser, rdCookie: RDCookie) -> Properties {
+        var headers = Properties()
         headers["Referer"] = event[RDConstants.uriKey] ?? ""
         headers["User-Agent"] = rdUser.userAgent
         if let cookie = prepareCookie(rdEndpoint, rdCookie: rdCookie) {

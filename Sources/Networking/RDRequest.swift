@@ -65,7 +65,7 @@ class RDRequest {
     // MARK: - RECOMMENDATION
     
     // TO_DO: completion Any mi olmalı, yoksa AnyObject mi?
-    class func sendRecommendationRequest(properties: Properties, headers: Properties, completion: @escaping ([Any]?, RDError?) -> Void) {
+    class func sendRecommendationRequest(properties: Properties, completion: @escaping ([Any]?, RDError?) -> Void) {
         
         var queryItems = [URLQueryItem]()
         for property in properties {
@@ -82,7 +82,7 @@ class RDRequest {
             return response as? [Any]
         }
         
-        let resource = RDNetwork.buildResource(endPoint: .target, method: .get, queryItems: queryItems, headers: headers, parse: responseParser)
+        let resource = RDNetwork.buildResource(endPoint: .target, method: .get, queryItems: queryItems, headers: [:], parse: responseParser)
         
         sendRecommendationRequestHandler(resource: resource, completion: { result, error in completion(result, error) })
         

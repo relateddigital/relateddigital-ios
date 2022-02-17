@@ -9,21 +9,9 @@ import Foundation
 
 class RDEvent {
     
-    let rdProfile: RDProfile
-    
-    init(rdProfile: RDProfile) {
-        self.rdProfile = rdProfile
-    }
-    
     // swiftlint:disable large_tuple function_body_length cyclomatic_complexity
-    func customEvent(pageName: String? = nil,
-                     properties: [String: String],
-                     eventsQueue: Queue,
-                     rdUser: RDUser,
-                     channel: String) -> (eventsQueque: Queue,
-                                          rdUser: RDUser,
-                                          clearUserParameters: Bool,
-                                          channel: String) {
+    func customEvent(pageName: String? = nil, properties: Properties, eventsQueue: Queue, rdUser: RDUser, channel: String) -> (eventsQueque: Queue, rdUser: RDUser, clearUserParameters: Bool, channel: String) {
+        
         var props = properties
         var user = updateSessionParameters(pageName: pageName, rdUser: rdUser)
         var chan = channel
@@ -74,8 +62,8 @@ class RDEvent {
             props.removeValue(forKey: RDConstants.channelKey)
         }
         
-        props[RDConstants.organizationIdKey] = self.rdProfile.organizationId
-        props[RDConstants.profileIdKey] = self.rdProfile.profileId
+        props[RDConstants.organizationIdKey] = RelatedDigital.rdProfile.organizationId
+        props[RDConstants.profileIdKey] = RelatedDigital.rdProfile.profileId
         props[RDConstants.cookieIdKey] = user.cookieId ?? ""
         props[RDConstants.channelKey] = chan
         if let pageNm = pageName {

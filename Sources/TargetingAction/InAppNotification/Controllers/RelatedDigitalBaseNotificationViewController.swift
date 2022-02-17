@@ -12,7 +12,7 @@ protocol RelatedDigitalNotificationViewControllerDelegate: AnyObject {
     func notificationShouldDismiss(controller: RelatedDigitalBaseViewProtocol,
                                    callToActionURL: URL?,
                                    shouldTrack: Bool,
-                                   additionalTrackingProperties: [String: String]?) -> Bool
+                                   additionalTrackingProperties: Properties?) -> Bool
 }
 
 public protocol RelatedDigitalBaseViewProtocol {

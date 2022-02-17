@@ -146,7 +146,7 @@ public class RDPersistence {
     // TO_DO: burada date kısmı yanlış geliyor sanki
     // TO_DO: buradaki encode işlemleri doğru mu kontrol et;
     // archiveQueue.sync { yerine archiveQueue.sync {[parameters] in
-    class func saveTargetParameters(_ parameters: [String: String]) {
+    class func saveTargetParameters(_ parameters: Properties) {
         archiveQueueUtility.sync {
             let dateString = getDateStr()
             var targetParameters = readTargetParameters()
@@ -201,11 +201,10 @@ public class RDPersistence {
         }
     }
     
-    class func readTargetParameters() -> [String: String] {
-        guard let targetParameters = readUserDefaults(RDConstants.userDefaultsTargetKey)
-                as? [String: String] else {
-                    return [String: String]()
-                }
+    class func readTargetParameters() -> Properties {
+        guard let targetParameters = readUserDefaults(RDConstants.userDefaultsTargetKey) as? Properties else {
+            return Properties()
+        }
         return targetParameters
     }
     

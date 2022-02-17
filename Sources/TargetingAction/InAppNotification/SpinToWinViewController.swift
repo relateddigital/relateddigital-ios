@@ -183,7 +183,7 @@ class SpinToWinViewController: RelatedDigitalBaseNotificationViewController {
     }
     
     private func sendPromotionCodeInfo(promo: String, actId: String, email: String? = "", promoTitle: String, promoSlice: String) {
-        var properties = [String: String]()
+        var properties = Properties()
         properties[RDConstants.promoAction] = promo
         properties[RDConstants.promoActionID] = actId
         if !self.subsEmail.isEmptyOrWhitespace {
@@ -273,7 +273,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                     }
                     
                     if !pIndexCodes.isEmpty, let randomIndex = pIndexCodes.keys.randomElement(), let randomCode = pIndexCodes[randomIndex], let randomDisplay = pIndexDisplayNames[randomIndex] {
-                        var props = [String: String]()
+                        var props = Properties()
                         props["actionid"] = "\(self.spinToWin!.actId)"
                         props["promotionid"] = randomCode
                         props["promoauth"] = "\(self.spinToWin!.promoAuth)"

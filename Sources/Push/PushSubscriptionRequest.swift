@@ -17,7 +17,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
     internal var subdomain = "pushs"
     internal var prodBaseUrl = ".euromsg.com"
     
-    var extra: [String: String]?
+    var extra: Properties?
     var firstTime: Int?
     var osVersion: String?
     var deviceType: String?

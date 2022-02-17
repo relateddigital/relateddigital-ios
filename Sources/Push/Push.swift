@@ -287,7 +287,7 @@ extension Push {
         if let shared = getShared() {
             shared.readWriteLock.write {
                 shared.subscription.token = nil
-                shared.subscription.extra = [String: String]()
+                shared.subscription.extra = Properties()
             }
             PushUserDefaultsUtils.removeUserDefaults(userKey: PushKey.tokenKey) // TODO: burada niye token var, android'de token silme yok
             // PushTools.removeUserDefaults(userKey: PushKey.registerKey) // TODO: bunu kaldırdım. zaten token yoksa request atılmıyor.

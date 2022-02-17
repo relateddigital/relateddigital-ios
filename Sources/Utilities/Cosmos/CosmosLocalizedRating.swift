@@ -83,9 +83,7 @@ struct CosmosLocalizedRating {
   - returns: Translation for the preferred language.
   
   */
-  static func translationInPreferredLanguage(_ preferredLanguages: [String],
-                                             localizedText: [String: String],
-                                             fallbackTranslation: String) -> String {
+  static func translationInPreferredLanguage(_ preferredLanguages: [String], localizedText: Properties, fallbackTranslation: String) -> String {
 
     for language in preferredLanguages {
       if let translatedText = translation(language) {

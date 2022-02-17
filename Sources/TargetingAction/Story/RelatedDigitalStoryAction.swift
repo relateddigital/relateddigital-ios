@@ -11,15 +11,15 @@ class RelatedDigitalStoryAction {
     let actionId: Int
     let storyTemplate: RelatedDigitalStoryTemplate
     var stories: [RelatedDigitalStory]
-    let clickQueryItems: [String: String]
-    let impressionQueryItems: [String: String]
+    let clickQueryItems: Properties
+    let impressionQueryItems: Properties
     let extendedProperties: RelatedDigitalStoryActionExtendedProperties
 
     init(actionId: Int,
          storyTemplate: RelatedDigitalStoryTemplate,
          stories: [RelatedDigitalStory],
-         clickQueryItems: [String: String],
-         impressionQueryItems: [String: String],
+         clickQueryItems: Properties,
+         impressionQueryItems: Properties,
          extendedProperties: RelatedDigitalStoryActionExtendedProperties) {
         self.actionId = actionId
         self.storyTemplate = storyTemplate
