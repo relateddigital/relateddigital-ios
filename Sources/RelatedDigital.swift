@@ -2,7 +2,7 @@
 //  RelatedDigital.swift
 //  RelatedDigitalIOS
 //
-//  Created by Egemen on 14.07.2020.
+//  Created by Egemen Gülkılık on 14.07.2020.
 //
 
 import class Foundation.Bundle

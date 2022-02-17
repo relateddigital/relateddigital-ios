@@ -1,13 +1,13 @@
 //
-//  VisilabsEvent.swift
-//  VisilabsIOS
+//  RDEvent.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 7.05.2020.
+//  Created by Egemen Gülkılık on 17.01.2021.
 //
 
 import Foundation
 
-class RelatedDigitalEvent {
+class RDEvent {
     
     let rdProfile: RelatedDigitalProfile
     

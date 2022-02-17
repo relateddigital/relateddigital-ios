@@ -42,7 +42,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RelatedDigitalUser()
     var rdProfile: RelatedDigitalProfile
-    var rdCookie = RelatedDigitalCookie()
+    var rdCookie = RDCookie()
     var eventsQueue = Queue()
     var trackingQueue: DispatchQueue!
     var targetingActionQueue: DispatchQueue!
@@ -51,8 +51,8 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     let readWriteLock: RDReadWriteLock
     private var observers: [NSObjectProtocol]? = []
     
-    let rdEventInstance: RelatedDigitalEvent
-    let rdSendInstance: RelatedDigitalSend
+    let rdEventInstance: RDEvent
+    let rdSendInstance: RDSend
     let rdTargetingActionInstance: RelatedDigitalTargetingAction
     let rdRecommendationInstance: RelatedDigitalRecommendation
     let rdRemoteConfigInstance: RelatedDigitalRemoteConfig
@@ -105,8 +105,8 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
         targetingActionQueue = DispatchQueue(label: "\(label).targetingaction)", qos: .utility)
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
-        rdEventInstance = RelatedDigitalEvent(rdProfile: rdProfile)
-        rdSendInstance = RelatedDigitalSend()
+        rdEventInstance = RDEvent(rdProfile: rdProfile)
+        rdSendInstance = RDSend()
         rdTargetingActionInstance = RelatedDigitalTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
         rdRecommendationInstance = RelatedDigitalRecommendation(rdProfile: rdProfile)
         rdRemoteConfigInstance = RelatedDigitalRemoteConfig(profileId: rdProfile.profileId)
@@ -400,18 +400,18 @@ extension RelatedDigitalInstance {
                 guard let self = self else { return }
                 var eQueue = Queue()
                 var user = RelatedDigitalUser()
-                var vCookie = RelatedDigitalCookie()
+                var rdCookie = RDCookie()
                 self.readWriteLock.read {
                     eQueue = self.eventsQueue
                     user = self.rdUser
-                    vCookie = self.rdCookie
+                    rdCookie = self.rdCookie
                 }
                 self.readWriteLock.write {
                     self.eventsQueue.removeAll()
                 }
                 let cookie = self.rdSendInstance.sendEventsQueue(eQueue,
                                                                  rdUser: user,
-                                                                 relatedDigitalCookie: vCookie,
+                                                                 rdCookie: rdCookie,
                                                                  timeoutInterval: self.rdProfile.requestTimeoutInterval)
                 self.readWriteLock.write {
                     self.rdCookie = cookie

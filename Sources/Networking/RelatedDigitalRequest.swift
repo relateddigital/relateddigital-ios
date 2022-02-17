@@ -11,7 +11,7 @@ class RelatedDigitalRequest {
     
     // MARK: - EVENT
     
-    class func sendEventRequest(relatedDigitalEndpoint: RDEndpoint,
+    class func sendEventRequest(rdEndpoint: RDEndpoint,
                                 properties: [String: String],
                                 headers: [String: String],
                                 timeoutInterval: TimeInterval,
@@ -22,7 +22,7 @@ class RelatedDigitalRequest {
             queryItems.append(URLQueryItem(name: property.key, value: property.value))
         }
         
-        let resource = RelatedDigitalNetwork.buildResource(endPoint: relatedDigitalEndpoint,
+        let resource = RelatedDigitalNetwork.buildResource(endPoint: rdEndpoint,
                                                      method: .get,
                                                      timeoutInterval: timeoutInterval,
                                                      requestBody: nil,

@@ -1,43 +1,30 @@
 //
-//  VisilabsSend.swift
-//  VisilabsIOS
+//  RDSend.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 11.05.2020.
+//  Created by Egemen Gülkılık on 13.01.2022.
 //
 
 import Foundation
 
-protocol RelatedDigitalSendDelegate: AnyObject {
-    func send(completion: (() -> Void)?)
-    func updateNetworkActivityIndicator(_ isOn: Bool)
-}
-
-class RelatedDigitalSend {
-
-    // TO_DO: bu delegate kullanılmıyor. kaldır.
-    weak var delegate: RelatedDigitalSendDelegate?
+class RDSend {
 
     // TO_DO: burada internet bağlantısı kontrolü yapmaya gerek var mı?
-    func sendEventsQueue(_ eventsQueue: Queue, rdUser: RelatedDigitalUser,
-                         relatedDigitalCookie: RelatedDigitalCookie, timeoutInterval: TimeInterval) -> RelatedDigitalCookie {
-        var mutableCookie = relatedDigitalCookie
+    func sendEventsQueue(_ eventsQueue: Queue, rdUser: RelatedDigitalUser, rdCookie: RDCookie, timeoutInterval: TimeInterval) -> RDCookie {
+        var mutableCookie = rdCookie
 
         for counter in 0..<eventsQueue.count {
             let event = eventsQueue[counter]
             RDLogger.debug("Sending event")
             RDLogger.debug(event)
-            let loggerHeaders = prepareHeaders(.logger, event: event, rdUser: rdUser,
-                                               relatedDigitalCookie: relatedDigitalCookie)
-            let realTimeHeaders = prepareHeaders(.realtime, event: event, rdUser: rdUser,
-                                                 relatedDigitalCookie: relatedDigitalCookie)
+            let loggerHeaders = prepareHeaders(.logger, event: event, rdUser: rdUser, rdCookie: rdCookie)
+            let realTimeHeaders = prepareHeaders(.realtime, event: event, rdUser: rdUser, rdCookie: rdCookie)
 
             let loggerSemaphore = DispatchSemaphore(value: 0)
             let realTimeSemaphore = DispatchSemaphore(value: 0)
-            // delegate?.updateNetworkActivityIndicator(true)
-            RelatedDigitalRequest.sendEventRequest(relatedDigitalEndpoint: .logger, properties: event,
+            RelatedDigitalRequest.sendEventRequest(rdEndpoint: .logger, properties: event,
                                              headers: loggerHeaders, timeoutInterval: timeoutInterval,
                                              completion: { [loggerSemaphore] cookies in
-                                        // self.delegate?.updateNetworkActivityIndicator(false)
                                         if let cookies = cookies {
                                             for cookie in cookies {
                                                 if cookie.key.contains(RDConstants.loadBalancePrefix,
@@ -54,10 +41,9 @@ class RelatedDigitalSend {
                                         loggerSemaphore.signal()
             })
 
-            RelatedDigitalRequest.sendEventRequest(relatedDigitalEndpoint: .realtime, properties: event,
+            RelatedDigitalRequest.sendEventRequest(rdEndpoint: .realtime, properties: event,
                                              headers: realTimeHeaders, timeoutInterval: timeoutInterval,
                                              completion: { [realTimeSemaphore] cookies in
-                                        // self.delegate?.updateNetworkActivityIndicator(false)
                                         if let cookies = cookies {
                                             for cookie in cookies {
                                                 if cookie.key.contains(RDConstants.loadBalancePrefix,
@@ -81,24 +67,23 @@ class RelatedDigitalSend {
         return mutableCookie
     }
 
-    private func prepareHeaders(_ relatedDigitalEndpoint: RDEndpoint, event: [String: String],
-                                rdUser: RelatedDigitalUser, relatedDigitalCookie: RelatedDigitalCookie) -> [String: String] {
+    private func prepareHeaders(_ rdEndpoint: RDEndpoint, event: [String: String], rdUser: RelatedDigitalUser, rdCookie: RDCookie) -> [String: String] {
         var headers = [String: String]()
         headers["Referer"] = event[RDConstants.uriKey] ?? ""
         headers["User-Agent"] = rdUser.userAgent
-        if let cookie = prepareCookie(relatedDigitalEndpoint, relatedDigitalCookie: relatedDigitalCookie) {
+        if let cookie = prepareCookie(rdEndpoint, rdCookie: rdCookie) {
             headers["Cookie"] = cookie
         }
         return headers
     }
 
-    private func prepareCookie(_ relatedDigitalEndpoint: RDEndpoint, relatedDigitalCookie: RelatedDigitalCookie) -> String? {
+    private func prepareCookie(_ rdEndpoint: RDEndpoint, rdCookie: RDCookie) -> String? {
         var cookieString: String?
-        if relatedDigitalEndpoint == .logger {
-            if let key = relatedDigitalCookie.loggerCookieKey, let value = relatedDigitalCookie.loggerCookieValue {
+        if rdEndpoint == .logger {
+            if let key = rdCookie.loggerCookieKey, let value = rdCookie.loggerCookieValue {
                 cookieString = "\(key)=\(value)"
             }
-            if let om3rdValue = relatedDigitalCookie.loggerOM3rdCookieValue {
+            if let om3rdValue = rdCookie.loggerOM3rdCookieValue {
                 if !cookieString.isNilOrWhiteSpace {
                     cookieString = cookieString! + ";"
                 } else { // TO_DO: bu kısmı güzelleştir
@@ -107,11 +92,11 @@ class RelatedDigitalSend {
                 cookieString = cookieString! + "\(RDConstants.om3Key)=\(om3rdValue)"
             }
         }
-        if relatedDigitalEndpoint == .realtime {
-            if let key = relatedDigitalCookie.realTimeCookieKey, let value = relatedDigitalCookie.realTimeCookieValue {
+        if rdEndpoint == .realtime {
+            if let key = rdCookie.realTimeCookieKey, let value = rdCookie.realTimeCookieValue {
                 cookieString = "\(key)=\(value)"
             }
-            if let om3rdValue = relatedDigitalCookie.realTimeOM3rdCookieValue {
+            if let om3rdValue = rdCookie.realTimeOM3rdCookieValue {
                 if !cookieString.isNilOrWhiteSpace {
                     cookieString = cookieString! + ";"
                 } else { // TO_DO: bu kısmı güzelleştir
