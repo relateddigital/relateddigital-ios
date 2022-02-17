@@ -9,16 +9,16 @@ import UIKit
 // swiftlint:disable type_body_length
 class RelatedDigitalTargetingAction {
 
-    let relatedDigitalProfile: RelatedDigitalProfile
+    let rdProfile: RelatedDigitalProfile
 
-    required init(lock: RelatedDigitalReadWriteLock, relatedDigitalProfile: RelatedDigitalProfile) {
+    required init(lock: RelatedDigitalReadWriteLock, rdProfile: RelatedDigitalProfile) {
         self.notificationsInstance = RelatedDigitalInAppNotifications(lock: lock)
-        self.relatedDigitalProfile = relatedDigitalProfile
+        self.rdProfile = rdProfile
     }
 
-    private func prepareHeaders(_ relatedDigitalUser: RelatedDigitalUser) -> [String: String] {
+    private func prepareHeaders(_ rdUser: RelatedDigitalUser) -> [String: String] {
         var headers = [String: String]()
-        headers["User-Agent"] = relatedDigitalUser.userAgent
+        headers["User-Agent"] = rdUser.userAgent
         return headers
     }
 
@@ -36,18 +36,18 @@ class RelatedDigitalTargetingAction {
     }
 
     func checkInAppNotification(properties: [String: String],
-                                relatedDigitalUser: RelatedDigitalUser,
+                                rdUser: RelatedDigitalUser,
                                 completion: @escaping ((_ response: RelatedDigitalInAppNotification?) -> Void)) {
         let semaphore = DispatchSemaphore(value: 0)
-        let headers = prepareHeaders(relatedDigitalUser)
+        let headers = prepareHeaders(rdUser)
         var notifications = [RelatedDigitalInAppNotification]()
         var props = properties
-        props["OM.vcap"] = relatedDigitalUser.visitData
-        props["OM.viscap"] = relatedDigitalUser.visitorData
-        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
+        props["OM.vcap"] = rdUser.visitData
+        props["OM.viscap"] = rdUser.visitorData
+        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
 
         for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -59,7 +59,7 @@ class RelatedDigitalTargetingAction {
 
         RelatedDigitalRequest.sendInAppNotificationRequest(properties: props,
                                                      headers: headers,
-                                                     timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                                     timeoutInterval: self.rdProfile.requestTimeoutInterval,
                                                      completion: { relatedDigitalInAppNotificationResult in
             guard let result = relatedDigitalInAppNotificationResult else {
                 semaphore.signal()
@@ -116,7 +116,7 @@ class RelatedDigitalTargetingAction {
 
         RelatedDigitalRequest.sendMobileRequest(properties: props,
                                           headers: prepareHeaders(relatedDigitalUser),
-                                          timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                          timeoutInterval: self.rdProfile.requestTimeoutInterval,
                                           completion: {(result: [String: Any]?, _: RelatedDigitalError?, _: String?) in
             guard let result = result else {
                 semaphore.signal()
@@ -558,30 +558,25 @@ class RelatedDigitalTargetingAction {
 
     // MARK: - Favorites
 
-    // class func sendMobileRequest(properties: [String : String],
-    // headers: [String : String], timeoutInterval: TimeInterval, completion: @escaping ([String: Any]?) -> Void) {
-    //https://s.visilabs.net/mobile?OM.oid=676D325830564761676D453D&OM
-    // .siteID=356467332F6533766975593D&OM.cookieID=B220EC66-A746-4130-93FD-53543055E406&
-    // OM.exVisitorID=ogun.ozturk%40euromsg.com&action_id=188&action_type=FavoriteAttributeAction&OM.apiver=IOS
-    func getFavorites(relatedDigitalUser: RelatedDigitalUser, actionId: Int? = nil,
+    func getFavorites(rdUser: RelatedDigitalUser, actionId: Int? = nil,
                       completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
 
         var props = [String: String]()
-        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
+        props[RelatedDigitalConstants.organizationIdKey] = self.rdProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = self.rdProfile.profileId
+        props[RelatedDigitalConstants.cookieIdKey] = rdUser.cookieId
+        props[RelatedDigitalConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RelatedDigitalConstants.tokenIdKey] = rdUser.tokenId
+        props[RelatedDigitalConstants.appidKey] = rdUser.appId
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
         props[RelatedDigitalConstants.actionType] = RelatedDigitalConstants.favoriteAttributeAction
         props[RelatedDigitalConstants.actionId] = actionId == nil ? nil : String(actionId!)
         
         
-        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
+        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
 
         for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -590,16 +585,12 @@ class RelatedDigitalTargetingAction {
         }
 
         RelatedDigitalRequest.sendMobileRequest(properties: props, headers: [String: String](),
-                                          timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                          timeoutInterval: self.rdProfile.requestTimeoutInterval,
                                           completion: { (result: [String: Any]?, error: RelatedDigitalError?, _: String?) in
             completion(self.parseFavoritesResponse(result, error))
         })
     }
 
-    // {"capping":"{\"data\":{}}","VERSION":1,"FavoriteAttributeAction:
-    // [{"actid":188,"title":"fav-test","actiontype":"FavoriteAttributeAction",
-    // "actiondata":{"attributes":["category","brand"],"favorites":{"category":["6","8","2"],
-    // "brand":["Kozmo","Luxury Room","OFS"]}}}]}
     private func parseFavoritesResponse(_ result: [String: Any]?,
                                         _ error: RelatedDigitalError?) -> RelatedDigitalFavoriteAttributeActionResponse {
         var favoritesResponse = [RelatedDigitalFavoriteAttribute: [String]]()
@@ -632,26 +623,26 @@ class RelatedDigitalTargetingAction {
     var relatedDigitalStoryHomeViewControllers = [String: RelatedDigitalStoryHomeViewController]()
     var relatedDigitalStoryHomeViews = [String: RelatedDigitalStoryHomeView]()
 
-    func getStories(relatedDigitalUser: RelatedDigitalUser,
+    func getStories(rdUser: RelatedDigitalUser,
                     guid: String, actionId: Int? = nil,
                     completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 
         var props = [String: String]()
-        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
-        props[RelatedDigitalConstants.cookieIdKey] = relatedDigitalUser.cookieId
-        props[RelatedDigitalConstants.exvisitorIdKey] = relatedDigitalUser.exVisitorId
-        props[RelatedDigitalConstants.tokenIdKey] = relatedDigitalUser.tokenId
-        props[RelatedDigitalConstants.appidKey] = relatedDigitalUser.appId
+        props[RelatedDigitalConstants.organizationIdKey] = rdProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = rdProfile.profileId
+        props[RelatedDigitalConstants.cookieIdKey] = rdUser.cookieId
+        props[RelatedDigitalConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RelatedDigitalConstants.tokenIdKey] = rdUser.tokenId
+        props[RelatedDigitalConstants.appidKey] = rdUser.appId
         props[RelatedDigitalConstants.apiverKey] = RelatedDigitalConstants.apiverValue
         props[RelatedDigitalConstants.actionType] = RelatedDigitalConstants.story
-        props[RelatedDigitalConstants.channelKey] = self.relatedDigitalProfile.channel
+        props[RelatedDigitalConstants.channelKey] = rdProfile.channel
         props[RelatedDigitalConstants.actionId] = actionId == nil ? nil : String(actionId!)
         
-        props[RelatedDigitalConstants.nrvKey] = String(relatedDigitalUser.nrv)
-        props[RelatedDigitalConstants.pvivKey] = String(relatedDigitalUser.pviv)
-        props[RelatedDigitalConstants.tvcKey] = String(relatedDigitalUser.tvc)
-        props[RelatedDigitalConstants.lvtKey] = relatedDigitalUser.lvt
+        props[RelatedDigitalConstants.nrvKey] = String(rdUser.nrv)
+        props[RelatedDigitalConstants.pvivKey] = String(rdUser.pviv)
+        props[RelatedDigitalConstants.tvcKey] = String(rdUser.tvc)
+        props[RelatedDigitalConstants.lvtKey] = rdUser.lvt
 
         for (key, value) in RelatedDigitalPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -661,7 +652,7 @@ class RelatedDigitalTargetingAction {
 
         RelatedDigitalRequest.sendMobileRequest(properties: props,
                                           headers: [String: String](),
-                                          timeoutInterval: self.relatedDigitalProfile.requestTimeoutInterval,
+                                          timeoutInterval: rdProfile.requestTimeoutInterval,
                                           completion: {(result: [String: Any]?, error: RelatedDigitalError?, guid: String?) in
             completion(self.parseStories(result, error, guid))
         }, guid: guid)

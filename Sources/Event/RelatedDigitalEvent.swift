@@ -9,23 +9,23 @@ import Foundation
 
 class RelatedDigitalEvent {
     
-    let relatedDigitalProfile: RelatedDigitalProfile
+    let rdProfile: RelatedDigitalProfile
     
-    init(relatedDigitalProfile: RelatedDigitalProfile) {
-        self.relatedDigitalProfile = relatedDigitalProfile
+    init(rdProfile: RelatedDigitalProfile) {
+        self.rdProfile = rdProfile
     }
     
     // swiftlint:disable large_tuple function_body_length cyclomatic_complexity
     func customEvent(pageName: String? = nil,
                      properties: [String: String],
                      eventsQueue: Queue,
-                     relatedDigitalUser: RelatedDigitalUser,
+                     rdUser: RelatedDigitalUser,
                      channel: String) -> (eventsQueque: Queue,
-                                          relatedDigitalUser: RelatedDigitalUser,
+                                          rdUser: RelatedDigitalUser,
                                           clearUserParameters: Bool,
                                           channel: String) {
         var props = properties
-        var vUser = updateSessionParameters(pageName: pageName, relatedDigitalUser: relatedDigitalUser)
+        var vUser = updateSessionParameters(pageName: pageName, rdUser: rdUser)
         var chan = channel
         var clearUserParameters = false
         let actualTimeOfevent = Int(Date().timeIntervalSince1970)
@@ -74,8 +74,8 @@ class RelatedDigitalEvent {
             props.removeValue(forKey: RelatedDigitalConstants.channelKey)
         }
         
-        props[RelatedDigitalConstants.organizationIdKey] = self.relatedDigitalProfile.organizationId
-        props[RelatedDigitalConstants.profileIdKey] = self.relatedDigitalProfile.profileId
+        props[RelatedDigitalConstants.organizationIdKey] = self.rdProfile.organizationId
+        props[RelatedDigitalConstants.profileIdKey] = self.rdProfile.profileId
         props[RelatedDigitalConstants.cookieIdKey] = vUser.cookieId ?? ""
         props[RelatedDigitalConstants.channelKey] = chan
         if let pageNm = pageName {
@@ -116,32 +116,32 @@ class RelatedDigitalEvent {
         return (eQueue, vUser, clearUserParameters, chan)
     }
     
-    private func updateSessionParameters(pageName: String?, relatedDigitalUser: RelatedDigitalUser) -> RelatedDigitalUser {
-        var vUser = relatedDigitalUser
+    private func updateSessionParameters(pageName: String?, rdUser: RelatedDigitalUser) -> RelatedDigitalUser {
+        var user = rdUser
         let dateNowString = RelatedDigitalHelper.formatDate(Date())
-        if let lastEventTimeString = relatedDigitalUser.lastEventTime {
+        if let lastEventTimeString = rdUser.lastEventTime {
             if isPreviousSessionOver(lastEventTimeString: lastEventTimeString, dateNowString: dateNowString) {
-                vUser.pviv = 1
-                vUser.tvc = vUser.tvc + 1
+                user.pviv = 1
+                user.tvc = user.tvc + 1
                 if pageName != RelatedDigitalConstants.omEvtGif {
-                    vUser.lastEventTime = dateNowString
-                    vUser.lvt = dateNowString
+                    user.lastEventTime = dateNowString
+                    user.lvt = dateNowString
                 }
             } else {
                 if pageName != RelatedDigitalConstants.omEvtGif {
-                    vUser.pviv = vUser.pviv + 1
-                    vUser.lastEventTime = dateNowString
+                    user.pviv = user.pviv + 1
+                    user.lastEventTime = dateNowString
                 }
             }
-            vUser.nrv = vUser.tvc > 1 ? 0 : 1
+            user.nrv = user.tvc > 1 ? 0 : 1
         } else {
-            vUser.lastEventTime = dateNowString
-            vUser.nrv = 1
-            vUser.pviv = 1
-            vUser.tvc = 1
-            vUser.lvt = dateNowString
+            user.lastEventTime = dateNowString
+            user.nrv = 1
+            user.pviv = 1
+            user.tvc = 1
+            user.lvt = dateNowString
         }
-        return vUser
+        return user
     }
     
     private func isPreviousSessionOver(lastEventTimeString: String, dateNowString: String) -> Bool {

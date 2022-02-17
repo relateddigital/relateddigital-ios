@@ -18,7 +18,7 @@ class RelatedDigitalSend {
     weak var delegate: RelatedDigitalSendDelegate?
 
     // TO_DO: burada internet bağlantısı kontrolü yapmaya gerek var mı?
-    func sendEventsQueue(_ eventsQueue: Queue, relatedDigitalUser: RelatedDigitalUser,
+    func sendEventsQueue(_ eventsQueue: Queue, rdUser: RelatedDigitalUser,
                          relatedDigitalCookie: RelatedDigitalCookie, timeoutInterval: TimeInterval) -> RelatedDigitalCookie {
         var mutableCookie = relatedDigitalCookie
 
@@ -26,9 +26,9 @@ class RelatedDigitalSend {
             let event = eventsQueue[counter]
             RelatedDigitalLogger.debug("Sending event")
             RelatedDigitalLogger.debug(event)
-            let loggerHeaders = prepareHeaders(.logger, event: event, relatedDigitalUser: relatedDigitalUser,
+            let loggerHeaders = prepareHeaders(.logger, event: event, rdUser: rdUser,
                                                relatedDigitalCookie: relatedDigitalCookie)
-            let realTimeHeaders = prepareHeaders(.realtime, event: event, relatedDigitalUser: relatedDigitalUser,
+            let realTimeHeaders = prepareHeaders(.realtime, event: event, rdUser: rdUser,
                                                  relatedDigitalCookie: relatedDigitalCookie)
 
             let loggerSemaphore = DispatchSemaphore(value: 0)
@@ -82,10 +82,10 @@ class RelatedDigitalSend {
     }
 
     private func prepareHeaders(_ relatedDigitalEndpoint: RelatedDigitalEndpoint, event: [String: String],
-                                relatedDigitalUser: RelatedDigitalUser, relatedDigitalCookie: RelatedDigitalCookie) -> [String: String] {
+                                rdUser: RelatedDigitalUser, relatedDigitalCookie: RelatedDigitalCookie) -> [String: String] {
         var headers = [String: String]()
         headers["Referer"] = event[RelatedDigitalConstants.uriKey] ?? ""
-        headers["User-Agent"] = relatedDigitalUser.userAgent
+        headers["User-Agent"] = rdUser.userAgent
         if let cookie = prepareCookie(relatedDigitalEndpoint, relatedDigitalCookie: relatedDigitalCookie) {
             headers["Cookie"] = cookie
         }

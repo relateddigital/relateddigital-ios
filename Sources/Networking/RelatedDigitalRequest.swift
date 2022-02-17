@@ -304,7 +304,7 @@ class RelatedDigitalRequest {
         
         let resource = RelatedDigitalNetwork.buildResource(endPoint: .promotion,
                                                      method: .get,
-                                                     timeoutInterval: RelatedDigital.relatedDigitalProfile.requestTimeoutInterval,
+                                                     timeoutInterval: RelatedDigital.rdProfile.requestTimeoutInterval,
                                                      requestBody: nil,
                                                      queryItems: queryItems,
                                                      headers: [String: String](),
@@ -342,7 +342,7 @@ class RelatedDigitalRequest {
         
         let resource  = RelatedDigitalNetwork.buildResource(endPoint: .subsjson,
                                                       method: .get,
-                                                      timeoutInterval: RelatedDigital.relatedDigitalProfile.requestTimeoutInterval,
+                                                      timeoutInterval: RelatedDigital.rdProfile.requestTimeoutInterval,
                                                       requestBody: nil,
                                                       queryItems: queryItems,
                                                       headers: [String: String]() ,
@@ -372,13 +372,13 @@ class RelatedDigitalRequest {
         }
         
         var headers = [String: String]()
-        if let userAgent = RelatedDigital.relatedDigitalUser.userAgent {
+        if let userAgent = RelatedDigital.rdUser.userAgent {
             headers =  ["User-Agent": userAgent]
         }
         
         let resource = RelatedDigitalNetwork.buildResource(endPoint: .remote ,
                                                      method: .get,
-                                                     timeoutInterval: RelatedDigital.relatedDigitalProfile.requestTimeoutInterval,
+                                                     timeoutInterval: RelatedDigital.rdProfile.requestTimeoutInterval,
                                                      headers: headers,
                                                      parse: responseParser)
         
@@ -402,8 +402,8 @@ class RelatedDigitalRequest {
         
         var props = [String: String]()
         
-        let profile = RelatedDigital.relatedDigitalProfile
-        let user = RelatedDigital.relatedDigitalUser
+        let profile = RelatedDigital.rdProfile
+        let user = RelatedDigital.rdUser
         
         props[RelatedDigitalConstants.organizationIdKey] = profile.organizationId
         props[RelatedDigitalConstants.profileIdKey] = profile.profileId
