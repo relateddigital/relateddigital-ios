@@ -9,11 +9,11 @@ import UIKit
 // swiftlint:disable type_name
 final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewController {
 
-    weak var relatedDigitalInAppNotification: RelatedDigitalInAppNotification?
+    weak var relatedDigitalInAppNotification: RDInAppNotification?
     var mailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
 
-    convenience init(relatedDigitalInAppNotification: RelatedDigitalInAppNotification? = nil,
+    convenience init(relatedDigitalInAppNotification: RDInAppNotification? = nil,
                      emailForm: MailSubscriptionViewModel? = nil,
                      scratchToWin: ScratchToWinModel? = nil) {
         self.init()

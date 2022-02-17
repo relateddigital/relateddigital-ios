@@ -288,10 +288,10 @@ public class RelatedDigitalProduct: Encodable {
 
 public class RelatedDigitalRecommendationResponse {
     public var products: [RelatedDigitalProduct]
-    public var error: RelatedDigitalError?
+    public var error: RDError?
     public var widgetTitle: String = ""
     
-    internal init(products: [RelatedDigitalProduct], widgetTitle: String = "", error: RelatedDigitalError? = nil) {
+    internal init(products: [RelatedDigitalProduct], widgetTitle: String = "", error: RDError? = nil) {
         self.products = products
         self.widgetTitle = widgetTitle
         self.error = error

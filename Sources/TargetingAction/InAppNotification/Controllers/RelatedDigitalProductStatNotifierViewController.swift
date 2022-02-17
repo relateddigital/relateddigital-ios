@@ -63,7 +63,7 @@ class RelatedDigitalProductStatNotifierViewController: RelatedDigitalBaseNotific
     }
 
     override func show(animated: Bool) {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
         var bounds: CGRect

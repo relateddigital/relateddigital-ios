@@ -1,22 +1,22 @@
 //
-//  VisilabsTargetingAction.swift
-//  VisilabsIOS
+//  RDTargetingAction.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 18.08.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
 // swiftlint:disable type_body_length
-class RelatedDigitalTargetingAction {
+class RDTargetingAction {
 
-    let rdProfile: RelatedDigitalProfile
+    let rdProfile: RDProfile
 
-    required init(lock: RDReadWriteLock, rdProfile: RelatedDigitalProfile) {
+    required init(lock: RDReadWriteLock, rdProfile: RDProfile) {
         self.notificationsInstance = RelatedDigitalInAppNotifications(lock: lock)
         self.rdProfile = rdProfile
     }
 
-    private func prepareHeaders(_ rdUser: RelatedDigitalUser) -> [String: String] {
+    private func prepareHeaders(_ rdUser: RDUser) -> [String: String] {
         var headers = [String: String]()
         headers["User-Agent"] = rdUser.userAgent
         return headers
@@ -35,12 +35,10 @@ class RelatedDigitalTargetingAction {
         }
     }
 
-    func checkInAppNotification(properties: [String: String],
-                                rdUser: RelatedDigitalUser,
-                                completion: @escaping ((_ response: RelatedDigitalInAppNotification?) -> Void)) {
+    func checkInAppNotification(properties: Properties, rdUser: RDUser, completion: @escaping ((_ response: RDInAppNotification?) -> Void)) {
         let semaphore = DispatchSemaphore(value: 0)
         let headers = prepareHeaders(rdUser)
-        var notifications = [RelatedDigitalInAppNotification]()
+        var notifications = [RDInAppNotification]()
         var props = properties
         props["OM.vcap"] = rdUser.visitData
         props["OM.viscap"] = rdUser.visitorData
@@ -57,11 +55,8 @@ class RelatedDigitalTargetingAction {
         
         props[RDConstants.pushPermitPermissionReqKey] = RDConstants.pushPermitStatus
 
-        RelatedDigitalRequest.sendInAppNotificationRequest(properties: props,
-                                                     headers: headers,
-                                                     timeoutInterval: self.rdProfile.requestTimeoutInterval,
-                                                     completion: { relatedDigitalInAppNotificationResult in
-            guard let result = relatedDigitalInAppNotificationResult else {
+        RDRequest.sendInAppNotificationRequest(properties: props, headers: headers, completion: { rdInAppNotificationResult in
+            guard let result = rdInAppNotificationResult else {
                 semaphore.signal()
                 completion(nil)
                 return
@@ -71,7 +66,7 @@ class RelatedDigitalTargetingAction {
                 if let actionData = rawNotif["actiondata"] as? [String: Any] {
                     if let typeString = actionData["msg_type"] as? String,
                        RDInAppNotificationType(rawValue: typeString) != nil,
-                       let notification = RelatedDigitalInAppNotification(JSONObject: rawNotif) {
+                       let notification = RDInAppNotification(JSONObject: rawNotif) {
                         notifications.append(notification)
                     }
                 }
@@ -89,7 +84,7 @@ class RelatedDigitalTargetingAction {
 
     // MARK: - Targeting Actions
 
-    func checkTargetingActions(properties: [String: String], rdUser: RelatedDigitalUser, completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
+    func checkTargetingActions(properties: [String: String], rdUser: RDUser, completion: @escaping ((_ response: TargetingActionViewModel?) -> Void)) {
 
         let semaphore = DispatchSemaphore(value: 0)
         var targetingActionViewModel: TargetingActionViewModel?
@@ -112,10 +107,7 @@ class RelatedDigitalTargetingAction {
         
         props[RDConstants.pushPermitPermissionReqKey] = RDConstants.pushPermitStatus
 
-        RelatedDigitalRequest.sendMobileRequest(properties: props,
-                                          headers: prepareHeaders(rdUser),
-                                          timeoutInterval: self.rdProfile.requestTimeoutInterval,
-                                          completion: {(result: [String: Any]?, _: RelatedDigitalError?, _: String?) in
+        RDRequest.sendMobileRequest(properties: props, headers: prepareHeaders(rdUser), completion: {(result: [String: Any]?, _: RDError?, _: String?) in
             guard let result = result else {
                 semaphore.signal()
                 completion(nil)
@@ -314,8 +306,8 @@ class RelatedDigitalTargetingAction {
         let textColor = extendedProps[RDConstants.textColor] as? String ?? ""
         let textFontFamily = extendedProps[RDConstants.textFontFamily] as? String ?? ""
         let textSize = extendedProps[RDConstants.textSize] as? String ?? ""
-        let buttonColor = extendedProps[RelatedDigitalInAppNotification.PayloadKey.buttonColor] as? String ?? ""
-        let buttonTextColor = extendedProps[RelatedDigitalInAppNotification.PayloadKey.buttonTextColor] as? String ?? ""
+        let buttonColor = extendedProps[RDInAppNotification.PayloadKey.buttonColor] as? String ?? ""
+        let buttonTextColor = extendedProps[RDInAppNotification.PayloadKey.buttonTextColor] as? String ?? ""
         let buttonTextSize = extendedProps[RDConstants.buttonTextSize] as? String ?? ""
         let buttonFontFamily = extendedProps[RDConstants.buttonFontFamily] as? String ?? ""
         let emailPermitTextSize = extendedProps[RDConstants.emailPermitTextSize] as? String ?? ""
@@ -556,7 +548,7 @@ class RelatedDigitalTargetingAction {
 
     // MARK: - Favorites
 
-    func getFavorites(rdUser: RelatedDigitalUser, actionId: Int? = nil,
+    func getFavorites(rdUser: RDUser, actionId: Int? = nil,
                       completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
 
         var props = [String: String]()
@@ -582,17 +574,15 @@ class RelatedDigitalTargetingAction {
            }
         }
 
-        RelatedDigitalRequest.sendMobileRequest(properties: props, headers: [String: String](),
-                                          timeoutInterval: self.rdProfile.requestTimeoutInterval,
-                                          completion: { (result: [String: Any]?, error: RelatedDigitalError?, _: String?) in
+        RDRequest.sendMobileRequest(properties: props, headers: [String: String](), completion: { (result: [String: Any]?, error: RDError?, _: String?) in
             completion(self.parseFavoritesResponse(result, error))
         })
     }
 
     private func parseFavoritesResponse(_ result: [String: Any]?,
-                                        _ error: RelatedDigitalError?) -> RelatedDigitalFavoriteAttributeActionResponse {
+                                        _ error: RDError?) -> RelatedDigitalFavoriteAttributeActionResponse {
         var favoritesResponse = [RelatedDigitalFavoriteAttribute: [String]]()
-        var errorResponse: RelatedDigitalError?
+        var errorResponse: RDError?
         if let error = error {
             errorResponse = error
         } else if let res = result {
@@ -611,7 +601,7 @@ class RelatedDigitalTargetingAction {
                 }
             }
         } else {
-            errorResponse = RelatedDigitalError.noData
+            errorResponse = RDError.noData
         }
         return RelatedDigitalFavoriteAttributeActionResponse(favorites: favoritesResponse, error: errorResponse)
     }
@@ -621,7 +611,7 @@ class RelatedDigitalTargetingAction {
     var relatedDigitalStoryHomeViewControllers = [String: RelatedDigitalStoryHomeViewController]()
     var relatedDigitalStoryHomeViews = [String: RelatedDigitalStoryHomeView]()
 
-    func getStories(rdUser: RelatedDigitalUser,
+    func getStories(rdUser: RDUser,
                     guid: String, actionId: Int? = nil,
                     completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 
@@ -648,21 +638,16 @@ class RelatedDigitalTargetingAction {
            }
         }
 
-        RelatedDigitalRequest.sendMobileRequest(properties: props,
-                                          headers: [String: String](),
-                                          timeoutInterval: rdProfile.requestTimeoutInterval,
-                                          completion: {(result: [String: Any]?, error: RelatedDigitalError?, guid: String?) in
+        RDRequest.sendMobileRequest(properties: props, headers: [String: String](), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
             completion(self.parseStories(result, error, guid))
         }, guid: guid)
     }
 
     // swiftlint:disable function_body_length cyclomatic_complexity
     // TO_DO: burada storiesResponse kısmı değiştirilmeli. aynı requestte birden fazla story action'ı gelebilir.
-    private func parseStories(_ result: [String: Any]?,
-                              _ error: RelatedDigitalError?,
-                              _ guid: String?) -> RelatedDigitalStoryActionResponse {
+    private func parseStories(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> RelatedDigitalStoryActionResponse {
         var storiesResponse = [RelatedDigitalStoryAction]()
-        var errorResponse: RelatedDigitalError?
+        var errorResponse: RDError?
         if let error = error {
             errorResponse = error
         } else if let res = result {
@@ -711,7 +696,7 @@ class RelatedDigitalTargetingAction {
                 }
             }
         } else {
-            errorResponse = RelatedDigitalError.noData
+            errorResponse = RDError.noData
         }
         return RelatedDigitalStoryActionResponse(storyActions: storiesResponse, error: errorResponse, guid: guid)
     }

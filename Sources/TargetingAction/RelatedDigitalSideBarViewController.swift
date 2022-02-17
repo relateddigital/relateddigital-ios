@@ -208,7 +208,7 @@ class RelatedDigitalSideBarViewController : UIViewController {
     
     
     func show(animated: Bool) {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
         var bounds: CGRect

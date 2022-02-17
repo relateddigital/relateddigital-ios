@@ -9,9 +9,9 @@ import Foundation
 
 class RDEvent {
     
-    let rdProfile: RelatedDigitalProfile
+    let rdProfile: RDProfile
     
-    init(rdProfile: RelatedDigitalProfile) {
+    init(rdProfile: RDProfile) {
         self.rdProfile = rdProfile
     }
     
@@ -19,9 +19,9 @@ class RDEvent {
     func customEvent(pageName: String? = nil,
                      properties: [String: String],
                      eventsQueue: Queue,
-                     rdUser: RelatedDigitalUser,
+                     rdUser: RDUser,
                      channel: String) -> (eventsQueque: Queue,
-                                          rdUser: RelatedDigitalUser,
+                                          rdUser: RDUser,
                                           clearUserParameters: Bool,
                                           channel: String) {
         var props = properties
@@ -116,7 +116,7 @@ class RDEvent {
         return (eQueue, user, clearUserParameters, chan)
     }
     
-    private func updateSessionParameters(pageName: String?, rdUser: RelatedDigitalUser) -> RelatedDigitalUser {
+    private func updateSessionParameters(pageName: String?, rdUser: RDUser) -> RDUser {
         var user = rdUser
         let dateNowString = RDHelper.formatDate(Date())
         if let lastEventTimeString = rdUser.lastEventTime {

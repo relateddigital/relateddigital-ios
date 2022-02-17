@@ -10,12 +10,12 @@ import UIKit
 
 class RelatedDigitalHalfScreenView: UIView {
     
-    var notification: RelatedDigitalInAppNotification
+    var notification: RDInAppNotification
     var titleLabel: UILabel!
     var imageView: UIImageView!
     var closeButton: UIButton!
     
-    init(frame: CGRect, notification: RelatedDigitalInAppNotification) {
+    init(frame: CGRect, notification: RDInAppNotification) {
         self.notification = notification
         super.init(frame: frame)
         setupTitle()

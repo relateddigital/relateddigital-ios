@@ -9,7 +9,7 @@ import UIKit
 
 class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificationViewController {
 
-    var miniNotification: RelatedDigitalInAppNotification! {
+    var miniNotification: RDInAppNotification! {
         return super.notification
     }
 
@@ -21,7 +21,7 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
     var canPan = true
     var position: CGPoint!
 
-    convenience init(notification: RelatedDigitalInAppNotification) {
+    convenience init(notification: RDInAppNotification) {
         self.init(notification: notification,
                   nameOfClass: String(describing: RelatedDigitalMiniNotificationViewController.self))
     }
@@ -80,7 +80,7 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
     }
 
     override func show(animated: Bool) {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
         canPan = false
@@ -154,9 +154,9 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
         if canPan, let window = window {
             switch gesture.state {
             case UIGestureRecognizer.State.began:
-                panStartPoint = gesture.location(in: RelatedDigitalInstance.sharedUIApplication()?.keyWindow)
+                panStartPoint = gesture.location(in: RDInstance.sharedUIApplication()?.keyWindow)
             case UIGestureRecognizer.State.changed:
-                var position = gesture.location(in: RelatedDigitalInstance.sharedUIApplication()?.keyWindow)
+                var position = gesture.location(in: RDInstance.sharedUIApplication()?.keyWindow)
                 let diffY = position.y - panStartPoint.y
                 position.y = max(position.y, position.y + diffY)
                 window.layer.position = CGPoint(x: window.layer.position.x, y: position.y)
@@ -178,7 +178,7 @@ class RelatedDigitalMiniNotificationViewController: RelatedDigitalBaseNotificati
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        guard RelatedDigitalInstance.sharedUIApplication() != nil else {
+        guard RDInstance.sharedUIApplication() != nil else {
             return
         }
         super.viewWillTransition(to: size, with: coordinator)

@@ -1,8 +1,8 @@
 //
-//  VisilabsNetwork.swift
-//  VisilabsIOS
+//  RDNetwork.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 4.05.2020.
+//  Created by Egemen Gülkılık on 20.01.2022.
 //
 
 import Foundation
@@ -27,15 +27,14 @@ enum RDEndpoint {
 struct RDResource<A> {
     let endPoint: RDEndpoint
     let method: RDRequestMethod
-    let timeoutInterval: TimeInterval
     let requestBody: Data?
     let queryItems: [URLQueryItem]?
-    let headers: [String: String]
+    let headers: Properties
     let parse: (Data) -> A?
     let guid: String?
 }
 
-public enum RelatedDigitalError: Codable {
+public enum RDError: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: Key.self)
         let rawValue = try container.decode(Int.self, forKey: .rawValue)
@@ -54,12 +53,12 @@ public enum RelatedDigitalError: Codable {
             throw CodingError.unknownValue
         }
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Key.self)
         switch self {
         case .parseError:
-             try container.encode(0, forKey: .rawValue)
+            try container.encode(0, forKey: .rawValue)
         case .noData:
             try container.encode(1, forKey: .rawValue)
         case .notOKStatusCode(let statusCode):
@@ -69,57 +68,54 @@ public enum RelatedDigitalError: Codable {
             try container.encode(3, forKey: .rawValue)
             try container.encode(errorDescription, forKey: .associatedValue)
         }
-
+        
     }
-
+    
     enum Key: CodingKey {
         case rawValue
         case associatedValue
     }
-
+    
     enum CodingError: Error {
         case unknownValue
     }
-
+    
     case parseError
     case noData
     case notOKStatusCode(statusCode: Int)
     case other(errorDescription: String?)
 }
 
-struct RelatedDigitalBasePath {
+struct RDBasePath {
     static var endpoints = [RDEndpoint: String]()
-
+    
     // TO_DO: path parametresini kaldır
-    static func buildURL(relatedDigitalEndpoint: RDEndpoint, queryItems: [URLQueryItem]?) -> URL? {
-        guard let endpoint = endpoints[relatedDigitalEndpoint], let url = URL(string: endpoint) else {
+    static func buildURL(rdEndpoint: RDEndpoint, queryItems: [URLQueryItem]?) -> URL? {
+        guard let endpoint = endpoints[rdEndpoint], let url = URL(string: endpoint) else {
             return nil
         }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        // components?.path = path
         components?.queryItems = queryItems
         return components?.url
-
+        
     }
-
-    static func getEndpoint(relatedDigitalEndpoint: RDEndpoint) -> String {
-        return endpoints[relatedDigitalEndpoint] ?? ""
+    
+    static func getEndpoint(rdEndpoint: RDEndpoint) -> String {
+        return endpoints[rdEndpoint] ?? ""
     }
 }
 
-class RelatedDigitalNetwork {
-
-    class func apiRequest<A>(resource: RDResource<A>,
-                             failure: @escaping (RelatedDigitalError, Data?, URLResponse?) -> Void,
-                             success: @escaping (A, URLResponse?) -> Void) {
+class RDNetwork {
+    
+    class func apiRequest<A>(resource: RDResource<A>, failure: @escaping (RDError, Data?, URLResponse?) -> Void, success: @escaping (A, URLResponse?) -> Void) {
         guard let request = buildURLRequest(resource: resource) else {
             return
         }
-
+        
         // TO_DO: burada cookie'leri düzgün handle edecek bir yöntem bul.
         URLSession.shared.dataTask(with: request) { (data, response, error) -> Void in
             guard let httpResponse = response as? HTTPURLResponse else {
-
+                
                 if let hasError = error {
                     failure(.other(errorDescription: hasError.localizedDescription), data, response)
                 } else {
@@ -127,7 +123,7 @@ class RelatedDigitalNetwork {
                 }
                 return
             }
-
+            
             // TO_DO: buraya 201'i de ekleyebiliriz, visilabs sunucuları 201(created) de dönebiliyor. 304(Not modified)
             guard httpResponse.statusCode == 200/*OK*/ else {
                 failure(.notOKStatusCode(statusCode: httpResponse.statusCode), data, response)
@@ -141,47 +137,31 @@ class RelatedDigitalNetwork {
                 failure(.parseError, data, response)
                 return
             }
-
+            
             success(result, response)
         }.resume()
     }
-
+    
     private class func buildURLRequest<A>(resource: RDResource<A>) -> URLRequest? {
-        guard let url = RelatedDigitalBasePath.buildURL(relatedDigitalEndpoint: resource.endPoint,
-                                                  queryItems: resource.queryItems) else {
+        
+        guard let url = RDBasePath.buildURL(rdEndpoint: resource.endPoint, queryItems: resource.queryItems) else {
             return nil
         }
-
-        RDLogger.debug("Fetching URL")
-        RDLogger.debug(url.absoluteURL)
+        
+        RDLogger.debug("Fetching URL: \(url.absoluteURL)")
         var request = URLRequest(url: url)
         request.httpMethod = resource.method.rawValue
         request.httpBody = resource.requestBody
-        // TO_DO: timeoutInterval dışarıdan alınacak
-        request.timeoutInterval = 60
-
+        request.timeoutInterval = RelatedDigital.rdProfile.requestTimeoutInterval
+        
         for (key, value) in resource.headers {
             request.setValue(value, forHTTPHeaderField: key)
         }
         return request as URLRequest
     }
-
-    class func buildResource<A>(endPoint: RDEndpoint,
-                                method: RDRequestMethod,
-                                timeoutInterval: TimeInterval,
-                                requestBody: Data? = nil,
-                                queryItems: [URLQueryItem]? = nil,
-                                headers: [String: String],
-                                parse: @escaping (Data) -> A?,
-                                guid: String? = nil) -> RDResource<A> {
-        return RDResource(endPoint: endPoint,
-                                method: method,
-                                timeoutInterval: timeoutInterval,
-                                requestBody: requestBody,
-                                queryItems: queryItems,
-                                headers: headers,
-                                parse: parse,
-                                guid: guid)
+    
+    class func buildResource<A>(endPoint: RDEndpoint, method: RDRequestMethod, requestBody: Data? = nil, queryItems: [URLQueryItem]? = nil, headers: Properties, parse: @escaping (Data) -> A?, guid: String? = nil) -> RDResource<A> {
+        return RDResource(endPoint: endPoint, method: method, requestBody: requestBody, queryItems: queryItems, headers: headers, parse: parse, guid: guid)
     }
-
+    
 }

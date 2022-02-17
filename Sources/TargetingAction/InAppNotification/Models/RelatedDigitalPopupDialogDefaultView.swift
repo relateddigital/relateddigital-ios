@@ -82,7 +82,7 @@ public class RelatedDigitalPopupDialogDefaultView: UIView {
     internal var imageHeightConstraint: NSLayoutConstraint?
     internal var secondImageHeight: NSLayoutConstraint?
 
-    weak var relatedDigitalInAppNotification: RelatedDigitalInAppNotification?
+    weak var relatedDigitalInAppNotification: RDInAppNotification?
     var emailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
     var consentCheckboxAdded = false
@@ -90,7 +90,7 @@ public class RelatedDigitalPopupDialogDefaultView: UIView {
     weak var delegate: RelatedDigitalPopupDialogDefaultViewDelegate?
     weak var npsDelegate: NPSDelegate?
     // MARK: - CONSTRUCTOR
-    init(frame: CGRect, visilabsInAppNotification: RelatedDigitalInAppNotification?,
+    init(frame: CGRect, visilabsInAppNotification: RDInAppNotification?,
                         emailForm: MailSubscriptionViewModel? = nil,
                         scratchTW: ScratchToWinModel? = nil) {
         self.relatedDigitalInAppNotification = visilabsInAppNotification
@@ -358,10 +358,10 @@ extension RelatedDigitalPopupDialogDefaultView {
 
     @objc func termsButtonTapped(_ sender: UIButton) {
         if let url = scratchToWin?.permitUrl {
-            RelatedDigitalInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
+            RDInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
         }
         if let url = emailForm?.emailPermitUrl {
-            RelatedDigitalInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
+            RDInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
         }
     }
 
@@ -372,10 +372,10 @@ extension RelatedDigitalPopupDialogDefaultView {
 
     @objc func consentButtonTapped(_ sender: UIButton) {
         if let url = scratchToWin?.consentUrl {
-            RelatedDigitalInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
+            RDInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
         }
         if let url = emailForm?.consentUrl {
-            RelatedDigitalInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
+            RDInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
         }
     }
 }

@@ -16,7 +16,7 @@ protocol RelatedDigitalNotificationViewControllerDelegate: AnyObject {
 }
 
 public protocol RelatedDigitalBaseViewProtocol {
-    var notification: RelatedDigitalInAppNotification? { get set }
+    var notification: RDInAppNotification? { get set }
     func hide(animated: Bool, completion: @escaping () -> Void)
 }
 
@@ -26,12 +26,12 @@ public class RelatedDigitalBasePageViewController: UIPageViewController, Related
     }
     
     weak var relatedDigitalDelegate: RelatedDigitalNotificationViewControllerDelegate?
-    public var notification: RelatedDigitalInAppNotification? = nil
+    public var notification: RDInAppNotification? = nil
 }
 
 class RelatedDigitalBaseNotificationViewController: UIViewController, RelatedDigitalBaseViewProtocol {
     
-    var notification: RelatedDigitalInAppNotification?
+    var notification: RDInAppNotification?
     var mailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
     var spinToWin: SpinToWinViewModel?
@@ -42,7 +42,7 @@ class RelatedDigitalBaseNotificationViewController: UIViewController, RelatedDig
     var window: UIWindow?
     var panStartPoint: CGPoint!
     
-    convenience init(notification: RelatedDigitalInAppNotification, nameOfClass: String) {
+    convenience init(notification: RDInAppNotification, nameOfClass: String) {
         
 #if SWIFT_PACKAGE
         let bundle = Bundle.module

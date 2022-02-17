@@ -430,7 +430,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
                 RDLogger.info("Opening Story URL is delegated!! Url: \(url)")
             } else if story.items[snapIndex].targetUrl.count > 0, let snapUrl = URL(string: story.items[snapIndex].targetUrl) {
                 RDLogger.info("opening CTA URL: \(snapUrl)")
-                RelatedDigitalInstance.sharedUIApplication()?.performSelector(onMainThread:
+                RDInstance.sharedUIApplication()?.performSelector(onMainThread:
                                     NSSelectorFromString("openURL:"), with: snapUrl, waitUntilDone: true)
             }
             delegate?.didTapCloseButton()

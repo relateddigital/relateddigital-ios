@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 protocol RelatedDigitalInAppNotificationsDelegate: AnyObject {
-    func notificationDidShow(_ notification: RelatedDigitalInAppNotification)
-    func trackNotification(_ notification: RelatedDigitalInAppNotification, event: String, properties: [String: String])
+    func notificationDidShow(_ notification: RDInAppNotification)
+    func trackNotification(_ notification: RDInAppNotification, event: String, properties: [String: String])
 }
 
 class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewControllerDelegate {
@@ -19,8 +19,8 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     var showNotificationOnActive = true
     var miniNotificationPresentationTime = 6.0
     var shownNotifications = Set<Int>()
-    var inAppNotification: RelatedDigitalInAppNotification?
-    var currentlyShowingNotification: RelatedDigitalInAppNotification?
+    var inAppNotification: RDInAppNotification?
+    var currentlyShowingNotification: RDInAppNotification?
     var currentlyShowingTargetingAction: TargetingActionViewModel?
     weak var delegate: RelatedDigitalInAppNotificationsDelegate?
     weak var inappButtonDelegate: RelatedDigitalInappButtonDelegate?
@@ -30,7 +30,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         self.lock = lock
     }
     
-    func showNotification(_ notification: RelatedDigitalInAppNotification) {
+    func showNotification(_ notification: RDInAppNotification) {
         let notification = notification
         let delayTime = notification.waitingTime ?? 0
         DispatchQueue.main.async {
@@ -100,14 +100,14 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         return true
     }
     
-    func showHalfScreenNotification(_ notification: RelatedDigitalInAppNotification) -> Bool {
+    func showHalfScreenNotification(_ notification: RDInAppNotification) -> Bool {
         let halfScreenNotificationVC = RelatedDigitalHalfScreenViewController(notification: notification)
         halfScreenNotificationVC.delegate = self
         halfScreenNotificationVC.show(animated: true)
         return true
     }
     
-    func showMiniNotification(_ notification: RelatedDigitalInAppNotification) -> Bool {
+    func showMiniNotification(_ notification: RDInAppNotification) -> Bool {
         let miniNotificationVC = RelatedDigitalMiniNotificationViewController(notification: notification)
         miniNotificationVC.delegate = self
         miniNotificationVC.show(animated: true)
@@ -118,14 +118,14 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         return true
     }
     
-    func showFullNotification(_ notification: RelatedDigitalInAppNotification) -> Bool {
+    func showFullNotification(_ notification: RDInAppNotification) -> Bool {
         let fullNotificationVC = RelatedDigitalFullNotificationViewController(notification: notification)
         fullNotificationVC.delegate = self
         fullNotificationVC.show(animated: true)
         return true
     }
     
-    func showCarousel(_ notification: RelatedDigitalInAppNotification) -> Bool {
+    func showCarousel(_ notification: RDInAppNotification) -> Bool {
         if notification.carouselItems.count < 2 {
             RDLogger.error("Carousel Item Count is less than 2.")
             return false
@@ -148,7 +148,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         }
     }
     
-    func showAlert(_ notification: RelatedDigitalInAppNotification) {
+    func showAlert(_ notification: RDInAppNotification) {
         let title = notification.messageTitle?.removeEscapingCharacters()
         let message = notification.messageBody?.removeEscapingCharacters()
         let style: UIAlertController.Style = notification.alertType?.lowercased() ?? "" == "actionsheet" ? .actionSheet : .alert
@@ -160,7 +160,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
             guard let url = URL(string: urlStr) else {
                 return
             }
-            RelatedDigitalInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
+            RDInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
             self.inappButtonDelegate?.didTapButton(notification)
         }
         
@@ -186,7 +186,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
     
     
     
-    func showPopUp(_ notification: RelatedDigitalInAppNotification) -> Bool {
+    func showPopUp(_ notification: RDInAppNotification) -> Bool {
         let controller = RelatedDigitalPopupNotificationViewController(notification: notification)
         controller.delegate = self
         controller.inappButtonDelegate = self.inappButtonDelegate
@@ -233,7 +233,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         return false
     }
     
-    func markNotificationShown(notification: RelatedDigitalInAppNotification) {
+    func markNotificationShown(notification: RDInAppNotification) {
         lock.write {
             RDLogger.info("marking notification as seen: \(notification.actId)")
             currentlyShowingNotification = notification
@@ -274,7 +274,7 @@ class RelatedDigitalInAppNotifications: RelatedDigitalNotificationViewController
         
         if let callToActionURL = callToActionURL {
             controller.hide(animated: true) {
-                let app = RelatedDigitalInstance.sharedUIApplication()
+                let app = RDInstance.sharedUIApplication()
                 app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: callToActionURL, waitUntilDone: true)
                 completionBlock()
             }

@@ -203,7 +203,7 @@ public protocol RelatedDigitalCarouselItemsDataSource: AnyObject {
 
 public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBasePageViewController, ItemControllerDelegate {
     
-    var carouselNotification: RelatedDigitalInAppNotification! {
+    var carouselNotification: RDInAppNotification! {
         return super.notification
     }
     
@@ -248,7 +248,7 @@ public class RelatedDigitalCarouselNotificationViewController: RelatedDigitalBas
     @available(*, unavailable)
     required public init?(coder: NSCoder) { fatalError() }
     
-    public init(startIndex: Int, notification: RelatedDigitalInAppNotification) {
+    public init(startIndex: Int, notification: RDInAppNotification) {
         
         overlayView.overlayColor = UIColor(white: 0.035, alpha: 1)
         overlayView.colorTargetOpacity = 0.7
@@ -625,14 +625,14 @@ extension RelatedDigitalCarouselNotificationViewController: GalleryDisplacedView
 final class RelatedDigitalCarouselPagingDataSource: NSObject, UIPageViewControllerDataSource {
     
     
-    weak var notification: RelatedDigitalInAppNotification?
+    weak var notification: RDInAppNotification?
     weak var itemControllerDelegate: ItemControllerDelegate?
     fileprivate weak var itemsDataSource:          RelatedDigitalCarouselItemsDataSource?
     fileprivate weak var displacedViewsDataSource: GalleryDisplacedViewsDataSource?
     
     fileprivate var itemCount: Int { return itemsDataSource?.itemCount() ?? 0 }
     
-    init(itemsDataSource: RelatedDigitalCarouselItemsDataSource, displacedViewsDataSource: GalleryDisplacedViewsDataSource?, notification: RelatedDigitalInAppNotification?) {
+    init(itemsDataSource: RelatedDigitalCarouselItemsDataSource, displacedViewsDataSource: GalleryDisplacedViewsDataSource?, notification: RDInAppNotification?) {
         self.notification = notification
         self.itemsDataSource = itemsDataSource
         self.displacedViewsDataSource = displacedViewsDataSource
@@ -668,7 +668,7 @@ final class RelatedDigitalCarouselPagingDataSource: NSObject, UIPageViewControll
 
 public class ItemBaseController: UIViewController, ItemController, UIGestureRecognizerDelegate, UIScrollViewDelegate {
     public var itemView: RelatedDigitalCarouselItemView
-    public var relatedDigitalInAppNotification: RelatedDigitalInAppNotification!
+    public var relatedDigitalInAppNotification: RDInAppNotification!
     
     let scrollView = UIScrollView()
     public var footerView: UIPageControl?
@@ -697,7 +697,7 @@ public class ItemBaseController: UIViewController, ItemController, UIGestureReco
     // MARK: - Initializers
     
     public init(index: Int, itemCount: Int, fetchImageBlock: FetchImageBlock?, relatedDigitalCarouselItemView: RelatedDigitalCarouselItemView
-                , isInitialController: Bool = false, relatedDigitalInAppNotification: RelatedDigitalInAppNotification?) {
+                , isInitialController: Bool = false, relatedDigitalInAppNotification: RDInAppNotification?) {
         
         self.relatedDigitalInAppNotification = relatedDigitalInAppNotification
         

@@ -102,17 +102,17 @@ internal class RDHelper {
     
     static func setEndpoints(dataSource: String, useInsecureProtocol: Bool = false) {
         let httpProtocol = useInsecureProtocol ? RDConstants.HTTP : RDConstants.HTTPS
-        RelatedDigitalBasePath.endpoints[.logger] =
+        RDBasePath.endpoints[.logger] =
         "\(httpProtocol)://\(RDConstants.loggerEndPoint)/\(dataSource)/\(RDConstants.omGif)"
-        RelatedDigitalBasePath.endpoints[.realtime] =
+        RDBasePath.endpoints[.realtime] =
         "\(httpProtocol)://\(RDConstants.realtimeEndPoint)/\(dataSource)/\(RDConstants.omGif)"
-        RelatedDigitalBasePath.endpoints[.target] = "\(httpProtocol)://\(RDConstants.recommendationEndPoint)"
-        RelatedDigitalBasePath.endpoints[.action] = "\(httpProtocol)://\(RDConstants.actionEndPoint)"
-        RelatedDigitalBasePath.endpoints[.geofence] = "\(httpProtocol)://\(RDConstants.geofenceEndPoint)"
-        RelatedDigitalBasePath.endpoints[.mobile] = "\(httpProtocol)://\(RDConstants.mobileEndPoint)"
-        RelatedDigitalBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RDConstants.subsjsonEndpoint)"
-        RelatedDigitalBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RDConstants.promotionEndpoint)"
-        RelatedDigitalBasePath.endpoints[.remote] = "https://\(RDConstants.remoteConfigEndpoint)"
+        RDBasePath.endpoints[.target] = "\(httpProtocol)://\(RDConstants.recommendationEndPoint)"
+        RDBasePath.endpoints[.action] = "\(httpProtocol)://\(RDConstants.actionEndPoint)"
+        RDBasePath.endpoints[.geofence] = "\(httpProtocol)://\(RDConstants.geofenceEndPoint)"
+        RDBasePath.endpoints[.mobile] = "\(httpProtocol)://\(RDConstants.mobileEndPoint)"
+        RDBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RDConstants.subsjsonEndpoint)"
+        RDBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RDConstants.promotionEndpoint)"
+        RDBasePath.endpoints[.remote] = "https://\(RDConstants.remoteConfigEndpoint)"
     }
     
     static private let dateFormatter = DateFormatter()
@@ -258,7 +258,7 @@ internal class RDHelper {
     }
     
     static func getRootViewController() -> UIViewController? {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return nil
         }
         if let rootViewController = sharedUIApplication.keyWindow?.rootViewController {

@@ -9,7 +9,7 @@ import UIKit
 
 class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationViewController {
 
-    var halfScreenNotification: RelatedDigitalInAppNotification! {
+    var halfScreenNotification: RDInAppNotification! {
         return super.notification
     }
     
@@ -19,7 +19,7 @@ class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationView
     var isDismissing = false
     var position: CGPoint!
 
-    init(notification: RelatedDigitalInAppNotification) {
+    init(notification: RDInAppNotification) {
         super.init(nibName: nil, bundle: nil)
         self.notification = notification
         relatedDigitalHalfScreenView = RelatedDigitalHalfScreenView(frame: UIScreen.main.bounds, notification: halfScreenNotification)
@@ -61,7 +61,7 @@ class RelatedDigitalHalfScreenViewController: RelatedDigitalBaseNotificationView
     }
 
     override func show(animated: Bool) {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
         var bounds: CGRect

@@ -123,7 +123,7 @@ public class CountdownTimerViewController: UIViewController {
     }
     
     public func showNow(animated: Bool) {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
         var bounds: CGRect
@@ -220,7 +220,7 @@ public class CountdownTimerViewController: UIViewController {
 
     static func xibName() -> String {
         let xibName = String(describing: CountdownTimerViewController.self)
-        guard RelatedDigitalInstance.sharedUIApplication() != nil else {
+        guard RDInstance.sharedUIApplication() != nil else {
             return xibName
         }
         return xibName

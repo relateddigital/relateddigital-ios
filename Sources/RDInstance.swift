@@ -1,8 +1,8 @@
 //
-//  RelatedDigitalInstance.swift
+//  RDInstance.swift
 //  RelatedDigitalIOS
 //
-//  Created by Egemen on 4.05.2020.
+//  Created by Egemen Gülkılık on 14.10.2021.
 //
 
 import class Foundation.Bundle
@@ -10,10 +10,12 @@ import SystemConfiguration
 import UIKit
 import UserNotifications
 
-protocol RelatedDigitalInstanceProtocol {
+public typealias Properties = [String: String]
+
+protocol RDInstanceProtocol {
     var exVisitorId: String? { get }
-    var rdUser: RelatedDigitalUser { get }
-    var rdProfile: RelatedDigitalProfile { get }
+    var rdUser: RDUser { get }
+    var rdProfile: RDProfile { get }
     var locationServicesEnabledForDevice: Bool { get }
     var locationServiceStateStatusForApplication: RelatedDigitalCLAuthorizationStatus { get }
     var inappButtonDelegate: RelatedDigitalInappButtonDelegate? { get set }
@@ -21,27 +23,27 @@ protocol RelatedDigitalInstanceProtocol {
     var inAppNotificationsEnabled: Bool { get set }
     func requestIDFA()
     func sendLocationPermission()
-    func customEvent(_ pageName: String, properties: [String: String])
-    func login(exVisitorId: String, properties: [String: String])
-    func signUp(exVisitorId: String, properties: [String: String])
+    func customEvent(_ pageName: String, properties: Properties)
+    func login(exVisitorId: String, properties: Properties)
+    func signUp(exVisitorId: String, properties: Properties)
     func logout()
-    func showNotification(_ relatedDigitalInAppNotification: RelatedDigitalInAppNotification)
+    func showNotification(_ relatedDigitalInAppNotification: RDInAppNotification)
     func subscribeSpinToWinMail(actid: String, auth: String, mail: String)
     func subscribeMail(click: String, actid: String, auth: String, mail: String)
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport)
     func trackRecommendationClick(qs: String)
     func getStoryView(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?) -> RelatedDigitalStoryHomeView
     func getStoryViewAsync(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?, completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void))
-    func recommend(zoneId: String, productCode: String?, filters: [RelatedDigitalRecommendationFilter], properties: [String: String],
+    func recommend(zoneId: String, productCode: String?, filters: [RelatedDigitalRecommendationFilter], properties: Properties,
                    completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void))
     func getFavoriteAttributeActions(actionId: Int?, completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void))
 }
 
-public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
+public class RDInstance: RDInstanceProtocol {
     
     var exVisitorId: String? { return rdUser.exVisitorId }
-    var rdUser = RelatedDigitalUser()
-    var rdProfile: RelatedDigitalProfile
+    var rdUser = RDUser()
+    var rdProfile: RDProfile
     var rdCookie = RDCookie()
     var eventsQueue = Queue()
     var trackingQueue: DispatchQueue!
@@ -53,9 +55,9 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     
     let rdEventInstance: RDEvent
     let rdSendInstance: RDSend
-    let rdTargetingActionInstance: RelatedDigitalTargetingAction
+    let rdTargetingActionInstance: RDTargetingAction
     let rdRecommendationInstance: RelatedDigitalRecommendation
-    let rdRemoteConfigInstance: RelatedDigitalRemoteConfig
+    let rdRemoteConfigInstance: RDRemoteConfig
     
     public var loggingEnabled: Bool = false {
         didSet {
@@ -76,7 +78,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         }
         set {
             rdProfile.inAppNotificationsEnabled = newValue
-            RDPersistence.saveRelatedDigitalProfile(rdProfile)
+            RDPersistence.saveRDProfile(rdProfile)
         }
     }
     
@@ -84,7 +86,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         didSet {
             rdProfile.useInsecureProtocol = useInsecureProtocol
             RDHelper.setEndpoints(dataSource: rdProfile.dataSource, useInsecureProtocol: useInsecureProtocol)
-            RDPersistence.saveRelatedDigitalProfile(rdProfile)
+            RDPersistence.saveRDProfile(rdProfile)
         }
     }
     
@@ -93,13 +95,13 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
     // swiftlint:disable function_body_length
     init(organizationId: String, profileId: String, dataSource: String) {
         
-        rdProfile = RDPersistence.readRDProfile() ?? RelatedDigitalProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, channel: "IOS", requestTimeoutInSeconds: 30, geofenceEnabled: false, inAppNotificationsEnabled: false, maxGeofenceCount: 20, isIDFAEnabled: false)
+        rdProfile = RDPersistence.readRDProfile() ?? RDProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, channel: "IOS", requestTimeoutInSeconds: 30, geofenceEnabled: false, inAppNotificationsEnabled: false, maxGeofenceCount: 20, isIDFAEnabled: false)
         rdProfile.organizationId = organizationId
         rdProfile.profileId = profileId
         rdProfile.dataSource = dataSource
         
-        RDPersistence.saveRelatedDigitalProfile(rdProfile)
-        readWriteLock = RDReadWriteLock(label: "RelatedDigitalInstanceLock")
+        RDPersistence.saveRDProfile(rdProfile)
+        readWriteLock = RDReadWriteLock(label: "RDInstanceLock")
         let label = "com.relateddigital.\(rdProfile.profileId)"
         trackingQueue = DispatchQueue(label: "\(label).tracking)", qos: .utility)
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
@@ -107,9 +109,9 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
         rdEventInstance = RDEvent(rdProfile: rdProfile)
         rdSendInstance = RDSend()
-        rdTargetingActionInstance = RelatedDigitalTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
+        rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
         rdRecommendationInstance = RelatedDigitalRecommendation(rdProfile: rdProfile)
-        rdRemoteConfigInstance = RelatedDigitalRemoteConfig(profileId: rdProfile.profileId)
+        rdRemoteConfigInstance = RDRemoteConfig(profileId: rdProfile.profileId)
         
         
         RDHelper.setEndpoints(dataSource: rdProfile.dataSource)
@@ -191,7 +193,7 @@ public class RelatedDigitalInstance: RelatedDigitalInstanceProtocol {
 
 // MARK: - IDFA
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     
     public func requestIDFA() {
         
@@ -203,7 +205,7 @@ extension RelatedDigitalInstance {
         RDHelper.getIDFA { uuid in
             if let idfa = uuid {
                 self.rdUser.identifierForAdvertising = idfa
-                self.customEvent(RDConstants.omEvtGif, properties: [String: String]())
+                self.customEvent(RDConstants.omEvtGif, properties: Properties())
             }
         }
     }
@@ -212,7 +214,7 @@ extension RelatedDigitalInstance {
 
 // MARK: - EVENT
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     
     private func checkPushPermission() {
         let current = UNUserNotificationCenter.current()
@@ -243,7 +245,7 @@ extension RelatedDigitalInstance {
         
     }
     
-    public func customEvent(_ pageName: String, properties: [String: String]) {
+    public func customEvent(_ pageName: String, properties: Properties) {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
@@ -260,7 +262,7 @@ extension RelatedDigitalInstance {
         trackingQueue.async { [weak self, pageName, properties] in
             guard let self = self else { return }
             var eQueue = Queue()
-            var user = RelatedDigitalUser()
+            var user = RDUser()
             var chan = ""
             self.readWriteLock.read {
                 eQueue = self.eventsQueue
@@ -285,7 +287,7 @@ extension RelatedDigitalInstance {
             }
             if let event = self.eventsQueue.last {
                 RDPersistence.saveTargetParameters(event)
-                if RelatedDigitalBasePath.endpoints[.action] != nil,
+                if RDBasePath.endpoints[.action] != nil,
                    self.rdProfile.inAppNotificationsEnabled,
                    pageName != RDConstants.omEvtGif {
                     self.checkInAppNotification(properties: event)
@@ -296,7 +298,7 @@ extension RelatedDigitalInstance {
         }
     }
     
-    public func sendCampaignParameters(properties: [String: String]) {
+    public func sendCampaignParameters(properties: Properties) {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
@@ -306,7 +308,7 @@ extension RelatedDigitalInstance {
         trackingQueue.async { [weak self, properties] in
             guard let strongSelf = self else { return }
             var eQueue = Queue()
-            var user = RelatedDigitalUser()
+            var user = RDUser()
             var chan = ""
             strongSelf.readWriteLock.read {
                 eQueue = strongSelf.eventsQueue
@@ -335,7 +337,7 @@ extension RelatedDigitalInstance {
         }
     }
     
-    public func login(exVisitorId: String, properties: [String: String] = [String: String]()) {
+    public func login(exVisitorId: String, properties: Properties = Properties()) {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
@@ -353,7 +355,7 @@ extension RelatedDigitalInstance {
         customEvent("LoginPage", properties: props)
     }
     
-    public func signUp(exVisitorId: String, properties: [String: String] = [String: String]()) {
+    public func signUp(exVisitorId: String, properties: Properties = Properties()) {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
@@ -383,23 +385,23 @@ extension RelatedDigitalInstance {
 
 // MARK: - PERSISTENCE
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     
     // TO_DO: kontrol et sıra doğru mu? gelen değerler null ise set'lemeli miyim?
-    private func unarchive() -> RelatedDigitalUser {
+    private func unarchive() -> RDUser {
         return RDPersistence.unarchiveUser()
     }
 }
 
 // MARK: - SEND
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     private func send() {
         trackingQueue.async { [weak self] in
             self?.networkQueue.async { [weak self] in
                 guard let self = self else { return }
                 var eQueue = Queue()
-                var user = RelatedDigitalUser()
+                var user = RDUser()
                 var rdCookie = RDCookie()
                 self.readWriteLock.read {
                     eQueue = self.eventsQueue
@@ -409,10 +411,7 @@ extension RelatedDigitalInstance {
                 self.readWriteLock.write {
                     self.eventsQueue.removeAll()
                 }
-                let cookie = self.rdSendInstance.sendEventsQueue(eQueue,
-                                                                 rdUser: user,
-                                                                 rdCookie: rdCookie,
-                                                                 timeoutInterval: self.rdProfile.requestTimeoutInterval)
+                let cookie = self.rdSendInstance.sendEventsQueue(eQueue, rdUser: user, rdCookie: rdCookie)
                 self.readWriteLock.write {
                     self.rdCookie = cookie
                 }
@@ -425,7 +424,7 @@ extension RelatedDigitalInstance {
 
 // MARK: - Favorite Attribute Actions
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     public func getFavoriteAttributeActions(actionId: Int? = nil,
                                             completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse)
                                                                    -> Void)) {
@@ -439,7 +438,7 @@ extension RelatedDigitalInstance {
         targetingActionQueue.async { [weak self] in
             self?.networkQueue.async { [weak self] in
                 guard let self = self else { return }
-                var user = RelatedDigitalUser()
+                var user = RDUser()
                 self.readWriteLock.read {
                     user = self.rdUser
                 }
@@ -453,10 +452,10 @@ extension RelatedDigitalInstance {
 
 // MARK: - InAppNotification
 
-extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
+extension RDInstance: RelatedDigitalInAppNotificationsDelegate {
     
     // This method added for test purposes
-    public func showNotification(_ rdInAppNotification: RelatedDigitalInAppNotification) {
+    public func showNotification(_ rdInAppNotification: RDInAppNotification) {
         rdTargetingActionInstance.notificationsInstance.showNotification(rdInAppNotification)
     }
     
@@ -464,7 +463,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
         rdTargetingActionInstance.notificationsInstance.showTargetingAction(model)
     }
     
-    func checkInAppNotification(properties: [String: String]) {
+    func checkInAppNotification(properties: Properties) {
         trackingQueue.async { [weak self, properties] in
             guard let self = self else { return }
             self.networkQueue.async { [weak self, properties] in
@@ -479,13 +478,13 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
         }
     }
     
-    func notificationDidShow(_ notification: RelatedDigitalInAppNotification) {
+    func notificationDidShow(_ notification: RDInAppNotification) {
         rdUser.visitData = notification.visitData
         rdUser.visitorData = notification.visitorData
         RDPersistence.archiveUser(rdUser)
     }
     
-    func trackNotification(_ notification: RelatedDigitalInAppNotification, event: String, properties: [String: String]) {
+    func trackNotification(_ notification: RDInAppNotification, event: String, properties: Properties) {
         if notification.queryString == nil || notification.queryString == "" {
             RDLogger.info("Notification or query string is nil or empty")
             return
@@ -501,7 +500,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
     
     // İleride inapp de s.visilabs.net/mobile üzerinden geldiğinde sadece bu metod kullanılacak
     // checkInAppNotification metodu kaldırılacak.
-    func checkTargetingActions(properties: [String: String]) {
+    func checkTargetingActions(properties: Properties) {
         trackingQueue.async { [weak self, properties] in
             guard let self = self else { return }
             self.networkQueue.async { [weak self, properties] in
@@ -520,7 +519,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
     }
     
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
-        var properties = [String: String]()
+        var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = spinToWinReport.click.parseClick().omZn
         properties["OM.zpc"] = spinToWinReport.click.parseClick().omZpc
@@ -530,7 +529,7 @@ extension RelatedDigitalInstance: RelatedDigitalInAppNotificationsDelegate {
 
 // MARK: - Story
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     
     public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil
                                   , completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void)) {
@@ -631,11 +630,11 @@ extension RelatedDigitalInstance {
 
 // MARK: - RECOMMENDATION
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     public func recommend(zoneId: String,
                           productCode: String? = nil,
                           filters: [RelatedDigitalRecommendationFilter] = [],
-                          properties: [String: String] = [:],
+                          properties: Properties = [:],
                           completion: @escaping ((_ response: RelatedDigitalRecommendationResponse) -> Void)) {
         
         if RDPersistence.isBlocked() {
@@ -646,7 +645,7 @@ extension RelatedDigitalInstance {
         recommendationQueue.async { [weak self, zoneId, productCode, filters, properties, completion] in
             self?.networkQueue.async { [weak self, zoneId, productCode, filters, properties, completion] in
                 guard let self = self else { return }
-                var user = RelatedDigitalUser()
+                var user = RDUser()
                 var channel = "IOS"
                 self.readWriteLock.read {
                     user = self.rdUser
@@ -666,7 +665,7 @@ extension RelatedDigitalInstance {
         }
         
         let qsArr = qs.components(separatedBy: "&")
-        var properties = [String: String]()
+        var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         if(qsArr.count > 1) {
             for queryItem in qsArr {
@@ -686,7 +685,7 @@ extension RelatedDigitalInstance {
 
 // MARK: - GEOFENCE
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     private func startGeofencing() {
         RelatedDigitalGeofence.sharedManager?.startGeofencing()
     }
@@ -708,14 +707,14 @@ extension RelatedDigitalInstance {
 
 // MARK: - SUBSCRIPTION MAIL
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     public func subscribeMail(click: String, actid: String, auth: String, mail: String) {
         if click.isEmpty {
             RDLogger.info("Notification or query string is nil or empty")
             return
         }
         
-        var properties = [String: String]()
+        var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = click.parseClick().omZn
         properties["OM.zpc"] = click.parseClick().omZpc
@@ -724,19 +723,19 @@ extension RelatedDigitalInstance {
     }
     
     private func createSubsJsonRequest(actid: String, auth: String, mail: String, type: String = "subscription_email") {
-        var props = [String: String]()
+        var props = Properties()
         props[RDConstants.type] = type
         props["actionid"] = actid
         props[RDConstants.authentication] = auth
         props[RDConstants.subscribedEmail] = mail
-        RelatedDigitalRequest.sendSubsJsonRequest(properties: props)
+        RDRequest.sendSubsJsonRequest(properties: props)
     }
 }
 
 // MARK: -REMOTE CONFIG
 
 
-extension RelatedDigitalInstance {
+extension RDInstance {
     
     @objc private func applicationDidBecomeActive(_ notification: Notification) {
         rdRemoteConfigInstance.applicationDidBecomeActive()
@@ -750,5 +749,5 @@ extension RelatedDigitalInstance {
 
 
 public protocol RelatedDigitalInappButtonDelegate: AnyObject {
-    func didTapButton(_ notification: RelatedDigitalInAppNotification)
+    func didTapButton(_ notification: RDInAppNotification)
 }

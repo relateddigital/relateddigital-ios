@@ -9,7 +9,7 @@ import UIKit
 
 class RelatedDigitalFullNotificationViewController: RelatedDigitalBaseNotificationViewController {
 
-    var fullNotification: RelatedDigitalInAppNotification! {
+    var fullNotification: RDInAppNotification! {
         return super.notification
     }
 
@@ -33,14 +33,14 @@ class RelatedDigitalFullNotificationViewController: RelatedDigitalBaseNotificati
     var isCopyEnabled = true
     let pasteboard = UIPasteboard.general
 
-    convenience init(notification: RelatedDigitalInAppNotification) {
+    convenience init(notification: RDInAppNotification) {
         self.init(notification: notification,
                   nameOfClass: String(describing: RelatedDigitalFullNotificationViewController.notificationXibToLoad()))
     }
 
     static func notificationXibToLoad() -> String {
         let xibName = String(describing: RelatedDigitalFullNotificationViewController.self)
-        guard RelatedDigitalInstance.sharedUIApplication() != nil else {
+        guard RDInstance.sharedUIApplication() != nil else {
             return xibName
         }
         return xibName
@@ -174,7 +174,7 @@ class RelatedDigitalFullNotificationViewController: RelatedDigitalBaseNotificati
     }
 
     override func show(animated: Bool) {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
         if #available(iOS 13.0, *) {

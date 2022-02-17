@@ -1,13 +1,13 @@
 //
-//  VisilabsInAppNotification.swift
-//  VisilabsIOS
+//  RDInAppNotification.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 10.05.2020.
+//  Created by Egemen Gülkılıj on 26.12.2021.
 //
 
 import UIKit
 // swiftlint:disable type_body_length
-public class RelatedDigitalInAppNotification {
+public class RDInAppNotification {
 
     public enum PayloadKey {
         public static let actId = "actid"
@@ -377,14 +377,8 @@ public class RelatedDigitalInAppNotification {
     }
 
     private func setFonts() {
-        self.messageTitleFont = RDHelper.getFont(fontFamily: self.fontFamily,
-                                                                  fontSize: self.messageTitleTextSize,
-                                                                  style: .title2, customFont: self.customFont)
-        self.messageBodyFont = RDHelper.getFont(fontFamily: self.fontFamily,
-                                                                 fontSize: self.messageBodyTextSize,
-                                                                 style: .body, customFont: self.customFont)
-        self.buttonTextFont = RDHelper.getFont(fontFamily: self.fontFamily,
-                                                                fontSize: self.messageBodyTextSize,
-                                                                style: .title2, customFont: self.customFont)
+        messageTitleFont = RDHelper.getFont(fontFamily: self.fontFamily, fontSize: self.messageTitleTextSize, style: .title2, customFont: self.customFont)
+        messageBodyFont = RDHelper.getFont(fontFamily: self.fontFamily, fontSize: self.messageBodyTextSize, style: .body, customFont: self.customFont)
+        buttonTextFont = RDHelper.getFont(fontFamily: self.fontFamily, fontSize: self.messageBodyTextSize, style: .title2, customFont: self.customFont)
     }
 }

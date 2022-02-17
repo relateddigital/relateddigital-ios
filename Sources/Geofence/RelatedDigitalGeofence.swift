@@ -13,7 +13,7 @@ class RelatedDigitalGeofence {
     static let sharedManager = RelatedDigitalGeofence()
 
     var activeGeofenceList: [RelatedDigitalGeofenceEntity]
-    let profile: RelatedDigitalProfile
+    let profile: RDProfile
     var geofenceHistory: RelatedDigitalGeofenceHistory
     private var lastGeofenceFetchTime: Date
     private var lastSuccessfulGeofenceFetchTime: Date
@@ -122,9 +122,7 @@ class RelatedDigitalGeofence {
                }
             }
             // swiftlint:disable closure_parameter_position
-            RelatedDigitalRequest.sendGeofenceRequest(properties: props,
-                                                headers: [String: String](),
-                                            timeoutInterval: profile.requestTimeoutInterval) {
+            RDRequest.sendGeofenceRequest(properties: props, headers: [String: String]()) {
                 [lastKnownLatitude, lastKnownLongitude, geofenceHistory, now] (result, error) in
 
                 if error != nil {
@@ -226,9 +224,7 @@ class RelatedDigitalGeofence {
            }
         }
         RDLogger.info("Geofence Triggerred: actionId: \(actionId) geofenceid: \(geofenceId)")
-        RelatedDigitalRequest.sendGeofenceRequest(properties: props,
-                                            headers: [String: String](),
-                                            timeoutInterval: profile.requestTimeoutInterval) { (_, error) in
+        RDRequest.sendGeofenceRequest(properties: props) { (_, error) in
             if let error = error {
                 RDLogger.error("Geofence Push Send Error: \(error)")
             }

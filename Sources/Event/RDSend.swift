@@ -10,7 +10,7 @@ import Foundation
 class RDSend {
 
     // TO_DO: burada internet bağlantısı kontrolü yapmaya gerek var mı?
-    func sendEventsQueue(_ eventsQueue: Queue, rdUser: RelatedDigitalUser, rdCookie: RDCookie, timeoutInterval: TimeInterval) -> RDCookie {
+    func sendEventsQueue(_ eventsQueue: Queue, rdUser: RDUser, rdCookie: RDCookie) -> RDCookie {
         var mutableCookie = rdCookie
 
         for counter in 0..<eventsQueue.count {
@@ -22,8 +22,7 @@ class RDSend {
 
             let loggerSemaphore = DispatchSemaphore(value: 0)
             let realTimeSemaphore = DispatchSemaphore(value: 0)
-            RelatedDigitalRequest.sendEventRequest(rdEndpoint: .logger, properties: event,
-                                             headers: loggerHeaders, timeoutInterval: timeoutInterval,
+            RDRequest.sendEventRequest(rdEndpoint: .logger, properties: event, headers: loggerHeaders,
                                              completion: { [loggerSemaphore] cookies in
                                         if let cookies = cookies {
                                             for cookie in cookies {
@@ -41,8 +40,7 @@ class RDSend {
                                         loggerSemaphore.signal()
             })
 
-            RelatedDigitalRequest.sendEventRequest(rdEndpoint: .realtime, properties: event,
-                                             headers: realTimeHeaders, timeoutInterval: timeoutInterval,
+            RDRequest.sendEventRequest(rdEndpoint: .realtime, properties: event, headers: realTimeHeaders,
                                              completion: { [realTimeSemaphore] cookies in
                                         if let cookies = cookies {
                                             for cookie in cookies {
@@ -67,7 +65,7 @@ class RDSend {
         return mutableCookie
     }
 
-    private func prepareHeaders(_ rdEndpoint: RDEndpoint, event: [String: String], rdUser: RelatedDigitalUser, rdCookie: RDCookie) -> [String: String] {
+    private func prepareHeaders(_ rdEndpoint: RDEndpoint, event: [String: String], rdUser: RDUser, rdCookie: RDCookie) -> [String: String] {
         var headers = [String: String]()
         headers["Referer"] = event[RDConstants.uriKey] ?? ""
         headers["User-Agent"] = rdUser.userAgent

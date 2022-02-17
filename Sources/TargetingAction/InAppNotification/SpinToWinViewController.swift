@@ -279,7 +279,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                         props["promoauth"] = "\(self.spinToWin!.promoAuth)"
                         self.sliceText = randomDisplay
                         
-                        RelatedDigitalRequest.sendPromotionCodeRequest(properties: props, completion: { (result: [String: Any]?, error: RelatedDigitalError?) in
+                        RDRequest.sendPromotionCodeRequest(properties: props, completion: { (result: [String: Any]?, error: RDError?) in
                             var selectedIndex = randomIndex as Int
                             var selectedPromoCode = ""
                             if error == nil, let res = result, let success = res["success"] as? Bool, success, let promocode = res["promocode"] as? String, !promocode.isEmptyOrWhitespace {
@@ -316,7 +316,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "openUrl", let urlString = event["url"] as? String, let url = URL(string: urlString) {
-                    let app = RelatedDigitalInstance.sharedUIApplication()
+                    let app = RDInstance.sharedUIApplication()
                     app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: url, waitUntilDone: true)
                 }
                 

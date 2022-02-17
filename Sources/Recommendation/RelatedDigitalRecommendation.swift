@@ -8,15 +8,15 @@
 import Foundation
 
 class RelatedDigitalRecommendation {
-    let rdProfile: RelatedDigitalProfile
+    let rdProfile: RDProfile
 
-    init(rdProfile: RelatedDigitalProfile) {
+    init(rdProfile: RDProfile) {
         self.rdProfile = rdProfile
     }
 
     func recommend(zoneId: String,
                    productCode: String?,
-                   rdUser: RelatedDigitalUser,
+                   rdUser: RDUser,
                    channel: String,
                    properties: [String: String] = [:],
                    filters: [RelatedDigitalRecommendationFilter] = [],
@@ -54,10 +54,7 @@ class RelatedDigitalRecommendation {
             }
         }
 
-        RelatedDigitalRequest.sendRecommendationRequest(properties: props,
-                                                  headers: [String: String](),
-                                                  timeoutInterval: rdProfile.requestTimeoutInterval,
-                                                  completion: { (results: [Any]?, error: RelatedDigitalError?) in
+        RDRequest.sendRecommendationRequest(properties: props, headers: [String: String](), completion: { (results: [Any]?, error: RDError?) in
             var products = [RelatedDigitalProduct]()
             if error != nil {
                 completion(RelatedDigitalRecommendationResponse(products: [RelatedDigitalProduct](), error: error))

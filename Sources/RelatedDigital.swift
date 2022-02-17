@@ -12,7 +12,7 @@ import UserNotifications
 
 typealias Queue = [[String: String]]
 
-struct RelatedDigitalUser: Codable {
+struct RDUser: Codable {
     var cookieId: String?
     var exVisitorId: String?
     var tokenId: String?
@@ -30,7 +30,7 @@ struct RelatedDigitalUser: Codable {
     var appVersion: String?
 }
 
-struct RelatedDigitalProfile: Codable {
+struct RDProfile: Codable {
     var organizationId: String
     var profileId: String
     var dataSource: String
@@ -41,7 +41,8 @@ struct RelatedDigitalProfile: Codable {
     var maxGeofenceCount: Int
     var isIDFAEnabled: Bool
     var requestTimeoutInterval: TimeInterval {
-        return TimeInterval(requestTimeoutInSeconds)
+        let ti = requestTimeoutInSeconds < 5 ? TimeInterval(30) : TimeInterval(requestTimeoutInSeconds)
+        return ti
     }
 
     var useInsecureProtocol = false
@@ -72,7 +73,7 @@ class urlConstant {
 /// before accesing any instances on RelatedDigital.
 public class RelatedDigital {
     
-    var relatedDigitalInstance: RelatedDigitalInstanceProtocol
+    var relatedDigitalInstance: RDInstanceProtocol
     
     static var _shared: RelatedDigital?
     
@@ -110,19 +111,19 @@ public class RelatedDigital {
             fatalError("organizationId, profileId and dataSource must have value.")
         }
         
-        _shared = RelatedDigital(instance: RelatedDigitalInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource))
+        _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource))
         
     }
     
-    init(instance: RelatedDigitalInstanceProtocol) {
+    init(instance: RDInstanceProtocol) {
         self.relatedDigitalInstance = instance
     }
     
     
     
-    static var rdUser: RelatedDigitalUser { return shared.relatedDigitalInstance.rdUser }
+    static var rdUser: RDUser { return shared.relatedDigitalInstance.rdUser }
     
-    static var rdProfile: RelatedDigitalProfile { return shared.relatedDigitalInstance.rdProfile }
+    static var rdProfile: RDProfile { return shared.relatedDigitalInstance.rdProfile }
     
     
     public static var exVisitorId: String? { return shared.relatedDigitalInstance.exVisitorId }
@@ -223,7 +224,7 @@ public class RelatedDigital {
         shared.relatedDigitalInstance.getFavoriteAttributeActions(actionId: actionId, completion: completion)
     }
 
-    static func showNotification(_ relatedDigitalInAppNotification: RelatedDigitalInAppNotification) {
+    static func showNotification(_ relatedDigitalInAppNotification: RDInAppNotification) {
         shared.relatedDigitalInstance.showNotification(relatedDigitalInAppNotification)
     }
     

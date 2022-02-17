@@ -89,7 +89,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
             let story = self.storyAction.stories[indexPath.row]
             if let storyLink = story.link, let storyUrl = URL(string: storyLink) {
                 RDLogger.info("opening CTA URL: \(storyUrl)")
-                let app = RelatedDigitalInstance.sharedUIApplication()
+                let app = RDInstance.sharedUIApplication()
                 app?.performSelector(onMainThread: NSSelectorFromString("openURL:"),
                                      with: storyUrl, waitUntilDone: true)
                 collectionView.reloadData()
@@ -138,7 +138,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
     }
     
     func getRootViewController() -> UIViewController? {
-        guard let sharedUIApplication = RelatedDigitalInstance.sharedUIApplication() else {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return nil
         }
         if let rootViewController = sharedUIApplication.keyWindow?.rootViewController {

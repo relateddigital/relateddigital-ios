@@ -1,6 +1,6 @@
 //
-//  VisilabsRemoteConfig.swift
-//  VisilabsIOS
+//  RDRemoteConfig.swift
+//  RelatedDigitalIOS
 //
 //  Created by Umut Can ALPARSLAN on 17.09.2021.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public class RelatedDigitalRemoteConfig {
+public class RDRemoteConfig {
     
     var profileId: String
     var firstTime = true
@@ -29,7 +29,7 @@ public class RelatedDigitalRemoteConfig {
         }
         firstTime = false
         RDLogger.info("Sending RemoteConfigRequest")
-        RelatedDigitalRequest.sendRemoteConfigRequest { sIdArr, err in
+        RDRequest.sendRemoteConfigRequest { sIdArr, err in
             if let err = err {
                 RDLogger.error("checkRemoteConfig: Error \(err)")
                 RDPersistence.saveBlock(false)
@@ -54,11 +54,7 @@ public class RelatedDigitalRemoteConfig {
                 return
             }
             let ti = self.firstTime ? TimeInterval(1) : self.remoteConfigFetchTimeInterval
-            self.timer = Timer.scheduledTimer(timeInterval: ti,
-                                              target: self,
-                                              selector: #selector(self.checkRemoteConfig),
-                                              userInfo: nil,
-                                              repeats: false)
+            self.timer = Timer.scheduledTimer(timeInterval: ti, target: self, selector: #selector(self.checkRemoteConfig), userInfo: nil, repeats: false)
         }
     }
     

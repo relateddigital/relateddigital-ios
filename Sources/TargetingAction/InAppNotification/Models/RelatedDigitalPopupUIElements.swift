@@ -227,7 +227,7 @@ extension RelatedDigitalPopupDialogDefaultView {
         return UIImage(named: named, in: bundle, compatibleWith: nil)!.resized(withPercentage: CGFloat(0.75))
     }
 
-    internal func baseSetup(_ notification: RelatedDigitalInAppNotification) {
+    internal func baseSetup(_ notification: RDInAppNotification) {
         if let bgColor = notification.backGroundColor {
             self.backgroundColor = bgColor
         }

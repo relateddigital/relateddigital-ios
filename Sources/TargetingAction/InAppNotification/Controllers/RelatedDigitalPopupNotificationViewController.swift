@@ -11,7 +11,7 @@ import UIKit
 class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificationViewController {
     /// First init flag
     fileprivate var initialized = false
-    weak var relatedDigitalInAppNotification: RelatedDigitalInAppNotification?
+    weak var relatedDigitalInAppNotification: RDInAppNotification?
 
     /// StatusBar display related
     fileprivate let hideStatusBar: Bool
@@ -181,7 +181,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
         viewController.standardView.delegate = self
     }
 
-    public convenience init(notification: RelatedDigitalInAppNotification? = nil,
+    public convenience init(notification: RDInAppNotification? = nil,
                             mailForm: MailSubscriptionViewModel? = nil,
                             scratchToWin: ScratchToWinModel? = nil) {
 
@@ -224,7 +224,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
      - returns: Popup dialog with a custom view controller
      */
     public init(
-        notification: RelatedDigitalInAppNotification?,
+        notification: RDInAppNotification?,
         mailForm: MailSubscriptionViewModel?,
         scratchToWin: ScratchToWinModel?,
         viewController: UIViewController,
@@ -285,7 +285,7 @@ class RelatedDigitalPopupNotificationViewController: RelatedDigitalBaseNotificat
     func openSecondPopup() {
         commonButtonAction()
         guard let type = self.notification?.secondPopupType else { return }
-        var not: RelatedDigitalInAppNotification?
+        var not: RDInAppNotification?
         switch type {
         case .feedback:
             let threshold = Double(self.notification?.secondPopupMinPoint ?? "3.0") ?? 3.0
@@ -513,7 +513,7 @@ internal extension RelatedDigitalPopupNotificationViewController {
 
     }
     // Creates a second popup with first popup properties
-    func createSecondPopup() -> RelatedDigitalInAppNotification? {
+    func createSecondPopup() -> RDInAppNotification? {
         if let not = self.notification {
             let point = viewController.standardView.npsView.rating
             var promo: String?
@@ -534,7 +534,7 @@ internal extension RelatedDigitalPopupNotificationViewController {
             default:
                 type = .imageTextButton
             }
-            return RelatedDigitalInAppNotification(actId: not.actId, type: type, messageTitle: not.secondPopupTitle, messageBody: not.secondPopupBody, buttonText: not.secondPopupButtonText, iosLink: not.iosLink, imageUrlString: not.secondImageUrlString1, visitorData: not.visitorData, visitData: not.visitData, queryString: not.queryString, messageTitleColor: not.messageTitleColor?.toHexString(), messageTitleTextSize: not.secondPopupBodyTextSize, messageBodyColor: not.messageBodyColor?.toHexString(), messageBodyTextSize: not.secondPopupBodyTextSize, fontFamily: not.fontFamily, customFont: not.customFont, closePopupActionType: not.closePopupActionType, backGround: not.backGroundColor?.toHexString(), closeButtonColor: closeButtonColor, buttonTextColor: not.buttonTextColor?.toHexString(), buttonColor: not.buttonColor?.toHexString(), alertType: "", closeButtonText: not.closeButtonText, promotionCode: promo, promotionTextColor: not.promotionTextColor?.toHexString(), promotionBackgroundColor: not.promotionBackgroundColor?.toHexString(), numberColors: nil, waitingTime: 0, secondPopupType: nil, secondPopupTitle: nil, secondPopupBody: nil, secondPopupBodyTextSize: nil, secondPopupButtonText: nil, secondImageUrlString1: nil, secondImageUrlString2: not.secondImageUrlString2, secondPopupMinPoint: nil, previousPopupPoint: point, position: .bottom)
+            return RDInAppNotification(actId: not.actId, type: type, messageTitle: not.secondPopupTitle, messageBody: not.secondPopupBody, buttonText: not.secondPopupButtonText, iosLink: not.iosLink, imageUrlString: not.secondImageUrlString1, visitorData: not.visitorData, visitData: not.visitData, queryString: not.queryString, messageTitleColor: not.messageTitleColor?.toHexString(), messageTitleTextSize: not.secondPopupBodyTextSize, messageBodyColor: not.messageBodyColor?.toHexString(), messageBodyTextSize: not.secondPopupBodyTextSize, fontFamily: not.fontFamily, customFont: not.customFont, closePopupActionType: not.closePopupActionType, backGround: not.backGroundColor?.toHexString(), closeButtonColor: closeButtonColor, buttonTextColor: not.buttonTextColor?.toHexString(), buttonColor: not.buttonColor?.toHexString(), alertType: "", closeButtonText: not.closeButtonText, promotionCode: promo, promotionTextColor: not.promotionTextColor?.toHexString(), promotionBackgroundColor: not.promotionBackgroundColor?.toHexString(), numberColors: nil, waitingTime: 0, secondPopupType: nil, secondPopupTitle: nil, secondPopupBody: nil, secondPopupBodyTextSize: nil, secondPopupButtonText: nil, secondImageUrlString1: nil, secondImageUrlString2: not.secondImageUrlString2, secondPopupMinPoint: nil, previousPopupPoint: point, position: .bottom)
         }
         return nil
     }

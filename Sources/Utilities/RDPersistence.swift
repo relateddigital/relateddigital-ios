@@ -22,7 +22,7 @@ public class RDPersistence {
         return urlUnwrapped
     }
     
-    class func archiveUser(_ rdUser: RelatedDigitalUser) {
+    class func archiveUser(_ rdUser: RDUser) {
         archiveQueueUtility.sync { [rdUser] in
             let propertiesFilePath = filePath(filename: RDConstants.userArchiveKey)
             guard let path = propertiesFilePath else {
@@ -55,8 +55,8 @@ public class RDPersistence {
     
     // TO_DO: bunu ExceptionWrapper içine al
     // swiftlint:disable cyclomatic_complexity
-    class func unarchiveUser() -> RelatedDigitalUser {
-        var relatedDigitalUser = RelatedDigitalUser()
+    class func unarchiveUser() -> RDUser {
+        var relatedDigitalUser = RDUser()
         // Before Visilabs.identity is used as archive key, to retrieve Visilabs.cookieID set by objective-c library
         // we added this control.
         if let cidfp = filePath(filename: RDConstants.identityArchiveKey),
@@ -244,15 +244,15 @@ public class RDPersistence {
         return readUserDefaults(RDConstants.userDefaultsBlockKey) as? Bool ?? false
     }
     
-    static func saveRelatedDigitalProfile(_ rdProfile: RelatedDigitalProfile) {
+    static func saveRDProfile(_ rdProfile: RDProfile) {
         if let encodedRDProfile = try? JSONEncoder().encode(rdProfile) {
             saveUserDefaults(RDConstants.userDefaultsProfileKey, withObject: encodedRDProfile)
         }
     }
     
-    static func readRDProfile() -> RelatedDigitalProfile? {
+    static func readRDProfile() -> RDProfile? {
         if let savedRDProfile = readUserDefaults(RDConstants.userDefaultsProfileKey) as? Data {
-            if let loadedRDProfile = try? JSONDecoder().decode(RelatedDigitalProfile.self, from: savedRDProfile) {
+            if let loadedRDProfile = try? JSONDecoder().decode(RDProfile.self, from: savedRDProfile) {
                 return loadedRDProfile
             }
         }

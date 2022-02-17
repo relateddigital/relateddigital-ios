@@ -9,9 +9,9 @@ import Foundation
 
 class RDAnalytics {
     
-    let rdProfile: RelatedDigitalProfile
+    let rdProfile: RDProfile
     
-    init(rdProfile: RelatedDigitalProfile) {
+    init(rdProfile: RDProfile) {
         self.rdProfile = rdProfile
     }
     
