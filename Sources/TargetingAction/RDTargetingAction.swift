@@ -549,7 +549,7 @@ class RDTargetingAction {
     // MARK: - Favorites
 
     func getFavorites(rdUser: RDUser, actionId: Int? = nil,
-                      completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
+                      completion: @escaping ((_ response: RDFavoriteAttributeActionResponse) -> Void)) {
 
         var props = Properties()
         props[RDConstants.organizationIdKey] = self.rdProfile.organizationId
@@ -580,8 +580,8 @@ class RDTargetingAction {
     }
 
     private func parseFavoritesResponse(_ result: [String: Any]?,
-                                        _ error: RDError?) -> RelatedDigitalFavoriteAttributeActionResponse {
-        var favoritesResponse = [RelatedDigitalFavoriteAttribute: [String]]()
+                                        _ error: RDError?) -> RDFavoriteAttributeActionResponse {
+        var favoritesResponse = [RDFavoriteAttribute: [String]]()
         var errorResponse: RDError?
         if let error = error {
             errorResponse = error
@@ -591,7 +591,7 @@ class RDTargetingAction {
                     if let actiondata = favoriteAttributeAction[RDConstants.actionData] as? [String: Any?] {
                         if let favorites = actiondata[RDConstants.favorites] as? [String: [String]?] {
                             for favorite in favorites {
-                                if let favoriteAttribute = RelatedDigitalFavoriteAttribute(rawValue: favorite.key),
+                                if let favoriteAttribute = RDFavoriteAttribute(rawValue: favorite.key),
                                    let favoriteValues = favorite.value {
                                     favoritesResponse[favoriteAttribute].mergeStringArray(favoriteValues)
                                 }
@@ -603,13 +603,13 @@ class RDTargetingAction {
         } else {
             errorResponse = RDError.noData
         }
-        return RelatedDigitalFavoriteAttributeActionResponse(favorites: favoritesResponse, error: errorResponse)
+        return RDFavoriteAttributeActionResponse(favorites: favoritesResponse, error: errorResponse)
     }
 
     // MARK: - Story
 
-    var relatedDigitalStoryHomeViewControllers = [String: RelatedDigitalStoryHomeViewController]()
-    var relatedDigitalStoryHomeViews = [String: RelatedDigitalStoryHomeView]()
+    var rdStoryHomeViewControllers = [String: RDStoryHomeViewController]()
+    var rdStoryHomeViews = [String: RDStoryHomeView]()
 
     func getStories(rdUser: RDUser, guid: String, actionId: Int? = nil, completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
 

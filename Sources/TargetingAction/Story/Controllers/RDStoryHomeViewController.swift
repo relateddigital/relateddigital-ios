@@ -1,17 +1,14 @@
 //
-//  VisilabsStoryHomeViewController.swift
-//  VisilabsIOS
+//  RDStoryHomeViewController.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 28.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
 import UIKit
 
-public class RelatedDigitalStoryHomeViewController: NSObject,
-                                              UICollectionViewDataSource,
-                                              UICollectionViewDelegate,
-                                              UICollectionViewDelegateFlowLayout {
+public class RDStoryHomeViewController: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     weak var collectionView: UICollectionView! {
         didSet {
@@ -20,7 +17,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
         }
     }
     
-    public weak var urlDelegate: RelatedDigitalStoryURLDelegate?
+    public weak var urlDelegate: RDStoryURLDelegate?
     
     var storyAction: RelatedDigitalStoryAction!
     var storiesLoaded = false
@@ -164,7 +161,7 @@ public class RelatedDigitalStoryHomeViewController: NSObject,
 }
 
 @objc
-public protocol RelatedDigitalStoryURLDelegate: NSObjectProtocol {
+public protocol RDStoryURLDelegate: NSObjectProtocol {
     @objc
     func urlClicked( _ url: URL)
 }

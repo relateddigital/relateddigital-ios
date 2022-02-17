@@ -33,11 +33,11 @@ protocol RDInstanceProtocol {
     func subscribeMail(click: String, actid: String, auth: String, mail: String)
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport)
     func trackRecommendationClick(qs: String)
-    func getStoryView(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?) -> RelatedDigitalStoryHomeView
-    func getStoryViewAsync(actionId: Int?, urlDelegate: RelatedDigitalStoryURLDelegate?, completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void))
+    func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView
+    func getStoryViewAsync(actionId: Int?, urlDelegate: RDStoryURLDelegate?, completion: @escaping ((_ storyHomeView: RDStoryHomeView?) -> Void))
     func recommend(zoneId: String, productCode: String?, filters: [RDRecommendationFilter], properties: Properties,
                    completion: @escaping ((_ response: RDRecommendationResponse) -> Void))
-    func getFavoriteAttributeActions(actionId: Int?, completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void))
+    func getFavoriteAttributeActions(actionId: Int?, completion: @escaping ((_ response: RDFavoriteAttributeActionResponse) -> Void))
 }
 
 public class RDInstance: RDInstanceProtocol {
@@ -267,11 +267,7 @@ extension RDInstance {
                 user = self.rdUser
                 chan = self.rdProfile.channel
             }
-            let result = self.rdEventInstance.customEvent(pageName: pageName,
-                                                          properties: properties,
-                                                          eventsQueue: eQueue,
-                                                          rdUser: user,
-                                                          channel: chan)
+            let result = self.rdEventInstance.customEvent(pageName: pageName, properties: properties, eventsQueue: eQueue, rdUser: user, channel: chan)
             self.readWriteLock.write {
                 self.eventsQueue = result.eventsQueque
                 self.rdUser = result.rdUser
@@ -313,10 +309,7 @@ extension RDInstance {
                 user = strongSelf.rdUser
                 chan = strongSelf.rdProfile.channel
             }
-            let result = strongSelf.rdEventInstance.customEvent(properties: properties,
-                                                                eventsQueue: eQueue,
-                                                                rdUser: user,
-                                                                channel: chan)
+            let result = strongSelf.rdEventInstance.customEvent(properties: properties, eventsQueue: eQueue, rdUser: user, channel: chan)
             strongSelf.readWriteLock.write {
                 strongSelf.eventsQueue = result.eventsQueque
                 strongSelf.rdUser = result.rdUser
@@ -402,9 +395,7 @@ extension RDInstance {
                 var user = RDUser()
                 var rdCookie = RDCookie()
                 self.readWriteLock.read {
-                    eQueue = self.eventsQueue
-                    user = self.rdUser
-                    rdCookie = self.rdCookie
+                    (eQueue, user, rdCookie) = (self.eventsQueue, self.rdUser, self.rdCookie)
                 }
                 self.readWriteLock.write {
                     self.eventsQueue.removeAll()
@@ -423,13 +414,11 @@ extension RDInstance {
 // MARK: - Favorite Attribute Actions
 
 extension RDInstance {
-    public func getFavoriteAttributeActions(actionId: Int? = nil,
-                                            completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse)
-                                                                   -> Void)) {
+    public func getFavoriteAttributeActions(actionId: Int? = nil, completion: @escaping ((_ response: RDFavoriteAttributeActionResponse) -> Void)) {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
-            completion(RelatedDigitalFavoriteAttributeActionResponse(favorites: [RelatedDigitalFavoriteAttribute: [String]](), error: .noData))
+            completion(RDFavoriteAttributeActionResponse(favorites: [RDFavoriteAttribute: [String]](), error: .noData))
             return
         }
         
@@ -529,8 +518,7 @@ extension RDInstance: RelatedDigitalInAppNotificationsDelegate {
 
 extension RDInstance {
     
-    public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil
-                                  , completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void)) {
+    public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil, completion: @escaping ((_ storyHomeView: RDStoryHomeView?) -> Void)) {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
@@ -539,12 +527,12 @@ extension RDInstance {
         }
         
         let guid = UUID().uuidString
-        let storyHomeView = RelatedDigitalStoryHomeView()
-        let storyHomeViewController = RelatedDigitalStoryHomeViewController()
+        let storyHomeView = RDStoryHomeView()
+        let storyHomeViewController = RDStoryHomeViewController()
         storyHomeViewController.urlDelegate = urlDelegate
         storyHomeView.controller = storyHomeViewController
-        rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
-        rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
+        rdTargetingActionInstance.rdStoryHomeViewControllers[guid] = storyHomeViewController
+        rdTargetingActionInstance.rdStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
         
@@ -552,17 +540,14 @@ extension RDInstance {
             guard let self = self else { return }
             self.networkQueue.async { [weak self, actionId, guid] in
                 guard let self = self else { return }
-                self.rdTargetingActionInstance.getStories(rdUser: self.rdUser,
-                                                          guid: guid,
-                                                          actionId: actionId,
-                                                          completion: { response in
+                self.rdTargetingActionInstance.getStories(rdUser: self.rdUser, guid: guid, actionId: actionId, completion: { response in
                     if let error = response.error {
                         RDLogger.error(error)
                         completion(nil)
                     } else {
                         if let guid = response.guid, response.storyActions.count > 0,
-                           let storyHomeViewController = self.rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
-                           let storyHomeView = self.rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
+                           let storyHomeViewController = self.rdTargetingActionInstance.rdStoryHomeViewControllers[guid],
+                           let storyHomeView = self.rdTargetingActionInstance.rdStoryHomeViews[guid] {
                             DispatchQueue.main.async {
                                 storyHomeViewController.loadStoryAction(response.storyActions.first!)
                                 storyHomeView.collectionView.reloadData()
@@ -579,20 +564,20 @@ extension RDInstance {
         }
     }
     
-    public func getStoryView(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil) -> RelatedDigitalStoryHomeView {
+    public func getStoryView(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil) -> RDStoryHomeView {
         
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
-            return RelatedDigitalStoryHomeView()
+            return RDStoryHomeView()
         }
         
         let guid = UUID().uuidString
-        let storyHomeView = RelatedDigitalStoryHomeView()
-        let storyHomeViewController = RelatedDigitalStoryHomeViewController()
+        let storyHomeView = RDStoryHomeView()
+        let storyHomeViewController = RDStoryHomeViewController()
         storyHomeViewController.urlDelegate = urlDelegate
         storyHomeView.controller = storyHomeViewController
-        rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid] = storyHomeViewController
-        rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] = storyHomeView
+        rdTargetingActionInstance.rdStoryHomeViewControllers[guid] = storyHomeViewController
+        rdTargetingActionInstance.rdStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
         
@@ -608,8 +593,8 @@ extension RDInstance {
                         RDLogger.error(error)
                     } else {
                         if let guid = response.guid, response.storyActions.count > 0,
-                           let storyHomeViewController = self.rdTargetingActionInstance.relatedDigitalStoryHomeViewControllers[guid],
-                           let storyHomeView = self.rdTargetingActionInstance.relatedDigitalStoryHomeViews[guid] {
+                           let storyHomeViewController = self.rdTargetingActionInstance.rdStoryHomeViewControllers[guid],
+                           let storyHomeView = self.rdTargetingActionInstance.rdStoryHomeViews[guid] {
                             DispatchQueue.main.async {
                                 storyHomeViewController.loadStoryAction(response.storyActions.first!)
                                 storyHomeView.collectionView.reloadData()

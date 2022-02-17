@@ -193,12 +193,11 @@ public class RelatedDigital {
         shared.relatedDigitalInstance.logout()
     }
     
-    public static func getStoryView(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil) -> RelatedDigitalStoryHomeView {
+    public static func getStoryView(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil) -> RDStoryHomeView {
         shared.relatedDigitalInstance.getStoryView(actionId: actionId, urlDelegate: urlDelegate)
     }
     
-    public static func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RelatedDigitalStoryURLDelegate? = nil
-                                  , completion: @escaping ((_ storyHomeView: RelatedDigitalStoryHomeView?) -> Void)) {
+    public static func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil, completion: @escaping ((_ storyHomeView: RDStoryHomeView?) -> Void)) {
         shared.relatedDigitalInstance.getStoryViewAsync(actionId: actionId, urlDelegate: urlDelegate, completion: completion)
     }
     
@@ -210,7 +209,7 @@ public class RelatedDigital {
         shared.relatedDigitalInstance.trackRecommendationClick(qs: qs)
     }
     
-    public static func getFavoriteAttributeActions(actionId: Int? = nil, completion: @escaping ((_ response: RelatedDigitalFavoriteAttributeActionResponse) -> Void)) {
+    public static func getFavoriteAttributeActions(actionId: Int? = nil, completion: @escaping ((_ response: RDFavoriteAttributeActionResponse) -> Void)) {
         shared.relatedDigitalInstance.getFavoriteAttributeActions(actionId: actionId, completion: completion)
     }
 

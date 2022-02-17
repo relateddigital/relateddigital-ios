@@ -40,7 +40,7 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
         return button
     }()
     
-    var storyHomeView: RelatedDigitalStoryHomeView?
+    var storyHomeView: RDStoryHomeView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -130,7 +130,7 @@ extension UIView {
     }
 }
 
-extension StoryViewController: RelatedDigitalStoryURLDelegate {
+extension StoryViewController: RDStoryURLDelegate {
     func urlClicked(_ url: URL) {
         print("You can handle url as you like!")
     }

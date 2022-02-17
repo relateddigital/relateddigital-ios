@@ -1,13 +1,13 @@
 //
-//  VisilabsFavoriteAttribute.swift
-//  VisilabsIOS
+//  RDFavoriteAttribute.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 25.08.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
 
-public enum RelatedDigitalFavoriteAttribute: String, Encodable {
+public enum RDFavoriteAttribute: String, Encodable {
     case ageGroup
     case attr1
     case attr2

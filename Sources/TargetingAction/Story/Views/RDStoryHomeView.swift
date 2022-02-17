@@ -1,13 +1,13 @@
 //
-//  VisilabsStoryHomeView.swift
-//  VisilabsIOS
+//  RDStoryHomeView.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 22.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
 
-public class RelatedDigitalStoryHomeView: UIView {
+public class RDStoryHomeView: UIView {
 
     // MARK: - iVars
     lazy var layout: UICollectionViewFlowLayout = {
@@ -39,7 +39,7 @@ public class RelatedDigitalStoryHomeView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public var controller: RelatedDigitalStoryHomeViewController?
+    public var controller: RDStoryHomeViewController?
 
     func setDelegates() {
         self.collectionView.delegate = controller

@@ -55,7 +55,7 @@ class RDLocationManager: NSObject {
         }
         lowPowerLocationManager.startUpdatingLocation()
         locationManager.startMonitoringSignificantLocationChanges()
-
+        
         self.currentGeoLocationValue = CLLocationCoordinate2DMake(0, 0)
         
         if let loc = self.locationManager.location {
