@@ -65,7 +65,7 @@ class InAppViewController: FormViewController {
     
 }
 
-extension InAppViewController: RelatedDigitalInappButtonDelegate {
+extension InAppViewController: RDInappButtonDelegate {
     func didTapButton(_ notification: RDInAppNotification) {
         print("notification did tapped...")
         print(notification)

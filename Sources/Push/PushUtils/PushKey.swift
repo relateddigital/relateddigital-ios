@@ -12,7 +12,7 @@ class PushKey {
                     appAlias not provided. Please use RelatedDigital.configure(::) function first.
                     For more information visit https://github.com/relateddigital/relateddigital-ios
                     """
-    internal static let sdkVersion = "4.0.0"
+    
     internal static let tokenKey = "EURO_TOKEN_KEY"
     internal static let registerKey = "EURO_REGISTER_KEY"
     internal static let euroLastMessageKey = "EURO_LAST_MESSAGE_KEY"

@@ -8,16 +8,16 @@
 import Foundation
 
 class PushReadHandler {
-    private let readWriteLock: PushReadWriteLock
-    var push: Push!
+    private let readWriteLock: RDReadWriteLock
+    var push: RDPush!
     private var inProgressPushId: String?
     private var inProgressEmPushSp: String?
-    private var pushMessage: PushMessage?
+    private var pushMessage: RDPushMessage?
     
     
-    init(push: Push) {
+    init(push: RDPush) {
         self.push = push
-        self.readWriteLock = PushReadWriteLock(label: "PushReadHandler")
+        self.readWriteLock = RDReadWriteLock(label: "PushReadHandler")
     }
     
     // MARK: Report Methods
@@ -25,22 +25,22 @@ class PushReadHandler {
     /// Reports recieved push to RelatedDigital services
     /// - Parameters:
     ///   - message: Push data
-    internal func reportRead(message: PushMessage) {
+    internal func reportRead(message: RDPushMessage) {
         
         guard let appKey = push.subscription.appKey, let token = push.subscription.token else {
-            PushLog.error("EMReadHandler reportRead appKey or token does not exist")
+            RDLogger.error("EMReadHandler reportRead appKey or token does not exist")
             return
         }
         
         var request: PushRetentionRequest?
         
         guard let pushID = message.pushId, let emPushSp = message.emPushSp else {
-            PushLog.warning("EMReadHandler pushId or emPushSp is empty.")
+            RDLogger.warn("EMReadHandler pushId or emPushSp is empty.")
             return
         }
         
         if PushUserDefaultsUtils.pushIdListContains(pushId: pushID) {
-            PushLog.warning("EMReadHandler pushId already sent.")
+            RDLogger.warn("EMReadHandler pushId already sent.")
             return
         }
         
@@ -53,7 +53,7 @@ class PushReadHandler {
         }
         
         if !isRequestValid {
-            PushLog.warning("EMReadHandler request not valid. Retention request with pushId: \(pushID) and emPushSp \(emPushSp) already sent.")
+            RDLogger.warn("EMReadHandler request not valid. Retention request with pushId: \(pushID) and emPushSp \(emPushSp) already sent.")
             return
         }
         
@@ -61,7 +61,7 @@ class PushReadHandler {
             inProgressPushId = pushID
             inProgressEmPushSp = emPushSp
             pushMessage = message
-            PushLog.info("reportRead: \(message.encoded)")
+            RDLogger.info("reportRead: \(message.encoded)")
             request = PushRetentionRequest(key: appKey, token: token, status: PushKey.euroReadStatus, pushId: pushID, emPushSp: emPushSp)
         }
         
@@ -93,8 +93,8 @@ class PushReadHandler {
     internal func checkUserUnreportedMessages() {
         let messageJson = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.euroLastMessageKey) as? Data
         if let messageJson = messageJson {
-            PushLog.info("Old message : \(messageJson)")
-            let lastMessage = try? JSONDecoder().decode(PushMessage.self, from: messageJson)
+            RDLogger.info("Old message : \(messageJson)")
+            let lastMessage = try? JSONDecoder().decode(RDPushMessage.self, from: messageJson)
             if let lastMessage = lastMessage {
                 reportRead(message: lastMessage)
             }

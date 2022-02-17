@@ -1,5 +1,5 @@
 //
-//  PushMessage.swift
+//  RDPushMessage.swift
 //  RelatedDigitalIOS
 //
 //  Created by Egemen on 14.02.2022.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PushMessage: PushCodable {
+public struct RDPushMessage: PushCodable {
     
     public func getDate() -> Date? {
         guard let dateString = formattedDateString  else {

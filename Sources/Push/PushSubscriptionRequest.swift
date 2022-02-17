@@ -79,7 +79,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
         self.firstTime = 0
         self.osName = device.systemName
         self.osVersion = device.systemVersion
-        self.sdkVersion = PushKey.sdkVersion
+        self.sdkVersion = RDConstants.sdkVersion
         self.deviceName = device.name
         self.deviceType = deviceType
 

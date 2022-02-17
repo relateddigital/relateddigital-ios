@@ -55,7 +55,7 @@ class PushUserDefaultsUtils {
     
     // MARK: - Retention
     
-    private static let pushIdLock = PushReadWriteLock(label: "PushIdLock")
+    private static let pushIdLock = RDReadWriteLock(label: "PushIdLock")
     
     static func saveReadPushId(pushId: String) {
         var pushIdList = getReadPushIdList()
@@ -65,10 +65,10 @@ class PushUserDefaultsUtils {
                 if let pushIdListData = try? JSONEncoder().encode(pushIdList) {
                     saveUserDefaults(key: PushKey.euroReadPushIdListKey, value: pushIdListData as AnyObject)
                 } else {
-                    PushLog.warning("Can not encode pushIdList : \(String(describing: pushIdList))")
+                    RDLogger.warn("Can not encode pushIdList : \(String(describing: pushIdList))")
                 }
             } else {
-                PushLog.warning("PushId already exists. pushId: \(pushId)")
+                RDLogger.warn("PushId already exists. pushId: \(pushId)")
             }
         }
     }
@@ -91,35 +91,35 @@ class PushUserDefaultsUtils {
     
     // MARK: - Deliver
     
-    private static let payloadLock = PushReadWriteLock(label: "PushPayloadLock")
+    private static let payloadLock = RDReadWriteLock(label: "PushPayloadLock")
     
-    static func savePayload(payload: PushMessage) {
+    static func savePayload(payload: RDPushMessage) {
         var payload = payload
         if let pushId = payload.pushId {
             payload.formattedDateString = PushTools.formatDate(Date())
             var recentPayloads = getRecentPayloads()
             payloadLock.write {
                 if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
-                    PushLog.warning("Payload is not valid, there is already another payload with same pushId  New : \(payload.encoded) Existing: \(existingPayload.encoded)")
+                    RDLogger.warn("Payload is not valid, there is already another payload with same pushId  New : \(payload.encoded) Existing: \(existingPayload.encoded)")
                 } else {
                     recentPayloads.insert(payload, at: 0)
                     if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
                         saveUserDefaults(key: PushKey.euroPayloadsKey, value: recentPayloadsData as AnyObject)
                     } else {
-                        PushLog.warning("Can not encode recentPayloads : \(String(describing: recentPayloads))")
+                        RDLogger.warn("Can not encode recentPayloads : \(String(describing: recentPayloads))")
                     }
                 }
             }
         } else {
-            PushLog.warning("Payload is not valid, pushId missing : \(payload.encoded)")
+            RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
         }
     }
     
-    static func getRecentPayloads() -> [PushMessage] {
-        var finalPayloads = [PushMessage]()
+    static func getRecentPayloads() -> [RDPushMessage] {
+        var finalPayloads = [RDPushMessage]()
         payloadLock.read {
             if let payloadsJsonData = retrieveUserDefaults(userKey: PushKey.euroPayloadsKey) as? Data {
-                if let payloads = try? JSONDecoder().decode([PushMessage].self, from: payloadsJsonData) {
+                if let payloads = try? JSONDecoder().decode([RDPushMessage].self, from: payloadsJsonData) {
                     finalPayloads = payloads
                 }
             }
@@ -149,7 +149,7 @@ class PushUserDefaultsUtils {
     
     // MARK: - Subscription
     
-    private static let subscriptionLock = PushReadWriteLock(label: "EMSubscriptionLock")
+    private static let subscriptionLock = RDReadWriteLock(label: "EMSubscriptionLock")
     
     static func saveLastSuccessfulSubscriptionTime(time: Date) {
         subscriptionLock.write {
@@ -172,7 +172,7 @@ class PushUserDefaultsUtils {
             if let subscriptionData = try? JSONEncoder().encode(subscription) {
                 saveUserDefaults(key: PushKey.euroLastSuccessfulSubscriptionKey, value: subscriptionData as AnyObject)
             } else {
-                PushLog.error("EMUserDefaultsUtils saveLastSuccessfulSubscription encode error.")
+                RDLogger.error("EMUserDefaultsUtils saveLastSuccessfulSubscription encode error.")
             }
         }
     }
@@ -184,7 +184,7 @@ class PushUserDefaultsUtils {
                 if let subscription = try? JSONDecoder().decode(PushSubscriptionRequest.self, from: lastSuccessfulSubscriptionData) {
                     lastSuccessfulSubscription = subscription
                 } else {
-                    PushLog.error("EMUserDefaultsUtils getLastSuccessfulSubscription decode error.")
+                    RDLogger.error("EMUserDefaultsUtils getLastSuccessfulSubscription decode error.")
                 }
             }
         }

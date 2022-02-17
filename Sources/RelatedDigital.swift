@@ -10,54 +10,6 @@ import SystemConfiguration
 import UIKit
 import UserNotifications
 
-struct RDUser: Codable {
-    var cookieId: String?
-    var exVisitorId: String?
-    var tokenId: String?
-    var appId: String?
-    var visitData: String?
-    var visitorData: String?
-    var userAgent: String?
-    var identifierForAdvertising: String?
-    var sdkVersion: String?
-    var lastEventTime: String?
-    var nrv = 0
-    var pviv = 0
-    var tvc = 0
-    var lvt: String?
-    var appVersion: String?
-}
-
-struct RDProfile: Codable {
-    var organizationId: String
-    var profileId: String
-    var dataSource: String
-    var channel: String
-    var requestTimeoutInSeconds: Int
-    var geofenceEnabled: Bool
-    var inAppNotificationsEnabled: Bool
-    var maxGeofenceCount: Int
-    var isIDFAEnabled: Bool
-    var requestTimeoutInterval: TimeInterval {
-        let ti = requestTimeoutInSeconds < 5 ? TimeInterval(30) : TimeInterval(requestTimeoutInSeconds)
-        return ti
-    }
-    var useInsecureProtocol = false
-}
-
-class urlConstant {
-    static var shared = urlConstant()
-    var urlPrefix = "s.visilabs.net"
-    var securityTag = "https"
-    var organizationId = "676D325830564761676D453D"
-    var profileId = "356467332F6533766975593D"
-    
-    func setTest() {
-        urlPrefix = "tests.visilabs.net"
-        securityTag = "http"
-    }
-}
-
 
 /**
  * RelatedDigital manages the shared state for all RelatedDigital services. RelatedDigital.initialize should be
@@ -70,7 +22,7 @@ class urlConstant {
 /// before accesing any instances on RelatedDigital.
 public class RelatedDigital {
     
-    var relatedDigitalInstance: RDInstanceProtocol
+    var rdInstance: RDInstanceProtocol
     
     static var _shared: RelatedDigital?
     
@@ -113,119 +65,203 @@ public class RelatedDigital {
     }
     
     init(instance: RDInstanceProtocol) {
-        self.relatedDigitalInstance = instance
+        self.rdInstance = instance
     }
     
+    static var rdUser: RDUser { return shared.rdInstance.rdUser }
     
+    static var rdProfile: RDProfile { return shared.rdInstance.rdProfile }
     
-    static var rdUser: RDUser { return shared.relatedDigitalInstance.rdUser }
-    
-    static var rdProfile: RDProfile { return shared.relatedDigitalInstance.rdProfile }
-    
-    
-    public static var exVisitorId: String? { return shared.relatedDigitalInstance.exVisitorId }
+    public static var exVisitorId: String? { return shared.rdInstance.exVisitorId }
     
     public static var locationServicesEnabledForDevice: Bool {
-        return shared.relatedDigitalInstance.locationServicesEnabledForDevice
+        return shared.rdInstance.locationServicesEnabledForDevice
     }
     
     public static var locationServiceStateStatusForApplication: RDCLAuthorizationStatus {
-        return shared.relatedDigitalInstance.locationServiceStateStatusForApplication
+        return shared.rdInstance.locationServiceStateStatusForApplication
     }
     
-    public static var inappButtonDelegate: RelatedDigitalInappButtonDelegate? {
+    public static var inappButtonDelegate: RDInappButtonDelegate? {
         get {
-            return shared.relatedDigitalInstance.inappButtonDelegate
+            return shared.rdInstance.inappButtonDelegate
         }
         set {
-            shared.relatedDigitalInstance.inappButtonDelegate = newValue
+            shared.rdInstance.inappButtonDelegate = newValue
         }
     }
     
     public static var loggingEnabled: Bool {
         get {
-            return shared.relatedDigitalInstance.loggingEnabled
+            return shared.rdInstance.loggingEnabled
         }
         set {
-            shared.relatedDigitalInstance.loggingEnabled = newValue
+            shared.rdInstance.loggingEnabled = newValue
         }
     }
     
     public static var inAppNotificationsEnabled: Bool {
         get {
-            return shared.relatedDigitalInstance.inAppNotificationsEnabled
+            return shared.rdInstance.inAppNotificationsEnabled
         }
         set {
-            shared.relatedDigitalInstance.inAppNotificationsEnabled = newValue
+            shared.rdInstance.inAppNotificationsEnabled = newValue
         }
     }
     
     public static var geofenceEnabled: Bool {
         get {
-            return shared.relatedDigitalInstance.inAppNotificationsEnabled
+            return shared.rdInstance.inAppNotificationsEnabled
         }
         set {
-            shared.relatedDigitalInstance.inAppNotificationsEnabled = newValue
+            shared.rdInstance.inAppNotificationsEnabled = newValue
         }
     }
     
     public static func requestIDFA() {
-        shared.relatedDigitalInstance.requestIDFA()
+        shared.rdInstance.requestIDFA()
     }
     
     public static func sendLocationPermission() {
-        shared.relatedDigitalInstance.sendLocationPermission()
+        shared.rdInstance.sendLocationPermission()
     }
     
     public static func customEvent(_ pageName: String, properties: Properties) {
-        shared.relatedDigitalInstance.customEvent(pageName, properties: properties)
+        shared.rdInstance.customEvent(pageName, properties: properties)
     }
     
     public static func login(exVisitorId: String, properties: Properties) {
-        shared.relatedDigitalInstance.login(exVisitorId: exVisitorId, properties: properties)
+        shared.rdInstance.login(exVisitorId: exVisitorId, properties: properties)
     }
     
     public static func signUp(exVisitorId: String, properties: Properties) {
-        shared.relatedDigitalInstance.signUp(exVisitorId: exVisitorId, properties: properties)
+        shared.rdInstance.signUp(exVisitorId: exVisitorId, properties: properties)
     }
     
     public static func logout() {
-        shared.relatedDigitalInstance.logout()
+        shared.rdInstance.logout()
     }
     
     public static func getStoryView(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil) -> RDStoryHomeView {
-        shared.relatedDigitalInstance.getStoryView(actionId: actionId, urlDelegate: urlDelegate)
+        shared.rdInstance.getStoryView(actionId: actionId, urlDelegate: urlDelegate)
     }
     
-    public static func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil, completion: @escaping ((_ storyHomeView: RDStoryHomeView?) -> Void)) {
-        shared.relatedDigitalInstance.getStoryViewAsync(actionId: actionId, urlDelegate: urlDelegate, completion: completion)
+    public static func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil, completion: @escaping StoryCompletion) {
+        shared.rdInstance.getStoryViewAsync(actionId: actionId, urlDelegate: urlDelegate, completion: completion)
     }
     
-    public static func recommend(zoneId: String, productCode: String? = nil, filters: [RDRecommendationFilter] = [], properties: Properties = [:], completion: @escaping ((_ response: RDRecommendationResponse) -> Void)){
-        shared.relatedDigitalInstance.recommend(zoneId: zoneId, productCode: productCode, filters: filters, properties: properties, completion: completion)
+    public static func recommend(zoneId: String, productCode: String? = nil, filters: [RDRecommendationFilter] = [], properties: Properties = [:], completion: @escaping RecommendCompletion){
+        shared.rdInstance.recommend(zoneId: zoneId, productCode: productCode, filters: filters, properties: properties, completion: completion)
     }
     
     public static func trackRecommendationClick(qs: String) {
-        shared.relatedDigitalInstance.trackRecommendationClick(qs: qs)
+        shared.rdInstance.trackRecommendationClick(qs: qs)
     }
     
-    public static func getFavoriteAttributeActions(actionId: Int? = nil, completion: @escaping ((_ response: RDFavoriteAttributeActionResponse) -> Void)) {
-        shared.relatedDigitalInstance.getFavoriteAttributeActions(actionId: actionId, completion: completion)
+    public static func getFavoriteAttributeActions(actionId: Int? = nil, completion: @escaping FavoriteAttributeActionCompletion) {
+        shared.rdInstance.getFavoriteAttributeActions(actionId: actionId, completion: completion)
     }
 
     static func showNotification(_ relatedDigitalInAppNotification: RDInAppNotification) {
-        shared.relatedDigitalInstance.showNotification(relatedDigitalInAppNotification)
+        shared.rdInstance.showNotification(relatedDigitalInAppNotification)
     }
     
     static func subscribeSpinToWinMail(actid: String, auth: String, mail: String) {
-        shared.relatedDigitalInstance.subscribeSpinToWinMail(actid: actid, auth: auth, mail: mail)
+        shared.rdInstance.subscribeSpinToWinMail(actid: actid, auth: auth, mail: mail)
     }
     
     static func subscribeMail(click: String, actid: String, auth: String, mail: String) {
-        shared.relatedDigitalInstance.subscribeMail(click: click, actid: actid, auth: auth, mail: mail)
+        shared.rdInstance.subscribeMail(click: click, actid: actid, auth: auth, mail: mail)
     }
     
     static func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
-        shared.relatedDigitalInstance.trackSpinToWinClick(spinToWinReport: spinToWinReport)
+        shared.rdInstance.trackSpinToWinClick(spinToWinReport: spinToWinReport)
+    }
+    
+    
+    // MARK: - Push
+    
+    public static func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil, appGroupsKey: String? = nil) {
+        shared.rdInstance.enablePushNotifications(appAlias: appAlias, launchOptions: launchOptions, appGroupsKey: appGroupsKey)
+    }
+    
+    public static func askForNotificationPermission(register: Bool = false) {
+        shared.rdInstance.askForNotificationPermission(register: register)
+    }
+    
+    public static func askForNotificationPermissionProvisional(register: Bool = false) {
+        shared.rdInstance.askForNotificationPermissionProvisional(register: register)
+    }
+    
+    public static func registerForPushNotifications() {
+        shared.rdInstance.registerForPushNotifications()
+    }
+    
+    public static func setPushNotification(permission: Bool) {
+        shared.rdInstance.setPushNotification(permission: permission)
+    }
+    
+    public static func setPhoneNumber(msisdn: String? = nil, permission: Bool) {
+        shared.rdInstance.setPhoneNumber(msisdn: msisdn, permission: permission)
+    }
+    
+    public static func setEmail(email: String? = nil, permission: Bool) {
+        shared.rdInstance.setEmail(email: email, permission: permission)
+    }
+    
+    public static func setEmail(email: String?) {
+        shared.rdInstance.setEmail(email: email)
+    }
+    
+    public static func setEuroUserId(userKey: String?) {
+        shared.rdInstance.setEuroUserId(userKey: userKey)
+    }
+    
+    public static func setAppVersion(appVersion: String?) {
+        shared.rdInstance.setAppVersion(appVersion: appVersion)
+    }
+    
+    public static func setTwitterId(twitterId: String?) {
+        shared.rdInstance.setTwitterId(twitterId: twitterId)
+    }
+    
+    public static func setAdvertisingIdentifier(adIdentifier: String?) {
+        shared.rdInstance.setAdvertisingIdentifier(adIdentifier: adIdentifier)
+    }
+    
+    public static func setFacebook(facebookId: String?) {
+        shared.rdInstance.setFacebook(facebookId: facebookId)
+    }
+    
+    public static func setUserProperty(key: String, value: String?) {
+        shared.rdInstance.setUserProperty(key: key, value: value)
+    }
+    
+    public static func removeUserProperty(key: String) {
+        shared.rdInstance.removeUserProperty(key: key)
+    }
+    
+    public static func setBadge(count: Int) {
+        shared.rdInstance.setBadge(count: count)
+    }
+    
+    public static func registerToken(tokenData: Data?) {
+        shared.rdInstance.registerToken(tokenData: tokenData)
+    }
+    
+    public static func handlePush(pushDictionary: [AnyHashable: Any]) {
+        shared.rdInstance.handlePush(pushDictionary: pushDictionary)
+    }
+    
+    public static func sync(notification: Notification? = nil) {
+        shared.rdInstance.sync(notification: notification)
+    }
+    
+    public static func registerEmail(email: String, permission: Bool, isCommercial: Bool = false, customDelegate: RDPushDelegate? = nil) {
+        shared.rdInstance.registerEmail(email: email, permission: permission, isCommercial: isCommercial, customDelegate: customDelegate)
+    }
+    
+    public static func getPushMessages(completion: @escaping GetPushMessagesCompletion) {
+        shared.rdInstance.getPushMessages(completion: completion)
     }
 }

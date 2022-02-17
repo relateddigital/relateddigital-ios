@@ -38,7 +38,7 @@ class RelatedDigitalBaseNotificationViewController: UIViewController, RelatedDig
     var productStatNotifier: RelatedDigitalProductStatNotifierViewModel?
     
     weak var delegate: RelatedDigitalNotificationViewControllerDelegate?
-    weak var inappButtonDelegate: RelatedDigitalInappButtonDelegate?
+    weak var inappButtonDelegate: RDInappButtonDelegate?
     var window: UIWindow?
     var panStartPoint: CGPoint!
     

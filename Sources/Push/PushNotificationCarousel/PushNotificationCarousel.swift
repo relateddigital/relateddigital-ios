@@ -15,7 +15,7 @@ public class PushNotificationCarousel: UIView {
     let identifier = "PushCarouselCell"
 
     var bestAttemptContent: UNMutableNotificationContent?
-    var carouselElements: [PushMessage.Element] = []
+    var carouselElements: [RDPushMessage.Element] = []
     var currentIndex: Int = 0
     var userInfo: [AnyHashable: Any]?
     public var completion: ((_ url: URL?, _ bestAttemptContent: UNMutableNotificationContent?) -> Void)?
@@ -48,7 +48,7 @@ public class PushNotificationCarousel: UIView {
             let data = try? JSONSerialization.data(withJSONObject: userInfo,
                                                    options: []) else { return }
         self.userInfo = userInfo
-        let pushDetail = try? JSONDecoder.init().decode(PushMessage.self,
+        let pushDetail = try? JSONDecoder.init().decode(RDPushMessage.self,
                                                         from: data)
         guard let list = pushDetail?.elements else { return }
         self.carouselElements = list
@@ -106,7 +106,7 @@ extension PushNotificationCarousel: UICollectionViewDelegate, UICollectionViewDa
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let userInfo = bestAttemptContent?.userInfo else { return }
-        Push.handlePush(pushDictionary: userInfo)
+        RDPush.handlePush(pushDictionary: userInfo)
         guard indexPath.row < carouselElements.count else { return }
         self.delegate?.selectedItem(carouselElements[indexPath.row])
         if let urlString = self.carouselElements[indexPath.row].url, let url = URL(string: urlString) {
@@ -188,5 +188,5 @@ extension UIView {
 }
 
 public protocol PushCarouselDelegate: AnyObject {
-    func selectedItem(_ element: PushMessage.Element)
+    func selectedItem(_ element: RDPushMessage.Element)
 }

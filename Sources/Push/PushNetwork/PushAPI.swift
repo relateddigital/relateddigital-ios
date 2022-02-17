@@ -46,7 +46,7 @@ class PushAPI: PushAPIProtocol {
                     if connectionError == nil &&
                         (remoteResponse?.statusCode == 200 || remoteResponse?.statusCode == 201) {
                         if let remoteResponse = remoteResponse {
-                            PushLog.success("Server response success : \(remoteResponse.statusCode)")
+                            RDLogger.info("Server response success : \(remoteResponse.statusCode)")
                         }
                         var responseData: T? = nil
                         if let data = data {
@@ -54,7 +54,7 @@ class PushAPI: PushAPIProtocol {
                         }
                         completion(.success(responseData))
                     } else {
-                        PushLog.error("Server response with failure : \(String(describing: remoteResponse))")
+                        RDLogger.error("Server response with failure : \(String(describing: remoteResponse))")
                         if retry > 0 {
                             self?.request(requestModel: requestModel, retry: retry - 1, completion: completion)
                             
@@ -65,7 +65,7 @@ class PushAPI: PushAPIProtocol {
                 }
             } else {
                 guard let connectionError = connectionError else {return}
-                PushLog.error("Connection error \(connectionError)")
+                RDLogger.error("Connection error \(connectionError)")
                 if retry > 0 {
                     self?.request(requestModel: requestModel, retry: retry - 1, completion: completion)
                 } else {
@@ -78,10 +78,10 @@ class PushAPI: PushAPIProtocol {
     func setupUrlRequest<R: PushRequestProtocol>(_ requestModel: R) -> URLRequest? {
         let urlString = "https://\(requestModel.subdomain)\(requestModel.prodBaseUrl)/\(requestModel.path)"
         guard let url = URL.init(string: urlString) else {
-            PushLog.info("URL couldn't be initialized")
+            RDLogger.info("URL couldn't be initialized")
             return nil
         }
-        let userAgent = Push.shared?.userAgent
+        let userAgent = RDPush.shared?.userAgent
         var request = URLRequest.init(url: url)
         request.httpMethod = requestModel.method
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -94,10 +94,7 @@ class PushAPI: PushAPIProtocol {
         }
         
         if let httpBody = request.httpBody {
-            PushLog.info("""
-                Request to \(url) with body
-                \(String(data: httpBody, encoding: String.Encoding.utf8) ?? "")
-                """)
+            RDLogger.info("Request to \(url) with body \(String(describing: String(data: httpBody, encoding: String.Encoding.utf8)))")
         }
         return request
     }

@@ -9,15 +9,15 @@ import Foundation
 
 class PushSubscriptionHandler {
     
-    var push: Push!
+    var push: RDPush!
     
     private let semaphore = DispatchSemaphore(value: 0)
-    private let readWriteLock: PushReadWriteLock
+    private let readWriteLock: RDReadWriteLock
     private var inProgressSubscriptionRequest: PushSubscriptionRequest?
     
-    init(push: Push) {
+    init(push: RDPush) {
         self.push = push
-        self.readWriteLock = PushReadWriteLock(label: "PushSubscriptionHandler")
+        self.readWriteLock = RDReadWriteLock(label: "PushSubscriptionHandler")
     }
     
     /// Reports user, device data and APNS token to RelatedDigital services
@@ -25,7 +25,7 @@ class PushSubscriptionHandler {
     ///   - subscription: Subscription data
     internal func reportSubscription(subscriptionRequest: PushSubscriptionRequest) {
         guard let _ = subscriptionRequest.appKey, let _ = subscriptionRequest.token else {
-            PushLog.error("PushSubscriptionHandler reportSubscription appKey or token does not exist")
+            RDLogger.error("PushSubscriptionHandler reportSubscription appKey or token does not exist")
             return
         }
         
@@ -43,18 +43,18 @@ class PushSubscriptionHandler {
         }
                 
         if isRequestSame {
-            PushLog.info("EMSubscriptionHandler request is not valid. EMSubscriptionRequest is the same as the previous one.")
+            RDLogger.info("EMSubscriptionHandler request is not valid. EMSubscriptionRequest is the same as the previous one.")
             return
         }
         
         if isRequestSameAsLastSuccessfulSubscriptionRequest {
-            PushLog.info("EMSubscriptionHandler request is not valid. EMSubscriptionRequest is the same as the lastSuccessfulSubscription.")
+            RDLogger.info("EMSubscriptionHandler request is not valid. EMSubscriptionRequest is the same as the lastSuccessfulSubscription.")
             return
         }
         
         self.readWriteLock.write {
             inProgressSubscriptionRequest = subscriptionRequest
-            PushLog.info("EMSubscriptionHandler reportSubscription: \(subscriptionRequest.encoded)")
+            RDLogger.info("EMSubscriptionHandler reportSubscription: \(subscriptionRequest.encoded)")
         }
         
         push.pushAPI?.request(requestModel: subscriptionRequest, retry: 3, completion: self.subscriptionRequestHandler)
@@ -67,12 +67,12 @@ class PushSubscriptionHandler {
         case .success:
             push.delegate?.didRegisterSuccessfully()
             if let subscriptionRequest = inProgressSubscriptionRequest {
-                PushLog.success("PushSubscriptionHandler: Request successfully send, token: \(String(describing: subscriptionRequest.token))")
+                RDLogger.info("PushSubscriptionHandler: Request successfully send, token: \(String(describing: subscriptionRequest.token))")
                 PushUserDefaultsUtils.saveLastSuccessfulSubscriptionTime(time: Date())
                 PushUserDefaultsUtils.saveLastSuccessfulSubscription(subscription: subscriptionRequest)
             }
         case .failure(let error):
-            PushLog.error("EMSubscriptionHandler: Request failed : \(error)")
+            RDLogger.error("EMSubscriptionHandler: Request failed : \(error)")
             push.delegate?.didFailRegister(error: error)
         }
         self.readWriteLock.write {

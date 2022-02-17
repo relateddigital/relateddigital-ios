@@ -8,36 +8,36 @@
 import Foundation
 
 class PushDeliverHandler {
-    private let readWriteLock: PushReadWriteLock
-    var push: Push!
+    private let readWriteLock: RDReadWriteLock
+    var push: RDPush!
     private var inProgressPushId: String?
     private var inProgressEmPushSp: String?
-    private var pushMessage: PushMessage?
+    private var pushMessage: RDPushMessage?
     
     
-    init(push: Push) {
+    init(push: RDPush) {
         self.push = push
-        self.readWriteLock = PushReadWriteLock(label: "PushDeliverHandler")
+        self.readWriteLock = RDReadWriteLock(label: "PushDeliverHandler")
     }
         
     /// Reports delivered push to RelatedDigital services
     /// - Parameters:
     ///   - message: Push data
-    internal func reportDeliver(message: PushMessage) {
+    internal func reportDeliver(message: RDPushMessage) {
         guard let appKey = push.subscription.appKey, let token = push.subscription.token else {
-            PushLog.error("EMDeliverHandler reportDeliver appKey or token does not exist")
+            RDLogger.error("EMDeliverHandler reportDeliver appKey or token does not exist")
             return
         }
         
         var request: PushRetentionRequest?
         
         guard let pushID = message.pushId, let emPushSp = message.emPushSp else {
-            PushLog.warning("EMDeliverHandler pushId or emPushSp is empty")
+            RDLogger.warn("EMDeliverHandler pushId or emPushSp is empty")
             return
         }
         
         if PushUserDefaultsUtils.payloadContains(pushId: pushID) {
-            PushLog.warning("EMDeliverHandler pushId already sent.")
+            RDLogger.warn("EMDeliverHandler pushId already sent.")
             return
         }
         
@@ -50,7 +50,7 @@ class PushDeliverHandler {
         }
         
         if !isRequestValid {
-            PushLog.warning("EMDeliverHandler request not valid. Retention request with pushId: \(pushID) and emPushSp \(emPushSp) already sent.")
+            RDLogger.warn("EMDeliverHandler request not valid. Retention request with pushId: \(pushID) and emPushSp \(emPushSp) already sent.")
             return
         }
         
@@ -58,7 +58,7 @@ class PushDeliverHandler {
             inProgressPushId = pushID
             inProgressEmPushSp = emPushSp
             pushMessage = message
-            PushLog.info("reportDeliver: \(message.encoded)")
+            RDLogger.info("reportDeliver: \(message.encoded)")
             request = PushRetentionRequest(key: appKey, token: token, status: PushKey.euroReceivedStatus, pushId: pushID, emPushSp: emPushSp)
         }
         

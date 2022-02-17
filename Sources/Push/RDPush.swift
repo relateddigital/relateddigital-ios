@@ -1,26 +1,23 @@
 //
-//  Push.swift
+//  RDPush.swift
 //  RelatedDigitalIOS
 //
-//  Created by Egemen on 10.02.2022.
+//  Created by Egemen Gülkılık on 10.02.2022.
 //
 
 import Foundation
 import UIKit
+import UserNotifications
 
-typealias UIA = UIApplication
-typealias NC = NotificationCenter
-typealias UNUNC = UNUserNotificationCenter
-
-public protocol PushDelegate: AnyObject {
+public protocol RDPushDelegate: AnyObject {
     func didRegisterSuccessfully()
     func didFailRegister(error: PushAPIError)
 }
 
-public class Push {
+public class RDPush {
     
-    private static var sharedInstance: Push?
-    private let readWriteLock: PushReadWriteLock
+    private static var sharedInstance: RDPush?
+    private let readWriteLock: RDReadWriteLock
     internal var pushAPI: PushAPIProtocol?
     private var observers: [NSObjectProtocol]?
     
@@ -29,7 +26,7 @@ public class Push {
     static var emSubscriptionHandler: PushSubscriptionHandler?
     
     private var pushPermitDidCall: Bool = false
-    weak var delegate: PushDelegate?
+    weak var delegate: RDPushDelegate?
     internal var subscription: PushSubscriptionRequest
     internal var graylog: PushGraylogRequest
     private static var previousSubscription: PushSubscriptionRequest?
@@ -39,9 +36,9 @@ public class Push {
     var networkQueue: DispatchQueue!
     
     private init(appKey: String, launchOptions: [UIA.LaunchOptionsKey: Any]?) {
-        PushLog.info("INITCALL \(appKey)")
+        RDLogger.info("INITCALL \(appKey)")
         networkQueue = DispatchQueue(label: "com.Push.\(appKey).network)", qos: .utility)
-        readWriteLock = PushReadWriteLock(label: "PushLock")
+        readWriteLock = RDReadWriteLock(label: "PushLock")
         if let lastSubscriptionData = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.registerKey) as? Data,
            let lastSubscription = try? JSONDecoder().decode(PushSubscriptionRequest.self, from: lastSubscriptionData) {
             subscription = lastSubscription
@@ -57,10 +54,10 @@ public class Push {
         
         let ncd = NC.default
         observers = []
-        observers?.append(ncd.addObserver(forName: UIA.willResignActiveNotification, object: nil, queue: nil, using: Push.sync))
-        observers?.append(ncd.addObserver(forName: UIA.willTerminateNotification, object: nil, queue: nil, using: Push.sync))
-        observers?.append(ncd.addObserver(forName: UIA.willEnterForegroundNotification, object: nil, queue: nil, using: Push.sync))
-        observers?.append(ncd.addObserver(forName: UIA.didBecomeActiveNotification, object: nil, queue: nil, using: Push.sync))
+        observers?.append(ncd.addObserver(forName: UIA.willResignActiveNotification, object: nil, queue: nil, using: RDPush.sync))
+        observers?.append(ncd.addObserver(forName: UIA.willTerminateNotification, object: nil, queue: nil, using: RDPush.sync))
+        observers?.append(ncd.addObserver(forName: UIA.willEnterForegroundNotification, object: nil, queue: nil, using: RDPush.sync))
+        observers?.append(ncd.addObserver(forName: UIA.didBecomeActiveNotification, object: nil, queue: nil, using: RDPush.sync))
         
         if let userAgent = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.userAgent) as? String {
             self.userAgent = userAgent
@@ -80,28 +77,28 @@ public class Push {
         NC.default.removeObserver(self, name: UIA.didBecomeActiveNotification, object: nil)
     }
     
-    private static func getShared() -> Push? {
-        guard let shared = Push.shared else {
-            PushLog.warning(PushKey.appAliasNotProvidedMessage)
+    private static func getShared() -> RDPush? {
+        guard let shared = RDPush.shared else {
+            RDLogger.warn(PushKey.appAliasNotProvidedMessage)
             return nil
         }
         return shared
     }
     
-    public static var shared: Push? {
+    public static var shared: RDPush? {
         get {
             guard sharedInstance?.subscription.appKey != nil,
                   sharedInstance?.subscription.appKey != "" else {
                 if let subscriptionData = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.registerKey) as? Data {
                     guard let subscriptionRequest = try? JSONDecoder().decode(PushSubscriptionRequest.self, from: subscriptionData),
                           let appKey = subscriptionRequest.appKey else {
-                        PushLog.warning(PushKey.appAliasNotProvidedMessage)
+                          RDLogger.warn(PushKey.appAliasNotProvidedMessage)
                         return nil
                     }
-                    Push.configure(appAlias: appKey, launchOptions: nil)
+                    RDPush.configure(appAlias: appKey, launchOptions: nil)
                     return sharedInstance
                 }
-                PushLog.warning(PushKey.appAliasNotProvidedMessage)
+                  RDLogger.warn(PushKey.appAliasNotProvidedMessage)
                 return nil
             }
             return sharedInstance
@@ -112,38 +109,36 @@ public class Push {
     }
     
     // MARK: Lifecycle
-    public class func configure(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-                                , enableLog: Bool = false, appGroupsKey: String? = nil) {
+    public class func configure(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil, appGroupsKey: String? = nil) {
         
         if let appGroupName = PushTools.getAppGroupName(appGroupName: appGroupsKey) {
             PushUserDefaultsUtils.setAppGroupsUserDefaults(appGroupName: appGroupName)
-            PushLog.info("App Group Key : \(appGroupName)")
+            RDLogger.info("App Group Key : \(appGroupName)")
         }
         
-        Push.shared = Push(appKey: appAlias, launchOptions: launchOptions)
-        PushLog.isEnabled = enableLog
-        Push.shared?.pushAPI = PushAPI()
+        RDPush.shared = RDPush(appKey: appAlias, launchOptions: launchOptions)
+        RDPush.shared?.pushAPI = PushAPI()
         
-        if let subscriptionHandler = Push.emSubscriptionHandler {
-            subscriptionHandler.push = Push.shared!
+        if let subscriptionHandler = RDPush.emSubscriptionHandler {
+            subscriptionHandler.push = RDPush.shared!
         } else {
-            Push.emSubscriptionHandler = PushSubscriptionHandler(push: Push.shared!)
+            RDPush.emSubscriptionHandler = PushSubscriptionHandler(push: RDPush.shared!)
         }
         
-        if let readHandler = Push.emReadHandler {
-            readHandler.push = Push.shared!
+        if let readHandler = RDPush.emReadHandler {
+            readHandler.push = RDPush.shared!
         } else {
-            Push.emReadHandler = PushReadHandler(push: Push.shared!)
+            RDPush.emReadHandler = PushReadHandler(push: RDPush.shared!)
         }
         
-        if let deliverHandler = Push.emDeliverHandler {
-            deliverHandler.push = Push.shared!
+        if let deliverHandler = RDPush.emDeliverHandler {
+            deliverHandler.push = RDPush.shared!
         } else {
-            Push.emDeliverHandler = PushDeliverHandler(push: Push.shared!)
+            RDPush.emDeliverHandler = PushDeliverHandler(push: RDPush.shared!)
         }
         
         if let userInfo = launchOptions?[UIA.LaunchOptionsKey.remoteNotification] as? [String: Any] {
-            Push.handlePush(pushDictionary: userInfo)
+            RDPush.handlePush(pushDictionary: userInfo)
         }
         
     }
@@ -154,12 +149,12 @@ public class Push {
         let center = UNUNC.current()
         center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
-                PushLog.success("Notification permission granted")
+                RDLogger.info("Notification permission granted")
                 if register {
-                    Push.registerForPushNotifications()
+                    RDPush.registerForPushNotifications()
                 }
             } else {
-                PushLog.error("An error occurred while notification permission: \(error.debugDescription)")
+                RDLogger.error("An error occurred while notification permission: \(error.debugDescription)")
             }
         }
     }
@@ -169,16 +164,16 @@ public class Push {
             let center = UNUNC.current()
             center.requestAuthorization(options: [.alert, .sound, .badge, .provisional]) { granted, error in
                 if granted {
-                    PushLog.success("Notification permission granted")
+                    RDLogger.info("Notification permission granted")
                     if register {
-                        Push.registerForPushNotifications()
+                        RDPush.registerForPushNotifications()
                     }
                 } else {
-                    PushLog.error("An error occurred while notification permission: \(error.debugDescription)")
+                    RDLogger.error("An error occurred while notification permission: \(error.debugDescription)")
                 }
             }
         } else {
-            Push.askForNotificationPermission(register: register)
+            RDPush.askForNotificationPermission(register: register)
         }
     }
     
@@ -190,7 +185,7 @@ public class Push {
     
 }
 
-extension Push {
+extension RDPush {
     
     // MARK: Request Builders
     
@@ -297,7 +292,7 @@ extension Push {
     }
     
     private static func saveSubscription() {
-        if let shared = Push.getShared() {
+        if let shared = RDPush.getShared() {
             var subs: PushSubscriptionRequest?
             shared.readWriteLock.read {
                 subs = shared.subscription
@@ -332,15 +327,15 @@ extension Push {
     public static func registerToken(tokenData: Data?) {
         guard let shared = getShared() else { return }
         guard let tokenData = tokenData else {
-            PushLog.error("Token data cannot be nil")
+            RDLogger.error("Token data cannot be nil")
             return
         }
         let tokenString = tokenData.reduce("", {$0 + String(format: "%02X", $1)})
-        PushLog.info("Your token is \(tokenString)")
+        RDLogger.info("Your token is \(tokenString)")
         shared.readWriteLock.write {
             shared.subscription.token = tokenString
         }
-        Push.sync()
+        RDPush.sync()
     }
     
     /// Report RelatedDigital services that a push notification successfully read
@@ -350,21 +345,21 @@ extension Push {
         guard pushDictionary["pushId"] != nil else {
             return
         }
-        PushLog.info("handlePush: \(pushDictionary)")
+        RDLogger.info("handlePush: \(pushDictionary)")
         if let jsonData = try? JSONSerialization.data(withJSONObject: pushDictionary, options: .prettyPrinted),
-           let message = try? JSONDecoder().decode(PushMessage.self, from: jsonData) {
+           let message = try? JSONDecoder().decode(RDPushMessage.self, from: jsonData) {
             shared.networkQueue.async {
-                Push.emReadHandler?.reportRead(message: message)
+                RDPush.emReadHandler?.reportRead(message: message)
             }
         } else {
-            PushLog.error("pushDictionary parse failed")
-            Push.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "pushDictionary parse failed")
+            RDLogger.error("pushDictionary parse failed")
+            RDPush.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "pushDictionary parse failed")
 
         }
     }
 }
 
-extension Push {
+extension RDPush {
     
     // MARK: Sync
     /// Synchronize user data with RelatedDigital servers
@@ -381,7 +376,7 @@ extension Push {
                         subs = shared.subscription
                     }
                     shared.networkQueue.async {
-                        Push.emSubscriptionHandler?.reportSubscription(subscriptionRequest: subs)
+                        RDPush.emSubscriptionHandler?.reportSubscription(subscriptionRequest: subs)
                     }
                 } else {
                     setUserProperty(key: PushProperties.CodingKeys.pushPermit.rawValue, value: PushProperties.PermissionKeys.yes.rawValue)
@@ -410,13 +405,13 @@ extension Push {
         }
         // check whether the user have an unreported message
         shared.networkQueue.async {
-            Push.emReadHandler?.checkUserUnreportedMessages()
+            RDPush.emReadHandler?.checkUserUnreportedMessages()
         }
         
         
         shared.readWriteLock.read {
             subs = shared.subscription
-            previousSubs = Push.previousSubscription
+            previousSubs = RDPush.previousSubscription
         }
         
         var shouldSendSubscription = false
@@ -424,13 +419,13 @@ extension Push {
         if subs.isValid() {
             shared.readWriteLock.write {
                 if previousSubs == nil ||  subs != previousSubs {
-                    Push.previousSubscription = subs
+                    RDPush.previousSubscription = subs
                     shouldSendSubscription = true
                 }
             }
             
             if !shouldSendSubscription {
-                PushLog.warning("Subscription request not ready : \(String(describing: subs))")
+                RDLogger.warn("Subscription request not ready : \(String(describing: subs))")
                 return
             }
             
@@ -439,9 +434,9 @@ extension Push {
                 subs = shared.subscription
             }
             PushUserDefaultsUtils.saveUserDefaults(key: PushKey.tokenKey, value: subs.token as AnyObject)
-            PushLog.info("Current subscription \(subs.encoded)")
+            RDLogger.info("Current subscription \(subs.encoded)")
         } else {
-            PushLog.warning("Subscription request is not valid : \(String(describing: subs))")
+            RDLogger.warn("Subscription request is not valid : \(String(describing: subs))")
             return
         }
         
@@ -490,13 +485,13 @@ extension Push {
         return PushTools.getIdentifierForVendorString()
     }
     
-    public static func getPushMessages( completion: @escaping ((_ payloads: [PushMessage]) -> Void)) {
+    public static func getPushMessages( completion: @escaping ((_ payloads: [RDPushMessage]) -> Void)) {
         completion(PushUserDefaultsUtils.getRecentPayloads())
     }
     
 }
 
-extension Push {
+extension RDPush {
     
     // MARK: - Notification Extension
     public static func didReceive(_ bestAttemptContent: UNMutableNotificationContent?,
@@ -506,9 +501,9 @@ extension Push {
 }
 
 // MARK: - IYS Register Email Extension
-extension Push {
+extension RDPush {
     
-    public static func registerEmail(email: String, permission: Bool, isCommercial: Bool = false, customDelegate: PushDelegate? = nil) {
+    public static func registerEmail(email: String, permission: Bool, isCommercial: Bool = false, customDelegate: RDPushDelegate? = nil) {
         guard let shared = getShared() else { return }
         
         if let customDelegate = customDelegate {
@@ -539,10 +534,10 @@ extension Push {
             shared.readWriteLock.write {
                 shared.previousRegisterEmailSubscription = registerEmailSubscriptionRequest
             }
-            PushLog.info("Current subscription \(registerEmailSubscriptionRequest.encoded)")
+            RDLogger.info("Current subscription \(registerEmailSubscriptionRequest.encoded)")
         } else {
             let message = "Subscription request not ready : \(String(describing: registerEmailSubscriptionRequest))"
-            PushLog.warning(message)
+            RDLogger.warn(message)
             shared.delegate?.didFailRegister(error: .other(message))
             return
         }
@@ -553,19 +548,17 @@ extension Push {
     private func registerEmailHandler(result: Result<PushResponse?, PushAPIError>) {
         switch result {
         case .success:
-            PushLog.success("""
-               Register email request successfully send, token: \(String(describing: self.previousRegisterEmailSubscription?.token))
-               """)
+            RDLogger.info("Register email request successfully send, token: \(String(describing: self.previousRegisterEmailSubscription?.token))")
             self.delegate?.didRegisterSuccessfully()
         case .failure(let error):
-            PushLog.error("Register email request failed : \(error)")
+            RDLogger.error("Register email request failed : \(error)")
             self.delegate?.didFailRegister(error: error)
         }
     }
 }
 
 // MARK: - Graylog
-extension Push {
+extension RDPush {
     
     private func fillGraylogModel() {
         graylog.iosAppAlias = subscription.appKey
@@ -601,9 +594,9 @@ extension Push {
     private func sendGraylogMessageHandler(result: Result<PushResponse?, PushAPIError>) {
         switch result {
         case .success:
-            PushLog.success("GraylogMessage request sent successfully")
+            RDLogger.info("GraylogMessage request sent successfully")
         case .failure(let error):
-            PushLog.error("GraylogMessage request failed : \(error)")
+            RDLogger.error("GraylogMessage request failed : \(error)")
         }
     }
     

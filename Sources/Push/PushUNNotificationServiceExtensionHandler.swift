@@ -14,12 +14,12 @@ class PushUNNotificationServiceExtensionHandler {
                                   , withContentHandler contentHandler:  @escaping (UNNotificationContent) -> Void) {
         
         guard let userInfo = bestAttemptContent?.userInfo, let data = try? JSONSerialization.data(withJSONObject: userInfo, options: []) else { return }
-        guard let pushDetail = try? JSONDecoder.init().decode(PushMessage.self, from: data) else { return }
+        guard let pushDetail = try? JSONDecoder.init().decode(RDPushMessage.self, from: data) else { return }
         
         if pushDetail.sendDeliver() {
-            if let shared = Push.shared {
+            if let shared = RDPush.shared {
                 shared.networkQueue.async {
-                    Push.emDeliverHandler?.reportDeliver(message: pushDetail)
+                    RDPush.emDeliverHandler?.reportDeliver(message: pushDetail)
                 }
             }
         }
@@ -63,8 +63,8 @@ class PushUNNotificationServiceExtensionHandler {
             completionHandler: { temporaryLocation, response, error in
                 if let err = error {
                     let desc = err.localizedDescription
-                    PushLog.error("Error with downloading rich push: \(String(describing: desc))")
-                    Push.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "Error with downloading rich push: \(String(describing: desc))")
+                    RDLogger.error("Error with downloading rich push: \(String(describing: desc))")
+                    RDPush.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "Error with downloading rich push: \(String(describing: desc))")
                     contentHandler(modifiedBestAttemptContent)
                     return
                 }
@@ -85,8 +85,8 @@ class PushUNNotificationServiceExtensionHandler {
                         try FileManager.default.removeItem(at: temporaryDirectory)
                     }
                 } catch {
-                    PushLog.error("Error with the rich push attachment: \(error)")
-                    Push.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "Error with the rich push attachment: \(error)")
+                    RDLogger.error("Error with the rich push attachment: \(error)")
+                    RDPush.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "Error with the rich push attachment: \(error)")
                     contentHandler(modifiedBestAttemptContent)
                     return
                 }

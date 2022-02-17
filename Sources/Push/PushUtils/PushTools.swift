@@ -46,10 +46,10 @@ internal class PushTools {
         let emptyUUID = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
         if let identifierForVendorString = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.identifierForVendorKey) as? String, let uuid = UUID(uuidString: identifierForVendorString), !uuid.uuidString.elementsEqual(emptyUUID.uuidString) {
             if !isiOSAppExtension() {
-                PushKeychain.set(identifierForVendorString, forKey: PushKey.identifierForVendorKey)
+                RDKeychain.set(identifierForVendorString, forKey: PushKey.identifierForVendorKey)
             }
             return identifierForVendorString
-        } else if let identifierForVendorString = PushKeychain.get(PushKey.identifierForVendorKey), let uuid = UUID(uuidString: identifierForVendorString), !uuid.uuidString.elementsEqual(emptyUUID.uuidString) {
+        } else if let identifierForVendorString = RDKeychain.get(PushKey.identifierForVendorKey), let uuid = UUID(uuidString: identifierForVendorString), !uuid.uuidString.elementsEqual(emptyUUID.uuidString) {
             if !isiOSAppExtension() {
                 PushUserDefaultsUtils.saveUserDefaults(key: PushKey.identifierForVendorKey, value: identifierForVendorString as AnyObject)
             }
@@ -57,7 +57,7 @@ internal class PushTools {
         } else if let identifierForVendorString = UIDevice.current.identifierForVendor?.uuidString, let uuid = UUID(uuidString: identifierForVendorString), !uuid.uuidString.elementsEqual(emptyUUID.uuidString) {
             if !isiOSAppExtension() {
                 PushUserDefaultsUtils.saveUserDefaults(key: PushKey.identifierForVendorKey, value: identifierForVendorString as AnyObject)
-                PushKeychain.set(identifierForVendorString, forKey: PushKey.identifierForVendorKey)
+                RDKeychain.set(identifierForVendorString, forKey: PushKey.identifierForVendorKey)
             }
             return identifierForVendorString
         }
@@ -76,8 +76,8 @@ internal class PushTools {
                 if error == nil, let userAgentString = userAgent as? String, userAgentString.count > 0 {
                     completion(userAgentString)
                 } else {
-                    PushLog.error("Can not evaluate userAgent")
-                    Push.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "Can not evaluate userAgent")
+                    RDLogger.error("Can not evaluate userAgent")
+                    RDPush.sendGraylogMessage(logLevel: PushKey.graylogLogLevelError, logMessage: "Can not evaluate userAgent")
                 }
             })
         }

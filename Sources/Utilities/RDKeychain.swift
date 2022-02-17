@@ -1,5 +1,5 @@
 //
-//  PushKeychain.swift
+//  RDKeychain.swift
 //  RelatedDigitalIOS
 //
 //  Created by Egemen on 10.02.2022.
@@ -8,7 +8,7 @@
 import Security
 import Foundation
 
-internal class PushKeychain {
+internal class RDKeychain {
 
     private static let accessLevel = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     private static let lock = NSLock()
