@@ -19,10 +19,10 @@ public class RDStoryHomeViewController: NSObject, UICollectionViewDataSource, UI
     
     public weak var urlDelegate: RDStoryURLDelegate?
     
-    var storyAction: RelatedDigitalStoryAction!
+    var storyAction: RDStoryAction!
     var storiesLoaded = false
     
-    func loadStoryAction(_ storyAction: RelatedDigitalStoryAction) {
+    func loadStoryAction(_ storyAction: RDStoryAction) {
         self.storyAction = storyAction
         self.storiesLoaded = true
     }

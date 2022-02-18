@@ -1,26 +1,26 @@
 //
-//  VisilabsStoryAction.swift
-//  VisilabsIOS
+//  RDStoryAction.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 22.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
 
-class RelatedDigitalStoryAction {
+class RDStoryAction {
     let actionId: Int
-    let storyTemplate: RelatedDigitalStoryTemplate
+    let storyTemplate: RDStoryTemplate
     var stories: [RelatedDigitalStory]
     let clickQueryItems: Properties
     let impressionQueryItems: Properties
-    let extendedProperties: RelatedDigitalStoryActionExtendedProperties
+    let extendedProperties: RDStoryActionExtendedProperties
 
     init(actionId: Int,
-         storyTemplate: RelatedDigitalStoryTemplate,
+         storyTemplate: RDStoryTemplate,
          stories: [RelatedDigitalStory],
          clickQueryItems: Properties,
          impressionQueryItems: Properties,
-         extendedProperties: RelatedDigitalStoryActionExtendedProperties) {
+         extendedProperties: RDStoryActionExtendedProperties) {
         self.actionId = actionId
         self.storyTemplate = storyTemplate
         self.stories = [RelatedDigitalStory]()
@@ -35,7 +35,7 @@ class RelatedDigitalStoryAction {
     }
 }
 
-class RelatedDigitalStoryActionExtendedProperties {
+class RDStoryActionExtendedProperties {
     var imageBorderWidth = 2  // 0,1,2,3
     var imageBorderRadius = 0.5 // "","50%","10%"
     var imageBoxShadow = false

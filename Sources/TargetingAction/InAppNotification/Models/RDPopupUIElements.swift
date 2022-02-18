@@ -1,14 +1,14 @@
 //
-//  VisilabsPopupUIElements.swift
-//  VisilabsIOS
+//  RDPopupUIElements.swift
+//  RelatedDigitalIOS
 //
-//  Created by Said Alır on 6.11.2020.
+//  Created by Said Alır on 16.03.2021.
 //
 
 import Foundation
 import UIKit
 
-extension RelatedDigitalPopupDialogDefaultView {
+extension RDPopupDialogDefaultView {
 
     internal func setCloseButton() -> UIButton {
         let closeButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
@@ -474,7 +474,7 @@ extension RelatedDigitalPopupDialogDefaultView {
     }
 }
 
-extension RelatedDigitalPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let nWidth = (self.numberRating.frame.width - 100) / 10

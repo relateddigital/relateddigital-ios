@@ -611,7 +611,7 @@ class RDTargetingAction {
     var rdStoryHomeViewControllers = [String: RDStoryHomeViewController]()
     var rdStoryHomeViews = [String: RDStoryHomeView]()
 
-    func getStories(rdUser: RDUser, guid: String, actionId: Int? = nil, completion: @escaping ((_ response: RelatedDigitalStoryActionResponse) -> Void)) {
+    func getStories(rdUser: RDUser, guid: String, actionId: Int? = nil, completion: @escaping ((_ response: RDStoryActionResponse) -> Void)) {
 
         var props = Properties()
         props[RDConstants.organizationIdKey] = rdProfile.organizationId
@@ -643,8 +643,8 @@ class RDTargetingAction {
 
     // swiftlint:disable function_body_length cyclomatic_complexity
     // TO_DO: burada storiesResponse kısmı değiştirilmeli. aynı requestte birden fazla story action'ı gelebilir.
-    private func parseStories(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> RelatedDigitalStoryActionResponse {
-        var storiesResponse = [RelatedDigitalStoryAction]()
+    private func parseStories(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> RDStoryActionResponse {
+        var storiesResponse = [RDStoryAction]()
         var errorResponse: RDError?
         if let error = error {
             errorResponse = error
@@ -655,7 +655,7 @@ class RDTargetingAction {
                     if let actionId = storyAction[RDConstants.actid] as? Int,
                        let actiondata = storyAction[RDConstants.actionData] as? [String: Any?],
                        let templateString = actiondata[RDConstants.taTemplate] as? String,
-                       let template = RelatedDigitalStoryTemplate.init(rawValue: templateString) {
+                       let template = RDStoryTemplate.init(rawValue: templateString) {
                         if let stories = actiondata[RDConstants.stories] as? [[String: Any]] {
                             for story in stories {
                                 if template == .skinBased {
@@ -681,7 +681,7 @@ class RDTargetingAction {
                             let (clickQueryItems, impressionQueryItems)
                                 = parseStoryReport(actiondata[RDConstants.report] as? [String: Any?])
                             if stories.count > 0 {
-                                storiesResponse.append(RelatedDigitalStoryAction(actionId: actionId,
+                                storiesResponse.append(RDStoryAction(actionId: actionId,
                                                                            storyTemplate: template,
                                                                            stories: relatedDigitalStories,
                                                                            clickQueryItems: clickQueryItems,
@@ -696,7 +696,7 @@ class RDTargetingAction {
         } else {
             errorResponse = RDError.noData
         }
-        return RelatedDigitalStoryActionResponse(storyActions: storiesResponse, error: errorResponse, guid: guid)
+        return RDStoryActionResponse(storyActions: storiesResponse, error: errorResponse, guid: guid)
     }
 
     private func parseStoryReport(_ report: [String: Any?]?) -> (Properties, Properties) {
@@ -771,8 +771,8 @@ class RDTargetingAction {
     }
 
     // swiftlint:disable cyclomatic_complexity
-    private func parseStoryExtendedProps(_ extendedPropsString: String?) -> RelatedDigitalStoryActionExtendedProperties {
-        let props = RelatedDigitalStoryActionExtendedProperties()
+    private func parseStoryExtendedProps(_ extendedPropsString: String?) -> RDStoryActionExtendedProperties {
+        let props = RDStoryActionExtendedProperties()
         if let propStr = extendedPropsString, let extendedProps = propStr.urlDecode().convertJsonStringToDictionary() {
             if let imageBorderWidthString = extendedProps[RDConstants.storylbImgBorderWidth] as? String,
                let imageBorderWidth = Int(imageBorderWidthString) {

@@ -14,7 +14,7 @@ class RelatedDigitalStoryHomeViewCell: UICollectionViewCell {
         self.profileImageView.imageView.image = RDHelper.getUIImage(named: "loading")
     }
 
-    func setProperties(_ properties: RelatedDigitalStoryActionExtendedProperties, _ actId: Int) {
+    func setProperties(_ properties: RDStoryActionExtendedProperties, _ actId: Int) {
         self.profileNameLabel.textColor = properties.labelColor
         var shown = false
         

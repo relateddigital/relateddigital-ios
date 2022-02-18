@@ -1,14 +1,14 @@
 //
-//  VisilabsPopupDialogDefaultView.swift
-//  VisilabsIOS
+//  RDPopupDialogDefaultView.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.06.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
 import UIKit
 
-public class RelatedDigitalPopupDialogDefaultView: UIView {
+public class RDPopupDialogDefaultView: UIView {
 
     // MARK: - VARIABLES
 
@@ -347,14 +347,14 @@ public class RelatedDigitalPopupDialogDefaultView: UIView {
 }
 
 // MARK: - SliderStepDelegate
-extension RelatedDigitalPopupDialogDefaultView: SliderStepDelegate {
+extension RDPopupDialogDefaultView: SliderStepDelegate {
     func didSelectedValue(sliderStep: RelatedDigitalSliderStep, value: Float) {
         sliderStep.value = value
     }
 }
 
 // Email form extension
-extension RelatedDigitalPopupDialogDefaultView {
+extension RDPopupDialogDefaultView {
 
     @objc func termsButtonTapped(_ sender: UIButton) {
         if let url = scratchToWin?.permitUrl {
@@ -380,7 +380,7 @@ extension RelatedDigitalPopupDialogDefaultView {
     }
 }
 
-extension RelatedDigitalPopupDialogDefaultView: UITextFieldDelegate {
+extension RDPopupDialogDefaultView: UITextFieldDelegate {
 
     public func textFieldDidBeginEditing(_ textField: UITextField) {
 
@@ -500,7 +500,7 @@ extension RelatedDigitalPopupDialogDefaultView: UITextFieldDelegate {
     }
 }
 
-extension RelatedDigitalPopupDialogDefaultView: ScratchUIViewDelegate {
+extension RDPopupDialogDefaultView: ScratchUIViewDelegate {
 
     public func scratchMoved(_ view: ScratchUIView) {
         if !expanded && view.getScratchPercent() > 0.69 {

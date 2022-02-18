@@ -39,13 +39,13 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
         }
     }
 
-    public var standardView: RelatedDigitalPopupDialogDefaultView {
-       return view as! RelatedDigitalPopupDialogDefaultView // swiftlint:disable:this force_cast
+    public var standardView: RDPopupDialogDefaultView {
+       return view as! RDPopupDialogDefaultView // swiftlint:disable:this force_cast
     }
 
     override public func loadView() {
         super.loadView()
-        view = RelatedDigitalPopupDialogDefaultView(frame: .zero,
+        view = RDPopupDialogDefaultView(frame: .zero,
                                               visilabsInAppNotification: relatedDigitalInAppNotification,
                                               emailForm: mailForm,
                                               scratchTW: scratchToWin)

@@ -75,7 +75,7 @@ class RDBaseNotificationViewController: UIViewController, RDBaseViewControllerPr
         }
         
         let touch = touches.first
-        if !(touch?.view is RelatedDigitalPopupDialogDefaultView)
+        if !(touch?.view is RDPopupDialogDefaultView)
             && !(touch?.view is CosmosView) &&
             !(touch?.view is UIImageView) &&
             !(touch?.view is ScratchUIView) &&
