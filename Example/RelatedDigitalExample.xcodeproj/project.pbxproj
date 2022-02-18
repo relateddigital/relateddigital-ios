@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		17E6F95FC1FA81C9F9EF8F68 /* Pods_RelatedDigitalExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C65DCB10210318632CB04A1 /* Pods_RelatedDigitalExampleTests.framework */; };
+		2F325DF127BFBC3A00817023 /* SelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F325DEF27BFBC3A00817023 /* SelectViewController.swift */; };
+		2F325DF227BFBC3A00817023 /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F325DF027BFBC3A00817023 /* StoryViewController.swift */; };
 		2F4250CF27B2679900D53F97 /* RelatedDigitalProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4250CE27B2679900D53F97 /* RelatedDigitalProfile.swift */; };
 		2F4250D327B2745400D53F97 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4250D227B2745400D53F97 /* DataManager.swift */; };
 		2F4250D527B275EA00D53F97 /* InAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4250D427B275EA00D53F97 /* InAppViewController.swift */; };
@@ -46,6 +48,8 @@
 
 /* Begin PBXFileReference section */
 		2F325DEE27BFBB5A00817023 /* RelatedDigitalExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RelatedDigitalExample.entitlements; sourceTree = "<group>"; };
+		2F325DEF27BFBC3A00817023 /* SelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectViewController.swift; sourceTree = "<group>"; };
+		2F325DF027BFBC3A00817023 /* StoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		2F4250CE27B2679900D53F97 /* RelatedDigitalProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedDigitalProfile.swift; sourceTree = "<group>"; };
 		2F4250D227B2745400D53F97 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		2F4250D427B275EA00D53F97 /* InAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppViewController.swift; sourceTree = "<group>"; };
@@ -181,6 +185,8 @@
 		88C8886F2695456000E50A10 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2F325DEF27BFBC3A00817023 /* SelectViewController.swift */,
+				2F325DF027BFBC3A00817023 /* StoryViewController.swift */,
 				88146CD2269CF8A400473051 /* AnalyticsViewController.swift */,
 				88680B102694FC09004B8DE8 /* HomeViewController.swift */,
 				88146CD0269CF5AD00473051 /* RelatedDigitalTabBarController.swift */,
@@ -423,10 +429,12 @@
 				88146CD1269CF5AD00473051 /* RelatedDigitalTabBarController.swift in Sources */,
 				2F4250D527B275EA00D53F97 /* InAppViewController.swift in Sources */,
 				88680B112694FC09004B8DE8 /* HomeViewController.swift in Sources */,
+				2F325DF127BFBC3A00817023 /* SelectViewController.swift in Sources */,
 				88680B0D2694FC09004B8DE8 /* AppDelegate.swift in Sources */,
 				2F51063F27B3A7380008C996 /* RecommendationViewController.swift in Sources */,
 				2F4250D727B27C4900D53F97 /* Extensions.swift in Sources */,
 				2F51063D27B3A5850008C996 /* StoryViewController.swift in Sources */,
+				2F325DF227BFBC3A00817023 /* StoryViewController.swift in Sources */,
 				2F4250CF27B2679900D53F97 /* RelatedDigitalProfile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
