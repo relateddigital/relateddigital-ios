@@ -10,20 +10,20 @@ import RelatedDigitalIOS
 
 var relatedDigitalProfile = RelatedDigitalProfile()
 
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    var isRelatedInit = false
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        RelatedDigital.initialize(organizationId: "676D325830564761676D453D", profileId: "356467332F6533766975593D", dataSource: "visistore", launchOptions: launchOptions)
+        RelatedDigital.initialize(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource, launchOptions: launchOptions)
+        RelatedDigital.enablePushNotifications(appAlias: "RDIOSExample", launchOptions: launchOptions, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital")
         RelatedDigital.loggingEnabled = true
-        RelatedDigital.inAppNotificationsEnabled = true
-        
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
-        window.rootViewController = HomeViewController() // Your initial view controller.
+        window.rootViewController = SelectViewController()
         window.makeKeyAndVisible()
         self.window = window
         return true
@@ -33,6 +33,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return RelatedDigitalTabBarController()
     }
     
+    func getPushViewController() -> PushViewController {
+        return PushViewController()
+    }
+    
+    func getHomeViewController() -> HomeViewController {
+        return HomeViewController()
+    }
     
 }
 

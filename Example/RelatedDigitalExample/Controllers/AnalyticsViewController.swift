@@ -8,6 +8,8 @@
 import UIKit
 import RelatedDigitalIOS
 import CleanyModal
+import Eureka
+import SplitRow
 
 enum RelatedDigitalEventType: String, CaseIterable {
     case login = "Login"
@@ -34,11 +36,32 @@ class AnalyticsViewController: FormViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        form +++ Section("Change Page")
+        <<< changePage()
+        
         form +++ initializeForm()
     }
     
+    fileprivate func changePage() -> SplitRow<ButtonRow, ButtonRow> {
+        return SplitRow() {
+            $0.rowLeftPercentage = 0.5
+            
+            $0.rowLeft = ButtonRow {
+                $0.title = "Push Module"
+            }.onCellSelection({ _, _ in
+                self.goToPushViewController()
+            })
+            
+            $0.rowRight = ButtonRow {
+                $0.title = "Analytics Module"
+                $0.disabled = true
+            }
+        }
+    }
     
     private func initializeForm() -> Section {
+        
+        
         let section = Section("Analytics".uppercased(with: Locale(identifier: "en_US")))
         section.append(TextRow("exVisitorId") {
             $0.title = "exVisitorId"
@@ -229,6 +252,11 @@ class AnalyticsViewController: FormViewController {
                              randomBannerCode: randomBannerCode,
                              genders: genders,
                              randomGender: randomGender)
+    }
+    
+    func goToPushViewController() {
+        let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
+        self.view.window?.rootViewController = appDelegate?.getPushViewController()
     }
     
 }
