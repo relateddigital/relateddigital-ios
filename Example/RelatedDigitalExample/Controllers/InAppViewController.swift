@@ -8,6 +8,8 @@
 import UIKit
 import CleanyModal
 import RelatedDigitalIOS
+import Eureka
+import SplitRow
 
 class InAppViewController: FormViewController {
     
@@ -27,7 +29,6 @@ class InAppViewController: FormViewController {
                 }.onCellSelection { _, _ in
                     self.inAppEvent(queryStringFilter)
                 })
-                
             }
         }
         return section

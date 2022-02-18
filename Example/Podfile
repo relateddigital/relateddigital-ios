@@ -4,12 +4,14 @@ target 'RelatedDigitalExample' do
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'
   pod 'CleanyModal'
+pod 'SplitRow'
 end
 
 target 'RelatedDigitalExampleTests' do
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'
   pod 'CleanyModal'
+pod 'SplitRow'
 end
 
 
