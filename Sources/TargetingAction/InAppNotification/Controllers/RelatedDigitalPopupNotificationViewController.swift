@@ -35,7 +35,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
     }
 
     /// The set of buttons
-    fileprivate var buttons = [RelatedDigitalPopupDialogButton]()
+    fileprivate var buttons = [RDPopupDialogButton]()
 
     fileprivate var closeButton: UIButton!
 
@@ -87,7 +87,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
     fileprivate func initForInAppNotification(_ viewController: RelatedDigitalDefaultPopupNotificationViewController) {
         guard let notification = self.notification else { return }
         if notification.type == .secondNps {
-            let button = RelatedDigitalPopupDialogButton(title: notification.buttonText!,
+            let button = RDPopupDialogButton(title: notification.buttonText!,
                                                    font: notification.buttonTextFont,
                                                    buttonTextColor: notification.buttonTextColor,
                                                    buttonColor: notification.buttonColor,
@@ -96,7 +96,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
             addButton(button)
         } else if notification.type != .fullImage && notification.type != .imageButtonImage {
 
-            let button = RelatedDigitalPopupDialogButton(title: notification.buttonText!,
+            let button = RDPopupDialogButton(title: notification.buttonText!,
                                                    font: notification.buttonTextFont,
                                                    buttonTextColor: notification.buttonTextColor,
                                                    buttonColor: notification.buttonColor, action: commonButtonAction)
@@ -169,7 +169,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
     fileprivate func initForEmailForm(_ viewController: RelatedDigitalDefaultPopupNotificationViewController) {
         guard let mailForm = self.mailForm else { return }
 
-        let button = RelatedDigitalPopupDialogButton(title: mailForm.buttonTitle,
+        let button = RDPopupDialogButton(title: mailForm.buttonTitle,
                                                 font: mailForm.buttonFont,
                                                    buttonTextColor: mailForm.buttonTextColor,
                                                    buttonColor: mailForm.buttonColor, action: nil)
@@ -384,7 +384,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
      Adds a single PopupDialogButton to the Popup dialog
      - parameter button: A PopupDialogButton instance
      */
-    @objc public func addButton(_ button: RelatedDigitalPopupDialogButton) {
+    @objc public func addButton(_ button: RDPopupDialogButton) {
         buttons.append(button)
     }
 
@@ -392,12 +392,12 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
      Adds an array of PopupDialogButtons to the Popup dialog
      - parameter buttons: A list of PopupDialogButton instances
      */
-    @objc public func addButtons(_ buttons: [RelatedDigitalPopupDialogButton]) {
+    @objc public func addButtons(_ buttons: [RDPopupDialogButton]) {
         self.buttons += buttons
     }
 
     /// Calls the action closure of the button instance tapped
-    @objc fileprivate func buttonTapped(_ button: RelatedDigitalPopupDialogButton) {
+    @objc fileprivate func buttonTapped(_ button: RDPopupDialogButton) {
         if self.mailForm != nil {
             let defaultView = viewController.standardView
             let first = defaultView.firstCheckBox.isChecked
@@ -567,7 +567,7 @@ extension UIColor {
 extension RelatedDigitalPopupNotificationViewController: RelatedDigitalPopupDialogDefaultViewDelegate {
     func viewExpanded() {
         guard let scratchTW = self.scratchToWin else { return }
-        let button = RelatedDigitalPopupDialogButton(title: scratchTW.copyButtonText ?? "",
+        let button = RDPopupDialogButton(title: scratchTW.copyButtonText ?? "",
                                                font: scratchTW.copyButtonTextFont ?? .systemFont(ofSize: 20 ),
                                                    buttonTextColor: scratchTW.copyButtonTextColor,
                                                    buttonColor: scratchTW.copyButtonColor,

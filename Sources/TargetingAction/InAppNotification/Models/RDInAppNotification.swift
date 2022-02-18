@@ -2,7 +2,7 @@
 //  RDInAppNotification.swift
 //  RelatedDigitalIOS
 //
-//  Created by Egemen Gülkılıj on 26.12.2021.
+//  Created by Egemen Gülkılık on 26.12.2021.
 //
 
 import UIKit

@@ -1,8 +1,8 @@
 //
 //  UIImageView+Extension.swift
-//  VisilabsIOS
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 28.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit

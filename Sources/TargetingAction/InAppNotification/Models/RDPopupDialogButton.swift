@@ -1,15 +1,15 @@
 //
-//  VisilabsPopupDialogButton.swift
-//  VisilabsIOS
+//  RDPopupDialogButton.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 12.06.2020.
+//  Created by Egemen Gülkılık on 26.12.2021.
 //
 
 import Foundation
 import UIKit
 
 /// Represents the default button for the popup dialog
-open class RelatedDigitalPopupDialogButton: UIButton {
+open class RDPopupDialogButton: UIButton {
 
     public typealias PopupDialogButtonAction = () -> Void
 

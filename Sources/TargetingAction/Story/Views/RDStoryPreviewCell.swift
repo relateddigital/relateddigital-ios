@@ -1,14 +1,14 @@
 //
-//  VisilabsStoryPreviewCell.swift
-//  VisilabsIOS
+//  RDStoryPreviewCell.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 7.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
 import AVKit
 
-protocol RelatedDigitalStoryPreviewProtocol: AnyObject {
+protocol RDStoryPreviewProtocol: AnyObject {
     func didCompletePreview()
     func moveToPreviousStory()
     func didTapCloseButton()
@@ -21,18 +21,18 @@ enum SnapMovementDirectionState {
 private let snapViewTagIndicator: Int = 8
 
 // swiftlint:disable file_length type_body_length
-final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
+final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
 
     // MARK: - Delegate
-    public weak var delegate: RelatedDigitalStoryPreviewProtocol? {
+    public weak var delegate: RDStoryPreviewProtocol? {
         didSet { storyHeaderView.delegate = self }
     }
 
     weak var storyUrlDelegate: RDStoryURLDelegate?
 
     // MARK: - Private iVars
-    private lazy var storyHeaderView: RelatedDigitalStoryPreviewHeaderView = {
-        let headerView = RelatedDigitalStoryPreviewHeaderView()
+    private lazy var storyHeaderView: RDStoryPreviewHeaderView = {
+        let headerView = RDStoryPreviewHeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
         return headerView
     }()
@@ -68,7 +68,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
     }
     private var videoSnapIndex: Int = 0
     private var handpickedSnapIndex: Int = 0
-    var retryBtn: RelatedDigitalRetryLoaderButton!
+    var retryBtn: RDRetryLoaderButton!
     var longPressGestureState: UILongPressGestureRecognizer.State?
 
     // MARK: - Public iVars
@@ -131,7 +131,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
             }
         }
     }
-    public var story: RelatedDigitalStory? {
+    public var story: RDStory? {
         didSet {
             storyHeaderView.story = story
             if let picture = story?.smallImg {
@@ -238,8 +238,8 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         }
         return nil
     }
-    private func createVideoView() -> RelatedDigitalPlayerView {
-        let videoView = RelatedDigitalPlayerView()
+    private func createVideoView() -> RDPlayerView {
+        let videoView = RDPlayerView()
         videoView.translatesAutoresizingMaskIntoConstraints = false
         videoView.tag = snapIndex + snapViewTagIndicator
         videoView.playerObserverDelegate = self
@@ -272,9 +272,9 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         }
         return videoView
     }
-    private func getVideoView(with index: Int) -> RelatedDigitalPlayerView? {
+    private func getVideoView(with index: Int) -> RDPlayerView? {
         let view = scrollview.subviews.filter({$0.tag == index + snapViewTagIndicator}).first
-        if let videoView = view as? RelatedDigitalPlayerView {
+        if let videoView = view as? RDPlayerView {
             return videoView
         }
         return nil
@@ -314,7 +314,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
     }
 
     private func showRetryButton(with url: String, for snapView: UIImageView) {
-        self.retryBtn = RelatedDigitalRetryLoaderButton.init(withURL: url)
+        self.retryBtn = RDRetryLoaderButton.init(withURL: url)
         self.retryBtn.translatesAutoresizingMaskIntoConstraints = false
         self.retryBtn.delegate = self
         self.isUserInteractionEnabled = true
@@ -324,11 +324,11 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
             self.retryBtn.igCenterYAnchor.constraint(equalTo: snapView.igCenterYAnchor)
         ])
     }
-    private func startPlayer(videoView: RelatedDigitalPlayerView, with url: String) {
+    private func startPlayer(videoView: RDPlayerView, with url: String) {
         if scrollview.subviews.count > 0 {
             if story?.isCompletelyVisible == true {
                 videoView.startAnimating()
-                RelatedDigitalVideoCacheManager.shared.getFile(for: url) { [weak self] (result) in
+                RDVideoCacheManager.shared.getFile(for: url) { [weak self] (result) in
                     guard let strongSelf = self else { return }
                     switch result {
                     case .success(let videoURL):
@@ -533,7 +533,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
             }
         }
     }
-    private func gearupTheProgressors(type: MimeType, playerView: RelatedDigitalPlayerView? = nil) {
+    private func gearupTheProgressors(type: MimeType, playerView: RDPlayerView? = nil) {
         if let holderView = getProgressIndicatorView(with: snapIndex),
             let progressView = getProgressView(with: snapIndex) {
             progressView.storyIdentifier = self.story?.internalIdentifier
@@ -577,7 +577,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
                     if self.story?.isCompletelyVisible == true {
                         let view = self.scrollview.subviews.filter {view in view.tag == self.snapIndex
                             + snapViewTagIndicator}.first
-                        let videoView = view as? RelatedDigitalPlayerView
+                        let videoView = view as? RDPlayerView
                         let snap = self.story?.items[self.snapIndex]
                         if let view = videoView, self.story?.isCompletelyVisible == true {
                             self.startPlayer(videoView: view, with: snap!.url)
@@ -588,10 +588,10 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         }
     }
 
-    func getProgressView(with index: Int) -> RelatedDigitalSnapProgressView? {
+    func getProgressView(with index: Int) -> RDSnapProgressView? {
         let progressView = storyHeaderView.getProgressView
         if progressView.subviews.count > 0 {
-            let prgView = getProgressIndicatorView(with: index)?.subviews.first as? RelatedDigitalSnapProgressView
+            let prgView = getProgressIndicatorView(with: index)?.subviews.first as? RDSnapProgressView
             guard let currentStory = self.story else {
                 fatalError("story not found")
             }
@@ -600,10 +600,10 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         }
         return nil
     }
-    func getProgressIndicatorView(with index: Int) -> RelatedDigitalSnapProgressIndicatorView? {
+    func getProgressIndicatorView(with index: Int) -> RDSnapProgressIndicatorView? {
         let progressView = storyHeaderView.getProgressView
         let indicatorView = progressView.subviews.filter({view in view.tag == index+progressIndicatorViewTag}).first
-            as? RelatedDigitalSnapProgressIndicatorView
+            as? RDSnapProgressIndicatorView
         return indicatorView ?? nil
     }
     func adjustPreviousSnapProgressorsWidth(with index: Int) {
@@ -684,7 +684,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
     public func pauseEntireSnap() {
         let progress = getProgressView(with: snapIndex)
         let view = scrollview.subviews.filter {view in view.tag == snapIndex + snapViewTagIndicator}.first
-        let videoView = view as? RelatedDigitalPlayerView
+        let videoView = view as? RDPlayerView
         if videoView != nil {
             progress?.pause()
             videoView?.pause()
@@ -695,7 +695,7 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
     public func resumeEntireSnap() {
         let progress = getProgressView(with: snapIndex)
         let view = scrollview.subviews.filter {view in view.tag == snapIndex + snapViewTagIndicator}.first
-        let videoView = view as? RelatedDigitalPlayerView
+        let videoView = view as? RDPlayerView
         if videoView != nil {
             progress?.resume()
             videoView?.play()
@@ -708,13 +708,13 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
         if let imgView = view as? UIImageView {
             imgView.removeRetryButton()
             self.startRequest(snapView: imgView, with: url)
-        } else if let playerView = view as? RelatedDigitalPlayerView {
+        } else if let playerView = view as? RDPlayerView {
             playerView.removeRetryButton()
             self.startPlayer(videoView: playerView, with: url)
         }
     }
 
-    private func setStoryShown(story: RelatedDigitalStory) {
+    private func setStoryShown(story: RDStory) {
         var shownStories = UserDefaults.standard.dictionary(forKey: RDConstants.shownStories)
             as? [String: [String]] ?? [String: [String]]()
 
@@ -728,21 +728,21 @@ final class RelatedDigitalStoryPreviewCell: UICollectionViewCell, UIScrollViewDe
 }
 
 // MARK: - Extension|StoryPreviewHeaderProtocol
-extension RelatedDigitalStoryPreviewCell: StoryPreviewHeaderProtocol {
+extension RDStoryPreviewCell: StoryPreviewHeaderProtocol {
     func didTapCloseButton() {
         delegate?.didTapCloseButton()
     }
 }
 
 // MARK: - Extension|RetryBtnDelegate
-extension RelatedDigitalStoryPreviewCell: RetryBtnDelegate {
+extension RDStoryPreviewCell: RetryBtnDelegate {
     func retryButtonTapped() {
         self.retryRequest(view: retryBtn.superview!, with: retryBtn.contentURL!)
     }
 }
 
 // MARK: - Extension|IGPlayerObserverDelegate
-extension RelatedDigitalStoryPreviewCell: RelatedDigitalPlayerObserver {
+extension RDStoryPreviewCell: RDPlayerObserver {
 
     func didStartPlaying() {
         if let videoView = getVideoView(with: snapIndex), videoView.currentTime <= 0 {
@@ -776,7 +776,7 @@ extension RelatedDigitalStoryPreviewCell: RelatedDigitalPlayerObserver {
     func didFailed(withError error: String, for url: URL?) {
         debugPrint("Failed with error: \(error)")
         if let videoView = getVideoView(with: snapIndex), let videoURL = url {
-            self.retryBtn = RelatedDigitalRetryLoaderButton(withURL: videoURL.absoluteString)
+            self.retryBtn = RDRetryLoaderButton(withURL: videoURL.absoluteString)
             self.retryBtn.translatesAutoresizingMaskIntoConstraints = false
             self.retryBtn.delegate = self
             self.isUserInteractionEnabled = true
@@ -796,7 +796,7 @@ extension RelatedDigitalStoryPreviewCell: RelatedDigitalPlayerObserver {
     }
 }
 
-extension RelatedDigitalStoryPreviewCell: UIGestureRecognizerDelegate {
+extension RDStoryPreviewCell: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer is UISwipeGestureRecognizer {

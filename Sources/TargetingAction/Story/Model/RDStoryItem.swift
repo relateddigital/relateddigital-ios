@@ -1,8 +1,8 @@
 //
-//  VisilabsStoryItem.swift
-//  VisilabsIOS
+//  RDStoryItem.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
@@ -12,7 +12,7 @@ enum MimeType: String {
     case video
     case unknown
 }
-class RelatedDigitalStoryItem {
+class RDStoryItem {
     let internalIdentifier: String
     let mimeType: String
     let url: String

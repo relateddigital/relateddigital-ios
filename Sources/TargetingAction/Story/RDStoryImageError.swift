@@ -1,13 +1,13 @@
 //
-//  VisilabsStoryImageError.swift
-//  VisilabsIOS
+//  RDStoryImageError.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 28.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
 
-public enum RelatedDigitalStoryImageError: Error, CustomStringConvertible {
+public enum RDStoryImageError: Error, CustomStringConvertible {
 
     case invalidImageURL
     case downloadError

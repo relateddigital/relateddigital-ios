@@ -21,8 +21,8 @@ public class RDStoryHomeView: UIView {
         colView.backgroundColor = .clear // .orange // .white
         colView.showsVerticalScrollIndicator = false
         colView.showsHorizontalScrollIndicator = false
-        colView.register(RelatedDigitalStoryHomeViewCell.self,
-                         forCellWithReuseIdentifier: RelatedDigitalStoryHomeViewCell.reuseIdentifier)
+        colView.register(RDStoryHomeViewCell.self,
+                         forCellWithReuseIdentifier: RDStoryHomeViewCell.reuseIdentifier)
         colView.translatesAutoresizingMaskIntoConstraints = false
         return colView
     }()

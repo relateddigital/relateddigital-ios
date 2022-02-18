@@ -1,8 +1,8 @@
 //
-//  VisilabsStoryPreviewHeaderView.swift
-//  VisilabsIOS
+//  RDStoryPreviewHeaderView.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
@@ -15,12 +15,12 @@ private let maxSnaps = 30
 public let progressIndicatorViewTag = 88
 public let progressViewTag = 99
 
-final class RelatedDigitalStoryPreviewHeaderView: UIView {
+final class RDStoryPreviewHeaderView: UIView {
 
     // MARK: - iVars
     public weak var delegate: StoryPreviewHeaderProtocol?
     fileprivate var snapsPerStory: Int = 0
-    public var story: RelatedDigitalStory? {
+    public var story: RDStory? {
         didSet {
             snapsPerStory  = (story?.items.count)! < maxSnaps ? (story?.items.count)! : maxSnaps
         }
@@ -204,7 +204,7 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
     // MARK: - Public functions
     public func clearTheProgressorSubviews() {
         getProgressView.subviews.forEach { view in
-            view.subviews.forEach {view in (view as? RelatedDigitalSnapProgressView ?? RelatedDigitalSnapProgressView())
+            view.subviews.forEach {view in (view as? RDSnapProgressView ?? RDSnapProgressView())
                 .stop()}
             view.removeFromSuperview()
         }
@@ -217,7 +217,7 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
     public func clearSnapProgressor(at index: Int) {
         getProgressView.subviews[index].removeFromSuperview()
     }
-    fileprivate func setConstraintsForIndicator(_ pvIndicatorArray: inout [RelatedDigitalSnapProgressIndicatorView],
+    fileprivate func setConstraintsForIndicator(_ pvIndicatorArray: inout [RDSnapProgressIndicatorView],
                                                 _ padding: CGFloat, _ height: CGFloat) {
         // Setting Constraints for all progressView indicators
         for index in 0..<pvIndicatorArray.count {
@@ -257,8 +257,8 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
         }
     }
 
-    fileprivate func setConstraintsForProgress(_ pvArray: inout [RelatedDigitalSnapProgressView],
-                                               _ pvIndicatorArray: inout [RelatedDigitalSnapProgressIndicatorView]) {
+    fileprivate func setConstraintsForProgress(_ pvArray: inout [RDSnapProgressView],
+                                               _ pvIndicatorArray: inout [RDSnapProgressIndicatorView]) {
         // Setting Constraints for all progressViews
         for index in 0..<pvArray.count {
             let prgView = pvArray[index]
@@ -273,16 +273,16 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
         }
     }
 
-    fileprivate func addIndicatorAndProgressViews(_ pvIndicatorArray: inout [RelatedDigitalSnapProgressIndicatorView],
-                                                  _ pvArray: inout [RelatedDigitalSnapProgressView]) {
+    fileprivate func addIndicatorAndProgressViews(_ pvIndicatorArray: inout [RDSnapProgressIndicatorView],
+                                                  _ pvArray: inout [RDSnapProgressView]) {
         // Adding all ProgressView Indicator and ProgressView to seperate arrays
         for counter in 0 ..< snapsPerStory {
-            let pvIndicator = RelatedDigitalSnapProgressIndicatorView()
+            let pvIndicator = RDSnapProgressIndicatorView()
             pvIndicator.translatesAutoresizingMaskIntoConstraints = false
             getProgressView.addSubview(applyProperties(pvIndicator, with: counter+progressIndicatorViewTag, alpha: 0.2))
             pvIndicatorArray.append(pvIndicator)
 
-            let prgView = RelatedDigitalSnapProgressView()
+            let prgView = RDSnapProgressView()
             prgView.translatesAutoresizingMaskIntoConstraints = false
             pvIndicator.addSubview(applyProperties(prgView))
             pvArray.append(prgView)
@@ -293,8 +293,8 @@ final class RelatedDigitalStoryPreviewHeaderView: UIView {
         print("Progressor count: \(getProgressView.subviews.count)")
         let padding: CGFloat = 8 // GUI-Padding
         let height: CGFloat = 3
-        var pvIndicatorArray: [RelatedDigitalSnapProgressIndicatorView] = []
-        var pvArray: [RelatedDigitalSnapProgressView] = []
+        var pvIndicatorArray: [RDSnapProgressIndicatorView] = []
+        var pvArray: [RDSnapProgressView] = []
 
         addIndicatorAndProgressViews(&pvIndicatorArray, &pvArray)
         setConstraintsForIndicator(&pvIndicatorArray, padding, height)

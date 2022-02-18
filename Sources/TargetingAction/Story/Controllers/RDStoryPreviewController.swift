@@ -1,20 +1,20 @@
 //
-//  VisilabsStoryPreviewController.swift
-//  VisilabsIOS
+//  RDStoryPreviewController.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 7.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
 
-final class RelatedDigitalStoryPreviewController: UIViewController, UIGestureRecognizerDelegate {
+final class RDStoryPreviewController: UIViewController, UIGestureRecognizerDelegate {
 
     // MARK: - Private Vars
-    private var _view: RelatedDigitalStoryPreviewView {return view as? RelatedDigitalStoryPreviewView
-        ?? RelatedDigitalStoryPreviewView(frame: view.frame)}
-    private var viewModel: RelatedDigitalStoryPreviewModel?
+    private var _view: RDStoryPreviewView {return view as? RDStoryPreviewView
+        ?? RDStoryPreviewView(frame: view.frame)}
+    private var viewModel: RDStoryPreviewModel?
 
-    private(set) var stories: [RelatedDigitalStory]
+    private(set) var stories: [RDStory]
     /** This index will tell you which Story, user has picked*/
     private(set) var handPickedStoryIndex: Int // starts with(i)
     /** This index will tell you which Snap, user has picked*/
@@ -22,8 +22,8 @@ final class RelatedDigitalStoryPreviewController: UIViewController, UIGestureRec
     /** This index will help you simply iterate the story one by one*/
 
     private var nStoryIndex: Int = 0 // iteration(i+1)
-    private var storyCopy: RelatedDigitalStory?
-    private(set) var layoutType: RelatedDigitalLayoutType
+    private var storyCopy: RDStory?
+    private(set) var layoutType: RDLayoutType
     private(set) var executeOnce = false
 
     // check whether device rotation is happening or not
@@ -36,12 +36,12 @@ final class RelatedDigitalStoryPreviewController: UIViewController, UIGestureRec
         return gesture
     }()
 
-    private var currentCell: RelatedDigitalStoryPreviewCell? {
+    private var currentCell: RDStoryPreviewCell? {
         guard let indexPath = self.currentIndexPath else {
             debugPrint("Current IndexPath is nil")
             return nil
         }
-        return self._view.snapsCollectionView.cellForItem(at: indexPath) as? RelatedDigitalStoryPreviewCell
+        return self._view.snapsCollectionView.cellForItem(at: indexPath) as? RDStoryPreviewCell
     }
 
     weak var storyUrlDelegate: RDStoryURLDelegate?
@@ -49,8 +49,8 @@ final class RelatedDigitalStoryPreviewController: UIViewController, UIGestureRec
     // MARK: - Overriden functions
     override func loadView() {
         super.loadView()
-        view = RelatedDigitalStoryPreviewView.init(layoutType: self.layoutType)
-        viewModel = RelatedDigitalStoryPreviewModel.init(self.stories, self.handPickedStoryIndex)
+        view = RDStoryPreviewView.init(layoutType: self.layoutType)
+        viewModel = RDStoryPreviewModel.init(self.stories, self.handPickedStoryIndex)
         _view.snapsCollectionView.decelerationRate = .fast
         dismissGesture.delegate = self
         dismissGesture.addTarget(self, action: #selector(didSwipeDown(_:)))
@@ -94,8 +94,8 @@ final class RelatedDigitalStoryPreviewController: UIViewController, UIGestureRec
         isTransitioning = true
         _view.snapsCollectionView.collectionViewLayout.invalidateLayout()
     }
-    init(layout: RelatedDigitalLayoutType = .parallax,
-         stories: [RelatedDigitalStory],
+    init(layout: RDLayoutType = .parallax,
+         stories: [RDStory],
          handPickedStoryIndex: Int,
          handPickedSnapIndex: Int = 0) {
         self.layoutType = layout
@@ -116,7 +116,7 @@ final class RelatedDigitalStoryPreviewController: UIViewController, UIGestureRec
 }
 
 // MARK: - Extension|UICollectionViewDataSource
-extension RelatedDigitalStoryPreviewController: UICollectionViewDataSource {
+extension RDStoryPreviewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let model = viewModel else {return 0}
         return model.numberOfItemsInSection(section)
@@ -124,8 +124,8 @@ extension RelatedDigitalStoryPreviewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:
-                    RelatedDigitalStoryPreviewCell.reuseIdentifier, for: indexPath)
-                as? RelatedDigitalStoryPreviewCell else {
+                    RDStoryPreviewCell.reuseIdentifier, for: indexPath)
+                as? RDStoryPreviewCell else {
             return UICollectionViewCell()
         }
         let story = viewModel?.cellForItemAtIndexPath(indexPath)
@@ -139,17 +139,17 @@ extension RelatedDigitalStoryPreviewController: UICollectionViewDataSource {
 }
 
 // MARK: - Extension|UICollectionViewDelegate
-extension RelatedDigitalStoryPreviewController: UICollectionViewDelegate {
+extension RDStoryPreviewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         willDisplay cell: UICollectionViewCell,
                         forItemAt indexPath: IndexPath) {
-        guard let cell = cell as? RelatedDigitalStoryPreviewCell else {
+        guard let cell = cell as? RDStoryPreviewCell else {
             return
         }
 
         // Taking Previous(Visible) cell to store previous story
         let visibleCells = collectionView.visibleCells.sortedArrayByPosition()
-        let visibleCell = visibleCells.first as? RelatedDigitalStoryPreviewCell
+        let visibleCell = visibleCells.first as? RDStoryPreviewCell
         if let vCell = visibleCell {
             vCell.story?.isCompletelyVisible = false
             vCell.pauseSnapProgressors(with: (vCell.story?.lastPlayedSnapIndex)!)
@@ -174,7 +174,7 @@ extension RelatedDigitalStoryPreviewController: UICollectionViewDelegate {
                         didEndDisplaying cell: UICollectionViewCell,
                         forItemAt indexPath: IndexPath) {
         let visibleCells = collectionView.visibleCells.sortedArrayByPosition()
-        let visibleCell = visibleCells.first as? RelatedDigitalStoryPreviewCell
+        let visibleCell = visibleCells.first as? RDStoryPreviewCell
         guard let vCell = visibleCell else {return}
         guard let vCellIndexPath = _view.snapsCollectionView.indexPath(for: vCell) else {
             return
@@ -191,7 +191,7 @@ extension RelatedDigitalStoryPreviewController: UICollectionViewDelegate {
             }
             vCell.longPressGestureState = nil
         } else {
-            if let cell = cell as? RelatedDigitalStoryPreviewCell {
+            if let cell = cell as? RDStoryPreviewCell {
                 cell.stopPlayer()
             }
             vCell.startProgressors()
@@ -203,7 +203,7 @@ extension RelatedDigitalStoryPreviewController: UICollectionViewDelegate {
 }
 
 // MARK: - Extension|UICollectionViewDelegateFlowLayout
-extension RelatedDigitalStoryPreviewController: UICollectionViewDelegateFlowLayout {
+extension RDStoryPreviewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -219,7 +219,7 @@ extension RelatedDigitalStoryPreviewController: UICollectionViewDelegateFlowLayo
          */
         if isTransitioning {
             let visibleCells = collectionView.visibleCells.sortedArrayByPosition()
-            let visibleCell = visibleCells.first as? RelatedDigitalStoryPreviewCell
+            let visibleCell = visibleCells.first as? RDStoryPreviewCell
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) { [weak self] in
                 guard let strongSelf = self,
                     let vCell = visibleCell,
@@ -247,16 +247,16 @@ extension RelatedDigitalStoryPreviewController: UICollectionViewDelegateFlowLayo
 }
 
 // MARK: - Extension|UIScrollViewDelegate<CollectionView>
-extension RelatedDigitalStoryPreviewController {
+extension RDStoryPreviewController {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        guard let vCell = _view.snapsCollectionView.visibleCells.first as? RelatedDigitalStoryPreviewCell else {return}
+        guard let vCell = _view.snapsCollectionView.visibleCells.first as? RDStoryPreviewCell else {return}
         vCell.pauseSnapProgressors(with: (vCell.story?.lastPlayedSnapIndex)!)
         vCell.pausePlayer(with: (vCell.story?.lastPlayedSnapIndex)!)
     }
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         let sortedVCells = _view.snapsCollectionView.visibleCells.sortedArrayByPosition()
-        guard let firstCell = sortedVCells.first as? RelatedDigitalStoryPreviewCell else {return}
-        guard let lastCell = sortedVCells.last as? RelatedDigitalStoryPreviewCell else {return}
+        guard let firstCell = sortedVCells.first as? RDStoryPreviewCell else {return}
+        guard let lastCell = sortedVCells.last as? RDStoryPreviewCell else {return}
         let firstIndexPath = _view.snapsCollectionView.indexPath(for: firstCell)
         let lastIndexPath = _view.snapsCollectionView.indexPath(for: lastCell)
         let numberOfItems = collectionView(_view.snapsCollectionView, numberOfItemsInSection: 0)-1
@@ -277,7 +277,7 @@ extension RelatedDigitalStoryPreviewController {
 }
 
 // MARK: - StoryPreview Protocol implementation
-extension RelatedDigitalStoryPreviewController: RelatedDigitalStoryPreviewProtocol {
+extension RDStoryPreviewController: RDStoryPreviewProtocol {
     func didCompletePreview() {
         let number = handPickedStoryIndex+nStoryIndex+1
         if number < stories.count {

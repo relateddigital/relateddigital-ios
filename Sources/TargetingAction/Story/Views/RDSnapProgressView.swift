@@ -1,8 +1,8 @@
 //
-//  VisilabsSnapProgressView.swift
-//  VisilabsIOS
+//  RDSnapProgressView.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
@@ -23,7 +23,7 @@ protocol ViewAnimator {
     func reset()
 }
 // swiftlint:disable multiple_closures_with_trailing_closure
-extension ViewAnimator where Self: RelatedDigitalSnapProgressView {
+extension ViewAnimator where Self: RDSnapProgressView {
     func start(with duration: TimeInterval, holderView: UIView,
                completion: @escaping (_ storyIdentifier: String, _ snapIndex: Int,
                                       _ isCancelledAbruptly: Bool) -> Void) {
@@ -82,15 +82,15 @@ extension ViewAnimator where Self: RelatedDigitalSnapProgressView {
     }
 }
 
-final class RelatedDigitalSnapProgressView: UIView, ViewAnimator {
+final class RDSnapProgressView: UIView, ViewAnimator {
     public var storyIdentifier: String?
     public var snapIndex: Int?
-    public var story: RelatedDigitalStory!
+    public var story: RDStory!
     public var widthConstraint: NSLayoutConstraint?
     public var state: ProgressorState = .notStarted
 }
 
-final class RelatedDigitalSnapProgressIndicatorView: UIView {
+final class RDSnapProgressIndicatorView: UIView {
     public var widthConstraint: NSLayoutConstraint?
     public var leftConstraiant: NSLayoutConstraint?
      public var rightConstraiant: NSLayoutConstraint?

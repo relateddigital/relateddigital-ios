@@ -1,13 +1,13 @@
 //
-//  VisilabsVideoCacheManager.swift
-//  VisilabsIOS
+//  RDVideoCacheManager.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
 
-class RelatedDigitalVideoCacheManager {
+class RDVideoCacheManager {
 
     enum VideoError: Error, CustomStringConvertible {
         case downloadError
@@ -22,7 +22,7 @@ class RelatedDigitalVideoCacheManager {
         }
     }
 
-    static let shared = RelatedDigitalVideoCacheManager()
+    static let shared = RDVideoCacheManager()
     private init() {}
     typealias Response = Result<URL, Error>
 

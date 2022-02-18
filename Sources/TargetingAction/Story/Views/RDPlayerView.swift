@@ -1,9 +1,10 @@
 //
-//  VisilabsPlayerView.swift
-//  VisilabsIOS
+//  RDPlayerView.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
+
 
 import UIKit
 import AVKit
@@ -23,7 +24,7 @@ enum PlayerStatus {
 
 // Move Implementation on ViewController or cell which ever the UIElement
 // CALL BACK
-protocol RelatedDigitalPlayerObserver: AnyObject {
+protocol RDPlayerObserver: AnyObject {
     func didStartPlaying()
     func didCompletePlay()
     func didTrack(progress: Float)
@@ -38,7 +39,7 @@ protocol PlayerControls: AnyObject {
     var playerStatus: PlayerStatus { get }
 }
 
-class RelatedDigitalPlayerView: UIView {
+class RDPlayerView: UIView {
 
     // MARK: - Private Vars
     private var timeObserverToken: AnyObject?
@@ -107,7 +108,7 @@ class RelatedDigitalPlayerView: UIView {
     }
 
     // MARK: - Public Vars
-    public weak var playerObserverDelegate: RelatedDigitalPlayerObserver?
+    public weak var playerObserverDelegate: RDPlayerObserver?
 
     // MARK: - Init methods
     override init(frame: CGRect) {
@@ -180,7 +181,7 @@ class RelatedDigitalPlayerView: UIView {
 }
 
 // MARK: - Protocol | PlayerControls
-extension RelatedDigitalPlayerView: PlayerControls {
+extension RDPlayerView: PlayerControls {
 
     func play(with resource: VideoResource) {
 

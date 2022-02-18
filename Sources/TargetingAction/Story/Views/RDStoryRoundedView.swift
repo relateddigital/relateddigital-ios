@@ -1,8 +1,8 @@
 //
-//  VisilabsStoryRoundedView.swift
-//  VisilabsIOS
+//  RDStoryRoundedView.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 28.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
@@ -16,7 +16,7 @@ struct Attributes {
     var borderRadius: Double = 0.0
 }
 
-class RelatedDigitalStoryRoundedView: UIView {
+class RDStoryRoundedView: UIView {
     private var attributes: Attributes = Attributes()
     lazy var imageView: UIImageView = {
         let imgView = UIImageView()
@@ -47,7 +47,7 @@ class RelatedDigitalStoryRoundedView: UIView {
     }
 }
 
-extension RelatedDigitalStoryRoundedView {
+extension RDStoryRoundedView {
     func setBorder(borderColor: UIColor, borderWidth: Int, borderRadius: Double) {
         attributes.borderRadius = borderRadius
         layer.borderColor = borderColor.cgColor

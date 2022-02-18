@@ -10,20 +10,20 @@ import UIKit
 class RDStoryAction {
     let actionId: Int
     let storyTemplate: RDStoryTemplate
-    var stories: [RelatedDigitalStory]
+    var stories: [RDStory]
     let clickQueryItems: Properties
     let impressionQueryItems: Properties
     let extendedProperties: RDStoryActionExtendedProperties
 
     init(actionId: Int,
          storyTemplate: RDStoryTemplate,
-         stories: [RelatedDigitalStory],
+         stories: [RDStory],
          clickQueryItems: Properties,
          impressionQueryItems: Properties,
          extendedProperties: RDStoryActionExtendedProperties) {
         self.actionId = actionId
         self.storyTemplate = storyTemplate
-        self.stories = [RelatedDigitalStory]()
+        self.stories = [RDStory]()
         for story in stories {
             story.clickQueryItems = clickQueryItems
             story.impressionQueryItems = impressionQueryItems

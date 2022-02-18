@@ -35,16 +35,16 @@ public class RDStoryHomeViewController: NSObject, UICollectionViewDataSource, UI
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if !storiesLoaded {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:
-                                                                    RelatedDigitalStoryHomeViewCell.reuseIdentifier, for: indexPath)
-                    as? RelatedDigitalStoryHomeViewCell else {
+                                                                    RDStoryHomeViewCell.reuseIdentifier, for: indexPath)
+                    as? RDStoryHomeViewCell else {
                         return UICollectionViewCell()
                     }
             cell.setAsLoadingCell()
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier:
-                                                                    RelatedDigitalStoryHomeViewCell.reuseIdentifier, for: indexPath)
-                    as? RelatedDigitalStoryHomeViewCell else {
+                                                                    RDStoryHomeViewCell.reuseIdentifier, for: indexPath)
+                    as? RDStoryHomeViewCell else {
                         return UICollectionViewCell()
                     }
             if self.storyAction.extendedProperties.moveShownToEnd {
@@ -72,7 +72,7 @@ public class RDStoryHomeViewController: NSObject, UICollectionViewDataSource, UI
                     self.storyAction.stories[index].isCompletelyVisible = false
                     self.storyAction.stories[index].isCancelledAbruptly = false
                 }
-                let storyPreviewScene = RelatedDigitalStoryPreviewController.init(stories: self.storyAction.stories,
+                let storyPreviewScene = RDStoryPreviewController.init(stories: self.storyAction.stories,
                                                                             handPickedStoryIndex: indexPath.row, handPickedSnapIndex: 0)
                 storyPreviewScene.storyUrlDelegate = self.urlDelegate
                 storyPreviewScene.modalPresentationStyle = .fullScreen
@@ -101,10 +101,10 @@ public class RDStoryHomeViewController: NSObject, UICollectionViewDataSource, UI
     }
     
     // First not shown stories
-    private func sortStories(stories: [RelatedDigitalStory]) -> [RelatedDigitalStory] {
+    private func sortStories(stories: [RDStory]) -> [RDStory] {
         
-        var shownStories: [RelatedDigitalStory] = []
-        var notShownStories: [RelatedDigitalStory] = []
+        var shownStories: [RDStory] = []
+        var notShownStories: [RDStory] = []
         for story in stories {
             var shown = false
             // check story has shown

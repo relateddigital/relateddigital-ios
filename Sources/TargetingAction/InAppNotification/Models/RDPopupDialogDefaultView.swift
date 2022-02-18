@@ -33,7 +33,7 @@ public class RDPopupDialogDefaultView: UIView {
     internal lazy var numberRating = setNumberRating()
 
     internal var sctw: ScratchUIView!
-    internal var sctwButton: RelatedDigitalPopupDialogButton!
+    internal var sctwButton: RDPopupDialogButton!
     internal lazy var feedbackTF = setFeedbackTF()
     internal lazy var imageButton = setImageButton()
 
@@ -161,7 +161,7 @@ public class RDPopupDialogDefaultView: UIView {
     }
 
     fileprivate func addSctwMailForm(_ model: ScratchToWinModel) {
-        sctwButton = RelatedDigitalPopupDialogButton(title: model.mailButtonText ?? "",
+        sctwButton = RDPopupDialogButton(title: model.mailButtonText ?? "",
                                                font: model.mailButtonFont ?? .systemFont(ofSize: 20),
                                                buttonTextColor: model.mailButtonTextColor,
                                                buttonColor: model.mailButtonColor, action: nil)
@@ -475,7 +475,7 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
     @objc func expandSctw() {
         self.delegate?.viewExpanded()
         let model = self.scratchToWin!
-        sctwButton = RelatedDigitalPopupDialogButton(title: model.copyButtonText ?? "",
+        sctwButton = RDPopupDialogButton(title: model.copyButtonText ?? "",
                                                font: model.copyButtonTextFont ?? .systemFont(ofSize: 20),
                                                             buttonTextColor: model.copyButtonTextColor,
                                                             buttonColor: model.copyButtonColor, action: nil)

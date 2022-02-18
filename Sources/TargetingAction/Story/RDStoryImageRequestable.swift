@@ -1,32 +1,32 @@
 //
-//  VisilabsStoryImageRequestable.swift
-//  VisilabsIOS
+//  RDStoryImageRequestable.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 28.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
 import UIKit
 
-public enum RelatedDigitalStoryImageResult<V, E> {
+public enum RDStoryImageResult<V, E> {
     case success(V)
     case failure(E)
 }
 
-public typealias ImageResponse = (RelatedDigitalStoryImageResult<UIImage, Error>) -> Void
+public typealias ImageResponse = (RDStoryImageResult<UIImage, Error>) -> Void
 
-protocol RelatedDigitalStoryImageRequestable {
+protocol RDStoryImageRequestable {
     func setImage(urlString: String, placeHolderImage: UIImage?, completionBlock: ImageResponse?)
 }
 
-extension RelatedDigitalStoryImageRequestable where Self: UIImageView {
+extension RDStoryImageRequestable where Self: UIImageView {
 
     func setImage(urlString: String, placeHolderImage: UIImage? = nil, completionBlock: ImageResponse?) {
 
         self.image = (placeHolderImage != nil) ? placeHolderImage! : nil
         self.showActivityIndicator()
 
-        if let cachedImage = RelatedDigitalStoryImageCache.shared.object(forKey: urlString as AnyObject) as? UIImage {
+        if let cachedImage = RDStoryImageCache.shared.object(forKey: urlString as AnyObject) as? UIImage {
             self.hideActivityIndicator()
             DispatchQueue.main.async {
                 self.image = cachedImage
@@ -34,7 +34,7 @@ extension RelatedDigitalStoryImageRequestable where Self: UIImageView {
             guard let completion = completionBlock else { return }
             return completion(.success(cachedImage))
         } else {
-            RelatedDigitalStoryImageURLSession.default.downloadImage(using: urlString) { [weak self] (response) in
+            RDStoryImageURLSession.default.downloadImage(using: urlString) { [weak self] (response) in
                 guard let strongSelf = self else { return }
                 strongSelf.hideActivityIndicator()
                 switch response {
@@ -64,7 +64,7 @@ public enum RelatedDigitalStoryImageRequestResult<V, E> {
 
 typealias SetImageRequester = (RelatedDigitalStoryImageRequestResult<Bool, Error>) -> Void
 
-extension UIImageView: RelatedDigitalStoryImageRequestable {
+extension UIImageView: RDStoryImageRequestable {
     func setImage(url: String,
                   style: ImageStyle = .rounded,
                   completion: SetImageRequester? = nil) {

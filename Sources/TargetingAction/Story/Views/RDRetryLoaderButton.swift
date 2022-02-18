@@ -1,8 +1,8 @@
 //
-//  VisilabsRetryLoaderButton.swift
-//  VisilabsIOS
+//  RDRetryLoaderButton.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 8.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ protocol RetryBtnDelegate: AnyObject {
     func retryButtonTapped()
 }
 
-public class RelatedDigitalRetryLoaderButton: UIButton {
+public class RDRetryLoaderButton: UIButton {
     var contentURL: String?
     weak var delegate: RetryBtnDelegate?
     convenience init(withURL url: String) {

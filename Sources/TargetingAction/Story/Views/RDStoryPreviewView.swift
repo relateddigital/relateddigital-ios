@@ -1,13 +1,13 @@
 //
-//  VisilabsStoryPreviewView.swift
-//  VisilabsIOS
+//  RDStoryPreviewView.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 7.10.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
 
-public enum RelatedDigitalLayoutType {
+public enum RDLayoutType {
     case cubic
     case parallax
     var animator: LayoutAttributesAnimator {
@@ -18,10 +18,10 @@ public enum RelatedDigitalLayoutType {
     }
 }
 
-class RelatedDigitalStoryPreviewView: UIView {
+class RDStoryPreviewView: UIView {
 
     // MARK: - iVars
-    var layoutType: RelatedDigitalLayoutType?
+    var layoutType: RDLayoutType?
     // swiftlint:disable large_tuple
     /**Layout Animate options(ie.choose which kinda animation you want!)*/
     lazy var layoutAnimator: (LayoutAttributesAnimator, Bool, Int, Int) = (layoutType!.animator, true, 1, 1)
@@ -41,8 +41,8 @@ class RelatedDigitalStoryPreviewView: UIView {
         colView.backgroundColor = .black
         colView.showsVerticalScrollIndicator = false
         colView.showsHorizontalScrollIndicator = false
-        colView.register(RelatedDigitalStoryPreviewCell.self,
-                forCellWithReuseIdentifier: RelatedDigitalStoryPreviewCell.reuseIdentifier)
+        colView.register(RDStoryPreviewCell.self,
+                forCellWithReuseIdentifier: RDStoryPreviewCell.reuseIdentifier)
         colView.translatesAutoresizingMaskIntoConstraints = false
         colView.isPagingEnabled = true
         colView.isPrefetchingEnabled = false
@@ -54,7 +54,7 @@ class RelatedDigitalStoryPreviewView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    convenience init(layoutType: RelatedDigitalLayoutType) {
+    convenience init(layoutType: RDLayoutType) {
         self.init()
         self.layoutType = layoutType
         createUIElements()

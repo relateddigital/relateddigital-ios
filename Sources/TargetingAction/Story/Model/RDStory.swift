@@ -1,22 +1,22 @@
 //
-//  VisilabsStory.swift
-//  VisilabsIOS
+//  RDStory.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 25.08.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import Foundation
 
-class RelatedDigitalStory {
+class RDStory {
     internal init(title: String? = nil, smallImg: String? = nil,
-                  link: String? = nil, items: [RelatedDigitalStoryItem]? = nil, actid: Int) {
+                  link: String? = nil, items: [RDStoryItem]? = nil, actid: Int) {
         self.title = title
         self.smallImg = smallImg
         self.link = link
         if let items = items {
             self.items = items
         } else {
-            self.items = [RelatedDigitalStoryItem]()
+            self.items = [RDStoryItem]()
         }
         self.internalIdentifier = UUID().uuidString
         self.actid = actid
@@ -24,7 +24,7 @@ class RelatedDigitalStory {
     let title: String?
     let smallImg: String?
     let link: String?
-    let items: [RelatedDigitalStoryItem]
+    let items: [RDStoryItem]
     let internalIdentifier: String
     var lastPlayedSnapIndex = 0
     var isCompletelyVisible = false
@@ -34,8 +34,8 @@ class RelatedDigitalStory {
     var actid: Int
 }
 
-extension RelatedDigitalStory: Equatable {
-    public static func == (lhs: RelatedDigitalStory, rhs: RelatedDigitalStory) -> Bool {
+extension RDStory: Equatable {
+    public static func == (lhs: RDStory, rhs: RDStory) -> Bool {
         return lhs.internalIdentifier == rhs.internalIdentifier
     }
 }

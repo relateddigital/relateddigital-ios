@@ -1,13 +1,13 @@
 //
-//  VisilabsStoryHomeViewCell.swift
-//  VisilabsIOS
+//  RDStoryHomeViewCell.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 22.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
 
-class RelatedDigitalStoryHomeViewCell: UICollectionViewCell {
+class RDStoryHomeViewCell: UICollectionViewCell {
 
     func setAsLoadingCell() {
         self.profileNameLabel.text = "Loading"
@@ -82,7 +82,7 @@ class RelatedDigitalStoryHomeViewCell: UICollectionViewCell {
     }
 
     // MARK: - Public iVars
-    var story: RelatedDigitalStory? {
+    var story: RDStory? {
         didSet {
             self.profileNameLabel.text = story?.title
             if let picture = story?.smallImg {
@@ -92,8 +92,8 @@ class RelatedDigitalStoryHomeViewCell: UICollectionViewCell {
     }
 
     // MARK: - Private ivars
-    private let profileImageView: RelatedDigitalStoryRoundedView = {
-        let roundedView = RelatedDigitalStoryRoundedView()
+    private let profileImageView: RDStoryRoundedView = {
+        let roundedView = RDStoryRoundedView()
         roundedView.translatesAutoresizingMaskIntoConstraints = false
         return roundedView
     }()

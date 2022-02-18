@@ -650,7 +650,7 @@ class RDTargetingAction {
             errorResponse = error
         } else if let res = result {
             if let storyActions = res[RDConstants.story] as? [[String: Any?]] {
-                var relatedDigitalStories = [RelatedDigitalStory]()
+                var relatedDigitalStories = [RDStory]()
                 for storyAction in storyActions {
                     if let actionId = storyAction[RDConstants.actid] as? Int,
                        let actiondata = storyAction[RDConstants.actionData] as? [String: Any?],
@@ -659,20 +659,20 @@ class RDTargetingAction {
                         if let stories = actiondata[RDConstants.stories] as? [[String: Any]] {
                             for story in stories {
                                 if template == .skinBased {
-                                    var storyItems = [RelatedDigitalStoryItem]()
+                                    var storyItems = [RDStoryItem]()
                                     if let items = story[RDConstants.items] as? [[String: Any]] {
                                         for item in items {
                                             storyItems.append(parseStoryItem(item))
                                         }
                                         if storyItems.count > 0 {
-                                            relatedDigitalStories.append(RelatedDigitalStory(title: story[RDConstants.title]
+                                            relatedDigitalStories.append(RDStory(title: story[RDConstants.title]
                                                                                     as? String,
                                             smallImg: story[RDConstants.thumbnail] as? String,
                                             link: story[RDConstants.link] as? String, items: storyItems, actid: actionId))
                                         }
                                     }
                                 } else {
-                                    relatedDigitalStories.append(RelatedDigitalStory(title: story[RDConstants.title]
+                                    relatedDigitalStories.append(RDStory(title: story[RDConstants.title]
                                                                             as? String,
                                     smallImg: story[RDConstants.smallImg] as? String,
                                     link: story[RDConstants.link] as? String, actid: actionId))
@@ -727,7 +727,7 @@ class RDTargetingAction {
         return (clickItems, impressionItems)
     }
 
-    private func parseStoryItem(_ item: [String: Any]) -> RelatedDigitalStoryItem {
+    private func parseStoryItem(_ item: [String: Any]) -> RDStoryItem {
         let fileType = (item[RDConstants.fileType] as? String) ?? "photo"
         let fileSrc = (item[RDConstants.fileSrc] as? String) ?? ""
         let targetUrl = (item[RDConstants.targetUrl]  as? String) ?? ""
@@ -760,7 +760,7 @@ class RDTargetingAction {
                 }
             }
         }
-        let relatedDigitalStoryItem = RelatedDigitalStoryItem(fileType: fileType,
+        let relatedDigitalStoryItem = RDStoryItem(fileType: fileType,
                                                   displayTime: displayTime,
                                                   fileSrc: fileSrc,
                                                   targetUrl: targetUrl,

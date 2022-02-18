@@ -1,8 +1,8 @@
 //
 //  UIView+AnchorAndSizes.swift
-//  VisilabsIOS
+//  RelatedDigitalIOS
 //
-//  Created by Egemen on 22.09.2020.
+//  Created by Egemen Gülkılık on 18.12.2021.
 //
 
 import UIKit
