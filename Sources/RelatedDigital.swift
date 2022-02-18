@@ -28,7 +28,7 @@ public class RelatedDigital {
     
     public static var shared: RelatedDigital {
         if _shared == nil {
-            assertionFailure("TakeOff must be called before accessing Airship.")
+            assertionFailure("initialize must be called before accessing RelatedDigital.")
         }
         return _shared!
     }
