@@ -32,6 +32,7 @@ protocol RDInstanceProtocol {
     var inAppNotificationsEnabled: Bool { get set }
     func requestIDFA()
     func sendLocationPermission()
+    func sendCampaignParameters(properties: Properties)
     func customEvent(_ pageName: String, properties: Properties)
     func login(exVisitorId: String, properties: Properties)
     func signUp(exVisitorId: String, properties: Properties)

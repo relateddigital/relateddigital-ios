@@ -126,6 +126,10 @@ public class RelatedDigital {
         shared.rdInstance.sendLocationPermission()
     }
     
+    public static func sendCampaignParameters(properties: Properties) {
+        shared.rdInstance.sendCampaignParameters(properties: properties)
+    }
+    
     public static func customEvent(_ pageName: String, properties: Properties) {
         shared.rdInstance.customEvent(pageName, properties: properties)
     }

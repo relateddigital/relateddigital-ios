@@ -41,5 +41,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return HomeViewController()
     }
     
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+            RelatedDigital.registerToken(tokenData: deviceToken)
+        }
+    
+    func application(_ application: UIApplication,
+                        didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+        RelatedDigital.handlePush(pushDictionary: userInfo)
+       }
+
+       func application(_ application: UIApplication,
+                        didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+                        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+           RelatedDigital.handlePush(pushDictionary: userInfo)
+       }
+
+       func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                   willPresent notification: UNNotification,
+                                   withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+           completionHandler([.alert, .badge, .sound])
+       }
+       
+       func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                   didReceive response: UNNotificationResponse,
+                                   withCompletionHandler completionHandler: @escaping () -> Void) {
+           RelatedDigital.handlePush(pushDictionary: response.notification.request.content.userInfo)
+           completionHandler()
+       }
+    
 }
 

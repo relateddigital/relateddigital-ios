@@ -37,6 +37,12 @@ public struct RDPushMessage: PushCodable {
     public let pushId: String?
     public let emPushSp: String?
     public let elements: [Element]?
+    public let utm_source: String?
+    public let utm_campaign: String?
+    public let utm_medium: String?
+    public let utm_content: String?
+    public let utm_term: String?
+    
     
     public let deliver: String?
 

@@ -25,11 +25,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     weak var delegate: RDInAppNotificationsDelegate?
     weak var inappButtonDelegate: RDInappButtonDelegate?
     weak var currentViewController: UIViewController?
-    
+
     init(lock: RDReadWriteLock) {
         self.lock = lock
     }
-    
+
     func showNotification(_ notification: RDInAppNotification) {
         let notification = notification
         let delayTime = notification.waitingTime ?? 0
@@ -57,7 +57,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     default:
                         shownNotification = self.showPopUp(notification)
                     }
-                    
+
                     if shownNotification {
                         self.markNotificationShown(notification: notification)
                         self.delegate?.notificationDidShow(notification)
@@ -66,7 +66,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             }
         })
     }
-    
+
     func showTargetingAction(_ model: TargetingActionViewModel) {
         DispatchQueue.main.async {
             if self.currentlyShowingNotification != nil || self.currentlyShowingTargetingAction != nil {
@@ -92,21 +92,21 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             }
         }
     }
-    
+
     func showProductStatNotifier(_ model: RDProductStatNotifierViewModel) -> Bool {
         let productStatNotifierVC = RelatedDigitalProductStatNotifierViewController(productStatNotifier: model)
         productStatNotifierVC.delegate = self
         productStatNotifierVC.show(animated: true)
         return true
     }
-    
+
     func showHalfScreenNotification(_ notification: RDInAppNotification) -> Bool {
         let halfScreenNotificationVC = RelatedDigitalHalfScreenViewController(notification: notification)
         halfScreenNotificationVC.delegate = self
         halfScreenNotificationVC.show(animated: true)
         return true
     }
-    
+
     func showMiniNotification(_ notification: RDInAppNotification) -> Bool {
         let miniNotificationVC = RelatedDigitalMiniNotificationViewController(notification: notification)
         miniNotificationVC.delegate = self
@@ -116,14 +116,14 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         }
         return true
     }
-    
+
     func showFullNotification(_ notification: RDInAppNotification) -> Bool {
         let fullNotificationVC = RelatedDigitalFullNotificationViewController(notification: notification)
         fullNotificationVC.delegate = self
         fullNotificationVC.show(animated: true)
         return true
     }
-    
+
     func showCarousel(_ notification: RDInAppNotification) -> Bool {
         if notification.carouselItems.count < 2 {
             RDLogger.error("Carousel Item Count is less than 2.")
@@ -146,13 +146,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             return false
         }
     }
-    
+
     func showAlert(_ notification: RDInAppNotification) {
         let title = notification.messageTitle?.removeEscapingCharacters()
         let message = notification.messageBody?.removeEscapingCharacters()
         let style: UIAlertController.Style = notification.alertType?.lowercased() ?? "" == "actionsheet" ? .actionSheet : .alert
         let alertController = UIAlertController(title: title, message: message, preferredStyle: style)
-        
+
         let buttonTxt = notification.buttonText
         let urlStr = notification.iosLink ?? ""
         let action = UIAlertAction(title: buttonTxt, style: .default) { _ in
@@ -162,34 +162,30 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             RDInstance.sharedUIApplication()?.open(url, options: [:], completionHandler: nil)
             self.inappButtonDelegate?.didTapButton(notification)
         }
-        
+
         let closeText = notification.closeButtonText ?? "Close"
         let close = UIAlertAction(title: closeText, style: .destructive) { _ in
             print("dismiss tapped")
         }
-        
+
         alertController.addAction(action)
         alertController.addAction(close)
-        
+
         if let root = RDHelper.getRootViewController() {
-            
             if UIDevice.current.userInterfaceIdiom == .pad, style == .actionSheet {
                 alertController.popoverPresentationController?.sourceView = root.view
                 alertController.popoverPresentationController?.sourceRect = CGRect(x: root.view.bounds.midX, y: root.view.bounds.maxY, width: 0, height: 0)
             }
-            
-            
+
             root.present(alertController, animated: true, completion: alertDismiss)
         }
     }
-    
-    
-    
+
     func showPopUp(_ notification: RDInAppNotification) -> Bool {
         let controller = RelatedDigitalPopupNotificationViewController(notification: notification)
         controller.delegate = self
-        controller.inappButtonDelegate = self.inappButtonDelegate
-        
+        controller.inappButtonDelegate = inappButtonDelegate
+
         if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: false, completion: nil)
             return true
@@ -197,11 +193,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             return false
         }
     }
-    
+
     func showMailPopup(_ model: MailSubscriptionViewModel) -> Bool {
         let controller = RelatedDigitalPopupNotificationViewController(mailForm: model)
         controller.delegate = self
-        
+
         if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: false, completion: nil)
             return true
@@ -209,7 +205,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             return false
         }
     }
-    
+
     func showScratchToWin(_ model: ScratchToWinModel) -> Bool {
         let controller = RelatedDigitalPopupNotificationViewController(scratchToWin: model)
         controller.delegate = self
@@ -220,7 +216,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             return false
         }
     }
-    
+
     func showSpinToWin(_ model: SpinToWinViewModel) -> Bool {
         let controller = SpinToWinViewController(model)
         controller.modalPresentationStyle = .fullScreen
@@ -231,7 +227,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         }
         return false
     }
-    
+
     func markNotificationShown(notification: RDInAppNotification) {
         lock.write {
             RDLogger.info("marking notification as seen: \(notification.actId)")
@@ -239,20 +235,19 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             // TO_DO: burada customEvent request'i atılmalı
         }
     }
-    
+
     func markTargetingActionShown(model: TargetingActionViewModel) {
         lock.write {
             self.currentlyShowingTargetingAction = model
         }
     }
-    
+
     @discardableResult
     func notificationShouldDismiss(controller: RDBaseViewControllerProtocol, callToActionURL: URL?, shouldTrack: Bool, additionalTrackingProperties: Properties?) -> Bool {
-        
         if currentlyShowingNotification?.actId != controller.notification?.actId {
             return false
         }
-        
+
         let completionBlock = {
             if shouldTrack {
                 var properties = additionalTrackingProperties ?? Properties()
@@ -268,7 +263,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             self.currentlyShowingNotification = nil
             self.currentlyShowingTargetingAction = nil
         }
-        
+
         if let callToActionURL = callToActionURL {
             controller.hide(animated: true) {
                 let app = RDInstance.sharedUIApplication()
@@ -278,17 +273,15 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         } else {
             controller.hide(animated: true, completion: completionBlock)
         }
-        
+
         return true
     }
-    
+
     func mailFormShouldDismiss(controller: RDBaseNotificationViewController, click: String) {
-        
     }
-    
+
     func alertDismiss() {
         currentlyShowingNotification = nil
         currentlyShowingTargetingAction = nil
     }
-    
 }

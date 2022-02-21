@@ -8,7 +8,6 @@
 import UIKit
 // swiftlint:disable type_body_length
 public class RDInAppNotification {
-
     public enum PayloadKey {
         public static let actId = "actid"
         public static let actionData = "actiondata"
@@ -22,8 +21,10 @@ public class RDInAppNotification {
         public static let visitData = "visit_data"
         public static let queryString = "qs"
         public static let messageTitleColor = "msg_title_color"
+        public static let messageTitleBackgroundColor = "msg_title_backgroundcolor"
         public static let messageTitleTextSize = "msg_title_textsize"
         public static let messageBodyColor = "msg_body_color"
+        public static let messageBodyBackgroundColor = "msg_body_backgroundcolor"
         public static let messageBodyTextSize = "msg_body_textsize"
         public static let fontFamily = "font_family"
         public static let backGround = "background"
@@ -63,8 +64,10 @@ public class RDInAppNotification {
     let visitData: String?
     let queryString: String?
     let messageTitleColor: UIColor?
+    let messageTitleBackgroundColor: UIColor?
     let messageTitleTextSize: String?
     let messageBodyColor: UIColor?
+    let messageBodyBackgroundColor: UIColor?
     let messageBodyTextSize: String?
     let fontFamily: String?
     let customFont: String?
@@ -89,7 +92,7 @@ public class RDInAppNotification {
     let secondPopupMinPoint: String?
     let previousPopupPoint: Double?
     let position: RDHalfScreenPosition?
-    let closePopupActionType : String?
+    let closePopupActionType: String?
     public var carouselItems: [RDCarouselItem] = [RDCarouselItem]()
 
     var imageUrl: URL?
@@ -104,6 +107,7 @@ public class RDInAppNotification {
         }
         return data
     }()
+
     /// Second Popup First Image
     var secondImageUrl1: URL?
     lazy var secondImage1: Data? = {
@@ -117,6 +121,7 @@ public class RDInAppNotification {
         }
         return data
     }()
+
     /// Second Popup Second Image
     var secondImageUrl2: URL?
     lazy var secondImage2: Data? = {
@@ -150,12 +155,14 @@ public class RDInAppNotification {
                 visitData: String?,
                 queryString: String?,
                 messageTitleColor: String?,
+                messageTitleBackgroundColor: String?,
                 messageTitleTextSize: String?,
                 messageBodyColor: String?,
+                messageBodyBackgroundColor: String?,
                 messageBodyTextSize: String?,
                 fontFamily: String?,
                 customFont: String?,
-                closePopupActionType:String?,
+                closePopupActionType: String?,
                 backGround: String?,
                 closeButtonColor: String?,
                 buttonTextColor: String?,
@@ -178,9 +185,8 @@ public class RDInAppNotification {
                 previousPopupPoint: Double? = nil,
                 position: RDHalfScreenPosition?,
                 carouselItems: [RDCarouselItem]? = nil) {
-
         self.actId = actId
-        self.messageType = type.rawValue
+        messageType = type.rawValue
         self.type = type
         self.messageTitle = messageTitle
         self.messageBody = messageBody
@@ -190,14 +196,16 @@ public class RDInAppNotification {
         self.visitorData = visitorData
         self.visitData = visitData
         self.queryString = queryString
-        self.messageTitleColor =  UIColor(hex: messageTitleColor)
+        self.messageTitleColor = UIColor(hex: messageTitleColor)
+        self.messageTitleBackgroundColor = UIColor(hex: messageTitleBackgroundColor)
         self.messageTitleTextSize = messageTitleTextSize
         self.messageBodyColor = UIColor(hex: messageBodyColor)
+        self.messageBodyBackgroundColor = UIColor(hex: messageBodyBackgroundColor)
         self.messageBodyTextSize = messageBodyTextSize
         self.fontFamily = fontFamily
         self.customFont = customFont
         self.closePopupActionType = closePopupActionType
-        self.backGroundColor = UIColor(hex: backGround)
+        backGroundColor = UIColor(hex: backGround)
         if let cBColor = closeButtonColor {
             if cBColor.lowercased() == "white" {
                 self.closeButtonColor = UIColor.white
@@ -212,7 +220,7 @@ public class RDInAppNotification {
         self.buttonTextColor = UIColor(hex: buttonTextColor)
         self.buttonColor = UIColor(hex: buttonColor)
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: self.type)
+            imageUrl = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
 
         var callToActionUrl: URL?
@@ -236,21 +244,21 @@ public class RDInAppNotification {
         self.secondImageUrlString2 = secondImageUrlString2
         self.secondPopupMinPoint = secondPopupMinPoint
         if !secondImageUrlString1.isNilOrWhiteSpace {
-            self.secondImageUrl1 = RDHelper.getImageUrl(secondImageUrlString1!, type: self.type)
+            secondImageUrl1 = RDHelper.getImageUrl(secondImageUrlString1!, type: self.type)
         }
         if !secondImageUrlString2.isNilOrWhiteSpace {
-            self.secondImageUrl2 = RDHelper.getImageUrl(secondImageUrlString2!, type: self.type)
+            secondImageUrl2 = RDHelper.getImageUrl(secondImageUrlString2!, type: self.type)
         }
         self.previousPopupPoint = previousPopupPoint
         self.position = position
-        
+
         if let carouselItems = carouselItems {
             self.carouselItems = carouselItems
         }
-        
+
         setFonts()
     }
-    
+
     // swiftlint:disable function_body_length disable cyclomatic_complexity
     init?(JSONObject: [String: Any]?) {
         guard let object = JSONObject else {
@@ -277,108 +285,109 @@ public class RDInAppNotification {
         self.actId = actId
         self.messageType = messageType
         self.type = type
-        self.messageTitle = actionData[PayloadKey.messageTitle] as? String
-        self.messageBody = actionData[PayloadKey.messageBody] as? String
-        self.buttonText = actionData[PayloadKey.buttonText] as? String
-        self.iosLink = actionData[PayloadKey.iosLink] as? String
-        self.imageUrlString = actionData[PayloadKey.imageUrlString] as? String
-        self.visitorData = actionData[PayloadKey.visitorData] as? String
-        self.visitData = actionData[PayloadKey.visitData] as? String
-        self.queryString = actionData[PayloadKey.queryString] as? String
-        self.messageTitleColor = UIColor(hex: actionData[PayloadKey.messageTitleColor] as? String)
-        self.messageBodyColor = UIColor(hex: actionData[PayloadKey.messageBodyColor] as? String)
-        let messageBodyTextSize = actionData[PayloadKey.messageBodyTextSize] as? String
-        self.messageBodyTextSize = messageBodyTextSize
-        self.messageTitleTextSize = actionData[PayloadKey.messageTitleTextSize] as? String ?? messageBodyTextSize
-        self.fontFamily = actionData[PayloadKey.fontFamily] as? String
-        self.customFont = actionData[PayloadKey.customFont] as? String
-        self.closePopupActionType = actionData[PayloadKey.closePopupActionType] as? String
-        self.backGroundColor = UIColor(hex: actionData[PayloadKey.backGround] as? String)
-        self.promotionCode = actionData[PayloadKey.promotionCode] as? String
-        self.promotionTextColor = UIColor(hex: actionData[PayloadKey.promotionTextColor] as? String)
-        self.promotionBackgroundColor = UIColor(hex: actionData[PayloadKey.promotionBackgroundColor] as? String)
+        messageTitle = actionData[PayloadKey.messageTitle] as? String
+        messageBody = actionData[PayloadKey.messageBody] as? String
+        buttonText = actionData[PayloadKey.buttonText] as? String
+        iosLink = actionData[PayloadKey.iosLink] as? String
+        imageUrlString = actionData[PayloadKey.imageUrlString] as? String
+        visitorData = actionData[PayloadKey.visitorData] as? String
+        visitData = actionData[PayloadKey.visitData] as? String
+        queryString = actionData[PayloadKey.queryString] as? String
+        messageTitleColor = UIColor(hex: actionData[PayloadKey.messageTitleColor] as? String)
+        messageTitleBackgroundColor = UIColor(hex: actionData[PayloadKey.messageTitleBackgroundColor] as? String)
+        messageBodyColor = UIColor(hex: actionData[PayloadKey.messageBodyColor] as? String)
+        messageBodyBackgroundColor = UIColor(hex: actionData[PayloadKey.messageBodyBackgroundColor] as? String)
+        messageBodyTextSize = actionData[PayloadKey.messageBodyTextSize] as? String
+        messageTitleTextSize = actionData[PayloadKey.messageTitleTextSize] as? String ?? messageBodyTextSize
+        fontFamily = actionData[PayloadKey.fontFamily] as? String
+        customFont = actionData[PayloadKey.customFont] as? String
+        closePopupActionType = actionData[PayloadKey.closePopupActionType] as? String
+        backGroundColor = UIColor(hex: actionData[PayloadKey.backGround] as? String)
+        promotionCode = actionData[PayloadKey.promotionCode] as? String
+        promotionTextColor = UIColor(hex: actionData[PayloadKey.promotionTextColor] as? String)
+        promotionBackgroundColor = UIColor(hex: actionData[PayloadKey.promotionBackgroundColor] as? String)
         if let cBColor = actionData[PayloadKey.closeButtonColor] as? String {
             if cBColor.lowercased() == "white" {
-                self.closeButtonColor = UIColor.white
+                closeButtonColor = UIColor.white
             } else if cBColor.lowercased() == "black" {
-                self.closeButtonColor = UIColor.black
+                closeButtonColor = UIColor.black
             } else {
-                self.closeButtonColor = UIColor(hex: cBColor)
+                closeButtonColor = UIColor(hex: cBColor)
             }
         } else {
-            self.closeButtonColor = nil
+            closeButtonColor = nil
         }
 
-        self.buttonTextColor = UIColor(hex: actionData[PayloadKey.buttonTextColor] as? String)
-        self.buttonColor = UIColor(hex: actionData[PayloadKey.buttonColor] as? String)
+        buttonTextColor = UIColor(hex: actionData[PayloadKey.buttonTextColor] as? String)
+        buttonColor = UIColor(hex: actionData[PayloadKey.buttonColor] as? String)
 
         if !imageUrlString.isNilOrWhiteSpace {
-            self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: self.type)
+            imageUrl = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
 
         var callToActionUrl: URL?
-        if let urlString = self.iosLink {
+        if let urlString = iosLink {
             callToActionUrl = URL(string: urlString)
         }
         self.callToActionUrl = callToActionUrl
-        self.alertType = actionData[PayloadKey.alertType] as? String
-        self.closeButtonText = actionData[PayloadKey.closeButtonText] as? String
+        alertType = actionData[PayloadKey.alertType] as? String
+        closeButtonText = actionData[PayloadKey.closeButtonText] as? String
         if let numColors = actionData[PayloadKey.numberColors] as? [String]? {
-            self.numberColors = RDHelper.convertColorArray(numColors)
+            numberColors = RDHelper.convertColorArray(numColors)
         } else {
-            self.numberColors = nil
+            numberColors = nil
         }
-        self.waitingTime = actionData[PayloadKey.waitingTime] as? Int
+        waitingTime = actionData[PayloadKey.waitingTime] as? Int
 
         // Second Popup Variables
         if let secondType = actionData[PayloadKey.secondPopupType] as? String {
-            self.secondPopupType = RDSecondPopupType.init(rawValue: secondType)
+            secondPopupType = RDSecondPopupType(rawValue: secondType)
         } else {
-            self.secondPopupType = nil
+            secondPopupType = nil
         }
-        self.secondPopupTitle = actionData[PayloadKey.secondPopupTitle] as? String
-        self.secondPopupBody = actionData[PayloadKey.secondPopupBody] as? String
-        self.secondPopupBodyTextSize = actionData[PayloadKey.secondPopupBodyTextSize] as? String
-        self.secondPopupButtonText = actionData[PayloadKey.secondPopupButtonText] as? String
-        self.secondImageUrlString1 = actionData[PayloadKey.secondImageUrlString1] as? String
-        self.secondImageUrlString2 = actionData[PayloadKey.secondImageUrlString2] as? String
+        secondPopupTitle = actionData[PayloadKey.secondPopupTitle] as? String
+        secondPopupBody = actionData[PayloadKey.secondPopupBody] as? String
+        secondPopupBodyTextSize = actionData[PayloadKey.secondPopupBodyTextSize] as? String
+        secondPopupButtonText = actionData[PayloadKey.secondPopupButtonText] as? String
+        secondImageUrlString1 = actionData[PayloadKey.secondImageUrlString1] as? String
+        secondImageUrlString2 = actionData[PayloadKey.secondImageUrlString2] as? String
         if !secondImageUrlString1.isNilOrWhiteSpace {
-            self.secondImageUrl1 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
+            secondImageUrl1 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
         if !secondImageUrlString2.isNilOrWhiteSpace {
-            self.secondImageUrl2 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
+            secondImageUrl2 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
-        self.secondPopupMinPoint = actionData[PayloadKey.secondPopupMinPoint] as? String
-        self.previousPopupPoint = nil
-        
+        secondPopupMinPoint = actionData[PayloadKey.secondPopupMinPoint] as? String
+        previousPopupPoint = nil
+
         if let positionString = actionData[PayloadKey.position] as? String
-            , let position = RDHalfScreenPosition.init(rawValue: positionString) {
+            , let position = RDHalfScreenPosition(rawValue: positionString) {
             self.position = position
         } else {
-            self.position = .bottom
+            position = .bottom
         }
-        
+
         var carouselItems = [RDCarouselItem]()
-        
+
         if let carouselItemObjects = actionData[PayloadKey.carouselItems] as? [[String: Any]] {
             for carouselItemObject in carouselItemObjects {
-                if let carouselItem = RDCarouselItem.init(JSONObject: carouselItemObject) {
+                if let carouselItem = RDCarouselItem(JSONObject: carouselItemObject) {
                     carouselItems.append(carouselItem)
                 }
             }
         }
-        
+
         self.carouselItems = carouselItems.map { (item) -> RDCarouselItem in
             item.closeButtonColor = closeButtonColor
             return item
         }
-        
+
         setFonts()
     }
 
     private func setFonts() {
-        messageTitleFont = RDHelper.getFont(fontFamily: self.fontFamily, fontSize: self.messageTitleTextSize, style: .title2, customFont: self.customFont)
-        messageBodyFont = RDHelper.getFont(fontFamily: self.fontFamily, fontSize: self.messageBodyTextSize, style: .body, customFont: self.customFont)
-        buttonTextFont = RDHelper.getFont(fontFamily: self.fontFamily, fontSize: self.messageBodyTextSize, style: .title2, customFont: self.customFont)
+        messageTitleFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageTitleTextSize, style: .title2, customFont: customFont)
+        messageBodyFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .body, customFont: customFont)
+        buttonTextFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .title2, customFont: customFont)
     }
 }
