@@ -15,6 +15,7 @@ public class RDInAppNotification {
         public static let messageTitle = "msg_title"
         public static let messageBody = "msg_body"
         public static let buttonText = "btn_text"
+        public static let buttonFunction = "button_function"
         public static let iosLink = "ios_lnk"
         public static let imageUrlString = "img"
         public static let visitorData = "visitor_data"
@@ -58,6 +59,7 @@ public class RDInAppNotification {
     let messageTitle: String?
     let messageBody: String?
     let buttonText: String?
+    let buttonFunction: String?
     public let iosLink: String?
     let imageUrlString: String?
     let visitorData: String?
@@ -149,6 +151,7 @@ public class RDInAppNotification {
                 messageTitle: String?,
                 messageBody: String?,
                 buttonText: String?,
+                buttonFunction: String?,
                 iosLink: String?,
                 imageUrlString: String?,
                 visitorData: String?,
@@ -191,6 +194,7 @@ public class RDInAppNotification {
         self.messageTitle = messageTitle
         self.messageBody = messageBody
         self.buttonText = buttonText
+        self.buttonFunction = buttonFunction
         self.iosLink = iosLink
         self.imageUrlString = imageUrlString
         self.visitorData = visitorData
@@ -224,8 +228,18 @@ public class RDInAppNotification {
         }
 
         var callToActionUrl: URL?
-        if let urlString = self.iosLink {
-            callToActionUrl = URL(string: urlString)
+        if let buttonFunction = buttonFunction {
+            if buttonFunction == "link" || buttonFunction == "" {
+                if let urlString = iosLink {
+                    callToActionUrl = URL(string: urlString)
+                }
+            } else if buttonFunction == "redirect" {
+                callToActionUrl = URL(string: "redirect")
+            }
+        } else {
+            if let urlString = iosLink {
+                callToActionUrl = URL(string: urlString)
+            }
         }
         self.callToActionUrl = callToActionUrl
         self.alertType = alertType
@@ -288,6 +302,7 @@ public class RDInAppNotification {
         messageTitle = actionData[PayloadKey.messageTitle] as? String
         messageBody = actionData[PayloadKey.messageBody] as? String
         buttonText = actionData[PayloadKey.buttonText] as? String
+        buttonFunction = actionData[PayloadKey.buttonFunction] as? String
         iosLink = actionData[PayloadKey.iosLink] as? String
         imageUrlString = actionData[PayloadKey.imageUrlString] as? String
         visitorData = actionData[PayloadKey.visitorData] as? String
@@ -326,8 +341,18 @@ public class RDInAppNotification {
         }
 
         var callToActionUrl: URL?
-        if let urlString = iosLink {
-            callToActionUrl = URL(string: urlString)
+        if let buttonFunction = buttonFunction {
+            if buttonFunction == "link" || buttonFunction == "" {
+                if let urlString = iosLink {
+                    callToActionUrl = URL(string: urlString)
+                }
+            } else if buttonFunction == "redirect" {
+                callToActionUrl = URL(string: "redirect")
+            }
+        } else {
+            if let urlString = iosLink {
+                callToActionUrl = URL(string: urlString)
+            }
         }
         self.callToActionUrl = callToActionUrl
         alertType = actionData[PayloadKey.alertType] as? String

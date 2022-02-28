@@ -266,9 +266,16 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
 
         if let callToActionURL = callToActionURL {
             controller.hide(animated: true) {
-                let app = RDInstance.sharedUIApplication()
-                app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: callToActionURL, waitUntilDone: true)
-                completionBlock()
+                if callToActionURL.absoluteString == "redirect" {
+                    if let appSettings = NSURL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(appSettings as URL, options: [:], completionHandler: nil)
+                        completionBlock()
+                    }
+                } else {
+                    let app = RDInstance.sharedUIApplication()
+                    app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: callToActionURL, waitUntilDone: true)
+                    completionBlock()
+                }
             }
         } else {
             controller.hide(animated: true, completion: completionBlock)
