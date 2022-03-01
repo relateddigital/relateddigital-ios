@@ -253,14 +253,21 @@ extension RDPopupDialogDefaultView {
         addSubview(titleLabel)
         addSubview(messageLabel)
         imageView.allEdges(to: self, excluding: .bottom)
-
+        
         titleLabel.topToBottom(of: imageView, offset: 0)
         titleLabel.leading(to: self)
         titleLabel.trailing(to: self)
-
+        titleLabel.height(32)
+        
         messageLabel.topToBottom(of: titleLabel, offset: 0)
         messageLabel.leading(to: self)
         messageLabel.trailing(to: self)
+        messageLabel.height(32)
+        
+        if relatedDigitalInAppNotification?.imageUrlString?.isEmpty == true {
+            closeButton.layer.zPosition = 1
+            closeButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+        }
 
         if let titleBackgroundColor = relatedDigitalInAppNotification?.messageTitleBackgroundColor {
             titleLabel.backgroundColor = titleBackgroundColor
@@ -276,9 +283,14 @@ extension RDPopupDialogDefaultView {
            !promo.isEmpty {
             addSubview(copyCodeTextButton)
             addSubview(copyCodeImageButton)
-            copyCodeTextButton.topToBottom(of: messageLabel, offset: 10.0)
             copyCodeTextButton.bottom(to: self, offset: 0.0)
-            copyCodeImageButton.topToBottom(of: messageLabel, offset: 10.0)
+            if relatedDigitalInAppNotification?.messageTitleColor != nil {
+                copyCodeTextButton.topToBottom(of: messageLabel, offset: 0)
+                copyCodeImageButton.topToBottom(of: messageLabel, offset: 0)
+            } else {
+                copyCodeTextButton.topToBottom(of: messageLabel, offset: 10.0)
+                copyCodeImageButton.topToBottom(of: messageLabel, offset: 10.0)
+            }
             copyCodeImageButton.bottom(to: copyCodeTextButton)
             copyCodeTextButton.leading(to: self)
             copyCodeImageButton.width(50.0)
