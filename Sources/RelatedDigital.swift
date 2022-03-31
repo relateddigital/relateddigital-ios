@@ -111,10 +111,10 @@ public class RelatedDigital {
     
     public static var geofenceEnabled: Bool {
         get {
-            return shared.rdInstance.inAppNotificationsEnabled
+            return shared.rdInstance.geofenceEnabled
         }
         set {
-            shared.rdInstance.inAppNotificationsEnabled = newValue
+            shared.rdInstance.geofenceEnabled = newValue
         }
     }
     

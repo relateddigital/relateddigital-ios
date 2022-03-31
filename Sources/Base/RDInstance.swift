@@ -54,6 +54,16 @@ public class RDInstance: RDInstanceProtocol {
         }
     }
     
+    public var geofenceEnabled: Bool {
+        get {
+            return rdProfile.geofenceEnabled
+        }
+        set {
+            rdProfile.geofenceEnabled = newValue
+            RDPersistence.saveRDProfile(rdProfile)
+        }
+    }
+    
     public var useInsecureProtocol: Bool = false {
         didSet {
             rdProfile.useInsecureProtocol = useInsecureProtocol
