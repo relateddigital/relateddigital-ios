@@ -30,6 +30,7 @@ protocol RDInstanceProtocol {
     var inappButtonDelegate: RDInappButtonDelegate? { get set }
     var loggingEnabled: Bool { get set }
     var inAppNotificationsEnabled: Bool { get set }
+    var geofenceEnabled: Bool { get set }
     func requestIDFA()
     func sendLocationPermission()
     func sendCampaignParameters(properties: Properties)
