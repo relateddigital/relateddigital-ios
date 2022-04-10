@@ -20,7 +20,7 @@ class RDNotificationViewController: UIViewController, UNNotificationContentExten
     
     func didReceive(_ notification: UNNotification) {
         notificationRequestIdentifier = notification.request.identifier
-        RelatedDigital.initialize(organizationId: "676D325830564761676D453D", profileId: "356467332F6533766975593D", dataSource: "visistore", launchOptions: nil)
+        RelatedDigital.initialize(organizationId: urlConstant.shared.organizationId, profileId: urlConstant.shared.profileId, dataSource: "visistore", launchOptions: nil)
         RelatedDigital.enablePushNotifications(appAlias: "RDIOSExample", launchOptions: nil, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital")
         carouselView.didReceive(notification)
     }
