@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     var isRelatedInit = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        urlConstant.shared.setTest()
         RelatedDigital.initialize(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource, launchOptions: launchOptions)
         RelatedDigital.enablePushNotifications(appAlias: "RDIOSExample", launchOptions: launchOptions, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital")
         UNUserNotificationCenter.current().delegate = self

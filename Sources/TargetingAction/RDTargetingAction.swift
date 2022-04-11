@@ -97,7 +97,7 @@ class RDTargetingAction {
         props[RDConstants.lvtKey] = rdUser.lvt
         
         
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -128,6 +128,8 @@ class RDTargetingAction {
             return parseSpinToWin(spinToWin)
         } else if let sctwArr = result[RDConstants.scratchToWin] as? [[String: Any?]], let sctw = sctwArr.first {
             return parseScratchToWin(sctw)
+        }   else if let drawerArr = result[RDConstants.drawer] as? [[String: Any?]], let drw = drawerArr.first {
+            return parseDrawer(drw)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
@@ -356,6 +358,41 @@ class RDTargetingAction {
                                               checkConsentMessage: checkConsent,
                                               report: mailReport)
         return convertJsonToEmailViewModel(emailForm: mailModel)
+    }
+    
+    private func parseDrawer(_ drawer: [String: Any?]) -> SideBarServiceModel? {
+        
+        guard let actionData = drawer[RDConstants.actionData] as? [String: Any] else { return nil }
+        var sideBarServiceModel = SideBarServiceModel(targetingActionType: .drawer)
+        sideBarServiceModel.actId = drawer[RDConstants.actid] as? Int ?? 0
+        sideBarServiceModel.title = drawer[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+
+        
+        //actionData
+        sideBarServiceModel.shape = actionData[RDConstants.shape] as? String ?? ""
+        sideBarServiceModel.pos = actionData[RDConstants.position] as? String ?? ""
+        sideBarServiceModel.contentMinimizedImage  = actionData[RDConstants.contentMinimizedImage] as? String ?? ""
+        sideBarServiceModel.contentMinimizedText = actionData[RDConstants.contentMinimizedText] as? String ?? ""
+        sideBarServiceModel.contentMaximizedImage = actionData[RDConstants.contentMaximizedImage] as? String ?? ""
+        sideBarServiceModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
+        sideBarServiceModel.iosLnk = actionData[RDConstants.iosLnk] as? String ?? ""
+        
+        //extended Props
+        sideBarServiceModel.contentMinimizedTextSize = extendedProps[RDConstants.contentMinimizedTextSize] as? String ?? ""
+        sideBarServiceModel.contentMinimizedTextColor = extendedProps[RDConstants.contentMinimizedTextColor] as? String ?? ""
+        sideBarServiceModel.contentMinimizedFontFamily = extendedProps[RDConstants.contentMinimizedFontFamily] as? String ?? ""
+        sideBarServiceModel.contentMinimizedCustomFontFamilyIos = extendedProps[RDConstants.contentMinimizedCustomFontFamilyIos] as? String ?? ""
+        sideBarServiceModel.contentMinimizedTextOrientation = extendedProps[RDConstants.contentMinimizedTextOrientation] as? String ?? ""
+        sideBarServiceModel.contentMinimizedBackgroundImage = extendedProps[RDConstants.contentMinimizedBackgroundImage] as? String ?? ""
+        sideBarServiceModel.contentMinimizedBackgroundColor = extendedProps[RDConstants.contentMinimizedBackgroundColor] as? String ?? ""
+        sideBarServiceModel.contentMinimizedArrowColor = extendedProps[RDConstants.contentMinimizedArrowColor] as? String ?? ""
+        sideBarServiceModel.contentMaximizedBackgroundImage = extendedProps[RDConstants.contentMaximizedBackgroundImage] as? String ?? ""
+        sideBarServiceModel.contentMaximizedBackgroundColor = extendedProps[RDConstants.contentMaximizedBackgroundColor] as? String ?? ""
+    
+
+        return sideBarServiceModel
     }
 
     private func parseScratchToWin(_ scratchToWin: [String: Any?]) -> ScratchToWinModel? {

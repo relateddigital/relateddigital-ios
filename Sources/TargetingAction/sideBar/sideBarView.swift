@@ -47,7 +47,7 @@ class sideBarView: UIView {
     @IBOutlet weak var rightSideBarContentImageCenterXConstraint: NSLayoutConstraint!
 
     
-    var sideBarModel : SideBarModel?
+    var sideBarModel : SideBarViewModel?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -61,11 +61,12 @@ class sideBarView: UIView {
         super.layoutSubviews()
         
         self.bounds = self.frame
+        self.sideBarGrandContentImageView.layer.zPosition = 1
         if sideBarModel?.screenXcoordinate == .right && !(sideBarModel?.isCircle ?? false) {
-            self.leftSideBarMiniView.roundCorners(corners: [.topLeft, .bottomLeft], radius: 10)
+            self.leftSideBarMiniView.roundCorners(corners: [.topLeft, .bottomLeft], radius: sideBarModel?.cornerRadius ?? 0.0)
         } else if sideBarModel?.screenXcoordinate == .left && !(sideBarModel?.isCircle ?? false) {
-            self.rightSideBarMiniView.roundCorners(corners: [.topRight, .bottomRight], radius: 10)
-        } 
+            self.rightSideBarMiniView.roundCorners(corners: [.topRight, .bottomRight], radius: sideBarModel?.cornerRadius ?? 0.0)
+        }
     }
 }
 

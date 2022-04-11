@@ -205,14 +205,6 @@ extension RDInstance {
         })
     }
     
-    private func sideBarTest(imageData:UIImage) {
-        
-        let model = SideBarModel()
-        model.dataImage = imageData
-        let sideBar = RelatedDigitalSideBarViewController(model:model)
-        sideBar.show(animated: true)
-        
-    }
     
     public func customEvent(_ pageName: String, properties: Properties) {
         

@@ -88,9 +88,19 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showProductStatNotifier(psn) {
                         self.markTargetingActionShown(model: psn)
                     }
-                }
+                } else if model.targetingActionType == .drawer, let drawer = model as? SideBarServiceModel {
+                    if self.showDrawer(model: drawer) {
+                       self.markTargetingActionShown(model: drawer)
+                   }
+               }
             }
         }
+    }
+    
+    func showDrawer(model:SideBarServiceModel) ->Bool {
+        let sideBar = RDSideBarViewController(model:model)
+        sideBar.show(animated: true)
+        return true
     }
 
     func showProductStatNotifier(_ model: RDProductStatNotifierViewModel) -> Bool {
