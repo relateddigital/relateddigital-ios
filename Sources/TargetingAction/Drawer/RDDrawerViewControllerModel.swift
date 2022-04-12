@@ -8,67 +8,67 @@
 import Foundation
 
 
-class RDSideBarViewControllerModel {
+class RDDrawerViewControllerModel {
     
     
-    func mapServiceModelToNeededModel(serviceModel : SideBarServiceModel?)  -> SideBarViewModel {
+    func mapServiceModelToNeededModel(serviceModel : DrawerServiceModel?)  -> DrawerViewModel {
         
-        var sideBarModel = SideBarViewModel()
+        var drawerModel = DrawerViewModel()
         
-        sideBarModel.actId = serviceModel?.actId
-        sideBarModel.title = serviceModel?.title
+        drawerModel.actId = serviceModel?.actId
+        drawerModel.title = serviceModel?.title
         
         if serviceModel?.shape?.lowercased() == "circle" {
-            sideBarModel.isCircle = true
+            drawerModel.isCircle = true
         } else if serviceModel?.shape?.lowercased() == "roundedcorners" {
-            sideBarModel.isCircle = false
+            drawerModel.isCircle = false
         } else {
-            sideBarModel.isCircle = false
-            sideBarModel.cornerRadius = 0.0
+            drawerModel.isCircle = false
+            drawerModel.cornerRadius = 0.0
         }
         
         if (serviceModel?.pos?.lowercased().contains("top") == true) {
-            sideBarModel.screenYcoordinate = .top
+            drawerModel.screenYcoordinate = .top
         } else if (serviceModel?.pos?.lowercased().contains("bottom") == true) {
-            sideBarModel.screenYcoordinate = .bottom
+            drawerModel.screenYcoordinate = .bottom
         } else {
-            sideBarModel.screenYcoordinate = .middle
+            drawerModel.screenYcoordinate = .middle
         }
         
         if (serviceModel?.pos?.lowercased().contains("right") == true) {
-            sideBarModel.screenXcoordinate = .right
+            drawerModel.screenXcoordinate = .right
         } else {
-            sideBarModel.screenXcoordinate = .left
+            drawerModel.screenXcoordinate = .left
         }
          
-        sideBarModel.miniSidebarContentImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMinimizedImage ?? ""))
-        sideBarModel.titleString = serviceModel?.contentMinimizedText ?? ""
-        sideBarModel.sideBarContentImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMaximizedImage ?? ""))
-        sideBarModel.waitTime = serviceModel?.waitingTime
-        sideBarModel.linkToGo = serviceModel?.iosLnk
+        drawerModel.miniDrawerContentImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMinimizedImage ?? ""))
+        drawerModel.titleString = serviceModel?.contentMinimizedText ?? ""
+        drawerModel.drawerContentImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMaximizedImage ?? ""))
+        drawerModel.waitTime = serviceModel?.waitingTime
+        drawerModel.linkToGo = serviceModel?.iosLnk
         
-        sideBarModel.miniSideBarTextFont = RDHelper.getFont(fontFamily: serviceModel?.contentMinimizedFontFamily, fontSize: serviceModel?.contentMinimizedTextSize, style: .title2, customFont: serviceModel?.contentMinimizedCustomFontFamilyIos)
-        sideBarModel.miniSideBarTextColor = UIColor(hex: serviceModel?.contentMinimizedTextColor)
+        drawerModel.miniDrawerTextFont = RDHelper.getFont(fontFamily: serviceModel?.contentMinimizedFontFamily, fontSize: serviceModel?.contentMinimizedTextSize, style: .title2, customFont: serviceModel?.contentMinimizedCustomFontFamilyIos)
+        drawerModel.miniDrawerTextColor = UIColor(hex: serviceModel?.contentMinimizedTextColor)
         
         if serviceModel?.contentMinimizedTextOrientation?.lowercased() == "toptobottom" {
-            sideBarModel.labelType = .upToDown
+            drawerModel.labelType = .upToDown
         } else {
-            sideBarModel.labelType = .downToUp
+            drawerModel.labelType = .downToUp
         }
         
-        sideBarModel.miniSideBarBackgroundImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMinimizedBackgroundImage ?? ""))
-        sideBarModel.miniSideBarBackgroundColor = UIColor(hex: serviceModel?.contentMinimizedBackgroundColor)
+        drawerModel.miniDrawerBackgroundImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMinimizedBackgroundImage ?? ""))
+        drawerModel.miniDrawerBackgroundColor = UIColor(hex: serviceModel?.contentMinimizedBackgroundColor)
         
         if serviceModel?.contentMinimizedArrowColor?.count == 0 {
-            sideBarModel.arrowColor = .clear
+            drawerModel.arrowColor = .clear
         } else {
-            sideBarModel.arrowColor = UIColor(hex: serviceModel?.contentMinimizedArrowColor)
+            drawerModel.arrowColor = UIColor(hex: serviceModel?.contentMinimizedArrowColor)
         }
         
-        sideBarModel.sideBarBackgroundImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMaximizedBackgroundImage ?? ""))
-        sideBarModel.sideBarBackgroundColor = UIColor(hex: serviceModel?.contentMaximizedBackgroundColor)
+        drawerModel.drawerBackgroundImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMaximizedBackgroundImage ?? ""))
+        drawerModel.drawerBackgroundColor = UIColor(hex: serviceModel?.contentMaximizedBackgroundColor)
 
-        return sideBarModel
+        return drawerModel
     }
     
     private func getDataOfImage(urlString : String) -> Data {
@@ -90,7 +90,7 @@ class RDSideBarViewControllerModel {
 }
 
 
-struct SideBarServiceModel: TargetingActionViewModel {
+struct DrawerServiceModel: TargetingActionViewModel {
     
     var targetingActionType: TargetingActionType
     var actId:Int?
@@ -118,12 +118,12 @@ struct SideBarServiceModel: TargetingActionViewModel {
     var contentMaximizedBackgroundColor:String?
 }
 
-struct SideBarViewModel {
+struct DrawerViewModel {
     
     //constants and varams
-    var sideBarHeight = 200.0
-    var miniSideBarWidth = 40.0
-    var miniSideBarWidthForCircle = 140.0
+    var drawerHeight = 200.0
+    var miniDrawerWidth = 40.0
+    var miniDrawerWidthForCircle = 140.0
     var xCoordPaddingConstant = -25.0
     var cornerRadius = 10.0
     
@@ -137,22 +137,22 @@ struct SideBarViewModel {
     var screenYcoordinate : screenYcoordinate?
     var screenXcoordinate : screenXcoordinate?
     //
-    var miniSidebarContentImage : UIImage?
+    var miniDrawerContentImage : UIImage?
     var titleString : String = "Label"
-    var sideBarContentImage : UIImage?
+    var drawerContentImage : UIImage?
     var waitTime : Int?
     var linkToGo : String?
     
     //extended Props
 
-    var miniSideBarTextFont : UIFont?
-    var miniSideBarTextColor : UIColor?
+    var miniDrawerTextFont : UIFont?
+    var miniDrawerTextColor : UIColor?
     var labelType : labelType?
-    var miniSideBarBackgroundImage:UIImage?
-    var miniSideBarBackgroundColor:UIColor?
+    var miniDrawerBackgroundImage:UIImage?
+    var miniDrawerBackgroundColor:UIColor?
     var arrowColor:UIColor?
-    var sideBarBackgroundImage:UIImage?
-    var sideBarBackgroundColor:UIColor?
+    var drawerBackgroundImage:UIImage?
+    var drawerBackgroundColor:UIColor?
     
 }
 
