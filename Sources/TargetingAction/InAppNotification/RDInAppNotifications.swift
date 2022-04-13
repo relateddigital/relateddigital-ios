@@ -98,8 +98,9 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showDrawer(model:DrawerServiceModel) ->Bool {
-        let sideBar = RDDrawerViewController(model:model)
-        sideBar.show(animated: true)
+        let drawerViewController = RDDrawerViewController(model:model)
+        drawerViewController.delegate = self
+        drawerViewController.show(animated: true)
         return true
     }
 

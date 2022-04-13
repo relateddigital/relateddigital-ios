@@ -9,16 +9,15 @@ import Foundation
 import UIKit
 
 
-class RDDrawerViewController : UIViewController {
-    
+class RDDrawerViewController : RDBaseNotificationViewController {
     
     var position: CGPoint?
     var model = DrawerViewModel()
-    var window: UIWindow?
     var globDrawerView : drawerView?
     var drawerOpen:Bool = false
     var drawerFirstPosition:CGPoint?
     var titleLenght = 12
+    var shouldDismissed = false
     
     
     public init(model:DrawerServiceModel?) {
@@ -198,10 +197,10 @@ class RDDrawerViewController : UIViewController {
     }
     
     @objc func imageClicked(_ sender: UITapGestureRecognizer? = nil) {
-        hide() {
-            if let url = URL(string: self.model.linkToGo ?? "") {
-                UIApplication.shared.open(url)
-            }
+        
+        shouldDismissed = true
+        if let url = URL(string: self.model.linkToGo ?? "") {
+            delegate?.notificationShouldDismiss(controller: self, callToActionURL: url, shouldTrack: false, additionalTrackingProperties: nil)
         }
     }
 
@@ -233,7 +232,7 @@ class RDDrawerViewController : UIViewController {
     }
     
     
-    func show(animated: Bool) {
+    override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
@@ -307,13 +306,16 @@ class RDDrawerViewController : UIViewController {
         })
     }
     
-    
-    func hide(completion: @escaping () -> Void) {
-        self.window?.isHidden = true
-        self.window?.removeFromSuperview()
-        self.window = nil
-        completion()
+    override func hide(animated: Bool, completion: @escaping () -> Void) {
+        
+        if shouldDismissed {
+            self.window?.isHidden = true
+            self.window?.removeFromSuperview()
+            self.window = nil
+            completion()
+        }
     }
+
     
     func addTapGestureToDrawerMiniView() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.viewClicked(_:)))
