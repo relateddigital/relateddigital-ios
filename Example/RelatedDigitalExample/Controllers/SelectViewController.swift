@@ -9,12 +9,17 @@ import Foundation
 import UIKit
 import Eureka
 import SplitRow
+import RelatedDigitalIOS
 
 class SelectViewController: FormViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeForm()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        //RelatedDigital.shared.showDownhs()
     }
     
     private func initializeForm() {

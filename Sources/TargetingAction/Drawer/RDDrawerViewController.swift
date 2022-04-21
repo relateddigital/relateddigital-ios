@@ -20,7 +20,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
     var shouldDismissed = false
     
     
-    public init(model:DrawerServiceModel?) {
+    init(model:DrawerServiceModel?) {
         super.init(nibName: nil, bundle: nil)
         self.model = RDDrawerViewControllerModel().mapServiceModelToNeededModel(serviceModel: model)
         let drawerView : drawerView = UIView.fromNib()
