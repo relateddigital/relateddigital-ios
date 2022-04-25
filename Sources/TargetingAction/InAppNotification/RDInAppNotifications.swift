@@ -192,19 +192,28 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         }
     }
 
+    
+    func getTopViewController() -> UIViewController? {
+        var topViewController = UIApplication.shared.delegate!.window!!.rootViewController!
+        while topViewController.presentedViewController != nil {
+            topViewController = topViewController.presentedViewController!
+        }
+        return topViewController
+    }
+    
     func showPopUp(_ notification: RDInAppNotification) -> Bool {
         let controller = RelatedDigitalPopupNotificationViewController(notification: notification)
         controller.delegate = self
         controller.inappButtonDelegate = inappButtonDelegate
 
-        if let rootViewController = RDHelper.getRootViewController() {
+        if let rootViewController = getTopViewController() {
             rootViewController.present(controller, animated: false, completion: nil)
             return true
         } else {
             return false
         }
     }
-
+    
     func showMailPopup(_ model: MailSubscriptionViewModel) -> Bool {
         let controller = RelatedDigitalPopupNotificationViewController(mailForm: model)
         controller.delegate = self

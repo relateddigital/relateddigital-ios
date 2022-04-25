@@ -357,10 +357,11 @@ extension RDPopupDialogDefaultView {
         addSubview(numberRating)
         numberBorderColor = setBorderColorOfCell()
         guard let numberColors = relatedDigitalInAppNotification?.numberColors else { return }
+        guard let numberRange = relatedDigitalInAppNotification?.numberRange else { return }
         if numberColors.count == 3 {
-            colors = UIColor.getGradientColorArray(numberColors[0], numberColors[1], numberColors[2])
+            colors = UIColor.getGradientColorArray(numberColors[0], numberColors[1], numberColors[2], numberRange)
         } else if numberColors.count == 2 {
-            colors = UIColor.getGradientColorArray(numberColors[0], numberColors[1])
+            colors = UIColor.getGradientColorArray(numberColors[0], numberColors[1], numberRange)
         } else {
             numberBgColor = numberColors.first ?? .black
         }
@@ -498,19 +499,40 @@ extension RDPopupDialogDefaultView {
 
 extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let nWidth = (numberRating.frame.width - 100) / 10
+        let numberRange = relatedDigitalInAppNotification?.numberRange
+        var nWidth: CGFloat = 0.0
+        if numberRange == "0-10" {
+            nWidth = (numberRating.frame.width - 100) / 11
+        } else {
+            nWidth = (numberRating.frame.width - 100) / 10
+        }
+        
         return CGSize(width: nWidth, height: nWidth)
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        let numberRange = relatedDigitalInAppNotification?.numberRange
+        if numberRange == "0-10" {
+            return 11
+        } else {
+            return 10
+        }
+        
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! RatingCollectionViewCell
-        cell.rating = indexPath.row + 1
+
+        let numberRange = relatedDigitalInAppNotification?.numberRange
+        if numberRange == "0-10" {
+            cell.rating = indexPath.row
+        } else {
+            cell.rating = indexPath.row + 1
+        }
+        
+
         cell.borderColor = numberBorderColor
-        if colors.count == 10 {
+        if colors.count == 11 || colors.count == 10 {
             cell.setGradient(colors: colors[indexPath.row])
         } else {
             cell.setBackgroundColor(numberBgColor)
@@ -522,8 +544,14 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? RatingCollectionViewCell else {
             return
         }
+        let numberRange = relatedDigitalInAppNotification?.numberRange
         if cell.isSelected {
-            selectedNumber = indexPath.row + 1
+            if numberRange == "0-10" {
+                selectedNumber = indexPath.row
+            } else {
+                selectedNumber = indexPath.row + 1
+            }
+            
             npsDelegate?.ratingSelected()
         } else {
             selectedNumber = 10
@@ -536,6 +564,12 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
+        let numberRange = relatedDigitalInAppNotification?.numberRange
+        if numberRange == "0-10" {
+            return 8
+        } else {
+            return 10
+        }
+        
     }
 }
