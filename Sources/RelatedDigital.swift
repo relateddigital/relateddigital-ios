@@ -269,7 +269,7 @@ public class RelatedDigital {
         shared.rdInstance.getPushMessages(completion: completion)
     }
     
-    public func showDownhs() ->Bool {
+    private func showDownhs() ->Bool {
         let downhsViewController = downhsViewController(model: downhsModel())
         //downhsViewController.delegate = self
         downhsViewController.show(animated: true)
