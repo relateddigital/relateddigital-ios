@@ -103,6 +103,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         drawerViewController.show(animated: true)
         return true
     }
+    
+    public func showDownhs(model: downhsModel) ->Bool {
+        let downhsViewController = downhsViewController(model: model)
+        downhsViewController.delegate = self
+        downhsViewController.show(animated: true)
+        return true
+    }
 
     func showProductStatNotifier(_ model: RDProductStatNotifierViewModel) -> Bool {
         let productStatNotifierVC = RelatedDigitalProductStatNotifierViewController(productStatNotifier: model)
