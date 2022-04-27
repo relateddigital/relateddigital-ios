@@ -473,7 +473,6 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
     }
 
     @objc func expandSctw() {
-        self.delegate?.viewExpanded()
         let model = self.scratchToWin!
         sctwButton = RDPopupDialogButton(title: model.copyButtonText ?? "",
                                                font: model.copyButtonTextFont ?? .systemFont(ofSize: 20),
