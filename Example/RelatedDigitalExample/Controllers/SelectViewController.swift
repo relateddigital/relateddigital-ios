@@ -11,6 +11,16 @@ import Eureka
 import SplitRow
 import RelatedDigitalIOS
 
+extension UIViewController {
+    func embed(_ viewController:UIViewController, inView view:UIView){
+        viewController.willMove(toParent: self)
+        viewController.view.frame = view.bounds
+        view.addSubview(viewController.view)
+        self.addChild(viewController)
+        viewController.didMove(toParent: self)
+    }
+}
+
 class SelectViewController: FormViewController {
     
     override func viewDidLoad() {
@@ -20,6 +30,17 @@ class SelectViewController: FormViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         //RelatedDigital.shared.showDownhs()
+        let bannerView = UIView()
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(bannerView)
+        NSLayoutConstraint.activate([bannerView.topAnchor.constraint(equalTo: self.view.topAnchor,constant:  100),
+                                     bannerView.heightAnchor.constraint(equalToConstant: 80),
+                                     bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                                     bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
+        bannerView.backgroundColor = .green
+        let drawerViewController = BannerViewController(view: bannerView, addedController: self)
+//        embed(drawerViewController, inView: bannerView)
+
     }
     
     private func initializeForm() {
