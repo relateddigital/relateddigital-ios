@@ -21,6 +21,9 @@
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <accessibility key="accessibilityConfiguration" identifier="orhunCell">
+                <bool key="isElement" value="YES"/>
+            </accessibility>
             <constraints>
                 <constraint firstItem="pJd-Iw-3CK" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="1ki-5s-rDO"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="pJd-Iw-3CK" secondAttribute="trailing" id="MDc-hZ-14g"/>
