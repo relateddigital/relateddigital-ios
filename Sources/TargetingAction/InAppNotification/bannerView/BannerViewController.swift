@@ -11,9 +11,23 @@ public class BannerViewController: UIViewController,UICollectionViewDelegate,UIC
 
     var globalBannerView : bannerView?
     var bannerViewModel : BannerViewModel?
+    var timer = Timer()
+    var currentPage = 1
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if bannerViewModel?.passAction == .slide {
+            startTimer()
+        }
+    }
+    
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        timer.invalidate()
     }
 
     public init (view:UIView,addedController:UIViewController) {
@@ -40,9 +54,7 @@ public class BannerViewController: UIViewController,UICollectionViewDelegate,UIC
         globalBannerView?.currentPageLabel.text = "\(1)/\(bannerViewModel?.pageCount ?? 10)"
         globalBannerView?.currentPageView.layer.cornerRadius = 15
         globalBannerView?.currentPageView.backgroundColor = UIColor.black.withAlphaComponent(0.65)
-
         configureCollectionViewLayout()
-
     }
     
     func configureCollectionViewLayout() {
@@ -63,7 +75,6 @@ public class BannerViewController: UIViewController,UICollectionViewDelegate,UIC
             globalBannerView?.pageControlHeightConstraint.constant = 0.0
         }
         globalBannerView?.pageControlView.numberOfPages = bannerViewModel?.pageCount ?? 0
-        
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -99,11 +110,42 @@ public class BannerViewController: UIViewController,UICollectionViewDelegate,UIC
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    @objc func scrollToNextCell() {
+
+        let collectionView = globalBannerView?.collectionView
+        let cellSize = CGSize(width: self.view.frame.width, height: self.view.frame.height - (globalBannerView?.pageControlHeightConstraint.constant ?? 0))
+        
+        if currentPage == bannerViewModel?.pageCount ?? 10 + 1 {
+            collectionView?.scrollRectToVisible(CGRect(x: 0, y:  0, width: cellSize.width, height: cellSize.height), animated: true)
+            currentPage = 1
+            globalBannerView?.pageControlView.currentPage = 0
+            globalBannerView?.currentPageLabel.text = "\(currentPage)/\(bannerViewModel?.pageCount ?? 10)"
+        } else {
+            let contentOffset = collectionView?.contentOffset
+            collectionView?.scrollRectToVisible(CGRect(x: contentOffset!.x + cellSize.width, y:  contentOffset!.y, width: cellSize.width, height: cellSize.height), animated: true)
+            globalBannerView?.currentPageLabel.text = "\(currentPage+1)/\(bannerViewModel?.pageCount ?? 10)"
+            globalBannerView?.pageControlView.currentPage = currentPage 
+            currentPage += 1
+        }
+
+    }
+
+    func startTimer() {
+        globalBannerView?.collectionView.isUserInteractionEnabled = false
+        timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(scrollToNextCell), userInfo: nil, repeats: true)
+    }
 }
 
 
 struct BannerViewModel {
     var pageControlHidden = false
-    var pageCount = 10
+    var pageCount = 5
+    var passAction : PassAction? = .slide
 
+}
+
+enum PassAction {
+    case swipe
+    case slide
 }
