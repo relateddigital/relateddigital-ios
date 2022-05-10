@@ -29,6 +29,10 @@ class SelectViewController: FormViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+
+    }
+    
+    func showBannerViewForTest() {
         //RelatedDigital.shared.showDownhs()
         let bannerView = UIView()
         bannerView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,7 +44,6 @@ class SelectViewController: FormViewController {
         bannerView.backgroundColor = .green
         let drawerViewController = BannerViewController(view: bannerView, addedController: self)
 //        embed(drawerViewController, inView: bannerView)
-
     }
     
     private func initializeForm() {
