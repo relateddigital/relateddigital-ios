@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
 
@@ -13,6 +14,7 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
         return super.notification
     }
     
+    var player : AVPlayer?
     var relatedDigitalHalfScreenView: RelatedDigitalHalfScreenView!
     var halfScreenHeight = 0.0
     
@@ -40,6 +42,16 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        player = relatedDigitalHalfScreenView.imageView.addVideoPlayer(urlString: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4")
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        player?.pause()
     }
     
     @objc func didTap(gesture: UITapGestureRecognizer) {

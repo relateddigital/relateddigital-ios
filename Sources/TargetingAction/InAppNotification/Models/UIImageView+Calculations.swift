@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 extension UIImageView {
     func pv_heightForImageView() -> CGFloat {
@@ -15,5 +16,21 @@ extension UIImageView {
         let width = bounds.size.width
         let ratio = image.size.height / image.size.width
         return width * ratio
+    }
+    
+    func addVideoPlayer(urlString : String) -> AVPlayer {
+        
+        var player : AVPlayer!
+        var avPlayerLayer : AVPlayerLayer!
+        
+        if let url = URL(string:urlString) {
+            player = AVPlayer(url: url)
+            avPlayerLayer = AVPlayerLayer(player: player)
+            //avPlayerLayer.videoGravity = AVLayerVideoGravity.resize
+            self.layer.addSublayer(avPlayerLayer)
+            avPlayerLayer.frame = self.layer.bounds
+            player.play()
+        }
+        return player
     }
 }

@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import AVFoundation
 // swiftlint:disable type_name
 final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewController {
 
     weak var relatedDigitalInAppNotification: RDInAppNotification?
     var mailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
+    var player : AVPlayer?
 
     convenience init(relatedDigitalInAppNotification: RDInAppNotification? = nil,
                      emailForm: MailSubscriptionViewModel? = nil,
@@ -49,6 +51,16 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
                                               visilabsInAppNotification: relatedDigitalInAppNotification,
                                               emailForm: mailForm,
                                               scratchTW: scratchToWin)
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //player = standardView.imageView.addVideoPlayer(urlString: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4")
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        player?.pause()
     }
 }
 
