@@ -174,12 +174,20 @@ public class RelatedDigital {
         shared.rdInstance.subscribeSpinToWinMail(actid: actid, auth: auth, mail: mail)
     }
     
+    static func subscribeGamificationMail(actid: String, auth: String, mail: String) {
+        shared.rdInstance.subscribeGamificationMail(actid: actid, auth: auth, mail: mail)
+    }
+    
     static func subscribeMail(click: String, actid: String, auth: String, mail: String) {
         shared.rdInstance.subscribeMail(click: click, actid: actid, auth: auth, mail: mail)
     }
     
     static func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
         shared.rdInstance.trackSpinToWinClick(spinToWinReport: spinToWinReport)
+    }
+    
+    static func trackGamificationClick(gameficationReport: GameficationReport) {
+        shared.rdInstance.trackGamificationClick(gameficationReport: gameficationReport)
     }
     
     

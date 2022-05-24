@@ -461,11 +461,23 @@ extension RDInstance: RDInAppNotificationsDelegate {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "spin_to_win_email")
     }
     
+    func subscribeGamificationMail(actid: String, auth: String, mail: String) {
+        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "gamification_email")
+    }
+    
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = spinToWinReport.click.parseClick().omZn
         properties["OM.zpc"] = spinToWinReport.click.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
+    func trackGamificationClick(gameficationReport: GameficationReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = gameficationReport.click.parseClick().omZn
+        properties["OM.zpc"] = gameficationReport.click.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
 }

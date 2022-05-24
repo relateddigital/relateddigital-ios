@@ -40,8 +40,10 @@ protocol RDInstanceProtocol {
     func logout()
     func showNotification(_ relatedDigitalInAppNotification: RDInAppNotification)
     func subscribeSpinToWinMail(actid: String, auth: String, mail: String)
+    func subscribeGamificationMail(actid: String, auth: String, mail: String)
     func subscribeMail(click: String, actid: String, auth: String, mail: String)
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport)
+    func trackGamificationClick(gameficationReport: GameficationReport)
     func trackRecommendationClick(qs: String)
     func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView
     func getStoryViewAsync(actionId: Int?, urlDelegate: RDStoryURLDelegate?, completion: @escaping StoryCompletion)

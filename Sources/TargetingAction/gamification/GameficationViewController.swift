@@ -8,7 +8,10 @@
 import UIKit
 import WebKit
 
-class gameficationViewController: RDBaseNotificationViewController {
+class GameficationViewController: RDBaseNotificationViewController {
+    
+    weak var webView: WKWebView!
+    var subsEmail = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +29,7 @@ class gameficationViewController: RDBaseNotificationViewController {
 
 }
 
-extension gameficationViewController: WKScriptMessageHandler {
+extension GameficationViewController: WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
@@ -40,6 +43,15 @@ extension gameficationViewController: WKScriptMessageHandler {
                     UIPasteboard.general.string = couponCode
                     RDHelper.showCopiedClipboardMessage()
                     self.close()
+                }
+                
+                if method == "subscribeEmail", let email = event["email"] as? String {
+                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId)", auth: self.gameficationModel!.auth, mail: email)
+                    subsEmail = email
+                }
+                
+                if method == "sendReport" {
+                    RelatedDigital.trackGamificationClick(gameficationReport: self.gameficationModel!.report)
                 }
                 
                 if method == "close" {
