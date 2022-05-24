@@ -97,6 +97,17 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         }
     }
     
+    
+    func showGamefication() {
+        let controller = GameficationViewController()
+        controller.modalPresentationStyle = .fullScreen
+        controller.delegate = self
+        if let rootViewController = RDHelper.getRootViewController() {
+            rootViewController.present(controller, animated: true, completion: nil)
+            
+        }
+    }
+    
     func showDrawer(model:DrawerServiceModel) ->Bool {
         let drawerViewController = RDDrawerViewController(model:model)
         drawerViewController.delegate = self
