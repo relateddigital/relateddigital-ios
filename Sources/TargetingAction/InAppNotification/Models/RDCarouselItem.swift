@@ -36,6 +36,7 @@ public class RDCarouselItem {
         public static let background_color = "background_color"
         public static let ios_lnk = "ios_lnk"
         public static let close_button_color = "close_button_color"
+        public static let videourl = "videourl"
     }
     
     public let imageUrlString: String?
@@ -63,6 +64,8 @@ public class RDCarouselItem {
     public let backgroundColor: UIColor?
     public let linkString: String?
     public var closeButtonColor: UIColor?
+    public var videourl : String?
+
     
     var titleFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title2), size: CGFloat(12))
     var bodyFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body), size: CGFloat(8))
@@ -106,7 +109,7 @@ public class RDCarouselItem {
                 ,bodyTextsize: String?, promocodeType: String?, promotionCode: String?, promocodeBackgroundColor: UIColor?
                 ,promocodeTextColor: UIColor?, buttonText: String?, buttonTextColor: UIColor?, buttonColor: UIColor?
                 ,buttonFontFamily: String?, buttonCustomFontFamily: String?, buttonTextsize: String?, backgroundImageString: String?
-                ,backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?) {
+                ,backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?,videourl: String?) {
         self.imageUrlString = imageUrlString
         self.title = title
         self.titleColor = UIColor(hex: titleColor)
@@ -131,6 +134,8 @@ public class RDCarouselItem {
         self.backgroundImageString = backgroundImageString
         self.backgroundColor = backgroundColor
         self.linkString = linkString
+        self.videourl = videourl
+
         
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
             self.linkUrl = URL(string: linkString)
@@ -195,6 +200,8 @@ public class RDCarouselItem {
         self.backgroundImageString = object[PayloadKey.background_image] as? String
         self.backgroundColor = UIColor(hex: object[PayloadKey.background_color] as? String)
         self.linkString = object[PayloadKey.ios_lnk] as? String
+        self.videourl = object[PayloadKey.videourl] as? String
+
         
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
             self.linkUrl = URL(string: linkString)
