@@ -46,7 +46,7 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        player = relatedDigitalHalfScreenView.imageView.addVideoPlayer(urlString: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4")
+        player = relatedDigitalHalfScreenView.imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
     }
     
     override func viewWillDisappear(_ animated: Bool) {

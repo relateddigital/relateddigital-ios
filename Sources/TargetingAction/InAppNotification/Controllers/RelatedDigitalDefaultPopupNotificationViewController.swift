@@ -22,7 +22,9 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
         self.relatedDigitalInAppNotification = relatedDigitalInAppNotification
         self.mailForm = emailForm
         self.scratchToWin = scratchToWin
+        
 
+    
         
         if let image = relatedDigitalInAppNotification?.image {
             if let imageGif = UIImage.gif(data: image) {
@@ -30,10 +32,6 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
             } else {
                 self.image = UIImage(data: image)
             }
-        }
-
-        if let img = scratchToWin?.image {
-            self.image = UIImage(data: img)
         }
 
         if let secondImage = relatedDigitalInAppNotification?.secondImage2 {
@@ -55,7 +53,18 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //player = standardView.imageView.addVideoPlayer(urlString: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4")
+        
+        if !standardView.firstPageOpened {
+            player = standardView.imageView.addVideoPlayer(urlString: relatedDigitalInAppNotification?.videourl ?? "")
+        } else {
+            if relatedDigitalInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 {
+                player = standardView.imageView.addVideoPlayer(urlString: relatedDigitalInAppNotification?.secondPopupVideourl1 ?? "")
+            }
+            
+            if relatedDigitalInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 {
+                player = standardView.secondImageView.addVideoPlayer(urlString: relatedDigitalInAppNotification?.secondPopupVideourl2 ?? "")
+            }
+        }
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -75,15 +84,24 @@ public extension RelatedDigitalDefaultPopupNotificationViewController {
         get { return standardView.imageView.image }
         set {
             standardView.imageView.image = newValue
-            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView()
+            if relatedDigitalInAppNotification?.videourl?.count ?? 0 > 0 {
+                standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+            } else {
+                standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+            }
         }
     }
     /// Second Image View
     var secondImage: UIImage? {
         get { return standardView.secondImageView.image }
         set {
+
             standardView.secondImageView.image = newValue
-            standardView.secondImageHeight?.constant = standardView.imageView.pv_heightForImageView()
+            if relatedDigitalInAppNotification?.videourl?.count ?? 0 > 0 {
+                standardView.secondImageHeight?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+            } else {
+                standardView.secondImageHeight?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+            }
         }
     }
 
@@ -172,8 +190,26 @@ public extension RelatedDigitalDefaultPopupNotificationViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView()
-        standardView.secondImageHeight?.constant = standardView.secondImageView.pv_heightForImageView()
+        
+        if relatedDigitalInAppNotification?.videourl?.count ?? 0 > 0 {
+            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+        } else {
+            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+        }
+        
+        if relatedDigitalInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 && standardView.firstPageOpened {
+            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+        } else if standardView.firstPageOpened {
+            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+        }
+        
+        if relatedDigitalInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 && standardView.firstPageOpened {
+            standardView.secondImageHeight?.constant = standardView.secondImageView.pv_heightForImageView(isVideoExist: true)
+        } else if standardView.firstPageOpened {
+            standardView.secondImageHeight?.constant = standardView.secondImageView.pv_heightForImageView(isVideoExist: false)
+        }
+        
+        
         if let _ = self.scratchToWin {
             standardView.sctw.centerX(to: standardView)
         }

@@ -253,7 +253,7 @@ extension RDPopupDialogDefaultView {
         addSubview(titleLabel)
         addSubview(messageLabel)
         imageView.allEdges(to: self, excluding: .bottom)
-        
+        firstPageOpened = true
         titleLabel.topToBottom(of: imageView, offset: 0)
         titleLabel.leading(to: self)
         titleLabel.trailing(to: self)
@@ -321,6 +321,7 @@ extension RDPopupDialogDefaultView {
         addSubview(imageButton)
         addSubview(secondImageView)
 
+        firstPageOpened = true
         imageView.allEdges(to: self, excluding: .bottom)
         titleLabel.topToBottom(of: imageView, offset: 10.0)
         messageLabel.topToBottom(of: titleLabel, offset: 8.0)

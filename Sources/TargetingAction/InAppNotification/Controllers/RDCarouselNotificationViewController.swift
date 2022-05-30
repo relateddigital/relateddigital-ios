@@ -781,7 +781,12 @@ public class ItemBaseController: UIViewController, ItemController, UIGestureReco
                     s.itemView.imageView.image = image
                     s.itemView.contentMode = .scaleAspectFill
                     s.itemView.centerYAnchor.constraint(equalTo: s.scrollView.centerYAnchor).isActive = true
-                    s.itemView.imageHeightConstraint?.constant = s.itemView.imageView.pv_heightForImageView()
+                    if s.relatedDigitalInAppNotification?.videourl?.count ?? 0 > 0 {
+                        s.itemView.imageHeightConstraint?.constant = s.itemView.imageView.pv_heightForImageView(isVideoExist: true)
+                    } else {
+                        s.itemView.imageHeightConstraint?.constant = s.itemView.imageView.pv_heightForImageView(isVideoExist: false)
+                    }
+                    
                     s.itemView.centerX(to: s.scrollView)
                     s.itemView.width(320.0)
                     s.itemView.isAccessibilityElement = true
@@ -839,7 +844,12 @@ public class ItemBaseController: UIViewController, ItemController, UIGestureReco
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollView.frame = self.view.bounds
-        itemView.imageHeightConstraint?.constant = itemView.imageView.pv_heightForImageView()
+        
+        if relatedDigitalInAppNotification?.videourl?.count ?? 0 > 0 {
+            itemView.imageHeightConstraint?.constant = itemView.imageView.pv_heightForImageView(isVideoExist: true)
+        } else {
+            itemView.imageHeightConstraint?.constant = itemView.imageView.pv_heightForImageView(isVideoExist: false)
+        }
     }
     
     // MARK: - Present/Dismiss transitions

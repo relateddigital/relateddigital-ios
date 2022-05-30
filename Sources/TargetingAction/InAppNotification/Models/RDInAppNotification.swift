@@ -398,6 +398,7 @@ public class RDInAppNotification {
         videourl = actionData[PayloadKey.videourl] as? String
         secondPopupVideourl1 = actionData[PayloadKey.secondPopupVideourl1] as? String
         secondPopupVideourl2 = actionData[PayloadKey.secondPopupVideourl2] as? String
+        
         if !secondImageUrlString1.isNilOrWhiteSpace {
             secondImageUrl1 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }

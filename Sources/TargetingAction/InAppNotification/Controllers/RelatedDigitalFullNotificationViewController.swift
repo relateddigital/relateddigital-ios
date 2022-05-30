@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewController {
 
@@ -32,6 +33,8 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
 
     var isCopyEnabled = true
     let pasteboard = UIPasteboard.general
+    var player : AVPlayer?
+
 
     convenience init(notification: RDInAppNotification) {
         self.init(notification: notification,
@@ -144,8 +147,14 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        imageView.addVideoPlayer(urlString: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4")
+        player = imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        player?.pause()
+    }
+    
 
     @IBAction func promotionCodeCopied(_ sender: Any) {
         pasteboard.string = copyTextButton.currentTitle

@@ -9,7 +9,11 @@ import UIKit
 import AVFoundation
 
 extension UIImageView {
-    func pv_heightForImageView() -> CGFloat {
+    func pv_heightForImageView(isVideoExist:Bool) -> CGFloat {
+        let root = self.rootSuperView()
+        if isVideoExist {
+            return root.height / 3
+        }
         guard let image = image, image.size.height > 0 else {
             return 0.0
         }
@@ -18,7 +22,7 @@ extension UIImageView {
         return width * ratio
     }
     
-    func addVideoPlayer(urlString : String) -> AVPlayer {
+    func addVideoPlayer(urlString : String) -> AVPlayer? {
         
         var player : AVPlayer!
         var avPlayerLayer : AVPlayerLayer!
@@ -32,5 +36,19 @@ extension UIImageView {
             player.play()
         }
         return player
+    }
+    
+
+}
+
+
+extension UIView {
+    func rootSuperView() -> UIView
+    {
+        var view = self
+        while let s = view.superview {
+            view = s
+        }
+        return view
     }
 }

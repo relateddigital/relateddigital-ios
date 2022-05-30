@@ -43,6 +43,7 @@ public class RDPopupDialogDefaultView: UIView {
     var selectedNumber: Int?
     var expanded = false
     var sctwMail: String = ""
+    var firstPageOpened = false
 
     @objc public dynamic var titleFont: UIFont {
         get { return titleLabel.font }
