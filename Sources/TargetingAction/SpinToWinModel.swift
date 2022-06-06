@@ -87,6 +87,23 @@ public struct SpinToWinViewModel: TargetingActionViewModel, Codable {
     var copybuttonCustomFontFamilyIos : String
     var promocodesSoldoutMessageCustomFontFamilyIos : String
     
+    
+    var titlePosition: String
+    var textPosition: String
+    var buttonPosition: String
+    var copybuttonPosition: String
+    
+    var promocodeBannerText: String
+    var promocodeBannerTextColor: String
+    var promocodeBannerBackgroundColor: String
+    var promocodeBannerButtonLabel: String
+    
+    var bannerCode: String?
+    
+    var showPromoCodeBanner: Bool {
+        return !promocodeBannerButtonLabel.isEmpty && !bannerCode.isNilOrWhiteSpace
+    }
+    
     var fontFiles: [String] = []
     
 }

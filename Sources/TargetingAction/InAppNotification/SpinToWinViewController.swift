@@ -177,8 +177,15 @@ class SpinToWinViewController: RDBaseNotificationViewController {
     }
     
     private func close() {
-        dismiss(animated: true) {
-            self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+        self.dismiss(animated: true) {
+            if let spinToWin = self.spinToWin, spinToWin.showPromoCodeBanner {
+                let bannerVC = VisilabsSpinToWinCodeBannerController(spinToWin)
+                bannerVC.delegate = self.delegate
+                bannerVC.show(animated: true)
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            } else {
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            }
         }
     }
     

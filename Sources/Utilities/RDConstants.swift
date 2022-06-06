@@ -268,6 +268,15 @@ struct RDConstants {
     static let copybuttonCustomFontFamilyIos = "copybutton_custom_font_family_ios"
     static let promocodesSoldoutMessageCustomFontFamilyIos = "promocodes_soldout_message_custom_font_family_ios"
     
+    static let title_position = "title_position"
+    static let text_position = "text_position"
+    static let button_position = "button_position"
+    static let copybutton_position = "copybutton_position"
+    
+    static let promocode_banner_text = "promocode_banner_text"
+    static let promocode_banner_text_color = "promocode_banner_text_color"
+    static let promocode_banner_background_color = "promocode_banner_background_color"
+    static let promocode_banner_button_label = "promocode_banner_button_label"
     
     static let promocodes_soldout_message_text_color = "promocodes_soldout_message_text_color"
     static let promocodes_soldout_message_font_family = "promocodes_soldout_message_font_family"
