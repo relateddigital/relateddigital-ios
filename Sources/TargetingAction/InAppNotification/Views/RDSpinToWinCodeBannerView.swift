@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class VisilabsSpinToWinCodeBannerView: UIView {
+class RDSpinToWinCodeBannerView: UIView {
     
     var spinToWinModel: SpinToWinViewModel
     

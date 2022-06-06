@@ -7,14 +7,14 @@
 
 import UIKit
 
-class VisilabsSpinToWinCodeBannerController: RDBaseNotificationViewController {
+class RDSpinToWinCodeBannerController: RDBaseNotificationViewController {
 
     
     var spinToWinModel: SpinToWinViewModel! {
         return super.spinToWin
     }
     
-    var visilabsSpinToWinCodeBannerView: VisilabsSpinToWinCodeBannerView!
+    var visilabsSpinToWinCodeBannerView: RDSpinToWinCodeBannerView!
     var halfScreenHeight = 0.0
     
     var isDismissing = false
@@ -22,7 +22,7 @@ class VisilabsSpinToWinCodeBannerController: RDBaseNotificationViewController {
     init(_ spinToWin: SpinToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.spinToWin = spinToWin
-        visilabsSpinToWinCodeBannerView = VisilabsSpinToWinCodeBannerView(frame: UIScreen.main.bounds, spinToWin: self.spinToWinModel)
+        visilabsSpinToWinCodeBannerView = RDSpinToWinCodeBannerView(frame: UIScreen.main.bounds, spinToWin: self.spinToWinModel)
         view = visilabsSpinToWinCodeBannerView
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))

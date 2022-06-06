@@ -18,6 +18,7 @@ class SpinToWinViewController: RDBaseNotificationViewController {
     var pIndexDisplayNames = [Int: String]()
     var sIndexCodes = [Int: String]()
     var sIndexDisplayNames = [Int: String]()
+
     
     init(_ spinToWin: SpinToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
@@ -179,7 +180,7 @@ class SpinToWinViewController: RDBaseNotificationViewController {
     private func close() {
         self.dismiss(animated: true) {
             if let spinToWin = self.spinToWin, spinToWin.showPromoCodeBanner {
-                let bannerVC = VisilabsSpinToWinCodeBannerController(spinToWin)
+                let bannerVC = RDSpinToWinCodeBannerController(spinToWin)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -234,6 +235,8 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                 if let error = err {
                     RDLogger.error(error)
                     RDLogger.error(error.localizedDescription)
+                } else {
+                    self.spinToWin?.bannerCode = promoCodeString.replacingOccurrences(of: "\'", with: "")
                 }
             }
         }
