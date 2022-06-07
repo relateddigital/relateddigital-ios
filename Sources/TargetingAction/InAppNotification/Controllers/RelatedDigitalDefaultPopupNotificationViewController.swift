@@ -54,8 +54,11 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if !standardView.firstPageOpened {
+        if !inAppCurrentState.shared.isFirstPageOpened {
             player = standardView.imageView.addVideoPlayer(urlString: relatedDigitalInAppNotification?.videourl ?? "")
+            if relatedDigitalInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 || relatedDigitalInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 {
+                inAppCurrentState.shared.isFirstPageOpened = true
+            }
         } else {
             if relatedDigitalInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 {
                 player = standardView.imageView.addVideoPlayer(urlString: relatedDigitalInAppNotification?.secondPopupVideourl1 ?? "")
@@ -64,7 +67,8 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
             if relatedDigitalInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 {
                 player = standardView.secondImageView.addVideoPlayer(urlString: relatedDigitalInAppNotification?.secondPopupVideourl2 ?? "")
             }
-        }
+            inAppCurrentState.shared.isFirstPageOpened = false
+        }        
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -197,15 +201,15 @@ public extension RelatedDigitalDefaultPopupNotificationViewController {
             standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
         }
         
-        if relatedDigitalInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 && standardView.firstPageOpened {
+        if relatedDigitalInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 && inAppCurrentState.shared.isFirstPageOpened {
             standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
-        } else if standardView.firstPageOpened {
+        } else if inAppCurrentState.shared.isFirstPageOpened {
             standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
         }
         
-        if relatedDigitalInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 && standardView.firstPageOpened {
+        if relatedDigitalInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 && inAppCurrentState.shared.isFirstPageOpened {
             standardView.secondImageHeight?.constant = standardView.secondImageView.pv_heightForImageView(isVideoExist: true)
-        } else if standardView.firstPageOpened {
+        } else if inAppCurrentState.shared.isFirstPageOpened {
             standardView.secondImageHeight?.constant = standardView.secondImageView.pv_heightForImageView(isVideoExist: false)
         }
         

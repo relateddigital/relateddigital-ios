@@ -43,7 +43,6 @@ public class RDPopupDialogDefaultView: UIView {
     var selectedNumber: Int?
     var expanded = false
     var sctwMail: String = ""
-    var firstPageOpened = false
 
     @objc public dynamic var titleFont: UIFont {
         get { return titleLabel.font }
@@ -301,7 +300,6 @@ public class RDPopupDialogDefaultView: UIView {
         baseSetup(notification)
 
         var constraints = [NSLayoutConstraint]()
-
         switch notification.type {
         case .imageButton, .fullImage:
             imageView.allEdges(to: self)
@@ -522,4 +520,9 @@ protocol ImageButtonImageDelegate: AnyObject {
 protocol NPSDelegate: AnyObject {
     func ratingSelected()
     func ratingUnselected()
+}
+
+class inAppCurrentState {
+    static var shared = inAppCurrentState()
+    var isFirstPageOpened = false
 }
