@@ -59,9 +59,11 @@ class InAppViewController: FormViewController {
             .halfScreenImage: [RDInAppNotificationType.halfScreenImage.rawValue: 704],
             .scratchToWin: [RDInAppNotificationType.scratchToWin.rawValue: 592],
             .secondNps: ["nps-image-text-button": 585,  "nps-image-text-button-image": 586, "nps-feedback": 587],
+            .inappcarousel: [RDInAppNotificationType.inappcarousel.rawValue: 927],
             .spintowin: [RDInAppNotificationType.spintowin.rawValue: 130],
             .productStatNotifier: [RDInAppNotificationType.productStatNotifier.rawValue: 703],
-            .drawer : [RDInAppNotificationType.drawer.rawValue: 203]
+            .drawer : [RDInAppNotificationType.drawer.rawValue: 203],
+            .video : [RDInAppNotificationType.video.rawValue: 73]
         ]
     }
     
