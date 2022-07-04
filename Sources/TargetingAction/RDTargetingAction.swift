@@ -78,7 +78,6 @@ class RDTargetingAction {
         RDLogger.info("in app notification check: \(notifications.count) found." +
                             " actid's: \(notifications.map({String($0.actId)}).joined(separator: ","))")
 
-        self.notificationsInstance.inAppNotification = notifications.first
         completion(notifications.first)
     }
 
