@@ -1,21 +1,19 @@
 //
-//  gameficationViewController.swift
-//  CleanyModal
+//  FindToWinViewController.swift
+//  RelatedDigitalIOS
 //
-//  Created by Orhun Akmil on 18.04.2022.
+//  Created by Orhun Akmil on 29.06.2022.
 //
 
 import UIKit
 import WebKit
 
-class GameficationViewController: RDBaseNotificationViewController {
-    
+class FindToWinViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
         webView = configureWebView()
         self.view.addSubview(webView)
         webView.allEdges(to: self.view)
@@ -44,7 +42,7 @@ class GameficationViewController: RDBaseNotificationViewController {
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createGameficationFiles() {
+        if let htmlUrl = createFindToWinFiles() {
             webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
             webView.backgroundColor = .clear
             webView.translatesAutoresizingMaskIntoConstraints = false
@@ -53,7 +51,7 @@ class GameficationViewController: RDBaseNotificationViewController {
         return webView
     }
     
-    private func createGameficationFiles() -> URL? {
+    private func createFindToWinFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
             RDLogger.error("Can not create documentDirectory")
@@ -110,10 +108,12 @@ class GameficationViewController: RDBaseNotificationViewController {
     }
 
 
-
 }
 
-extension GameficationViewController: WKScriptMessageHandler {
+
+
+
+extension FindToWinViewController: WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
