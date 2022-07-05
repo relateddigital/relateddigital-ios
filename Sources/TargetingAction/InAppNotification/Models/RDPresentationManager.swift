@@ -1,6 +1,6 @@
 //
-//  VisilabsPresentationManager.swift
-//  VisilabsIOS
+//  RDPresentationManager.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 12.06.2020.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final internal class RelatedDigitalPresentationManager: NSObject, UIViewControllerTransitioningDelegate {
+final internal class RDPresentationManager: NSObject, UIViewControllerTransitioningDelegate {
 
     var transitionStyle: PopupDialogTransitionStyle
     var interactor: RDInteractiveTransition
@@ -22,7 +22,7 @@ final internal class RelatedDigitalPresentationManager: NSObject, UIViewControll
     func presentationController(forPresented presented: UIViewController,
                                 presenting: UIViewController?,
                                 source: UIViewController) -> UIPresentationController? {
-        let presentationController = RelatedDigitalPresentationController(presentedViewController: presented,
+        let presentationController = RDPresentationController(presentedViewController: presented,
                                                                     presenting: source)
         return presentationController
     }
@@ -31,7 +31,7 @@ final internal class RelatedDigitalPresentationManager: NSObject, UIViewControll
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 
-        var transition: RelatedDigitalTransitionAnimator
+        var transition: RDTransitionAnimator
         switch transitionStyle {
         case .bounceUp:
             transition = BounceUpTransition(direction: .in)
@@ -52,7 +52,7 @@ final internal class RelatedDigitalPresentationManager: NSObject, UIViewControll
             return DismissInteractiveTransition()
         }
 
-        var transition: RelatedDigitalTransitionAnimator
+        var transition: RDTransitionAnimator
         switch transitionStyle {
         case .bounceUp:
             transition = BounceUpTransition(direction: .out)

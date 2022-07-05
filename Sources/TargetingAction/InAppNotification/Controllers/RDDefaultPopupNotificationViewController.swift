@@ -1,6 +1,6 @@
 //
-//  VisilabsDefaultPopupNotificationViewController.swift
-//  VisilabsIOS
+//  RDDefaultPopupNotificationViewController.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 8.06.2020.
 //
@@ -8,7 +8,7 @@
 import UIKit
 import AVFoundation
 // swiftlint:disable type_name
-final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewController {
+final public class RDDefaultPopupNotificationViewController: UIViewController {
 
     weak var relatedDigitalInAppNotification: RDInAppNotification?
     var mailForm: MailSubscriptionViewModel?
@@ -77,7 +77,7 @@ final public class RelatedDigitalDefaultPopupNotificationViewController: UIViewC
     }
 }
 
-public extension RelatedDigitalDefaultPopupNotificationViewController {
+public extension RDDefaultPopupNotificationViewController {
 
     // MARK: - Setter / Getter
 

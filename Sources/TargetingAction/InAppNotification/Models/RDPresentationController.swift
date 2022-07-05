@@ -1,6 +1,6 @@
 //
-//  VisilabsPresentationController.swift
-//  VisilabsIOS
+//  RDPresentationController.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 12.06.2020.
 //
@@ -8,10 +8,10 @@
 import Foundation
 import UIKit
 
-final internal class RelatedDigitalPresentationController: UIPresentationController {
+final internal class RDPresentationController: UIPresentationController {
 
-    private lazy var overlay: RelatedDigitalPopupDialogOverlayView = {
-        return RelatedDigitalPopupDialogOverlayView(frame: .zero)
+    private lazy var overlay: RDPopupDialogOverlayView = {
+        return RDPopupDialogOverlayView(frame: .zero)
     }()
 
     override func presentationTransitionWillBegin() {

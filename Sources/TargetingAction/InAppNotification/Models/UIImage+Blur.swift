@@ -1,6 +1,6 @@
 //
 //  UIImage+Blur.swift
-//  VisilabsIOS
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 12.06.2020.
 //

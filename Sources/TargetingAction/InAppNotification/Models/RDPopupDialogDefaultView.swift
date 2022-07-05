@@ -347,7 +347,7 @@ public class RDPopupDialogDefaultView: UIView {
 
 // MARK: - SliderStepDelegate
 extension RDPopupDialogDefaultView: SliderStepDelegate {
-    func didSelectedValue(sliderStep: RelatedDigitalSliderStep, value: Float) {
+    func didSelectedValue(sliderStep: RDSliderStep, value: Float) {
         sliderStep.value = value
     }
 }

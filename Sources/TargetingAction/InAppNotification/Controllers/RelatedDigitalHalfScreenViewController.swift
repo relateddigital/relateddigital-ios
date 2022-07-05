@@ -15,7 +15,7 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
     }
     
     var player : AVPlayer?
-    var relatedDigitalHalfScreenView: RelatedDigitalHalfScreenView!
+    var relatedDigitalHalfScreenView: RDHalfScreenView!
     var halfScreenHeight = 0.0
     
     var isDismissing = false
@@ -24,7 +24,7 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
     init(notification: RDInAppNotification) {
         super.init(nibName: nil, bundle: nil)
         self.notification = notification
-        relatedDigitalHalfScreenView = RelatedDigitalHalfScreenView(frame: UIScreen.main.bounds, notification: halfScreenNotification)
+        relatedDigitalHalfScreenView = RDHalfScreenView(frame: UIScreen.main.bounds, notification: halfScreenNotification)
         view = relatedDigitalHalfScreenView
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))

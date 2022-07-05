@@ -176,8 +176,8 @@ extension RDPopupDialogDefaultView {
         imgButtonDelegate?.imageButtonTapped()
     }
 
-    internal func setSliderStepRating() -> RelatedDigitalSliderStep {
-        let sliderStepRating = RelatedDigitalSliderStep()
+    internal func setSliderStepRating() -> RDSliderStep {
+        let sliderStepRating = RDSliderStep()
 
         sliderStepRating.stepImages = [getUIImage(named: "terrible")!, getUIImage(named: "bad")!,
                                        getUIImage(named: "okay")!, getUIImage(named: "good")!,
@@ -204,13 +204,13 @@ extension RDPopupDialogDefaultView {
 
         if sliderStepRating.enableTap {
             let tap = UITapGestureRecognizer(target: sliderStepRating,
-                                             action: #selector(RelatedDigitalSliderStep.sliderTapped(_:)))
+                                             action: #selector(RDSliderStep.sliderTapped(_:)))
             addGestureRecognizer(tap)
         }
 
-        sliderStepRating.addTarget(sliderStepRating, action: #selector(RelatedDigitalSliderStep.movingSliderStepValue),
+        sliderStepRating.addTarget(sliderStepRating, action: #selector(RDSliderStep.movingSliderStepValue),
                                    for: .valueChanged)
-        sliderStepRating.addTarget(sliderStepRating, action: #selector(RelatedDigitalSliderStep.didMoveSliderStepValue),
+        sliderStepRating.addTarget(sliderStepRating, action: #selector(RDSliderStep.didMoveSliderStepValue),
                                    for: [.touchUpInside, .touchUpOutside, .touchCancel])
         return sliderStepRating
     }

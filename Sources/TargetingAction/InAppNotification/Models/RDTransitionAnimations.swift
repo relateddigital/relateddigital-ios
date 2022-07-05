@@ -1,6 +1,6 @@
 //
-//  VisilabsTransitionAnimations.swift
-//  VisilabsIOS
+//  RDTransitionAnimations.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 8.06.2020.
 //
@@ -24,7 +24,7 @@ import UIKit
 }
 
 /// Dialog bounces in from bottom and is dismissed to bottom
-final internal class BounceUpTransition: RelatedDigitalTransitionAnimator {
+final internal class BounceUpTransition: RDTransitionAnimator {
 
     init(direction: AnimationDirection) {
         super.init(inDuration: 0.22, outDuration: 0.2, direction: direction)
@@ -56,7 +56,7 @@ final internal class BounceUpTransition: RelatedDigitalTransitionAnimator {
 }
 
 /// Dialog bounces in from top and is dismissed to top
-final internal class BounceDownTransition: RelatedDigitalTransitionAnimator {
+final internal class BounceDownTransition: RDTransitionAnimator {
 
     init(direction: AnimationDirection) {
         super.init(inDuration: 0.22, outDuration: 0.2, direction: direction)
@@ -88,7 +88,7 @@ final internal class BounceDownTransition: RelatedDigitalTransitionAnimator {
 }
 
 /// Dialog zooms in and is dismissed by zooming out
-final internal class ZoomTransition: RelatedDigitalTransitionAnimator {
+final internal class ZoomTransition: RDTransitionAnimator {
 
     init(direction: AnimationDirection) {
         super.init(inDuration: 0.22, outDuration: 0.2, direction: direction)
@@ -120,7 +120,7 @@ final internal class ZoomTransition: RelatedDigitalTransitionAnimator {
 }
 
 /// Dialog fades in and is dismissed by fading out
-final internal class FadeTransition: RelatedDigitalTransitionAnimator {
+final internal class FadeTransition: RDTransitionAnimator {
 
     init(direction: AnimationDirection) {
         super.init(inDuration: 0.22, outDuration: 0.2, direction: direction)
@@ -151,7 +151,7 @@ final internal class FadeTransition: RelatedDigitalTransitionAnimator {
 }
 
 /// Used for the always drop out animation with pan gesture dismissal
-final internal class DismissInteractiveTransition: RelatedDigitalTransitionAnimator {
+final internal class DismissInteractiveTransition: RDTransitionAnimator {
 
     init() {
         super.init(inDuration: 0.22, outDuration: 0.32, direction: .out)

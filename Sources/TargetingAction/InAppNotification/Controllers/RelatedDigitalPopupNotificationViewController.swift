@@ -24,14 +24,14 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
     fileprivate var completion: (() -> Void)?
 
     /// The custom transition presentation manager
-    fileprivate var presentationManager: RelatedDigitalPresentationManager!
+    fileprivate var presentationManager: RDPresentationManager!
 
     /// Interactor class for pan gesture dismissal
     fileprivate lazy var interactor = RDInteractiveTransition()
 
     /// Returns the controllers view
-    internal var popupContainerView: RelatedDigitalPopupDialogContainerView {
-        return view as! RelatedDigitalPopupDialogContainerView // swiftlint:disable:this force_cast
+    internal var popupContainerView: RDPopupDialogContainerView {
+        return view as! RDPopupDialogContainerView // swiftlint:disable:this force_cast
     }
 
     /// The set of buttons
@@ -42,7 +42,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
     // MARK: Public
 
     /// The content view of the popup dialog
-    public var viewController: RelatedDigitalDefaultPopupNotificationViewController
+    public var viewController: RDDefaultPopupNotificationViewController
 
     // MARK: - Initializers
 
@@ -84,7 +84,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
 
     }
 
-    fileprivate func initForInAppNotification(_ viewController: RelatedDigitalDefaultPopupNotificationViewController) {
+    fileprivate func initForInAppNotification(_ viewController: RDDefaultPopupNotificationViewController) {
         guard let notification = self.notification else { return }
         if notification.type == .secondNps {
             let button = RDPopupDialogButton(title: notification.buttonText!,
@@ -166,7 +166,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
         }
     }
 
-    fileprivate func initForEmailForm(_ viewController: RelatedDigitalDefaultPopupNotificationViewController) {
+    fileprivate func initForEmailForm(_ viewController: RDDefaultPopupNotificationViewController) {
         guard let mailForm = self.mailForm else { return }
 
         let button = RDPopupDialogButton(title: mailForm.buttonTitle,
@@ -177,7 +177,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
 
     }
 
-    fileprivate func initForScratchToWin(_ viewController: RelatedDigitalDefaultPopupNotificationViewController) {
+    fileprivate func initForScratchToWin(_ viewController: RDDefaultPopupNotificationViewController) {
         viewController.standardView.delegate = self
     }
 
@@ -185,7 +185,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
                             mailForm: MailSubscriptionViewModel? = nil,
                             scratchToWin: ScratchToWinModel? = nil) {
 
-        let viewController = RelatedDigitalDefaultPopupNotificationViewController(relatedDigitalInAppNotification: notification,emailForm: mailForm, scratchToWin: scratchToWin)
+        let viewController = RDDefaultPopupNotificationViewController(relatedDigitalInAppNotification: notification,emailForm: mailForm, scratchToWin: scratchToWin)
         
         self.init(notification: notification,
                   mailForm: mailForm,
@@ -236,8 +236,8 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
         hideStatusBar: Bool = false,
         completion: (() -> Void)? = nil) {
 
-        self.viewController = viewController as? RelatedDigitalDefaultPopupNotificationViewController
-            ?? RelatedDigitalDefaultPopupNotificationViewController()
+        self.viewController = viewController as? RDDefaultPopupNotificationViewController
+            ?? RDDefaultPopupNotificationViewController()
         self.preferredWidth = preferredWidth
         self.hideStatusBar = hideStatusBar
         self.completion = completion
@@ -246,7 +246,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
         self.mailForm = mailForm
         self.scratchToWin = scratchToWin
         // Init the presentation manager
-        presentationManager = RelatedDigitalPresentationManager(transitionStyle: transitionStyle, interactor: interactor)
+        presentationManager = RDPresentationManager(transitionStyle: transitionStyle, interactor: interactor)
         popupContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
 
         // Assign the interactor view controller
@@ -310,7 +310,7 @@ class RelatedDigitalPopupNotificationViewController: RDBaseNotificationViewContr
 
     /// Replaces controller view with popup view
     public override func loadView() {
-        view = RelatedDigitalPopupDialogContainerView(frame: UIScreen.main.bounds, preferredWidth: preferredWidth)
+        view = RDPopupDialogContainerView(frame: UIScreen.main.bounds, preferredWidth: preferredWidth)
     }
 
     public override func viewWillAppear(_ animated: Bool) {
