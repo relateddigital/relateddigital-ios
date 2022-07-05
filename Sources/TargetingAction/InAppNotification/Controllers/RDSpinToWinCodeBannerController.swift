@@ -1,6 +1,6 @@
 //
-//  VisilabsSpinToWinCodeBannerController.swift
-//  VisilabsIOS
+//  RDSpinToWinCodeBannerController.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen Gülkılık on 21.03.2022.
 //

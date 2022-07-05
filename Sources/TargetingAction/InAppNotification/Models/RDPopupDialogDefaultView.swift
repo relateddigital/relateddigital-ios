@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 public class RDPopupDialogDefaultView: UIView {
+    
+    typealias NSLC = NSLayoutConstraint
 
     // MARK: - VARIABLES
 
@@ -79,25 +81,25 @@ public class RDPopupDialogDefaultView: UIView {
         set { closeButton.setTitleColor(newValue, for: .normal) }
     }
 
-    internal var imageHeightConstraint: NSLayoutConstraint?
-    internal var secondImageHeight: NSLayoutConstraint?
+    internal var imageHeightConstraint: NSLC?
+    internal var secondImageHeight: NSLC?
 
-    weak var relatedDigitalInAppNotification: RDInAppNotification?
+    weak var rdInAppNotification: RDInAppNotification?
     var emailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
     var consentCheckboxAdded = false
     weak var imgButtonDelegate: ImageButtonImageDelegate?
-    weak var delegate: RelatedDigitalPopupDialogDefaultViewDelegate?
+    weak var delegate: RDPopupDialogDefaultViewDelegate?
     weak var npsDelegate: NPSDelegate?
     // MARK: - CONSTRUCTOR
-    init(frame: CGRect, visilabsInAppNotification: RDInAppNotification?,
+    init(frame: CGRect, rdInAppNotification: RDInAppNotification?,
                         emailForm: MailSubscriptionViewModel? = nil,
                         scratchTW: ScratchToWinModel? = nil) {
-        self.relatedDigitalInAppNotification = visilabsInAppNotification
+        self.rdInAppNotification = rdInAppNotification
         self.emailForm = emailForm
         self.scratchToWin = scratchTW
         super.init(frame: frame)
-        if self.relatedDigitalInAppNotification != nil {
+        if self.rdInAppNotification != nil {
             setupViews()
         } else if self.emailForm != nil {
             setupInitialViewForEmailForm()
@@ -122,8 +124,8 @@ public class RDPopupDialogDefaultView: UIView {
         self.addSubview(imageView)
         self.addSubview(closeButton)
 
-        var constraints = [NSLayoutConstraint]()
-        imageHeightConstraint = NSLayoutConstraint(item: imageView,
+        var constraints = [NSLC]()
+        imageHeightConstraint = NSLC(item: imageView,
             attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
 
         if let imageHeightConstraint = imageHeightConstraint {
@@ -131,7 +133,7 @@ public class RDPopupDialogDefaultView: UIView {
         }
 
         closeButton.trailing(to: self, offset: -10.0)
-        NSLayoutConstraint.activate(constraints)
+        NSLC.activate(constraints)
 
         setupForEmailForm()
     }
@@ -276,15 +278,15 @@ public class RDPopupDialogDefaultView: UIView {
 
         self.closeButton.trailing(to: self, offset: -10)
 
-        var constraints = [NSLayoutConstraint]()
-        imageHeightConstraint = NSLayoutConstraint(item: imageView,
+        var constraints = [NSLC]()
+        imageHeightConstraint = NSLC(item: imageView,
             attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
 
         if let imageHeightConstraint = imageHeightConstraint {
             constraints.append(imageHeightConstraint)
         }
 
-        NSLayoutConstraint.activate(constraints)
+        NSLC.activate(constraints)
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -293,13 +295,13 @@ public class RDPopupDialogDefaultView: UIView {
 
     internal func setupViews() {
 
-        guard let notification = relatedDigitalInAppNotification else {
+        guard let notification = rdInAppNotification else {
             return
         }
 
         baseSetup(notification)
 
-        var constraints = [NSLayoutConstraint]()
+        var constraints = [NSLC]()
         switch notification.type {
         case .imageButton, .fullImage:
             imageView.allEdges(to: self)
@@ -324,28 +326,28 @@ public class RDPopupDialogDefaultView: UIView {
             setupForDefault()
         }
 
-        imageHeightConstraint = NSLayoutConstraint(item: imageView,
+        imageHeightConstraint = NSLC(item: imageView,
             attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
 
         if let imageHeightConstraint = imageHeightConstraint {
             constraints.append(imageHeightConstraint)
         }
-        secondImageHeight = NSLayoutConstraint(item: secondImageView,
+        secondImageHeight = NSLC(item: secondImageView,
                                                attribute: .height, relatedBy: .equal, toItem: secondImageView, attribute: .height, multiplier: 0, constant: 0)
         if let secondHeight = secondImageHeight {
             constraints.append(secondHeight)
         }
         closeButton.trailing(to: self, offset: -10.0)
-        NSLayoutConstraint.activate(constraints)
+        NSLC.activate(constraints)
     }
 
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
         emailTF.resignFirstResponder()
     }
-
 }
 
 // MARK: - SliderStepDelegate
+
 extension RDPopupDialogDefaultView: SliderStepDelegate {
     func didSelectedValue(sliderStep: RDSliderStep, value: Float) {
         sliderStep.value = value
@@ -390,7 +392,7 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
     }
 
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if self.relatedDigitalInAppNotification?.type == .emailForm {
+        if self.rdInAppNotification?.type == .emailForm {
             return emailTF.resignFirstResponder()
         } else {
             return feedbackTF.resignFirstResponder()
@@ -405,7 +407,6 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
                     view.frame.origin.y -= keyboardSize.height
                 }
             }
-
         }
     }
 
@@ -484,7 +485,6 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
         RelatedDigital.subscribeSpinToWinMail(actid: actid, auth: auth, mail: sctwMail)
         sctwButton.allEdges(to: self, excluding: .top)
         sctwButton.height(50)
-
     }
 
     @objc func dismissKeyboard() {
@@ -499,7 +499,6 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
 }
 
 extension RDPopupDialogDefaultView: ScratchUIViewDelegate {
-
     public func scratchMoved(_ view: ScratchUIView) {
         if !expanded && view.getScratchPercent() > 0.69 {
             expanded = true
@@ -508,8 +507,7 @@ extension RDPopupDialogDefaultView: ScratchUIViewDelegate {
     }
 }
 
-protocol RelatedDigitalPopupDialogDefaultViewDelegate: AnyObject {
-    func viewExpanded()
+protocol RDPopupDialogDefaultViewDelegate: AnyObject {
     func dismissSctw()
 }
 

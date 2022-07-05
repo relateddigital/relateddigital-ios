@@ -1,6 +1,6 @@
 //
-//  VisilabsHalfScreenViewController.swift
-//  VisilabsIOS
+//  RDHalfScreenViewController.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen Gülkılık on 10.11.2021.
 //
@@ -8,7 +8,7 @@
 import UIKit
 import AVFoundation
 
-class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
+class RDHalfScreenViewController: RDBaseNotificationViewController {
 
     var halfScreenNotification: RDInAppNotification! {
         return super.notification

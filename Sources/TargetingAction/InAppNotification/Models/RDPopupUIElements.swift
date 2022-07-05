@@ -50,9 +50,9 @@ extension RDPopupDialogDefaultView {
     internal func setCopyCodeText() -> UIButton {
         let copyCodeText = UIButton(frame: .zero)
         copyCodeText.translatesAutoresizingMaskIntoConstraints = false
-        copyCodeText.setTitle(relatedDigitalInAppNotification?.promotionCode, for: .normal)
-        copyCodeText.backgroundColor = relatedDigitalInAppNotification?.promotionBackgroundColor
-        copyCodeText.setTitleColor(relatedDigitalInAppNotification?.promotionTextColor, for: .normal)
+        copyCodeText.setTitle(rdInAppNotification?.promotionCode, for: .normal)
+        copyCodeText.backgroundColor = rdInAppNotification?.promotionBackgroundColor
+        copyCodeText.setTitleColor(rdInAppNotification?.promotionTextColor, for: .normal)
         copyCodeText.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
 
         return copyCodeText
@@ -63,7 +63,7 @@ extension RDPopupDialogDefaultView {
         let copyIconImage = RDHelper.getUIImage(named: "RelatedCopyButton")
         copyCodeImage.setImage(copyIconImage, for: .normal)
         copyCodeImage.translatesAutoresizingMaskIntoConstraints = false
-        copyCodeImage.backgroundColor = relatedDigitalInAppNotification?.promotionBackgroundColor
+        copyCodeImage.backgroundColor = rdInAppNotification?.promotionBackgroundColor
         copyCodeImage.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
         return copyCodeImage
     }
@@ -164,9 +164,9 @@ extension RDPopupDialogDefaultView {
 
     internal func setImageButton() -> UIButton {
         let button = UIButton(frame: .zero)
-        button.backgroundColor = relatedDigitalInAppNotification?.buttonColor ?? .black
-        button.setTitle(relatedDigitalInAppNotification?.buttonText, for: .normal)
-        button.setTitleColor(relatedDigitalInAppNotification?.buttonTextColor, for: .normal)
+        button.backgroundColor = rdInAppNotification?.buttonColor ?? .black
+        button.setTitle(rdInAppNotification?.buttonText, for: .normal)
+        button.setTitleColor(rdInAppNotification?.buttonTextColor, for: .normal)
         button.addTarget(self, action: #selector(imageButtonTapped), for: .touchUpInside)
         return button
     }
@@ -264,27 +264,27 @@ extension RDPopupDialogDefaultView {
         messageLabel.trailing(to: self)
         messageLabel.height(32)
         
-        if relatedDigitalInAppNotification?.imageUrlString?.isEmpty == true {
+        if rdInAppNotification?.imageUrlString?.isEmpty == true {
             closeButton.layer.zPosition = 1
             closeButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
         }
 
-        if let titleBackgroundColor = relatedDigitalInAppNotification?.messageTitleBackgroundColor {
+        if let titleBackgroundColor = rdInAppNotification?.messageTitleBackgroundColor {
             titleLabel.backgroundColor = titleBackgroundColor
         }
 
-        if let bodyBackgroundColor = relatedDigitalInAppNotification?.messageBodyBackgroundColor {
+        if let bodyBackgroundColor = rdInAppNotification?.messageBodyBackgroundColor {
             messageLabel.backgroundColor = bodyBackgroundColor
         }
 
-        if let promo = relatedDigitalInAppNotification?.promotionCode,
-           let _ = relatedDigitalInAppNotification?.promotionBackgroundColor,
-           let _ = relatedDigitalInAppNotification?.promotionTextColor,
+        if let promo = rdInAppNotification?.promotionCode,
+           let _ = rdInAppNotification?.promotionBackgroundColor,
+           let _ = rdInAppNotification?.promotionTextColor,
            !promo.isEmpty {
             addSubview(copyCodeTextButton)
             addSubview(copyCodeImageButton)
             copyCodeTextButton.bottom(to: self, offset: 0.0)
-            if relatedDigitalInAppNotification?.messageTitleColor != nil {
+            if rdInAppNotification?.messageTitleColor != nil {
                 copyCodeTextButton.topToBottom(of: messageLabel, offset: 0)
                 copyCodeImageButton.topToBottom(of: messageLabel, offset: 0)
             } else {
@@ -357,8 +357,8 @@ extension RDPopupDialogDefaultView {
         addSubview(messageLabel)
         addSubview(numberRating)
         numberBorderColor = setBorderColorOfCell()
-        guard let numberColors = relatedDigitalInAppNotification?.numberColors else { return }
-        guard let numberRange = relatedDigitalInAppNotification?.numberRange else { return }
+        guard let numberColors = rdInAppNotification?.numberColors else { return }
+        guard let numberRange = rdInAppNotification?.numberRange else { return }
         if numberColors.count == 3 {
             colors = UIColor.getGradientColorArray(numberColors[0], numberColors[1], numberColors[2], numberRange)
         } else if numberColors.count == 2 {
@@ -500,7 +500,7 @@ extension RDPopupDialogDefaultView {
 
 extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let numberRange = relatedDigitalInAppNotification?.numberRange
+        let numberRange = rdInAppNotification?.numberRange
         var nWidth: CGFloat = 0.0
         if numberRange == "0-10" {
             nWidth = (numberRating.frame.width - 100) / 11
@@ -512,7 +512,7 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let numberRange = relatedDigitalInAppNotification?.numberRange
+        let numberRange = rdInAppNotification?.numberRange
         if numberRange == "0-10" {
             return 11
         } else {
@@ -524,7 +524,7 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! RatingCollectionViewCell
 
-        let numberRange = relatedDigitalInAppNotification?.numberRange
+        let numberRange = rdInAppNotification?.numberRange
         if numberRange == "0-10" {
             cell.rating = indexPath.row
         } else {
@@ -545,7 +545,7 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? RatingCollectionViewCell else {
             return
         }
-        let numberRange = relatedDigitalInAppNotification?.numberRange
+        let numberRange = rdInAppNotification?.numberRange
         if cell.isSelected {
             if numberRange == "0-10" {
                 selectedNumber = indexPath.row
@@ -565,7 +565,7 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        let numberRange = relatedDigitalInAppNotification?.numberRange
+        let numberRange = rdInAppNotification?.numberRange
         if numberRange == "0-10" {
             return 8
         } else {

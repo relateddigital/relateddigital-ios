@@ -1,6 +1,6 @@
 //
-//  VisilabsFullNotificationViewController.swift
-//  VisilabsIOS
+//  RelatedDigitalFullNotificationViewController.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 3.06.2020.
 //

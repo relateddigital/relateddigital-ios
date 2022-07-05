@@ -1,6 +1,6 @@
 //
-//  VisilabsMiniNotificationViewController.swift
-//  VisilabsIOS
+//  RelatedDigitalMiniNotificationViewController.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 13.05.2020.
 //

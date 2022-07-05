@@ -119,14 +119,14 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showProductStatNotifier(_ model: RDProductStatNotifierViewModel) -> Bool {
-        let productStatNotifierVC = RelatedDigitalProductStatNotifierViewController(productStatNotifier: model)
+        let productStatNotifierVC = RDProductStatNotifierViewController(productStatNotifier: model)
         productStatNotifierVC.delegate = self
         productStatNotifierVC.show(animated: true)
         return true
     }
 
     func showHalfScreenNotification(_ notification: RDInAppNotification) -> Bool {
-        let halfScreenNotificationVC = RelatedDigitalHalfScreenViewController(notification: notification)
+        let halfScreenNotificationVC = RDHalfScreenViewController(notification: notification)
         halfScreenNotificationVC.delegate = self
         halfScreenNotificationVC.show(animated: true)
         return true
@@ -207,7 +207,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showScratchToWin(_ model: ScratchToWinModel) -> Bool {
-        let popUpVC = RelatedDigitalPopupNotificationViewController(scratchToWin: model)
+        let popUpVC = RDPopupNotificationViewController(scratchToWin: model)
         popUpVC.delegate = self
         popUpVC.inappButtonDelegate = inappButtonDelegate
         popUpVC.show(animated: false)
@@ -222,7 +222,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showPopUp(_ notification: RDInAppNotification) -> Bool {
-        let popUpVC = RelatedDigitalPopupNotificationViewController(notification: notification)
+        let popUpVC = RDPopupNotificationViewController(notification: notification)
         popUpVC.delegate = self
         popUpVC.inappButtonDelegate = inappButtonDelegate
         popUpVC.show(animated: false)
@@ -230,7 +230,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showMailPopup(_ model: MailSubscriptionViewModel) -> Bool {
-        let popUpVC = RelatedDigitalPopupNotificationViewController(mailForm: model)
+        let popUpVC = RDPopupNotificationViewController(mailForm: model)
         popUpVC.delegate = self
         popUpVC.show(animated: false)
         return true

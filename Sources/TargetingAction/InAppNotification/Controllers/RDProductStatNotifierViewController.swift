@@ -1,13 +1,13 @@
 //
-//  VisilabsProductStatNotifierViewController.swift
-//  VisilabsIOS
+//  RDProductStatNotifierViewController.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen Gülkılık on 8.11.2021.
 //
 
 import UIKit
 
-class RelatedDigitalProductStatNotifierViewController: RDBaseNotificationViewController {
+class RDProductStatNotifierViewController: RDBaseNotificationViewController {
     
     
     var notifier: RDProductStatNotifierViewModel! {
