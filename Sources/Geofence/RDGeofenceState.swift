@@ -14,7 +14,6 @@ class RDGeofenceState {
     
     enum Key: String {
         case geofenceEnabled = "geofenceEnabled"
-        case geofenceLastLocation = "geofenceLastLocation"
         case geofenceStopped = "geofenceStopped"
         case geofenceLastMovedLocation = "geofenceLastMovedLocation"
         case geofenceLastMovedAt = "geofenceLastMovedAt"
@@ -59,19 +58,6 @@ class RDGeofenceState {
             }
         }
         return nil
-    }
-    
-    static func setLastLocation(_ loc: CLLocation) {
-        if validLocation(loc) {
-            saveLocation(loc, key: Key.geofenceLastLocation.rawValue)
-        }
-    }
-    
-    static func getLastLocation() -> CLLocation? {
-        guard let loc = getLocation(key: Key.geofenceLastLocation.rawValue), validLocation(loc) else {
-            return nil
-        }
-        return loc
     }
     
     static func setLastMovedLocation(_ loc: CLLocation) {

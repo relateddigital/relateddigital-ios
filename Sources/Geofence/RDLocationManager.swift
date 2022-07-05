@@ -30,9 +30,7 @@ class RDLocationManager: NSObject {
     private var fetching = false
     private var timer: Timer?
     
-    var activeGeofenceList = [RDGeofenceEntity]()
     var lastGeofenceFetchTime = Date(timeIntervalSince1970: 0)
-    var lastSuccessfulGeofenceFetchTime = Date(timeIntervalSince1970: 0)
     var geofenceHistory: RDGeofenceHistory
     
     
@@ -96,12 +94,7 @@ class RDLocationManager: NSObject {
         }
         fetchGeofences()
     }
-    
-    func stopGeofence() {
-        RDGeofenceState.setGeofenceEnabled(false)
-        updateTracking(location: nil, fromInit: false)
-    }
-    
+
     func startUpdates(_ interval: Int) {
         if !started || interval != startedInterval {
             RDLogger.info("Starting geofence timer | interval = \(interval)")
@@ -234,7 +227,10 @@ class RDLocationManager: NSObject {
         if !RDGeofenceState.getGeofenceEnabled() || !options.syncGeofences {
             return
         }
-        for geoEnt in geoEntities {
+        
+        let newGeoEntities = sortAndTakeVisilabsGeofenceEntitiesToMonitor(geoEntities)
+        
+        for geoEnt in newGeoEntities {
             let region = CLCircularRegion(center: CLLocationCoordinate2D(latitude: geoEnt.latitude,
                                                                          longitude: geoEnt.longitude),
                                           radius: CLLocationDistance(geoEnt.radius),
@@ -332,7 +328,6 @@ extension RDLocationManager {
         
         let justStopped = stopped && !wasStopped
         RDGeofenceState.setStopped(stopped)
-        RDGeofenceState.setLastLocation(location)
         
         if source != .manualLocation {
             updateTracking(location: location, fromInit: false)
@@ -383,10 +378,10 @@ extension RDLocationManager {
         if source == .foregroundLocation {
             return
         }
-        self.sendLocation(sendLocation, stopped: stopped, source: source, replayed: replayed, region: region)
+        self.sendLocation(sendLocation, source: source, region: region)
     }
     
-    func sendLocation(_ location: CLLocation, stopped: Bool, source: RDLocationSource, replayed: Bool, region: CLRegion? = nil) {
+    func sendLocation(_ location: CLLocation, source: RDLocationSource, region: CLRegion? = nil) {
         sending = true
         
         if [RDLocationSource.geofenceEnter, RDLocationSource.geofenceExit].contains(source) {
@@ -611,7 +606,7 @@ extension RDLocationManager {
                     completion(false, [RDGeofenceEntity]())
                     return
                 }
-                (self.lastSuccessfulGeofenceFetchTime, self.geofenceHistory.lastFetchTime) = (now, now)
+                self.geofenceHistory.lastFetchTime = now
                 var fetchedGeofences = [RDGeofenceEntity]()
                 if let res = result {
                     for targetingAction in res {
