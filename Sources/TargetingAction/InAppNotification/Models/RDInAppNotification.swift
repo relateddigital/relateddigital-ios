@@ -87,7 +87,7 @@ public class RDInAppNotification {
     let promotionTextColor: UIColor?
     let promotionBackgroundColor: UIColor?
     let numberColors: [UIColor]?
-    let numberRange: String?
+    var numberRange = "1-10"
     let waitingTime: Int?
     let secondPopupType: RDSecondPopupType?
     let secondPopupTitle: String?
@@ -261,7 +261,7 @@ public class RDInAppNotification {
         self.promotionTextColor = UIColor(hex: promotionTextColor)
         self.promotionBackgroundColor = UIColor(hex: promotionBackgroundColor)
         self.numberColors = RDHelper.convertColorArray(numberColors)
-        self.numberRange = numberRange
+        self.numberRange = numberRange ?? "1-10"
         self.waitingTime = waitingTime
         self.secondPopupType = secondPopupType
         self.secondPopupTitle = secondPopupTitle
@@ -380,7 +380,7 @@ public class RDInAppNotification {
         } else {
             numberColors = nil
         }
-        numberRange = actionData[PayloadKey.numberRange] as? String
+        numberRange = actionData[PayloadKey.numberRange] as? String ?? "1-10"
         waitingTime = actionData[PayloadKey.waitingTime] as? Int
 
         // Second Popup Variables
