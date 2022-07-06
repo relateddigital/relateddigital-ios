@@ -58,13 +58,13 @@ public class RDCarouselItemView: UIView, DisplaceableView {
 
     internal var imageHeightConstraint: NSLayoutConstraint?
 
-    public weak var relatedDigitalCarouselItem: RDCarouselItem?
+    public weak var rdCarouselItem: RDCarouselItem?
     
     // MARK: - CONSTRUCTOR
-    public init(frame: CGRect, relatedDigitalCarouselItem: RDCarouselItem?) {
-        self.relatedDigitalCarouselItem = relatedDigitalCarouselItem
+    public init(frame: CGRect, rdCarouselItem: RDCarouselItem?) {
+        self.rdCarouselItem = rdCarouselItem
         super.init(frame: frame)
-        if self.relatedDigitalCarouselItem != nil {
+        if self.rdCarouselItem != nil {
             setupViews()
         }
     }
@@ -74,7 +74,7 @@ public class RDCarouselItemView: UIView, DisplaceableView {
     }
 
     internal func setupViews() {
-        guard let carouselItem = relatedDigitalCarouselItem else {
+        guard let carouselItem = rdCarouselItem else {
             return
         }
         setup(carouselItem)
@@ -152,9 +152,9 @@ extension RDCarouselItemView {
     internal func setCopyCodeText() -> UIButton {
         let copyCodeText = UIButton(frame: .zero)
         copyCodeText.translatesAutoresizingMaskIntoConstraints = false
-        copyCodeText.setTitle(self.relatedDigitalCarouselItem?.promotionCode, for: .normal)
-        copyCodeText.backgroundColor = self.relatedDigitalCarouselItem?.promocodeBackgroundColor
-        copyCodeText.setTitleColor(self.relatedDigitalCarouselItem?.promocodeTextColor, for: .normal)
+        copyCodeText.setTitle(self.rdCarouselItem?.promotionCode, for: .normal)
+        copyCodeText.backgroundColor = self.rdCarouselItem?.promocodeBackgroundColor
+        copyCodeText.setTitleColor(self.rdCarouselItem?.promocodeTextColor, for: .normal)
         copyCodeText.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
         copyCodeText.titleLabel?.font = .systemFont(ofSize: 15.0, weight: .regular)
         return copyCodeText
@@ -165,18 +165,9 @@ extension RDCarouselItemView {
         let copyIconImage = RDHelper.getUIImage(named: "RelatedCopyButton")
         copyCodeImage.setImage(copyIconImage, for: .normal)
         copyCodeImage.translatesAutoresizingMaskIntoConstraints = false
-        copyCodeImage.backgroundColor = self.relatedDigitalCarouselItem?.promocodeBackgroundColor
+        copyCodeImage.backgroundColor = self.rdCarouselItem?.promocodeBackgroundColor
         copyCodeImage.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
         return copyCodeImage
-    }
-
-    private func getUIImage(named: String) -> UIImage? {
-        #if SWIFT_PACKAGE
-        let bundle = Bundle.module
-        #else
-        let bundle = Bundle(for: type(of: self))
-        #endif
-        return UIImage(named: named, in: bundle, compatibleWith: nil)!.resized(withPercentage: CGFloat(0.75))
     }
 
     internal func setup(_ carouselItem: RDCarouselItem) {
@@ -236,9 +227,9 @@ extension RDCarouselItemView {
         }
         
 
-        if let promo = self.relatedDigitalCarouselItem?.promotionCode,
-           let _ = self.relatedDigitalCarouselItem?.promocodeBackgroundColor,
-           let _ = self.relatedDigitalCarouselItem?.promocodeTextColor,
+        if let promo = self.rdCarouselItem?.promotionCode,
+           let _ = self.rdCarouselItem?.promocodeBackgroundColor,
+           let _ = self.rdCarouselItem?.promocodeTextColor,
            !promo.isEmpty {
             copyCodeTextButton.isHidden = false
             copyCodeImageButton.isHidden = false
@@ -266,11 +257,13 @@ extension RDCarouselItemView {
         messageLabel.centerX(to: self)
         button.centerX(to: self)
         
+
         self.backgroundColor = .white
         
         if let bgColor = carouselItem.backgroundColor {
             self.backgroundColor = bgColor
         }
-        
+  
     }
+
 }

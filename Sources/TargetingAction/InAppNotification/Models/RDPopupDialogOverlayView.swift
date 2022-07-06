@@ -1,6 +1,6 @@
 //
-//  VisilabsPopupDialogOverlayView.swift
-//  VisilabsIOS
+//  RelatedDigitalPopupDialogOverlayView.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 12.06.2020.
 //
@@ -9,7 +9,7 @@ import UIKit
 // import DynamicBlurView
 
 /// The (blurred) overlay view below the popup dialog
-final public class RelatedDigitalPopupDialogOverlayView: UIView {
+final public class RDPopupDialogOverlayView: UIView {
 
     // MARK: - Views
 

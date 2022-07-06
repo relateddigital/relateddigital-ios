@@ -1,6 +1,6 @@
 //
-//  VisilabsHalfScreenView.swift
-//  VisilabsIOS
+//  RDHalfScreenView.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen Gülkılık on 10.11.2021.
 //
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class RelatedDigitalHalfScreenView: UIView {
+class RDHalfScreenView: UIView {
     
     var notification: RDInAppNotification
     var titleLabel: UILabel!

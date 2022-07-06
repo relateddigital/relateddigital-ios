@@ -15,11 +15,7 @@ protocol RDInAppNotificationsDelegate: AnyObject {
 
 class RDInAppNotifications: RDNotificationViewControllerDelegate {
     let lock: RDReadWriteLock
-    var checkForNotificationOnActive = true
-    var showNotificationOnActive = true
     var miniNotificationPresentationTime = 6.0
-    var shownNotifications = Set<Int>()
-    var inAppNotification: RDInAppNotification?
     var currentlyShowingNotification: RDInAppNotification?
     var currentlyShowingTargetingAction: TargetingActionViewModel?
     weak var delegate: RDInAppNotificationsDelegate?
@@ -123,14 +119,14 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showProductStatNotifier(_ model: RDProductStatNotifierViewModel) -> Bool {
-        let productStatNotifierVC = RelatedDigitalProductStatNotifierViewController(productStatNotifier: model)
+        let productStatNotifierVC = RDProductStatNotifierViewController(productStatNotifier: model)
         productStatNotifierVC.delegate = self
         productStatNotifierVC.show(animated: true)
         return true
     }
 
     func showHalfScreenNotification(_ notification: RDInAppNotification) -> Bool {
-        let halfScreenNotificationVC = RelatedDigitalHalfScreenViewController(notification: notification)
+        let halfScreenNotificationVC = RDHalfScreenViewController(notification: notification)
         halfScreenNotificationVC.delegate = self
         halfScreenNotificationVC.show(animated: true)
         return true
@@ -209,61 +205,35 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             root.present(alertController, animated: true, completion: alertDismiss)
         }
     }
-
     
-    func getTopViewController() -> UIViewController? {
-        var topViewController = UIApplication.shared.delegate!.window!!.rootViewController!
-        while topViewController.presentedViewController != nil {
-            topViewController = topViewController.presentedViewController!
-        }
-        return topViewController
-    }
-    
-    func showPopUp(_ notification: RDInAppNotification) -> Bool {
-        let controller = RelatedDigitalPopupNotificationViewController(notification: notification)
-        controller.delegate = self
-        controller.inappButtonDelegate = inappButtonDelegate
-
-        if let rootViewController = getTopViewController() {
-            rootViewController.present(controller, animated: false, completion: nil)
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    func showMailPopup(_ model: MailSubscriptionViewModel) -> Bool {
-        let controller = RelatedDigitalPopupNotificationViewController(mailForm: model)
-        controller.delegate = self
-
-        if let rootViewController = RDHelper.getRootViewController() {
-            rootViewController.present(controller, animated: false, completion: nil)
-            return true
-        } else {
-            return false
-        }
-    }
-
     func showScratchToWin(_ model: ScratchToWinModel) -> Bool {
-        let controller = RelatedDigitalPopupNotificationViewController(scratchToWin: model)
-        controller.delegate = self
-        if let rootViewController = RDHelper.getRootViewController() {
-            rootViewController.present(controller, animated: false, completion: nil)
-            return true
-        } else {
-            return false
-        }
+        let popUpVC = RDPopupNotificationViewController(scratchToWin: model)
+        popUpVC.delegate = self
+        popUpVC.inappButtonDelegate = inappButtonDelegate
+        popUpVC.show(animated: false)
+        return true
     }
 
     func showSpinToWin(_ model: SpinToWinViewModel) -> Bool {
-        let controller = SpinToWinViewController(model)
-        controller.modalPresentationStyle = .fullScreen
-        controller.delegate = self
-        if let rootViewController = RDHelper.getRootViewController() {
-            rootViewController.present(controller, animated: true, completion: nil)
-            return true
-        }
-        return false
+        let spinToWinVC = SpinToWinViewController(model)
+        spinToWinVC.delegate = self
+        spinToWinVC.show(animated: true)
+        return true
+    }
+    
+    func showPopUp(_ notification: RDInAppNotification) -> Bool {
+        let popUpVC = RDPopupNotificationViewController(notification: notification)
+        popUpVC.delegate = self
+        popUpVC.inappButtonDelegate = inappButtonDelegate
+        popUpVC.show(animated: false)
+        return true
+    }
+    
+    func showMailPopup(_ model: MailSubscriptionViewModel) -> Bool {
+        let popUpVC = RDPopupNotificationViewController(mailForm: model)
+        popUpVC.delegate = self
+        popUpVC.show(animated: false)
+        return true
     }
 
     func markNotificationShown(notification: RDInAppNotification) {
@@ -273,6 +243,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             // TO_DO: burada customEvent request'i atılmalı
         }
     }
+    
 
     func markTargetingActionShown(model: TargetingActionViewModel) {
         lock.write {

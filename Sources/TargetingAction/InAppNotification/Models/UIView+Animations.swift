@@ -1,6 +1,6 @@
 //
 //  UIView+Animations.swift
-//  VisilabsIOS
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 8.06.2020.
 //

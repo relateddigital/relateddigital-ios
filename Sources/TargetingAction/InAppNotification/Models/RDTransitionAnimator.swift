@@ -1,6 +1,6 @@
 //
-//  VisilabsTransitionAnimator.swift
-//  VisilabsIOS
+//  RelatedDigitalTransitionAnimator.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 8.06.2020.
 //
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 /// Base class for custom transition animations
-internal class RelatedDigitalTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+internal class RDTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
 
     var toViewController: UIViewController!
     var from: UIViewController!

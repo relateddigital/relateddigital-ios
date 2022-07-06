@@ -1,41 +1,41 @@
 //
-//  VisilabsHalfScreenViewController.swift
-//  VisilabsIOS
+//  RDProductStatNotifierViewController.swift
+//  RelatedDigitalIOS
 //
-//  Created by Egemen Gülkılık on 10.11.2021.
+//  Created by Egemen Gülkılık on 8.11.2021.
 //
 
 import UIKit
-import AVFoundation
 
-class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
-
-    var halfScreenNotification: RDInAppNotification! {
-        return super.notification
+class RDProductStatNotifierViewController: RDBaseNotificationViewController {
+    
+    
+    var notifier: RDProductStatNotifierViewModel! {
+        return super.productStatNotifier
     }
     
-    var player : AVPlayer?
-    var relatedDigitalHalfScreenView: RelatedDigitalHalfScreenView!
+    var relatedDigitalProductStatNotifierView: RelatedDigitalProductStatNotifierView!
     var halfScreenHeight = 0.0
     
     var isDismissing = false
     var position: CGPoint!
 
-    init(notification: RDInAppNotification) {
+    
+    init(productStatNotifier: RDProductStatNotifierViewModel) {
         super.init(nibName: nil, bundle: nil)
-        self.notification = notification
-        relatedDigitalHalfScreenView = RelatedDigitalHalfScreenView(frame: UIScreen.main.bounds, notification: halfScreenNotification)
-        view = relatedDigitalHalfScreenView
-        
+        self.productStatNotifier = productStatNotifier
+        relatedDigitalProductStatNotifierView = RelatedDigitalProductStatNotifierView(frame: UIScreen.main.bounds, productStatNotifier: productStatNotifier)
+        view = relatedDigitalProductStatNotifierView
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))
         tapGesture.numberOfTapsRequired = 1
-        relatedDigitalHalfScreenView.addGestureRecognizer(tapGesture)
+        relatedDigitalProductStatNotifierView.addGestureRecognizer(tapGesture)
         
         let closeTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeButtonTapped(tapGestureRecognizer:)))
-        relatedDigitalHalfScreenView.closeButton.isUserInteractionEnabled = true
-        relatedDigitalHalfScreenView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
+        relatedDigitalProductStatNotifierView.closeButton.isUserInteractionEnabled = true
+        relatedDigitalProductStatNotifierView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
     }
     
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -44,21 +44,11 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
         super.viewDidLoad()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        player = relatedDigitalHalfScreenView.imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        player?.pause()
-    }
-    
     @objc func didTap(gesture: UITapGestureRecognizer) {
         if !isDismissing && gesture.state == UIGestureRecognizer.State.ended {
             delegate?.notificationShouldDismiss(controller: self,
-                                                callToActionURL: halfScreenNotification.callToActionUrl,
-                                                shouldTrack: true,
+                                                callToActionURL: nil,
+                                                shouldTrack: false,
                                                 additionalTrackingProperties: nil)
         }
     }
@@ -90,12 +80,14 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
         
         let bottomInset = Double(RDHelper.getSafeAreaInsets().bottom)
         let topInset = Double(RDHelper.getSafeAreaInsets().top)
-        halfScreenHeight = Double(relatedDigitalHalfScreenView.imageView.frame.height) + Double(relatedDigitalHalfScreenView.titleLabel.frame.height)
+        halfScreenHeight = Double(relatedDigitalProductStatNotifierView.titleLabel.frame.height)
         
-        let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
+        let frameY = notifier.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
         
         
         let frame = CGRect(origin: CGPoint(x: 0, y: CGFloat(frameY)), size: CGSize(width: bounds.size.width, height: CGFloat(halfScreenHeight)))
+        
+        
         
         if #available(iOS 13.0, *) {
             let windowScene = sharedUIApplication
@@ -129,7 +121,7 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
             UIView.animate(withDuration: duration, animations: {
                 
                 var originY = 0.0
-                if self.halfScreenNotification.position == .bottom {
+                if self.notifier.position == .bottom {
                     originY = self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().bottom)
                 } else {
                     originY = -(self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().top))
@@ -146,3 +138,5 @@ class RelatedDigitalHalfScreenViewController: RDBaseNotificationViewController {
     }
 
 }
+
+

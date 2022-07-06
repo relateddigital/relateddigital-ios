@@ -25,6 +25,7 @@ public class RelatedDigital {
     var rdInstance: RDInstanceProtocol
     
     static var _shared: RelatedDigital?
+    static var initializeCalled = false;
     
     public static var shared: RelatedDigital {
         if _shared == nil {
@@ -51,6 +52,8 @@ public class RelatedDigital {
             fatalError("initialize must be called on the main thread.")
         }
         
+        initializeCalled = true
+        
         guard _shared == nil else {
             RDLogger.error("initialize can only be called once.")
             return
@@ -62,6 +65,17 @@ public class RelatedDigital {
         
         _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource))
         
+    }
+    
+    class func initialize() {
+        initializeCalled = true
+        guard _shared == nil else {
+            RDLogger.error("initialize can only be called once.")
+            return
+        }
+        if let rdInstance = RDInstance() {
+            _shared = RelatedDigital(instance: rdInstance)
+        }
     }
     
     init(instance: RDInstanceProtocol) {
@@ -115,6 +129,15 @@ public class RelatedDigital {
         }
         set {
             shared.rdInstance.geofenceEnabled = newValue
+        }
+    }
+    
+    public static var askLocationPermmissionAtStart: Bool {
+        get {
+            return shared.rdInstance.askLocationPermmissionAtStart
+        }
+        set {
+            shared.rdInstance.askLocationPermmissionAtStart = newValue
         }
     }
     

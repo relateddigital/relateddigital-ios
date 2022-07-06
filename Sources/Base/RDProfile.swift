@@ -14,6 +14,7 @@ struct RDProfile: Codable {
     var channel: String = "IOS"
     var requestTimeoutInSeconds: Int = 30
     var geofenceEnabled: Bool = false
+    var askLocationPermmissionAtStart: Bool = true
     var inAppNotificationsEnabled: Bool = false
     var maxGeofenceCount: Int = 20
     var isIDFAEnabled: Bool = false

@@ -1,6 +1,6 @@
 //
-//  VisilabsSliderStepRating.swift
-//  VisilabsIOS
+//  RDSliderStep.swift
+//  RelatedDigitalIOS
 //
 //  Created by Egemen on 16.06.2020.
 //
@@ -28,10 +28,10 @@ private func > <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
 }
 
 protocol SliderStepDelegate: AnyObject {
-    func didSelectedValue(sliderStep: RelatedDigitalSliderStep, value: Float)
+    func didSelectedValue(sliderStep: RDSliderStep, value: Float)
 }
 // swiftlint:disable type_body_length valid_ibinspectable file_length
-class RelatedDigitalSliderStep: UISlider {
+class RDSliderStep: UISlider {
 
     @IBInspectable var enableTap: Bool = true
     @IBInspectable var trackHeight: Float = 4
@@ -92,12 +92,12 @@ class RelatedDigitalSliderStep: UISlider {
         self.contentMode = .redraw // enable redraw on rotation (calls setNeedsDisplay)
 
         if enableTap {
-            let tap = UITapGestureRecognizer(target: self, action: #selector(RelatedDigitalSliderStep.sliderTapped(_:)))
+            let tap = UITapGestureRecognizer(target: self, action: #selector(RDSliderStep.sliderTapped(_:)))
             self.addGestureRecognizer(tap)
         }
 
-        self.addTarget(self, action: #selector(RelatedDigitalSliderStep.movingSliderStepValue), for: .valueChanged)
-        self.addTarget(self, action: #selector(RelatedDigitalSliderStep.didMoveSliderStepValue),
+        self.addTarget(self, action: #selector(RDSliderStep.movingSliderStepValue), for: .valueChanged)
+        self.addTarget(self, action: #selector(RDSliderStep.didMoveSliderStepValue),
                        for: [.touchUpInside, .touchUpOutside, .touchCancel])
     }
 

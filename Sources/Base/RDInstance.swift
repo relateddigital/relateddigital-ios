@@ -29,6 +29,8 @@ public class RDInstance: RDInstanceProtocol {
     let rdTargetingActionInstance: RDTargetingAction
     let rdRecommendationInstance = RDRecommendation()
     let rdRemoteConfigInstance: RDRemoteConfig
+    let rdLocationManager: RDLocationManager
+    
     var launchOptions: [UIA.LaunchOptionsKey : Any]? = nil
     
     public var loggingEnabled: Bool = false {
@@ -64,6 +66,16 @@ public class RDInstance: RDInstanceProtocol {
         }
     }
     
+    public var askLocationPermmissionAtStart: Bool {
+        get {
+            return rdProfile.askLocationPermmissionAtStart
+        }
+        set {
+            rdProfile.askLocationPermmissionAtStart = newValue
+            RDPersistence.saveRDProfile(rdProfile)
+        }
+    }
+    
     public var useInsecureProtocol: Bool = false {
         didSet {
             rdProfile.useInsecureProtocol = useInsecureProtocol
@@ -92,7 +104,7 @@ public class RDInstance: RDInstanceProtocol {
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
         rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
         rdRemoteConfigInstance = RDRemoteConfig(profileId: rdProfile.profileId)
-        
+        rdLocationManager = RDLocationManager()
         
         RDHelper.setEndpoints(dataSource: rdProfile.dataSource)
         
@@ -114,10 +126,6 @@ public class RDInstance: RDInstanceProtocol {
                     self.rdUser.identifierForAdvertising = idfa
                 }
             }
-        }
-        
-        if rdProfile.geofenceEnabled {
-            startGeofencing()
         }
         
         rdTargetingActionInstance.inAppDelegate = self
@@ -629,20 +637,21 @@ extension RDInstance {
 
 
 extension RDInstance {
-    private func startGeofencing() {
-        RDGeofence.sharedManager?.startGeofencing()
-    }
-    
+
     public var locationServicesEnabledForDevice: Bool {
-        return RDGeofence.sharedManager?.locationServicesEnabledForDevice ?? false
+        return RDGeofenceState.locationServicesEnabledForDevice
     }
     
     public var locationServiceStateStatusForApplication: RDCLAuthorizationStatus {
-        return RDGeofence.sharedManager?.locationServiceStateStatusForApplication ?? .none
+        return RDGeofenceState.locationServiceStateStatusForApplication
     }
     
     public func sendLocationPermission() {
-        RDLocationManager.sharedManager.sendLocationPermission(geofenceEnabled: rdProfile.geofenceEnabled)
+        rdLocationManager.sendLocationPermission(geofenceEnabled: rdProfile.geofenceEnabled)
+    }
+    
+    public func requestLocationPermissions() {
+        rdLocationManager.requestLocationPermissions()
     }
     
 }
