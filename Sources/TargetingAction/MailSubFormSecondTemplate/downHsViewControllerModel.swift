@@ -68,7 +68,8 @@ struct downHsViewServiceModel : TargetingActionViewModel {
     
     var targetingActionType: TargetingActionType
     var actId:Int?
-    
+    var auth: String?
+
     
     //actionData
     var title:String?

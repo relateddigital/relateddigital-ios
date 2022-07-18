@@ -305,6 +305,8 @@ class RDTargetingAction {
         guard let actionData = downHsView[RDConstants.actionData] as? [String: Any] else { return nil }
         var downHsViewServiceModel = downHsViewServiceModel(targetingActionType: .downHsView)
         downHsViewServiceModel.actId = downHsView[RDConstants.actid] as? Int ?? 0
+        downHsViewServiceModel.auth = actionData[RDConstants.authentication] as? String ?? ""
+        
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
         

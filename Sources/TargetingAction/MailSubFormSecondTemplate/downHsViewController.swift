@@ -88,6 +88,7 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     }
     
     func addTargets() {
+        globDownhsView?.submitButton.addTarget(self, action:#selector(submitClicked(sender:)), for: .touchUpInside)
         globDownhsView?.closeButton.addTarget(self, action:#selector(closeClicked(sender:)), for: .touchUpInside)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -109,6 +110,10 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     @objc func keyboardWillDisappear() {
         keyBooardOpen = false
         setViewDown()
+    }
+    
+    @objc func submitClicked(sender: UIButton) {
+        RelatedDigital.subscribeGamificationMail(actid: "\(model.serviceModel?.actId ?? 0)", auth: model.serviceModel?.auth ?? "", mail: globDownhsView?.mailTextField.text ?? "")
     }
     
     @objc func closeClicked(sender: UIButton){
