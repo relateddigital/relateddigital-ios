@@ -144,6 +144,8 @@ struct RDConstants {
     static let scratchToWin = "ScratchToWin"
     static let productStatNotifier = "ProductStatNotifier"
     static let drawer = "Drawer"
+    static let downHsView = "downHsView"
+
     
     static let actid = "actid"
     static let actionId = "action_id"
@@ -179,6 +181,8 @@ struct RDConstants {
     static let storyzLabelColor = "storyz_label_color"
     static let fontFamily = "font_family"
     static let customFontFamilyIos = "custom_font_family_ios"
+    static let customizable = "customizable"
+
     
     
     // Email form constants
@@ -228,6 +232,14 @@ struct RDConstants {
     static let contentMinimizedArrowColor = "content_minimized_arrow_color"
     static let contentMaximizedBackgroundImage = "content_maximized_background_image"
     static let contentMaximizedBackgroundColor = "content_maximized_background_color"
+    
+    //downHsView
+    static let emailpermitText = "emailpermit_text"
+
+    static let language = "language"
+    //extended Props
+    static let imagePosition = "image_position"
+    static let textPosition = "text_position"
     
     // SpinToWin constants
     static let slices = "slices"

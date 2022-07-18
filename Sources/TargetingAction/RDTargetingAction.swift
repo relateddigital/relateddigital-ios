@@ -122,13 +122,21 @@ class RDTargetingAction {
     func parseTargetingAction(_ result: [String: Any]?) -> TargetingActionViewModel? {
         guard let result = result else { return nil }
         if let mailFormArr = result[RDConstants.mailSubscriptionForm] as? [[String: Any?]], let mailForm = mailFormArr.first {
+            if let actionData = mailForm[RDConstants.actionData] as? [String: Any] {
+                let taTemplate = actionData[RDConstants.taTemplate] as? String ?? ""
+                if taTemplate == RDConstants.customizable {
+                    return parseDownHsView(mailForm)
+                }
+            }
             return parseMailForm(mailForm)
         } else if let spinToWinArr = result[RDConstants.spinToWin] as? [[String: Any?]], let spinToWin = spinToWinArr.first {
             return parseSpinToWin(spinToWin)
         } else if let sctwArr = result[RDConstants.scratchToWin] as? [[String: Any?]], let sctw = sctwArr.first {
             return parseScratchToWin(sctw)
-        }   else if let drawerArr = result[RDConstants.drawer] as? [[String: Any?]], let drw = drawerArr.first {
+        } else if let drawerArr = result[RDConstants.drawer] as? [[String: Any?]], let drw = drawerArr.first {
             return parseDrawer(drw)
+        } else if let downHsViewArr = result[RDConstants.downHsView] as? [[String: Any?]], let downHs = downHsViewArr.first {
+            return parseDownHsView(downHs)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
@@ -290,6 +298,52 @@ class RDTargetingAction {
         productStatNotifier.setAttributedString()
         return productStatNotifier
     }
+    
+    
+    private func parseDownHsView(_ downHsView: [String: Any?]) -> downHsViewServiceModel? {
+
+        guard let actionData = downHsView[RDConstants.actionData] as? [String: Any] else { return nil }
+        var downHsViewServiceModel = downHsViewServiceModel(targetingActionType: .downHsView)
+        downHsViewServiceModel.actId = downHsView[RDConstants.actid] as? Int ?? 0
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        
+        downHsViewServiceModel.title = actionData[RDConstants.title] as? String ?? ""
+        downHsViewServiceModel.message = actionData[RDConstants.message] as? String ?? ""
+        downHsViewServiceModel.buttonLabel = actionData[RDConstants.buttonLabel] as? String ?? ""
+        downHsViewServiceModel.consentText = actionData[RDConstants.consentText] as? String
+        downHsViewServiceModel.successMessage = actionData[RDConstants.successMessage] as? String ?? ""
+        downHsViewServiceModel.invalidEmailMessage = actionData[RDConstants.invalidEmailMessage] as? String ?? ""
+        downHsViewServiceModel.emailPermitText = actionData[RDConstants.emailPermitText] as? String ?? ""
+        downHsViewServiceModel.checkConsentMessage = actionData[RDConstants.checkConsentMessage] as? String ?? ""
+        downHsViewServiceModel.placeholder = actionData[RDConstants.placeholder] as? String ?? ""
+
+        //extended props
+        downHsViewServiceModel.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
+        downHsViewServiceModel.titleFontFamily = extendedProps[RDConstants.titleFontFamily] as? String ?? ""
+        downHsViewServiceModel.titleTextSize = extendedProps[RDConstants.titleTextSize] as? String ?? ""
+        downHsViewServiceModel.textColor = extendedProps[RDConstants.textColor] as? String ?? ""
+        downHsViewServiceModel.textFontFamily = extendedProps[RDConstants.textFontFamily] as? String ?? ""
+        downHsViewServiceModel.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
+        downHsViewServiceModel.buttonColor = extendedProps[RDInAppNotification.PayloadKey.buttonColor] as? String ?? ""
+        downHsViewServiceModel.buttonTextColor = extendedProps[RDInAppNotification.PayloadKey.buttonTextColor] as? String ?? ""
+        downHsViewServiceModel.buttonTextSize = extendedProps[RDConstants.buttonTextSize] as? String ?? ""
+        downHsViewServiceModel.buttonFontFamily = extendedProps[RDConstants.buttonFontFamily] as? String ?? ""
+        downHsViewServiceModel.emailPermitTextSize = extendedProps[RDConstants.emailPermitTextSize] as? String ?? ""
+        downHsViewServiceModel.emailPermitTextUrl = extendedProps[RDConstants.emailPermitTextUrl] as? String ?? ""
+        downHsViewServiceModel.consentTextSize = extendedProps[RDConstants.consentTextSize] as? String ?? ""
+        downHsViewServiceModel.consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
+        downHsViewServiceModel.closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
+        downHsViewServiceModel.backgroundColor = extendedProps[RDConstants.backgroundColor] as? String ?? ""
+        
+        downHsViewServiceModel.titleCustomFontFamilyIos = extendedProps[RDConstants.titleCustomFontFamilyIos] as? String ?? ""
+        downHsViewServiceModel.textCustomFontFamilyIos = extendedProps[RDConstants.textCustomFontFamilyIos] as? String ?? ""
+        downHsViewServiceModel.buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
+        downHsViewServiceModel.textPosition = extendedProps[RDConstants.text_position] as? String ?? ""
+
+        
+        return downHsViewServiceModel
+    }
 
     // MARK: MailSubscriptionForm
 
@@ -403,6 +457,8 @@ class RDTargetingAction {
 
         return sideBarServiceModel
     }
+    
+
 
     private func parseScratchToWin(_ scratchToWin: [String: Any?]) -> ScratchToWinModel? {
         guard let actionData = scratchToWin[RDConstants.actionData] as? [String: Any] else { return nil }

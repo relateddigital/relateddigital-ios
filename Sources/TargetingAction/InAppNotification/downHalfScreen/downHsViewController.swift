@@ -7,10 +7,10 @@
 
 import UIKit
 
-class downhsViewController: RDBaseNotificationViewController, UITextFieldDelegate {
+class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegate {
 
     var globDownhsView : downhsView?
-    var model = downhsModel()
+    var model = downHsModel()
     var position: CGPoint?
     var shouldDismissed = false
     var keyBoardHeight = 200.0
@@ -21,15 +21,29 @@ class downhsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         super.viewDidLoad()
     }
     
-    init(model:downhsModel?) {
+    init(model:downHsViewServiceModel?) {
         super.init(nibName: nil, bundle: nil)
         let downhsView : downhsView = UIView.fromNib()
         globDownhsView = downhsView
         self.globDownhsView?.mailTextField.delegate = self
-        self.model = model!
+        self.model = downHsViewControllerModel().mapServiceModelToNeededModel(serviceModel: model!)
         self.view = downhsView
         configureView()
         addTargets()
+        assignInfos()
+    }
+    
+    func assignInfos() {
+        
+        globDownhsView?.leftImageVİew.image = UIImage()
+        globDownhsView?.rightImageView.image = UIImage()
+        globDownhsView?.titleLabel.text = model.serviceModel?.title
+        globDownhsView?.mailTextField.text = ""
+        globDownhsView?.submitButton.setTitle(model.serviceModel?.buttonLabel, for: .normal)
+        globDownhsView?.lastTextLabel.text = model.serviceModel?.emailPermitText
+        globDownhsView?.mailTextField.placeholder = model.serviceModel?.placeholder
+        //globDownhsView?.closeButton
+
     }
     
     required init?(coder: NSCoder) {
@@ -96,14 +110,15 @@ class downhsViewController: RDBaseNotificationViewController, UITextFieldDelegat
             globDownhsView?.leftImageViewWidth.constant = bounds.width / 3
         }
         
-        if model.textPos == .up {
+        if model.textPos == .top {
             globDownhsView?.subTitleDownLabel.isHidden = true
+            globDownhsView?.subTitleUpLabel.text = model.serviceModel?.message
         } else {
             globDownhsView?.subTitleUpLabel.isHidden = true
+            globDownhsView?.subTitleDownLabel.text = model.serviceModel?.message
         }
         globDownhsView?.lastTextLabel.isHidden = model.lastTextHidden
     }
-    
     override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return

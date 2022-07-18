@@ -88,7 +88,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showDrawer(model: drawer) {
                        self.markTargetingActionShown(model: drawer)
                    }
-               }
+               } else if model.targetingActionType == .downHsView, let downHsView = model as? downHsViewServiceModel {
+                   if self.showDownhs(model: downHsView) {
+                      self.markTargetingActionShown(model: downHsView)
+                  }
+              }
             }
         }
     }
@@ -111,8 +115,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         return true
     }
     
-    public func showDownhs(model: downhsModel) ->Bool {
-        let downhsViewController = downhsViewController(model: model)
+    public func showDownhs(model: downHsViewServiceModel) ->Bool {
+        let downhsViewController = downHsViewController(model: model)
         downhsViewController.delegate = self
         downhsViewController.show(animated: true)
         return true

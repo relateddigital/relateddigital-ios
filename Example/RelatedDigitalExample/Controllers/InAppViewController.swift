@@ -63,6 +63,7 @@ class InAppViewController: FormViewController {
             .spintowin: [RDInAppNotificationType.spintowin.rawValue: 130],
             .productStatNotifier: [RDInAppNotificationType.productStatNotifier.rawValue: 703],
             .drawer : [RDInAppNotificationType.drawer.rawValue: 203],
+            .downHsView : [RDInAppNotificationType.downHsView.rawValue: 210],
             .video : [RDInAppNotificationType.video.rawValue: 73]
         ]
     }
