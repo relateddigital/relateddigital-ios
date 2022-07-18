@@ -20,6 +20,7 @@ class downhsView: UIView {
     @IBOutlet weak var submitButton: UIButton!
     @IBOutlet weak var closeButton: UIButton!
     @IBOutlet weak var lastTextLabel: UILabel!
+    @IBOutlet weak var downHsBackGroundView: UIView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)

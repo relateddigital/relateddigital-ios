@@ -35,15 +35,45 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     
     func assignInfos() {
         
-        globDownhsView?.leftImageVİew.image = UIImage()
-        globDownhsView?.rightImageView.image = UIImage()
+        globDownhsView?.leftImageVİew.image = model.image
+        globDownhsView?.rightImageView.image = model.image
         globDownhsView?.titleLabel.text = model.serviceModel?.title
-        globDownhsView?.mailTextField.text = ""
-        globDownhsView?.submitButton.setTitle(model.serviceModel?.buttonLabel, for: .normal)
         globDownhsView?.lastTextLabel.text = model.serviceModel?.emailPermitText
         globDownhsView?.mailTextField.placeholder = model.serviceModel?.placeholder
+        globDownhsView?.submitButton.setTitle(model.serviceModel?.buttonLabel, for: .normal)
         //globDownhsView?.closeButton
+        setDesign()
+    }
+    
+    func setDesign() {
+        
+        let titleFont = RDHelper.getFont(fontFamily: model.serviceModel?.titleFontFamily, fontSize: model.serviceModel?.titleTextSize, style: .title2, customFont: model.serviceModel?.titleCustomFontFamilyIos)
+        let titleColor = UIColor(hex: model.serviceModel?.titleTextColor)
+        globDownhsView?.titleLabel.font = titleFont
+        globDownhsView?.titleLabel.textColor = titleColor
+        
+        let subTitleFont = RDHelper.getFont(fontFamily: model.serviceModel?.textFontFamily, fontSize: model.serviceModel?.textSize, style: .title2, customFont: model.serviceModel?.textCustomFontFamilyIos)
+        let subTitleColor = UIColor(hex: model.serviceModel?.textColor)
+        
+        globDownhsView?.subTitleUpLabel.font = subTitleFont
+        globDownhsView?.subTitleUpLabel.textColor = subTitleColor
+        
+        let lastTextLabelFont = RDHelper.getFont(fontFamily: model.serviceModel?.emailPermitTextSize, fontSize: model.serviceModel?.titleTextSize, style: .title2)
+        globDownhsView?.titleLabel.font = lastTextLabelFont
 
+        
+        let submitButtonFont = RDHelper.getFont(fontFamily: model.serviceModel?.buttonFontFamily, fontSize: model.serviceModel?.buttonTextSize, style: .title2, customFont: model.serviceModel?.buttonCustomFontFamilyIos)
+        let submitButtonTextColor = UIColor(hex: model.serviceModel?.buttonTextColor)
+        let submitButtonBackGroundColor = UIColor(hex: model.serviceModel?.buttonColor)
+
+        let viewBackGroundColor = UIColor(hex: model.serviceModel?.backgroundColor)
+        globDownhsView?.downHsBackGroundView.backgroundColor = viewBackGroundColor
+        
+        globDownhsView?.submitButton.setTitleColor(submitButtonTextColor, for: .normal)
+        globDownhsView?.submitButton.backgroundColor = submitButtonBackGroundColor
+        globDownhsView?.submitButton.titleLabel?.font = submitButtonFont
+        globDownhsView?.submitButton.layer.cornerRadius = 10
+ 
     }
     
     required init?(coder: NSCoder) {
@@ -81,6 +111,7 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     
     @objc func closeClicked(sender: UIButton){
         shouldDismissed = true
+        delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
     }
     
     
@@ -118,6 +149,7 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
             globDownhsView?.subTitleDownLabel.text = model.serviceModel?.message
         }
         globDownhsView?.lastTextLabel.isHidden = model.lastTextHidden
+        globDownhsView?.closeButton.layer.zPosition = 10
     }
     override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
@@ -136,7 +168,7 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         }
         let bottomInset = Double(RDHelper.getSafeAreaInsets().bottom)
 
-        let downhsViewHeight = 400.0
+        let downhsViewHeight = 350.0
         
         let frameY = bounds.maxY - downhsViewHeight + bottomInset
         

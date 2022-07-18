@@ -317,6 +317,8 @@ class RDTargetingAction {
         downHsViewServiceModel.emailPermitText = actionData[RDConstants.emailPermitText] as? String ?? ""
         downHsViewServiceModel.checkConsentMessage = actionData[RDConstants.checkConsentMessage] as? String ?? ""
         downHsViewServiceModel.placeholder = actionData[RDConstants.placeholder] as? String ?? ""
+        downHsViewServiceModel.img = actionData[RDConstants.img] as? String ?? ""
+
 
         //extended props
         downHsViewServiceModel.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
@@ -339,7 +341,8 @@ class RDTargetingAction {
         downHsViewServiceModel.titleCustomFontFamilyIos = extendedProps[RDConstants.titleCustomFontFamilyIos] as? String ?? ""
         downHsViewServiceModel.textCustomFontFamilyIos = extendedProps[RDConstants.textCustomFontFamilyIos] as? String ?? ""
         downHsViewServiceModel.buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
-        downHsViewServiceModel.textPosition = extendedProps[RDConstants.text_position] as? String ?? ""
+        downHsViewServiceModel.textPosition = extendedProps[RDConstants.textPosition] as? String ?? ""
+        downHsViewServiceModel.imagePosition = extendedProps[RDConstants.imagePosition] as? String ?? ""
 
         
         return downHsViewServiceModel

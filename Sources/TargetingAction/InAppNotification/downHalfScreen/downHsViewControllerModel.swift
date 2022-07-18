@@ -14,6 +14,7 @@ class downHsViewControllerModel {
     func mapServiceModelToNeededModel(serviceModel: downHsViewServiceModel) -> downHsModel {
         var model = downHsModel()
         model.serviceModel = serviceModel
+        model.image = UIImage(data: getDataOfImage(urlString: model.serviceModel?.img ?? ""))
         if model.serviceModel?.imagePosition == "left" {
             model.imagePos = .left
         }
@@ -27,9 +28,26 @@ class downHsViewControllerModel {
         return model
     }
     
+    private func getDataOfImage(urlString : String) -> Data {
+        
+        let image: Data? = {
+            var data: Data?
+            if let iUrl = URL(string: urlString)  {
+                do {
+                    data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
+                } catch {
+                    RDLogger.error("image failed to load from url \(iUrl)")
+                }
+            }
+            return data
+        }()
+        
+        return image ?? Data()
+    }
 }
 
 struct downHsModel {
+    var image : UIImage?
     var imagePos : imagePosition? = .right
     var textPos : subTitlePosition? = .top
     var lastTextHidden : Bool = false
