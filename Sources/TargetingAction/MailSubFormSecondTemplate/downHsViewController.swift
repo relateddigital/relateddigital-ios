@@ -41,7 +41,9 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         globDownhsView?.lastTextLabel.text = model.serviceModel?.emailPermitText
         globDownhsView?.mailTextField.placeholder = model.serviceModel?.placeholder
         globDownhsView?.submitButton.setTitle(model.serviceModel?.buttonLabel, for: .normal)
-        //globDownhsView?.closeButton
+        if model.serviceModel?.closeButtonColor == "white" {
+            globDownhsView?.closeButton.setTitleColor(.white, for: .normal)
+        }
         setDesign()
     }
     
@@ -114,7 +116,6 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
     }
     
-    
     func setViewUp() {
         UIView.animate(withDuration: 0.5, animations: { [self] in
             if let winPos = self.window?.layer.position {
@@ -151,6 +152,7 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         globDownhsView?.lastTextLabel.isHidden = model.lastTextHidden
         globDownhsView?.closeButton.layer.zPosition = 10
     }
+    
     override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
