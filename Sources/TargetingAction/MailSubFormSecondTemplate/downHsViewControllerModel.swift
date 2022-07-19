@@ -25,6 +25,14 @@ class downHsViewControllerModel {
             model.lastTextHidden = true
         }
         
+        if model.serviceModel?.consentText?.count == 0 {
+            model.consentCheckBoxIsHidden = true
+        }
+        
+        if model.serviceModel?.emailPermitText?.count == 0 {
+            model.emailCheckBoxIsHidden = true
+        }
+        
         return model
     }
     
@@ -52,6 +60,8 @@ struct downHsModel {
     var textPos : subTitlePosition? = .top
     var lastTextHidden : Bool = false
     var serviceModel:downHsViewServiceModel?
+    var consentCheckBoxIsHidden : Bool = false
+    var emailCheckBoxIsHidden : Bool = false
 }
 
 enum imagePosition {

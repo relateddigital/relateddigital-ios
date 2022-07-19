@@ -19,8 +19,15 @@ class downhsView: UIView {
     @IBOutlet weak var mailTextField: UITextField!
     @IBOutlet weak var submitButton: UIButton!
     @IBOutlet weak var closeButton: UIButton!
-    @IBOutlet weak var lastTextLabel: UILabel!
+    @IBOutlet weak var consentLabel: UILabel!
     @IBOutlet weak var downHsBackGroundView: UIView!
+    @IBOutlet weak var mailPermitLabel: UILabel!
+    @IBOutlet weak var emailPermitCheckBoxImageView: UIImageView!
+    @IBOutlet weak var consentPermitCheckBoxImageView: UIImageView!
+    @IBOutlet weak var mailErrLabel: UILabel!
+    @IBOutlet weak var consentErrLabel: UILabel!
+    @IBOutlet weak var emailPermitView: UIView!
+    @IBOutlet weak var consentView: UIView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)

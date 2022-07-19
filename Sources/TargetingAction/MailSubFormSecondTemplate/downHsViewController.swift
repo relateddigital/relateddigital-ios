@@ -15,6 +15,8 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     var shouldDismissed = false
     var keyBoardHeight = 200.0
     var keyBooardOpen = false
+    var consentConfirmed = false
+    var mailConfirmed = false
 
     
     override func viewDidLoad() {
@@ -38,7 +40,10 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         globDownhsView?.leftImageVİew.image = model.image
         globDownhsView?.rightImageView.image = model.image
         globDownhsView?.titleLabel.text = model.serviceModel?.title
-        globDownhsView?.lastTextLabel.text = model.serviceModel?.emailPermitText
+        globDownhsView?.consentLabel.text = model.serviceModel?.consentText
+        globDownhsView?.mailPermitLabel.text = model.serviceModel?.emailPermitText
+        globDownhsView?.mailErrLabel.text = model.serviceModel?.invalidEmailMessage
+        globDownhsView?.consentErrLabel.text = model.serviceModel?.checkConsentMessage
         globDownhsView?.mailTextField.placeholder = model.serviceModel?.placeholder
         globDownhsView?.submitButton.setTitle(model.serviceModel?.buttonLabel, for: .normal)
         if model.serviceModel?.closeButtonColor == "white" {
@@ -60,10 +65,12 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         globDownhsView?.subTitleUpLabel.font = subTitleFont
         globDownhsView?.subTitleUpLabel.textColor = subTitleColor
         
-        let lastTextLabelFont = RDHelper.getFont(fontFamily: model.serviceModel?.emailPermitTextSize, fontSize: model.serviceModel?.titleTextSize, style: .title2)
-        globDownhsView?.titleLabel.font = lastTextLabelFont
-
+        let consentLabelFont = RDHelper.getFont(fontFamily: model.serviceModel?.titleFontFamily, fontSize: model.serviceModel?.consentTextSize, style: .title2)
+        globDownhsView?.consentLabel.font = consentLabelFont
         
+        let mailPermitLabelFont = RDHelper.getFont(fontFamily: model.serviceModel?.titleFontFamily, fontSize: model.serviceModel?.emailPermitTextSize, style: .title2)
+        globDownhsView?.mailPermitLabel.font = mailPermitLabelFont
+
         let submitButtonFont = RDHelper.getFont(fontFamily: model.serviceModel?.buttonFontFamily, fontSize: model.serviceModel?.buttonTextSize, style: .title2, customFont: model.serviceModel?.buttonCustomFontFamilyIos)
         let submitButtonTextColor = UIColor(hex: model.serviceModel?.buttonTextColor)
         let submitButtonBackGroundColor = UIColor(hex: model.serviceModel?.buttonColor)
@@ -75,6 +82,12 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
         globDownhsView?.submitButton.backgroundColor = submitButtonBackGroundColor
         globDownhsView?.submitButton.titleLabel?.font = submitButtonFont
         globDownhsView?.submitButton.layer.cornerRadius = 10
+        
+        globDownhsView?.emailPermitCheckBoxImageView.superview?.layer.borderWidth = 2.0
+        globDownhsView?.emailPermitCheckBoxImageView.superview?.layer.borderColor = UIColor.lightGray.cgColor
+        
+        globDownhsView?.consentPermitCheckBoxImageView.superview?.layer.borderWidth = 2.0
+        globDownhsView?.consentPermitCheckBoxImageView.superview?.layer.borderColor = UIColor.lightGray.cgColor
  
     }
     
@@ -88,11 +101,60 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     }
     
     func addTargets() {
+        
         globDownhsView?.submitButton.addTarget(self, action:#selector(submitClicked(sender:)), for: .touchUpInside)
         globDownhsView?.closeButton.addTarget(self, action:#selector(closeClicked(sender:)), for: .touchUpInside)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillDisappear), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillAppear), name: UIResponder.keyboardWillShowNotification, object: nil)
+        
+        let tap1 = UITapGestureRecognizer(target: self, action: #selector(downHsViewController.tapFunctionConsent))
+        globDownhsView?.consentLabel.isUserInteractionEnabled = true
+        globDownhsView?.consentLabel.addGestureRecognizer(tap1)
+        
+        let tap2 = UITapGestureRecognizer(target: self, action: #selector(downHsViewController.tapFunctionMail))
+        globDownhsView?.mailPermitLabel.isUserInteractionEnabled = true
+        globDownhsView?.mailPermitLabel.addGestureRecognizer(tap2)
+        
+        let tap3 = UITapGestureRecognizer(target: self, action: #selector(downHsViewController.consentImageTapped(tapGestureRecognizer:)))
+        globDownhsView?.consentPermitCheckBoxImageView.isUserInteractionEnabled = true
+        globDownhsView?.consentPermitCheckBoxImageView.addGestureRecognizer(tap3)
+        
+        let tap4 = UITapGestureRecognizer(target: self, action: #selector(downHsViewController.mailImageTapped(tapGestureRecognizer:)))
+        globDownhsView?.emailPermitCheckBoxImageView.isUserInteractionEnabled = true
+        globDownhsView?.emailPermitCheckBoxImageView.addGestureRecognizer(tap4)
+    }
+    
+    @objc func consentImageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        if consentConfirmed {
+            globDownhsView?.consentPermitCheckBoxImageView.image = UIImage()
+            consentConfirmed = false
+        } else {
+            globDownhsView?.consentPermitCheckBoxImageView.image = UIImage(named: "grayTick.png", in: Bundle(for: type(of: self)), compatibleWith: nil)
+            consentConfirmed = true
+        }
+    }
+    
+    @objc func mailImageTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        if mailConfirmed {
+            globDownhsView?.emailPermitCheckBoxImageView.image = UIImage()
+            mailConfirmed = false
+        } else {
+            globDownhsView?.emailPermitCheckBoxImageView.image = UIImage(named: "grayTick.png", in: Bundle(for: type(of: self)), compatibleWith: nil)
 
+            mailConfirmed = true
+        }
+    }
+    
+    @objc func tapFunctionConsent(sender:UITapGestureRecognizer) {
+        if let url = URL(string: model.serviceModel?.consentTextUrl ?? "") {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    @objc func tapFunctionMail(sender:UITapGestureRecognizer) {
+        if let url = URL(string: model.serviceModel?.emailPermitTextUrl ?? "") {
+            UIApplication.shared.open(url)
+        }
     }
     
     @objc func keyboardWillAppear(_ notification: Notification) {
@@ -113,13 +175,40 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     }
     
     @objc func submitClicked(sender: UIButton) {
-        RelatedDigital.subscribeGamificationMail(actid: "\(model.serviceModel?.actId ?? 0)", auth: model.serviceModel?.auth ?? "", mail: globDownhsView?.mailTextField.text ?? "")
+        
+        if !isValidEmail(globDownhsView?.mailTextField.text ?? "") {
+            globDownhsView?.mailErrLabel.isHidden = false
+            return
+        } else {
+            globDownhsView?.mailErrLabel.isHidden = true
+        }
+
+        if mailConfirmed && consentConfirmed {
+            RelatedDigital.subscribeMail(click: "",actid: "\(model.serviceModel?.actId ?? 0)", auth: model.serviceModel?.auth ?? "", mail: globDownhsView?.mailTextField.text ?? "")
+            globDownhsView?.mailErrLabel.isHidden = false
+            globDownhsView?.mailErrLabel.textColor = .green
+            globDownhsView?.mailErrLabel.text = model.serviceModel?.successMessage
+            globDownhsView?.submitButton.isUserInteractionEnabled = false
+        } else {
+            if !consentConfirmed {
+                globDownhsView?.consentErrLabel.isHidden = false
+            }
+        }
     }
     
     @objc func closeClicked(sender: UIButton){
         shouldDismissed = true
         delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
     }
+    
+    func isValidEmail(_ email: String) -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+
+        let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailPred.evaluate(with: email)
+    }
+    
+
     
     func setViewUp() {
         UIView.animate(withDuration: 0.5, animations: { [self] in
@@ -154,8 +243,19 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
             globDownhsView?.subTitleUpLabel.isHidden = true
             globDownhsView?.subTitleDownLabel.text = model.serviceModel?.message
         }
-        globDownhsView?.lastTextLabel.isHidden = model.lastTextHidden
+        globDownhsView?.consentLabel.isHidden = model.lastTextHidden
         globDownhsView?.closeButton.layer.zPosition = 10
+        
+        globDownhsView?.consentView.isHidden = model.consentCheckBoxIsHidden
+        globDownhsView?.emailPermitView.isHidden = model.emailCheckBoxIsHidden
+        
+        if globDownhsView?.consentView.isHidden == true{
+            consentConfirmed = true
+        }
+
+        if globDownhsView?.emailPermitView.isHidden == true {
+            mailConfirmed = true
+        }
     }
     
     override func show(animated: Bool) {
@@ -174,8 +274,7 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
             bounds = UIScreen.main.bounds
         }
         let bottomInset = Double(RDHelper.getSafeAreaInsets().bottom)
-
-        let downhsViewHeight = 350.0
+        let downhsViewHeight = 400.0
         
         let frameY = bounds.maxY - downhsViewHeight + bottomInset
         
@@ -213,5 +312,4 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
             completion()
         }
     }
-    
 }
