@@ -867,13 +867,26 @@ class RDTargetingAction {
                 }
             }
         }
+        
+        var countDownModel = RDStoryCountDown()
+        if let countDown = item[RDConstants.countDown] as? [String:String] {
+            countDownModel.pagePosition = countDown[RDConstants.pagePosition]
+            countDownModel.messageText = countDown[RDConstants.messageText]
+            countDownModel.messageTextSize = countDown[RDConstants.messageTextSize]
+            countDownModel.messageTextColor = countDown[RDConstants.messageTextColor]
+            countDownModel.displayType = countDown[RDConstants.displayType]
+            countDownModel.endDateTime = countDown[RDConstants.endDateTime]
+            countDownModel.endAction = countDown[RDConstants.endAction]
+        }
+        
         let relatedDigitalStoryItem = RDStoryItem(fileType: fileType,
                                                   displayTime: displayTime,
                                                   fileSrc: fileSrc,
                                                   targetUrl: targetUrl,
                                                   buttonText: buttonText,
                                                   buttonTextColor: buttonTextColor,
-                                                  buttonColor: buttonColor)
+                                                  buttonColor: buttonColor,
+                                                  countDown: countDownModel)
         return relatedDigitalStoryItem
     }
 

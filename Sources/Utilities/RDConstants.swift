@@ -182,8 +182,15 @@ struct RDConstants {
     static let fontFamily = "font_family"
     static let customFontFamilyIos = "custom_font_family_ios"
     static let customizable = "customizable"
+    static let countDown = "countdown"
+    static let pagePosition = "pagePosition"
+    static let messageText = "messageText"
+    static let messageTextSize = "messageTextSize"
+    static let messageTextColor = "messageTextColor"
+    static let displayType = "displayType"
+    static let endDateTime = "endDateTime"
+    static let endAction = "endAction"
 
-    
     
     // Email form constants
     static let message = "message"
