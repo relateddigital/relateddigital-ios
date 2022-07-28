@@ -101,21 +101,19 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             if let st = story {
                 setStoryShown(story: st)
             }
-            var tempCountDown = RDStoryCountDown()
-            tempCountDown.displayType = "dhms"
-            tempCountDown.messageText = "selamlar deneme orhun deneme"
-            tempCountDown.messageTextSize = "25"
-            tempCountDown.pagePosition = "bottom"
-            tempCountDown.endDateTime = "21.07.2023 17:30"
-            tempCountDown.messageTextColor = "#d82525"
+
             switch direction {
             case .forward:
                 if snapIndex < story?.items.count ?? 0 {
                     if let snap = story?.items[snapIndex] {
                         if snap.kind != MimeType.video {
-
-                            currentSnapCountDown = tempCountDown
-                            initializeCountDownTimerForSnap(countDown: tempCountDown)
+                            timerView.isHidden = true
+                            if let countDown = snap.countDown,let _ = countDown.endDateTime {
+                                timerView.isHidden = false
+                                currentSnapCountDown = countDown
+                                initializeCountDownTimerForSnap(countDown: countDown)
+                            }
+                            
                             if let snapView = getSnapview() {
                                 startRequest(snapView: snapView, with: snap.url)
                             } else {
@@ -138,9 +136,13 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
                 if snapIndex < story?.items.count ?? 0 {
                     if let snap = story?.items[snapIndex] {
                         if snap.kind != MimeType.video {
-                            //burda backend geldıgınde countdown var ise hidden=false eklenecek
-                            currentSnapCountDown = tempCountDown
-                            initializeCountDownTimerForSnap(countDown: tempCountDown)
+                            timerView.isHidden = true
+                            if let countDown = snap.countDown,let _ = countDown.endDateTime {
+                                timerView.isHidden = false
+                                currentSnapCountDown = countDown
+                                initializeCountDownTimerForSnap(countDown: countDown)
+                            }
+                            
                             if let snapView = getSnapview() {
                                 self.startRequest(snapView: snapView, with: snap.url)
                             }
@@ -164,9 +166,6 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
     }
     
     func initializeCountDownTimerForSnap(countDown:RDStoryCountDown?) {
-        
-        
-        timerView.isHidden = false
 
         if countDown?.pagePosition == "bottom" {
             timerView.upLabel.isHidden = true
@@ -570,12 +569,26 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
     
     private func mapRemainingTime(wantToEndTime:String?,timeType:timeType) -> [String] {
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy HH:mm"
-        let endDate = formatter.date(from: wantToEndTime ?? "21.07.2100 17:30")
-        let startDate = Date()
+        let formattedEndTime = wantToEndTime?.replacingOccurrences(of: "T", with: " ", options: .literal, range: nil)
 
-        let differenceInSeconds = Int(endDate!.timeIntervalSince(startDate))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let endDate = formatter.date(from: formattedEndTime ?? "21.07.2100 17:30")
+        let startDate = Date()
+        let differenceInSeconds = Int(endDate?.timeIntervalSince(startDate) ?? 0)
+        
+        if startDate >= endDate ?? startDate {
+            DispatchQueue.global(qos: .userInteractive).async { [self] in
+                DispatchQueue.main.async { [self] in
+                    if currentSnapCountDown?.gifShown == false {
+                        timerView.gifImageView.image = UIImage.gif(url: currentSnapCountDown?.endAnimationImageUrl ?? "")
+                        currentSnapCountDown?.gifShown = true
+                    }
+                }
+            }
+            return ["0","0","0","0","0","0","0","0","0","0"]
+        }
+        
         
         let weekInsecond = 604800
         let dayInSecond = 86400

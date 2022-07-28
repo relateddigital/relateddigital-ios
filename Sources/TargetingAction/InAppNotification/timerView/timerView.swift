@@ -37,6 +37,8 @@ class timerView: UIView {
     @IBOutlet weak var minutePointLabel: UILabel!
     @IBOutlet weak var dayPointLabel: UILabel!
     @IBOutlet weak var countDownTimerView: UIView!
+    @IBOutlet weak var gifImageView: UIImageView!
+
     
     override init(frame: CGRect) {
         super.init(frame: frame)

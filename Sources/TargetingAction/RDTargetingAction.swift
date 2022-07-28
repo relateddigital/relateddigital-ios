@@ -877,6 +877,7 @@ class RDTargetingAction {
             countDownModel.displayType = countDown[RDConstants.displayType]
             countDownModel.endDateTime = countDown[RDConstants.endDateTime]
             countDownModel.endAction = countDown[RDConstants.endAction]
+            countDownModel.endAnimationImageUrl = countDown[RDConstants.endAnimationImageUrl]
         }
         
         let relatedDigitalStoryItem = RDStoryItem(fileType: fileType,

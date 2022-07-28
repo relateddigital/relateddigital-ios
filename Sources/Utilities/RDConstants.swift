@@ -190,6 +190,7 @@ struct RDConstants {
     static let displayType = "displayType"
     static let endDateTime = "endDateTime"
     static let endAction = "endAction"
+    static let endAnimationImageUrl = "endAnimationImageUrl"
 
     
     // Email form constants

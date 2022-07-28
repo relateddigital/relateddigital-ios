@@ -57,4 +57,7 @@ struct RDStoryCountDown {
     var displayType:String?
     var endDateTime:String?
     var endAction:String?
+    var endAnimationImageUrl:String?
+    var gifShown:Bool = false
+
 }

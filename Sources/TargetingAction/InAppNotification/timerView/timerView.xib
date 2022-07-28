@@ -404,16 +404,24 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hxs-Yi-wZe">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="196"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </imageView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="FIE-z0-Fen" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="6t8-vK-0T8"/>
+                <constraint firstItem="hxs-Yi-wZe" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="Auh-V8-vyB"/>
                 <constraint firstItem="FIE-z0-Fen" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="5" id="BtZ-uN-b3A"/>
+                <constraint firstItem="hxs-Yi-wZe" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="EaY-hL-p2r"/>
+                <constraint firstItem="hxs-Yi-wZe" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="KTn-cV-NEc"/>
                 <constraint firstItem="0yl-hz-Hra" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="5" id="KlZ-Aa-MZt"/>
                 <constraint firstItem="FIE-z0-Fen" firstAttribute="top" secondItem="SHb-7T-Vga" secondAttribute="bottom" constant="15" id="TJj-Ai-JTd"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="0yl-hz-Hra" secondAttribute="trailing" constant="5" id="VD9-Ee-417"/>
                 <constraint firstItem="0yl-hz-Hra" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="VO4-Th-AN7"/>
+                <constraint firstItem="hxs-Yi-wZe" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="Wme-3S-2Cr"/>
                 <constraint firstItem="SHb-7T-Vga" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="ZTO-IX-3Ul"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="FIE-z0-Fen" secondAttribute="trailing" constant="5" id="fmz-mQ-SYz"/>
                 <constraint firstItem="SHb-7T-Vga" firstAttribute="top" secondItem="0yl-hz-Hra" secondAttribute="bottom" constant="15" id="uYn-MR-qpH"/>
@@ -427,6 +435,7 @@
                 <outlet property="day2digitLabelView" destination="Vry-0u-xpO" id="wfB-IS-iRy"/>
                 <outlet property="dayPointLabel" destination="HPd-Fr-NSd" id="6Bi-RO-l1H"/>
                 <outlet property="downLabel" destination="FIE-z0-Fen" id="Bdl-no-glH"/>
+                <outlet property="gifImageView" destination="hxs-Yi-wZe" id="hmT-nx-lXT"/>
                 <outlet property="hour1digitLabel" destination="ln4-0T-fp2" id="LDu-Ba-bhO"/>
                 <outlet property="hour1digitLabelView" destination="C2n-3d-aLh" id="wYe-UV-i1H"/>
                 <outlet property="hour2digitLabel" destination="Xof-hu-jFT" id="Lw0-rH-k7T"/>
