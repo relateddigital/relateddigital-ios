@@ -878,6 +878,7 @@ class RDTargetingAction {
             countDownModel.endDateTime = countDown[RDConstants.endDateTime]
             countDownModel.endAction = countDown[RDConstants.endAction]
             countDownModel.endAnimationImageUrl = countDown[RDConstants.endAnimationImageUrl]
+            countDownModel.gifImage = UIImage.gif(url: countDownModel.endAnimationImageUrl ?? "")
         }
         
         let relatedDigitalStoryItem = RDStoryItem(fileType: fileType,

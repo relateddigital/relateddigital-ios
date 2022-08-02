@@ -110,6 +110,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
                             timerView.isHidden = true
                             if let countDown = snap.countDown,let _ = countDown.endDateTime {
                                 timerView.isHidden = false
+                                timerView.gifImageView.image = UIImage()
                                 currentSnapCountDown = countDown
                                 initializeCountDownTimerForSnap(countDown: countDown)
                             }
@@ -139,6 +140,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
                             timerView.isHidden = true
                             if let countDown = snap.countDown,let _ = countDown.endDateTime {
                                 timerView.isHidden = false
+                                timerView.gifImageView.image = UIImage()
                                 currentSnapCountDown = countDown
                                 initializeCountDownTimerForSnap(countDown: countDown)
                             }
@@ -315,10 +317,10 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             snapButton.centerXAnchor.constraint(equalTo: scrollview.centerXAnchor)
         ])
         
-        NSLayoutConstraint.activate([timerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+        NSLayoutConstraint.activate([timerView.topAnchor.constraint(equalTo: contentView.topAnchor),
                                      timerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                                      timerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                                     timerView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+                                     timerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
                                     ])
     }
     private func createSnapView() -> UIImageView {
@@ -580,10 +582,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         if startDate >= endDate ?? startDate {
             DispatchQueue.global(qos: .userInteractive).async { [self] in
                 DispatchQueue.main.async { [self] in
-                    if currentSnapCountDown?.gifShown == false {
-                        timerView.gifImageView.image = UIImage.gif(url: currentSnapCountDown?.endAnimationImageUrl ?? "")
-                        currentSnapCountDown?.gifShown = true
-                    }
+                    timerView.gifImageView.image = currentSnapCountDown?.gifImage
                 }
             }
             return ["0","0","0","0","0","0","0","0","0","0"]

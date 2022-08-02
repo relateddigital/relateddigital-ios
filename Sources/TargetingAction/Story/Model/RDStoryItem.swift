@@ -58,6 +58,6 @@ struct RDStoryCountDown {
     var endDateTime:String?
     var endAction:String?
     var endAnimationImageUrl:String?
-    var gifShown:Bool = false
+    var gifImage:UIImage?
 
 }
