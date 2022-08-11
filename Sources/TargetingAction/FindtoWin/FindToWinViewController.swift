@@ -57,8 +57,8 @@ class FindToWinViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("index.html")
-        let jsUrl = docUrl.appendingPathComponent("game.js")
+        let htmlUrl = docUrl.appendingPathComponent("find_to_win_index.html")
+        let jsUrl = docUrl.appendingPathComponent("find_to_win.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
@@ -127,7 +127,7 @@ extension FindToWinViewController: WKScriptMessageHandler {
                     RDLogger.info("initGiftCatch")
                     //burada spintowinModelı kaldı düzeltilmeli
                     if let json = try? JSONEncoder().encode(self.spinToWin!), let jsonString = String(data: json, encoding: .utf8) {
-                        self.webView.evaluateJavaScript("window.initGiftCatch(asd);") { (_, err) in
+                        self.webView.evaluateJavaScript("window.initFindToWinGame(responseConfig);") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
