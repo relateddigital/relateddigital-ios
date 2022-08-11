@@ -29,6 +29,8 @@ class PushUNNotificationServiceExtensionHandler {
         // Setup carousel buttons
         if pushDetail.aps?.category == "carousel" {
             UNUNC.current().setNotificationCategories(getCarouselActionCategorySet())
+        } else if pushDetail.aps?.category == "action.button" {
+            addActionButtons(pushDetail)
         }
 
         // Setup notification for image/video
@@ -43,6 +45,25 @@ class PushUNNotificationServiceExtensionHandler {
             loadAttachments(mediaUrl: mediaUrl, modifiedBestAttemptContent: modifiedBestAttemptContent, withContentHandler: contentHandler)
         } else if pushDetail.pushType == "Text" {
             contentHandler(modifiedBestAttemptContent)
+        }
+    }
+    
+    @available(iOS 10.0, *)
+    static func addActionButtons(_ detail: RDPushMessage) {
+        let categoryIdentifier = "action.button"
+        if let buttons = detail.buttons {
+            var actionButtons: [UNNotificationAction] = []
+            for button in buttons {
+                actionButtons.append(UNNotificationAction(identifier: button.identifier ?? "",
+                                                          title: button.title ?? "",
+                                                          options: [.foreground]))
+            }
+            let actionCategory = UNNotificationCategory(identifier: categoryIdentifier,
+                                                          actions: actionButtons,
+                                                          intentIdentifiers: [], options: [])
+
+            UNUserNotificationCenter.current().setNotificationCategories([actionCategory])
+
         }
     }
 

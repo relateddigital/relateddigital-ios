@@ -37,6 +37,7 @@ public struct RDPushMessage: PushCodable {
     public let pushId: String?
     public let emPushSp: String?
     public let elements: [Element]?
+    public let buttons: [ActionButtons]?
     public let utm_source: String?
     public let utm_campaign: String?
     public let utm_medium: String?
@@ -74,4 +75,9 @@ public struct RDPushMessage: PushCodable {
         public let picture: String?
     }
 
+    public struct ActionButtons: Codable {
+    public let title: String?
+    public let identifier: String?
+    public let url: String?
+    }
 }
