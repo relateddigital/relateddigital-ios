@@ -31,6 +31,7 @@ public class RDPush {
     private static var previousSubscription: PushSubscriptionRequest?
     private var previousRegisterEmailSubscription: PushSubscriptionRequest?
     internal var userAgent: String? = nil
+    static var deliveredBadgeCount: Bool?
 
     var networkQueue: DispatchQueue!
 
@@ -108,7 +109,7 @@ public class RDPush {
 
     // MARK: Lifecycle
 
-    public class func configure(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil, appGroupsKey: String? = nil) {
+    public class func configure(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil, appGroupsKey: String? = nil, deliveredBadge: Bool? = true) {
         if let appGroupName = PushTools.getAppGroupName(appGroupName: appGroupsKey) {
             PushUserDefaultsUtils.setAppGroupsUserDefaults(appGroupName: appGroupName)
             RDLogger.info("App Group Key : \(appGroupName)")
@@ -116,6 +117,7 @@ public class RDPush {
 
         RDPush.shared = RDPush(appKey: appAlias, launchOptions: launchOptions)
         RDPush.shared?.pushAPI = PushAPI()
+        RDPush.deliveredBadgeCount = deliveredBadge
 
         if let subscriptionHandler = RDPush.emSubscriptionHandler {
             subscriptionHandler.push = RDPush.shared!
@@ -407,13 +409,15 @@ extension RDPush {
         // Clear badge
         if !(subs.isBadgeCustom ?? false) {
             PushUserDefaultsUtils.removeUserDefaults(userKey: PushKey.badgeCount)
-
+            
             if !PushTools.isiOSAppExtension() {
-                UNUNC.current().getDeliveredNotifications(completionHandler: { notifications in
-                    DispatchQueue.main.async {
-                        UIA.shared.applicationIconBadgeNumber = notifications.count
-                    }
-                })
+                if deliveredBadgeCount! {
+                    UNUNC.current().getDeliveredNotifications(completionHandler: { notifications in
+                        DispatchQueue.main.async {
+                            UIA.shared.applicationIconBadgeNumber = notifications.count
+                        }
+                    })
+                }
             }
         }
         // check whether the user have an unreported message
