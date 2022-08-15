@@ -216,8 +216,8 @@ public class RelatedDigital {
     
     // MARK: - Push
     
-    public static func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil, appGroupsKey: String? = nil) {
-        shared.rdInstance.enablePushNotifications(appAlias: appAlias, launchOptions: launchOptions, appGroupsKey: appGroupsKey)
+    public static func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil, appGroupsKey: String? = nil, deliveredBadge: Bool? = true) {
+        shared.rdInstance.enablePushNotifications(appAlias: appAlias, launchOptions: launchOptions, appGroupsKey: appGroupsKey, deliveredBadge: deliveredBadge)
     }
     
     public static func askForNotificationPermission(register: Bool = false) {
