@@ -260,7 +260,7 @@ struct RDConstants {
     static let img = "img"
     static let wheelSpinAction = "wheel_spin_action"
     static let promocodesSoldoutMessage = "promocodes_soldout_message"
-    
+    static let copyButtonFunction = "copybutton_function"
     
     // SpinToWin extended properties
     static let displaynameTextColor = "displayname_text_color"
@@ -308,6 +308,7 @@ struct RDConstants {
     static let color = "color"
     static let code = "code"
     static let isAvailable = "is_available"
+    static let iosLink = "ios_lnk"
     
     // SpinToWin information properties
     static let promoAction = "OM.promoaction"
