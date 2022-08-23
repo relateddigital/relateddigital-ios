@@ -13,11 +13,14 @@ class SpinToWinViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
     var sliceText = ""
+    var sliceLink: String? = nil
     
     var pIndexCodes = [Int: String]()
     var pIndexDisplayNames = [Int: String]()
     var sIndexCodes = [Int: String]()
     var sIndexDisplayNames = [Int: String]()
+    
+    var sliceLinks = [Int: String]()
 
     
     init(_ spinToWin: SpinToWinViewModel) {
@@ -179,6 +182,17 @@ class SpinToWinViewController: RDBaseNotificationViewController {
     
     private func close() {
         self.dismiss(animated: true) {
+            
+            if let sliceLink = self.sliceLink,
+               !sliceLink.isEmptyOrWhitespace,
+               let url = URL(string: sliceLink),
+               self.spinToWin?.copyButtonFunction == "copy_redirect" {
+                DispatchQueue.main.async {
+                    let app = RDInstance.sharedUIApplication()
+                    app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: url, waitUntilDone: true)
+                }
+            }
+            
             if let spinToWin = self.spinToWin, spinToWin.showPromoCodeBanner {
                 let bannerVC = RDSpinToWinCodeBannerController(spinToWin)
                 bannerVC.delegate = self.delegate
@@ -231,6 +245,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
         let promoCodeString = index > -1 ? "'\(promoCode)'" : "undefined"
         
         DispatchQueue.main.async {
+            self.sliceLink = self.sliceLinks[index]
             self.webView.evaluateJavaScript("window.chooseSlice(\(index), \(promoCodeString));") { (_, err) in
                 if let error = err {
                     RDLogger.error(error)
@@ -279,6 +294,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                             sIndexCodes[index] = slice.code
                             sIndexDisplayNames[index] = slice.displayName
                         }
+                        sliceLinks[index] = slice.iosLink
                         index += 1
                     }
                     
@@ -322,6 +338,7 @@ extension SpinToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "close" {
+                    self.sliceLink = nil
                     self.close()
                 }
                 
