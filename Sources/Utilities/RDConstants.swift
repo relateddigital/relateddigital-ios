@@ -145,6 +145,30 @@ struct RDConstants {
     static let productStatNotifier = "ProductStatNotifier"
     static let drawer = "Drawer"
     static let downHsView = "downHsView"
+    
+    //gamification
+    static let gamification = "gamification"
+    static let copybuttonFunction = "copybutton_function"
+    static let backgroundImage = "background_image"
+    static let gamificationRules = "gamification_rules"
+    static let gameElements = "game_elements"
+    static let giftCatcherImage = "gift_catcher_image"
+    static let numberOfProducts = "number_of_products"
+    static let downwardSpeed = "downward_speed"
+    static let soundUrl = "sound_url"
+    static let giftImages = "gift_images"
+    static let gameResultElements = "game_result_elements"
+    static let promoCodes = "promo_codes"
+    static let rangebottom = "rangebottom"
+    static let rangetop = "rangetop"
+    static let staticcode = "staticcode"
+    static let scoreboardBackgroundColor = "scoreboard_background_color"
+    static let scoreboardShape = "scoreboard_shape"
+
+    
+    
+    
+    
 
     
     static let actid = "actid"
@@ -331,7 +355,7 @@ struct RDConstants {
     static let contentBodyTextSize = "content_body_text_size"
     static let promocodeFontFamily = "promocode_font_family"
     static let promocodeTextSize = "promocode_text_size"
-    static let sctwMailSubscriptionForm = "mail_subscription_form"
+    static let gMailSubscriptionForm = "mail_subscription_form"
     
     static let contentTitleCustomFontFamilyIos = "content_title_custom_font_family_ios"
     static let contentBodyCustomFontFamilyIos = "content_body_custom_font_family_ios"

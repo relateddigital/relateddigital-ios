@@ -12,6 +12,11 @@ import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
     
+    func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, appGroupsKey: String?, deliveredBadge: Bool?) {
+        print("")//geçiçi burası Umut bakacak
+    }
+    
+    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile

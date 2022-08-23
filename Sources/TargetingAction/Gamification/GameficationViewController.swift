@@ -144,12 +144,12 @@ extension GameficationViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId)", auth: self.gameficationModel!.auth, mail: email)
+                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId)", auth: self.gameficationModel!.auth!, mail: email)
                     subsEmail = email
                 }
                 
                 if method == "sendReport" {
-                    RelatedDigital.trackGamificationClick(gameficationReport: self.gameficationModel!.report)
+                    RelatedDigital.trackGamificationClick(gameficationReport: self.gameficationModel!.report!)
                 }
                 
                 if method == "close" {
