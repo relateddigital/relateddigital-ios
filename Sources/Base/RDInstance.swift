@@ -489,8 +489,8 @@ extension RDInstance: RDInAppNotificationsDelegate {
     func trackGamificationClick(gameficationReport: GameficationReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
-        properties["OM.zn"] = gameficationReport.click.parseClick().omZn
-        properties["OM.zpc"] = gameficationReport.click.parseClick().omZpc
+        properties["OM.zn"] = gameficationReport.click?.parseClick().omZn
+        properties["OM.zpc"] = gameficationReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
 }

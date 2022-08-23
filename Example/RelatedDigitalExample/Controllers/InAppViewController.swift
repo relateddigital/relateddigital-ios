@@ -64,7 +64,8 @@ class InAppViewController: FormViewController {
             .productStatNotifier: [RDInAppNotificationType.productStatNotifier.rawValue: 703],
             .drawer : [RDInAppNotificationType.drawer.rawValue: 203],
             .downHsView : [RDInAppNotificationType.downHsView.rawValue: 238],
-            .video : [RDInAppNotificationType.video.rawValue: 73]
+            .video : [RDInAppNotificationType.video.rawValue: 73],
+            .gamification : [RDInAppNotificationType.gamification.rawValue: 131]
         ]
     }
     

@@ -484,13 +484,13 @@ class RDTargetingAction {
         
         
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
-            gamificationModel.mailSubscriptionForm?.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
-            gamificationModel.mailSubscriptionForm?.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
-            gamificationModel.mailSubscriptionForm?.consentText = mailForm[RDConstants.consentText] as? String
-            gamificationModel.mailSubscriptionForm?.invalidEmailMessage = mailForm[RDConstants.invalidEmailMessage] as? String ?? ""
-            gamificationModel.mailSubscriptionForm?.successMessage = mailForm[RDConstants.successMessage] as? String ?? ""
-            gamificationModel.mailSubscriptionForm?.emailPermitText = mailForm[RDConstants.emailPermitText] as? String ?? ""
-            gamificationModel.mailSubscriptionForm?.checkConsentMessage = mailForm[RDConstants.checkConsentMessage] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.consentText = mailForm[RDConstants.consentText] as? String
+            gamificationModel.mailSubscriptionForm.invalidEmailMessage = mailForm[RDConstants.invalidEmailMessage] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.successMessage = mailForm[RDConstants.successMessage] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.emailPermitText = mailForm[RDConstants.emailPermitText] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.checkConsentMessage = mailForm[RDConstants.checkConsentMessage] as? String ?? ""
         }
         
         if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
@@ -507,7 +507,7 @@ class RDTargetingAction {
             if let imagesString = gameElements[RDConstants.giftImages] as? [String:[String]] {
                 for element in imagesString.values {
                     for index in element {
-                        gamificationModel.gameElements?.giftImages.append(index)
+                        gamificationModel.gameElements?.giftImages?.append(index)
                     }
                 }
             }
@@ -549,19 +549,19 @@ class RDTargetingAction {
         gamificationModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
        
         
-        gamificationModel.mailExtendedProps?.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
-        gamificationModel.mailExtendedProps?.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
-        gamificationModel.mailExtendedProps?.textColor = extendedProps[RDConstants.textColor] as? String ?? ""
-        gamificationModel.mailExtendedProps?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
+        gamificationModel.mailExtendedProps.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
+        gamificationModel.mailExtendedProps.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
+        gamificationModel.mailExtendedProps.textColor = extendedProps[RDConstants.textColor] as? String ?? ""
+        gamificationModel.mailExtendedProps.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
         
-        gamificationModel.mailExtendedProps?.buttonColor = extendedProps[RDConstants.button_color] as? String ?? ""
-        gamificationModel.mailExtendedProps?.buttonTextColor = extendedProps[RDConstants.button_text_color] as? String ?? ""
-        gamificationModel.mailExtendedProps?.buttonTextSize = extendedProps[RDConstants.buttonTextSize] as? String ?? ""
+        gamificationModel.mailExtendedProps.buttonColor = extendedProps[RDConstants.button_color] as? String ?? ""
+        gamificationModel.mailExtendedProps.buttonTextColor = extendedProps[RDConstants.button_text_color] as? String ?? ""
+        gamificationModel.mailExtendedProps.buttonTextSize = extendedProps[RDConstants.buttonTextSize] as? String ?? ""
         
-        gamificationModel.mailExtendedProps?.emailPermitTextSize = extendedProps[RDConstants.emailpermitTextSize] as? String ?? ""
-        gamificationModel.mailExtendedProps?.emailPermitTextUrl = extendedProps[RDConstants.emailpermitTextUrl] as? String ?? ""
-        gamificationModel.mailExtendedProps?.consentTextSize = extendedProps[RDConstants.consentTextSize] as? String ?? ""
-        gamificationModel.mailExtendedProps?.consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
+        gamificationModel.mailExtendedProps.emailPermitTextSize = extendedProps[RDConstants.emailpermitTextSize] as? String ?? ""
+        gamificationModel.mailExtendedProps.emailPermitTextUrl = extendedProps[RDConstants.emailpermitTextUrl] as? String ?? ""
+        gamificationModel.mailExtendedProps.consentTextSize = extendedProps[RDConstants.consentTextSize] as? String ?? ""
+        gamificationModel.mailExtendedProps.consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
         
         gamificationModel.gamificationRulesExtended?.buttonColor = extendedProps[RDConstants.button_color] as? String ?? ""
         gamificationModel.gamificationRulesExtended?.buttonTextColor = extendedProps[RDConstants.button_text_color] as? String ?? ""

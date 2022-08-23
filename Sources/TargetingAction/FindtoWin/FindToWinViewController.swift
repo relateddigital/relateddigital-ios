@@ -144,7 +144,7 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId)", auth: self.gameficationModel!.auth!, mail: email)
+                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId)", auth: self.gameficationModel!.auth, mail: email)
                     subsEmail = email
                 }
                 

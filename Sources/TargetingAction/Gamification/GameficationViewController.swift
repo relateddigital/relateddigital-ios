@@ -126,8 +126,8 @@ extension GameficationViewController: WKScriptMessageHandler {
                 if method == "initGiftCatch" {
                     RDLogger.info("initGiftCatch")
                     //burada spintowinModelı kaldı düzeltilmeli
-                    if let json = try? JSONEncoder().encode(self.spinToWin!), let jsonString = String(data: json, encoding: .utf8) {
-                        self.webView.evaluateJavaScript("window.initGiftCatch(asd);") { (_, err) in
+                    if let json = try? JSONEncoder().encode(self.gameficationModel), let jsonString = String(data: json, encoding: .utf8) {
+                        self.webView.evaluateJavaScript("window.initGiftCatch(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
@@ -144,7 +144,7 @@ extension GameficationViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId)", auth: self.gameficationModel!.auth!, mail: email)
+                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId ?? 0)", auth: self.gameficationModel!.auth, mail: email)
                     subsEmail = email
                 }
                 
