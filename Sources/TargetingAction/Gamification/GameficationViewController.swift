@@ -31,7 +31,14 @@ class GameficationViewController: RDBaseNotificationViewController {
     
     private func close() {
         dismiss(animated: true) {
-            self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            if let gamefication = self.gameficationModel {
+                let bannerVC = RDGamificationCodeBannerController(gamefication)
+                bannerVC.delegate = self.delegate
+                bannerVC.show(animated: true)
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            } else {
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            }
         }
     }
     
