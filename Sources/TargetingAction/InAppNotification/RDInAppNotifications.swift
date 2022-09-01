@@ -92,20 +92,26 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                    if self.showDownhs(model: downHsView) {
                       self.markTargetingActionShown(model: downHsView)
                   }
-              }
+               } else if model.targetingActionType == .gamification, let gamification = model as? GameficationViewModel {
+                   if self.showGamefication(gameficationVİewModel: gamification) {
+                      self.markTargetingActionShown(model: gamification)
+                  }
+               }
+                
             }
         }
     }
     
     
-    func showGamefication() {
-        let controller = GameficationViewController()
+    func showGamefication(gameficationVİewModel: GameficationViewModel) ->Bool{
+        let controller = GameficationViewController(gameficationVİewModel)
         controller.modalPresentationStyle = .fullScreen
         controller.delegate = self
         if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: true, completion: nil)
-            
+            return true
         }
+        return false
     }
     
     func showFindToWin() {

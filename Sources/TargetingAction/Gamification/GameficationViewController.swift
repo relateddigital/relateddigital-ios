@@ -21,8 +21,9 @@ class GameficationViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
     
-    init() {
+    init(_ gamefication : GameficationViewModel) {
         super.init(nibName: nil, bundle: nil)
+        self.gameficationModel = gamefication
     }
     
     required init?(coder: NSCoder) {

@@ -147,7 +147,7 @@ struct RDConstants {
     static let downHsView = "downHsView"
     
     //gamification
-    static let gamification = "gamification"
+    static let gamification = "GiftRain"
     static let copybuttonFunction = "copybutton_function"
     static let backgroundImage = "background_image"
     static let gamificationRules = "gamification_rules"

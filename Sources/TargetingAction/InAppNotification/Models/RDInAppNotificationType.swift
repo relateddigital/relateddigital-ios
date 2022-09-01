@@ -27,7 +27,7 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case feedbackForm
     case productStatNotifier = "product_stat_notifier"
     case drawer = "drawer"
-    case gamification = "gamification"
+    case gamification = "giftrain"
     case video = "video"
     case downHsView = "downHsView"
 }
