@@ -25,6 +25,13 @@ class PushUNNotificationServiceExtensionHandler {
         }
         
         PushUserDefaultsUtils.savePayload(payload: pushDetail)
+        
+        if let notificationLoginId = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.notificationLoginIdKey) as? String,
+           !notificationLoginId.isEmpty {
+            PushUserDefaultsUtils.savePayloadWithId(payload: pushDetail, notificationLoginID: notificationLoginId)
+        } else {
+            PushUserDefaultsUtils.savePayload(payload: pushDetail)
+        }
 
         // Setup carousel buttons
         if pushDetail.aps?.category == "carousel" {

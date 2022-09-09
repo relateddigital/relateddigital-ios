@@ -45,6 +45,7 @@ class PushViewController: FormViewController {
 
         form +++ Section()
             <<< getPushMessages()
+            <<< getPushMessagesWithID()
     }
 
     fileprivate func changePage() -> SplitRow<ButtonRow, ButtonRow> {
@@ -165,6 +166,24 @@ class PushViewController: FormViewController {
             $0.title = "Get Push Messages"
         }.onCellSelection { _, _ in
             RelatedDigital.getPushMessages { messages in
+                if messages.isEmpty {
+                    print("🚲 there is no recorded push message.")
+                }
+
+                for message in messages {
+                    print("🆔: \(message.pushId ?? "")")
+                    print("📅: \(message.formattedDateString ?? "")")
+                    print(message.encoded)
+                }
+            }
+        }
+    }
+    
+    fileprivate func getPushMessagesWithID() -> ButtonRow {
+        return ButtonRow {
+            $0.title = "Get Push Messages With ID"
+        }.onCellSelection { _, _ in
+            RelatedDigital.getPushMessagesWithID { messages in
                 if messages.isEmpty {
                     print("🚲 there is no recorded push message.")
                 }

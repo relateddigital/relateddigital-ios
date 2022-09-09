@@ -502,6 +502,10 @@ extension RDPush {
     public static func getPushMessages(completion: @escaping ((_ payloads: [RDPushMessage]) -> Void)) {
         completion(PushUserDefaultsUtils.getRecentPayloads())
     }
+    
+    public static func getPushMessagesWithId(completion: @escaping ((_ payloads: [RDPushMessage]) -> Void)) {
+        completion(PushUserDefaultsUtils.getRecentPayloadsWithId())
+    }
 }
 
 extension RDPush {

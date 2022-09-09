@@ -43,7 +43,8 @@ public struct RDPushMessage: PushCodable {
     public let utm_medium: String?
     public let utm_content: String?
     public let utm_term: String?
-    
+    public var notificationLoginID: String?
+
     
     public let deliver: String?
 

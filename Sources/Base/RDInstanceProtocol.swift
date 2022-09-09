@@ -71,5 +71,7 @@ protocol RDInstanceProtocol {
     func sync(notification: Notification?)
     func registerEmail(email: String, permission: Bool, isCommercial: Bool, customDelegate: RDPushDelegate?)
     func getPushMessages(completion: @escaping GetPushMessagesCompletion)
+    func getPushMessagesWithID(completion: @escaping GetPushMessagesCompletion)
+
 }
 

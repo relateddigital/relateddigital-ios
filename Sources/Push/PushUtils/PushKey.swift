@@ -36,6 +36,10 @@ class PushKey {
     internal static let euroReadPushIdListKey = "EURO_READ_PUSHID_LIST_KEY"
     
     
+    internal static let notificationLoginIdKey = "EURO_NOTIFICATION_LOGIN_ID_KEY"
+    internal static let euroPayloadsWithIdKey = "EURO_PAYLOADS_WITH_ID_KEY"
+    
+    
     internal static let euroLastSuccessfulSubscriptionDateKey = "EURO_LAST_SUCCESSFUL_SUBSCRIPTION_DATE_KEY"
     internal static let euroLastSuccessfulSubscriptionKey = "EURO_LAST_SUCCESSFUL_SUBSCRIPTION_KEY"
     internal static let threeDaysInSeconds = 259200 // 3 days

@@ -72,6 +72,68 @@ class PushUserDefaultsUtils {
             }
         }
     }
+      
+    static func savePayloadWithId(payload: RDPushMessage, notificationLoginID: String) {
+        var payload = payload
+        if let pushId = payload.pushId, !notificationLoginID.isEmpty {
+            payload.notificationLoginID = notificationLoginID
+            payload.formattedDateString = PushTools.formatDate(Date())
+            var recentPayloads = getRecentPayloads()
+            payloadLock.write {
+                if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
+                    RDLogger.warn("Payload is not valid, there is already another payload with same pushId  New : \(payload.encoded) Existing: \(existingPayload.encoded)")
+                } else {
+                    recentPayloads.insert(payload, at: 0)
+                    if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
+                        saveUserDefaults(key: PushKey.euroPayloadsWithIdKey, value: recentPayloadsData as AnyObject)
+                    } else {
+                        RDLogger.warn("Can not encode recentPayloads : \(String(describing: recentPayloads))")
+                    }
+                }
+            }
+        } else {
+            RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
+        }
+    }
+    
+    static func getRecentPayloadsWithId() -> [RDPushMessage] {
+        var finalPayloads = [RDPushMessage]()
+        payloadLock.read {
+            guard let notificationLoginId = retrieveUserDefaults(userKey: PushKey.notificationLoginIdKey) as? String,
+                  notificationLoginId.isEmpty else {
+                RDLogger.error("Push-getRecentPayloadsWithId() : login ID is empty!");
+                return
+            }
+            
+            if let payloadsJsonData = retrieveUserDefaults(userKey: PushKey.euroPayloadsWithIdKey) as? Data {
+                if let payloads = try? JSONDecoder().decode([RDPushMessage].self, from: payloadsJsonData) {
+                    finalPayloads = payloads
+                }
+            }
+            if let filterDate = Calendar.current.date(byAdding: .day, value: -PushKey.payloadDayThreshold, to: Date()) {
+                finalPayloads = finalPayloads.filter({ payload in
+                    
+                    if payload.notificationLoginID != notificationLoginId {
+                        return false
+                    }
+                    
+                    if let date = payload.getDate() {
+                        return date > filterDate
+                    } else {
+                        return false
+                    }
+                })
+            }
+        }
+        
+        return finalPayloads.sorted(by: { payload1, payload2 in
+            if let date1 = payload1.getDate(), let date2 = payload2.getDate() {
+                return date1 > date2
+            } else {
+                return false
+            }
+        })
+    }
     
     static func getReadPushIdList() -> [String] {
         var finalPushIdList = [String]()

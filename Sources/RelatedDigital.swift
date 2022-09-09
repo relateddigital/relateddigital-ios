@@ -300,6 +300,15 @@ public class RelatedDigital {
         shared.rdInstance.getPushMessages(completion: completion)
     }
     
+    public static func getPushMessagesWithID(completion: @escaping GetPushMessagesCompletion) {
+        shared.rdInstance.getPushMessagesWithID(completion: completion)
+    }
+    
+    public static func setNotificationLoginID(notificationLoginID: String?) {
+        setUserProperty(key: PushKey.notificationLoginIdKey, value: notificationLoginID)
+        PushUserDefaultsUtils.saveUserDefaults(key: PushKey.notificationLoginIdKey, value: notificationLoginID as AnyObject)
+    }
+    
 //    private func showDownhs() ->Bool {
 //        let downhsViewController = downHsViewController(model: downHsModel())
 //        //downhsViewController.delegate = self

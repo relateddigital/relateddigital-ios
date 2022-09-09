@@ -67,15 +67,15 @@ class GameficationViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("index.html")
-        let jsUrl = docUrl.appendingPathComponent("game.js")
+        let htmlUrl = docUrl.appendingPathComponent("gift_catch_index.html")
+        let jsUrl = docUrl.appendingPathComponent("gift_catch.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "index", ofType: "html") ?? ""
-        let bundleJsPath = bundle.path(forResource: "game", ofType: "js") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "gift_catch_index", ofType: "html") ?? ""
+        let bundleJsPath = bundle.path(forResource: "gift_catch", ofType: "js") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
         let bundleJsUrl = URL(fileURLWithPath: bundleJsPath)
@@ -135,6 +135,7 @@ extension GameficationViewController: WKScriptMessageHandler {
                     RDLogger.info("initGiftCatch")
                     //burada spintowinModelı kaldı düzeltilmeli
                     if let json = try? JSONEncoder().encode(self.gameficationModel), let jsonString = String(data: json, encoding: .utf8) {
+                        print(jsonString)
                         self.webView.evaluateJavaScript("window.initGiftCatch(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)

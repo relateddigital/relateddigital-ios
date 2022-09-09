@@ -31,6 +31,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
     var advertisingIdentifier: String?
     var sdkVersion: String?
     var carrier: String?
+    var notificationLoginID: String?
 
     // local variable
     var isBadgeCustom: Bool?
@@ -50,6 +51,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
         case advertisingIdentifier = "advertisingIdentifier"
         case sdkVersion = "sdkVersion"
         case carrier = "carrier"
+        case notificationLoginID
     }
 
     init() {
