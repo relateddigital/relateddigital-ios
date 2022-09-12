@@ -66,7 +66,7 @@ public struct GameElements : Codable {
     var numberOfProducts : Int?
     var downwardSpeed : String?
     var soundUrl : String?
-    var giftImages : [String]?
+    var giftImages = [String]()
 }
 
 public struct GameResultElements : Codable {

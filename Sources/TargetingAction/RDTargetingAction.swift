@@ -491,6 +491,9 @@ class RDTargetingAction {
             gamificationModel.mailSubscriptionForm.successMessage = mailForm[RDConstants.successMessage] as? String ?? ""
             gamificationModel.mailSubscriptionForm.emailPermitText = mailForm[RDConstants.emailPermitText] as? String ?? ""
             gamificationModel.mailSubscriptionForm.checkConsentMessage = mailForm[RDConstants.checkConsentMessage] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.title = mailForm[RDConstants.title] as? String ?? ""
+            gamificationModel.mailSubscriptionForm.message = mailForm[RDConstants.message] as? String ?? ""
+
         }
         
         if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
@@ -504,11 +507,9 @@ class RDTargetingAction {
             gamificationModel.gameElements?.downwardSpeed = gameElements[RDConstants.downwardSpeed] as? String ?? ""
             gamificationModel.gameElements?.soundUrl = gameElements[RDConstants.soundUrl] as? String ?? ""
 
-            if let imagesString = gameElements[RDConstants.giftImages] as? [String:[String]] {
-                for element in imagesString.values {
-                    for index in element {
-                        gamificationModel.gameElements?.giftImages?.append(index)
-                    }
+            if let imagesString = gameElements[RDConstants.giftImages] as? [String] {
+                for element in imagesString {
+                    gamificationModel.gameElements?.giftImages.append(element)
                 }
             }
         }
@@ -553,6 +554,8 @@ class RDTargetingAction {
         gamificationModel.mailExtendedProps.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
         gamificationModel.mailExtendedProps.textColor = extendedProps[RDConstants.textColor] as? String ?? ""
         gamificationModel.mailExtendedProps.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
+        gamificationModel.mailExtendedProps.titleTextSize = extendedProps[RDConstants.titleTextSize] as? String ?? ""
+
         
         gamificationModel.mailExtendedProps.buttonColor = extendedProps[RDConstants.button_color] as? String ?? ""
         gamificationModel.mailExtendedProps.buttonTextColor = extendedProps[RDConstants.button_text_color] as? String ?? ""
