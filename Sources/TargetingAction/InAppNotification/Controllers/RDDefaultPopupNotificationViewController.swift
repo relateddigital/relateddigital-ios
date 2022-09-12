@@ -24,7 +24,7 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
         self.scratchToWin = scratchToWin
         
 
-        if let image = rdInAppNotification?.image {
+        if let image = rdInAppNotification?.image ?? scratchToWin?.image {
             if let imageGif = UIImage.gif(data: image) {
                 self.image = imageGif
             } else {
