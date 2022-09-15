@@ -233,6 +233,20 @@ let componentsData = {
  * Init
  */
 function initGame(responseConfig) {
+    if (utils.getMobileOperatingSystem() == 'iOS') {
+        console.log("RUN IOS");
+        iOSConfigRegulator(responseConfig)
+    }
+    else {        
+        console.log("RUN ANDROID");
+        androidConfigRegulator(responseConfig);
+    }
+
+    config();
+}
+
+function androidConfigRegulator(responseConfig){
+    responseConfig = JSON.parse(responseConfig)
     responseConfig.actiondata.ExtendedProps = JSON.parse(unescape(responseConfig.actiondata.ExtendedProps))
 
     const res = responseConfig.actiondata;
@@ -320,6 +334,8 @@ function initGame(responseConfig) {
     componentsData.gameScreen.scoreboard.background = ext.game_elements.scoreboard_background_color;
     componentsData.gameScreen.scoreboard.type = ext.game_elements.scoreboard_shape;
 
+    if(componentsData.gameScreen.scoreboard.type == "") componentsData.gameScreen.scoreboard.type = "roundedcorners"
+
     if (res.game_result_elements.title) {
         componentsData.finishScreen.title.use = true
         componentsData.finishScreen.title.text = res.game_result_elements.title
@@ -340,8 +356,113 @@ function initGame(responseConfig) {
     componentsData.finishScreen.button.buttonColor = ext.copybutton_color;
     componentsData.finishScreen.button.androidLink = res.android_lnk;
     componentsData.finishScreen.button.iOSLink = res.ios_lnk;
+}
 
-    config();
+function iOSConfigRegulator(responseConfig){
+    console.log(responseConfig)
+
+
+    const res = responseConfig;
+
+    promoCodeCalculator(res.promoCodes)
+
+    // // General data
+    generalData.difficulty = parseInt(res.gameElements.downwardSpeed);
+    generalData.basketImg = res.gameElements.giftCatcherImage;
+    generalData.bgColor = res.background_color;
+    generalData.bgImg = res.backgroundImage;
+    generalData.closeButtonColor = res.close_button_color;
+    generalData.fontName = res.font_family;
+    generalData.sound = res.gameElements.soundUrl;
+    utils.loadSound();
+
+    if (res.custom_font_family_ios && utils.getMobileOperatingSystem() == 'iOS') {
+        generalData.fontName = res.custom_font_family_ios;
+    }
+
+    productImgs = res.gameElements.giftImages; 
+    productSettings.totalProductCount = res.gameElements.numberOfProducts;
+
+    // // Mail Form Optionals
+    if (res.mailSubscription) {
+        activePageData.mailSubsScreen = true;
+
+        if (res.mailSubscriptionForm.title) {
+            componentsData.mailSubsScreen.title.use = true;
+            componentsData.mailSubsScreen.title.text = res.mailSubscriptionForm.title; 
+            componentsData.mailSubsScreen.title.textColor = res.mailExtendedProps.titleTextColor;
+            componentsData.mailSubsScreen.title.fontSize = res.mailExtendedProps.titleTextSize + 'px'; 
+        }
+
+        if (res.mailSubscriptionForm.message) {
+            componentsData.mailSubsScreen.message.use = true;
+            componentsData.mailSubsScreen.message.text = res.mailSubscriptionForm.message;
+            componentsData.mailSubsScreen.message.textColor = res.mailExtendedProps.textColor;
+            componentsData.mailSubsScreen.message.fontSize = res.mailExtendedProps.textSize + 'px';
+        }
+
+        if (res.mailSubscriptionForm.emailPermitText) {
+            componentsData.mailSubsScreen.emailPermission.use = true;
+            componentsData.mailSubsScreen.emailPermission.text = res.mailSubscriptionForm.emailPermitText;
+            componentsData.mailSubsScreen.emailPermission.fontSize = res.mailExtendedProps.emailPermitTextSize + 'px';
+            componentsData.mailSubsScreen.emailPermission.url = res.mailExtendedProps.emailPermitTextUrl;
+        }
+
+        if (res.mailSubscriptionForm.consentText) {
+            componentsData.mailSubsScreen.secondPermission.use = true;
+            componentsData.mailSubsScreen.secondPermission.text = res.mailSubscriptionForm.consentText;
+            componentsData.mailSubsScreen.secondPermission.fontSize = res.mailExtendedProps.consentTextSize + 'px';
+            componentsData.mailSubsScreen.secondPermission.url = res.mailExtendedProps.consentTextUrl;
+        }
+    }
+
+    // // Mail Form Required
+    componentsData.mailSubsScreen.button.text = res.mailSubscriptionForm.buttonTitle;
+    componentsData.mailSubsScreen.button.textColor = res.mailExtendedProps.buttonTextColor;
+    componentsData.mailSubsScreen.button.buttonColor = res.mailExtendedProps.buttonColor;
+    componentsData.mailSubsScreen.button.fontSize = res.mailExtendedProps.buttonTextSize + 'px';
+    componentsData.mailSubsScreen.emailInput.placeHolder = res.mailSubscriptionForm.placeholder;
+    componentsData.mailSubsScreen.alerts.check_consent_message = res.mailSubscriptionForm.checkConsentMessage;
+    componentsData.mailSubsScreen.alerts.invalid_email_message = res.mailSubscriptionForm.invalidEmailMessage;
+
+    // // Rules Screen Optionals
+    if (res.gamificationRules) {
+        activePageData.rulesScreen = true;
+
+        componentsData.rulesScreen.bgImage = res.gamificationRules.backgroundImage
+        componentsData.rulesScreen.button.text = res.gamificationRules.buttonLabel
+        componentsData.rulesScreen.button.textColor = res.gamificationRulesExtended.buttonTextColor;
+        componentsData.rulesScreen.button.buttonColor = res.gamificationRulesExtended.buttonColor;
+        componentsData.rulesScreen.button.fontSize = res.gamificationRulesExtended.buttonTextSize + 'px';
+    }
+
+    // Game Screen
+    // componentsData.scoreboard.fontSize
+    // componentsData.scoreboard.fontColor
+    componentsData.gameScreen.scoreboard.background = res.gameElementsExtended.scoreboardBackgroundColor;
+    componentsData.gameScreen.scoreboard.type = res.gameElementsExtended.scoreboardShape;
+
+    if(componentsData.gameScreen.scoreboard.type == "") componentsData.gameScreen.scoreboard.type = "roundedcorners"
+
+    if (res.gameResultElements.title) {
+        componentsData.finishScreen.title.use = true
+        componentsData.finishScreen.title.text = res.gameResultElements.title
+        componentsData.finishScreen.title.fontSize = res.gameResultElementsExtended.titleTextSize + 'px'
+        componentsData.finishScreen.title.textColor = res.gameResultElementsExtended.titleTextColor
+
+    }
+    if (res.gameResultElements.message) {
+        componentsData.finishScreen.message.use = true
+        componentsData.finishScreen.message.text = res.gameResultElements.message
+        componentsData.finishScreen.message.fontSize = res.gameResultElementsExtended.textSize + 'px'
+        componentsData.finishScreen.message.textColor = res.gameResultElementsExtended.textColor
+    }
+
+    componentsData.finishScreen.button.text = res.copybutton_label;
+    componentsData.finishScreen.button.textColor = res.copybutton_text_color;
+    componentsData.finishScreen.button.fontSize = res.copybutton_text_size + 'px';
+    componentsData.finishScreen.button.buttonColor = res.copybutton_color;
+    componentsData.finishScreen.button.iOSLink = res.ios_lnk;
 }
 
 /**
@@ -443,7 +564,6 @@ function createMailSubsScreen() {
     var input = document.createElement("INPUT");
     input.setAttribute("type", "text");
     input.setAttribute("placeholder", componentsData.mailSubsScreen.emailInput.placeHolder);
-    input.setAttribute("value", "baris.arslan@euromsg.com");
     input.id = componentsData.mailSubsScreen.emailInput.id;
     input.style.backgroundColor = "white";
     input.style.width = "80%";
@@ -468,7 +588,7 @@ function createMailSubsScreen() {
         emailPermission.style.margin = "15px 0";
         emailPermission.style.width = "80%";
         emailPermission.style.display = "inline-block";
-        emailPermission.innerHTML = "<input style='width:20px;height:20px;display:block;margin-right:7px;float:left' id='" + componentsData.mailSubsScreen.emailPermission.id + "' checked type='checkbox'>\
+        emailPermission.innerHTML = "<input style='width:20px;height:20px;display:block;margin-right:7px;float:left' id='" + componentsData.mailSubsScreen.emailPermission.id + "' type='checkbox'>\
         <div style='" + ("padding: 0px;") + "'>\
         <a style='font-size:"+ componentsData.mailSubsScreen.emailPermission.fontSize + ";text-decoration: underline;color: black; font-family:" + generalData.fontName + "'\
         href='"+ componentsData.mailSubsScreen.emailPermission.url + "'>" + componentsData.mailSubsScreen.emailPermission.text + "</a>\
@@ -483,7 +603,7 @@ function createMailSubsScreen() {
         secondPermission.style.margin = "15px 0";
         secondPermission.style.width = "80%";
         secondPermission.style.display = "inline-block";
-        secondPermission.innerHTML = "<input style='width:20px;height:20px;display:block;margin-right:7px;float:left' id='" + componentsData.mailSubsScreen.secondPermission.id + "' checked type='checkbox' >" +
+        secondPermission.innerHTML = "<input style='width:20px;height:20px;display:block;margin-right:7px;float:left' id='" + componentsData.mailSubsScreen.secondPermission.id + "' type='checkbox' >" +
             "<div style='padding: 0px;'>\
                 <a style='font-size:"+ componentsData.mailSubsScreen.emailPermission.fontSize + ";text-decoration: underline;color: black; font-family:" + generalData.fontName + "'\
                 href='"+ componentsData.mailSubsScreen.secondPermission.url + "'>\
@@ -1236,6 +1356,7 @@ let utils = {
 };
 
 function promoCodeCalculator(data) {
+    console.log(data);
     let codes = { 0: "" }, counter = 1;
     data.forEach(range => {
         if (range.rangebottom == range.rangetop) {
