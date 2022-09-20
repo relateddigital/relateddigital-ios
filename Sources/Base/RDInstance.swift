@@ -12,11 +12,6 @@ import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
     
-    func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, appGroupsKey: String?, deliveredBadge: Bool?) {
-        print("")//geçiçi burası Umut bakacak
-    }
-    
-    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
@@ -37,6 +32,8 @@ public class RDInstance: RDInstanceProtocol {
     let rdLocationManager: RDLocationManager
     
     var launchOptions: [UIA.LaunchOptionsKey : Any]? = nil
+    
+    static var deliveredBadgeCount: Bool?
     
     public var loggingEnabled: Bool = false {
         didSet {
@@ -709,14 +706,14 @@ extension RDInstance {
 
 extension RDInstance {
     
-    public func enablePushNotifications(appAlias: String, launchOptions: [UIA.LaunchOptionsKey : Any]? = nil, appGroupsKey: String? = nil) {
+    public func enablePushNotifications(appAlias: String, launchOptions: [UIA.LaunchOptionsKey : Any]? = nil, appGroupsKey: String? = nil, deliveredBadge: Bool? = true) {
         rdProfile.isPushNotificationEnabled = true
         rdProfile.appAlias = appAlias
         rdProfile.appGroupsKey = appGroupsKey
         if let launchOptions = launchOptions {
             self.launchOptions = launchOptions
         }
-        RDPush.configure(appAlias: appAlias, launchOptions: self.launchOptions, appGroupsKey: appGroupsKey)
+        RDPush.configure(appAlias: appAlias, launchOptions: self.launchOptions, appGroupsKey: appGroupsKey, deliveredBadge: deliveredBadge)
     }
     
     public func askForNotificationPermission(register: Bool = false) {
