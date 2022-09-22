@@ -96,7 +96,7 @@ class RDTargetingAction {
         props[RDConstants.lvtKey] = rdUser.lvt
         
         
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -139,6 +139,8 @@ class RDTargetingAction {
             return parseDownHsView(downHs)
         } else if let gamification = result[RDConstants.gamification] as? [[String: Any?]], let gamifi = gamification.first {
             return parseGamification(gamifi)
+        } else if let findToWin = result[RDConstants.findToWin] as? [[String: Any?]], let findTown = findToWin.first {
+            return parseFindToWin(findTown)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
@@ -595,6 +597,143 @@ class RDTargetingAction {
         return gamificationModel
     }
 
+    
+    private func parseFindToWin(_ findToWin: [String: Any?]) -> FindToWinViewModel? {
+
+        guard let actionData = findToWin[RDConstants.actionData] as? [String: Any] else { return nil }
+        var findToWinModel = FindToWinViewModel(targetingActionType: .findToWin)
+        findToWinModel.actId = findToWin[RDConstants.actid] as? Int ?? 0
+        findToWinModel.title = findToWin[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+
+        findToWinModel.mailSubscription = actionData[RDConstants.mailSubscription] as? Bool ?? false
+        findToWinModel.copybutton_label = actionData[RDConstants.copybuttonLabel] as? String ?? ""
+        findToWinModel.copybutton_function = actionData[RDConstants.copybuttonFunction] as? String ?? ""
+        findToWinModel.ios_lnk = actionData[RDConstants.iosLnk] as? String ?? ""
+        
+        
+        if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
+            findToWinModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
+            findToWinModel.mailSubscriptionForm.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
+            findToWinModel.mailSubscriptionForm.consentText = mailForm[RDConstants.consentText] as? String
+            findToWinModel.mailSubscriptionForm.invalidEmailMessage = mailForm[RDConstants.invalidEmailMessage] as? String ?? ""
+            findToWinModel.mailSubscriptionForm.successMessage = mailForm[RDConstants.successMessage] as? String ?? ""
+            findToWinModel.mailSubscriptionForm.emailPermitText = mailForm[RDConstants.emailPermitText] as? String ?? ""
+            findToWinModel.mailSubscriptionForm.checkConsentMessage = mailForm[RDConstants.checkConsentMessage] as? String ?? ""
+            findToWinModel.mailSubscriptionForm.title = mailForm[RDConstants.title] as? String ?? ""
+            findToWinModel.mailSubscriptionForm.message = mailForm[RDConstants.message] as? String ?? ""
+
+        }
+        
+        if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
+            findToWinModel.gamificationRules?.backgroundImage = gamificationRules[RDConstants.backgroundImage] as? String ?? ""
+            findToWinModel.gamificationRules?.buttonLabel = gamificationRules[RDConstants.buttonLabel] as? String ?? ""
+        }
+
+        if let gameElements = actionData[RDConstants.gameElements] as? [String: Any] {
+            findToWinModel.gameElements?.playgroundRowcount = gameElements[RDConstants.playgroundRowcount] as? Int ?? 0
+            findToWinModel.gameElements?.playgroundColumncount = gameElements[RDConstants.playgroundColumncount] as? Int ?? 0
+            findToWinModel.gameElements?.durationOfGame = gameElements[RDConstants.durationOfGame] as? Int ?? 0
+            findToWinModel.gameElements?.soundUrl = gameElements[RDConstants.soundUrl] as? String ?? ""
+
+            if let imagesString = gameElements[RDConstants.blankcardImage] as? [String] {
+                for element in imagesString {
+                    findToWinModel.gameElements?.cardImages.append(element)
+                }
+            }
+        }
+        
+        
+        if let gameResultElements = actionData[RDConstants.gameResultElements] as? [String: Any] {
+            findToWinModel.gameResultElements?.title = gameResultElements[RDConstants.title] as? String ?? ""
+            findToWinModel.gameResultElements?.message = gameResultElements[RDConstants.message] as? String ?? ""
+            findToWinModel.gameResultElements?.loseImage = gameResultElements[RDConstants.loseImage] as? String ?? ""
+            findToWinModel.gameResultElements?.loseButtonLabel = gameResultElements[RDConstants.loseButtonLabel] as? String ?? ""
+            findToWinModel.gameResultElements?.loseIosLnk = gameResultElements[RDConstants.loseIosLnk] as? String ?? ""
+            
+        }
+        
+        if let promoCodes = actionData[RDConstants.promoCodes] as? [[String: Any]] {
+            for promoCode in promoCodes {
+                var promCode = PromoCodes()
+                promCode.rangebottom = promoCode[RDConstants.rangebottom] as? Int
+                promCode.rangetop = promoCode[RDConstants.rangetop] as? Int
+                promCode.staticcode = promoCode[RDConstants.staticcode] as? String
+                findToWinModel.promoCodes?.append(promCode)
+            }
+        }
+        
+        //extended props
+        
+        if let mailFormExtended = extendedProps[RDConstants.gMailSubscriptionForm] as? [String: Any] {
+
+            findToWinModel.mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
+            findToWinModel.mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
+            findToWinModel.mailExtendedProps.textColor = mailFormExtended[RDConstants.textColor] as? String ?? ""
+            findToWinModel.mailExtendedProps.textSize = mailFormExtended[RDConstants.textSize] as? String ?? ""
+            findToWinModel.mailExtendedProps.titleTextSize = mailFormExtended[RDConstants.titleTextSize] as? String ?? ""
+            findToWinModel.mailExtendedProps.buttonColor = mailFormExtended[RDConstants.button_color] as? String ?? ""
+            findToWinModel.mailExtendedProps.buttonTextColor = mailFormExtended[RDConstants.button_text_color] as? String ?? ""
+            findToWinModel.mailExtendedProps.buttonTextSize = mailFormExtended[RDConstants.buttonTextSize] as? String ?? ""
+            
+            findToWinModel.mailExtendedProps.emailPermitTextSize = mailFormExtended[RDConstants.emailpermitTextSize] as? String ?? ""
+            findToWinModel.mailExtendedProps.emailPermitTextUrl = mailFormExtended[RDConstants.emailpermitTextUrl] as? String ?? ""
+            findToWinModel.mailExtendedProps.consentTextSize = mailFormExtended[RDConstants.consentTextSize] as? String ?? ""
+            findToWinModel.mailExtendedProps.consentTextUrl = mailFormExtended[RDConstants.consentTextUrl] as? String ?? ""
+            findToWinModel.mailExtendedProps.titleFontFamily = mailFormExtended[RDConstants.titleFontFamily] as? String ?? ""
+        }
+        
+        findToWinModel.backgroundImage = extendedProps[RDConstants.backgroundImage] as? String ?? ""
+        findToWinModel.background_color = extendedProps[RDConstants.backgroundColor] as? String ?? ""
+        findToWinModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        findToWinModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        findToWinModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        findToWinModel.promocode_background_color = extendedProps[RDConstants.promocodeBackgroundColor] as? String ?? ""
+        findToWinModel.promocode_text_color = extendedProps[RDConstants.promocodeTextColor] as? String ?? ""
+        findToWinModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        findToWinModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        findToWinModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        findToWinModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        findToWinModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        findToWinModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        findToWinModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        findToWinModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+
+        
+        if let gameficationRuleExtended = extendedProps[RDConstants.gamificationRules] as? [String: Any] {
+            
+            findToWinModel.gamificationRulesExtended?.buttonColor = gameficationRuleExtended[RDConstants.button_color] as? String ?? ""
+            findToWinModel.gamificationRulesExtended?.buttonTextColor = gameficationRuleExtended[RDConstants.button_text_color] as? String ?? ""
+            findToWinModel.gamificationRulesExtended?.buttonTextSize = gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? ""
+        }
+
+        if let gameficationElementExtended = extendedProps[RDConstants.gameElements] as? [String: Any] {
+            findToWinModel.gameElementsExtended?.scoreboardShape = gameficationElementExtended[RDConstants.scoreboardShape] as? String ?? ""
+            findToWinModel.gameElementsExtended?.scoreboardBackgroundColor = gameficationElementExtended[RDConstants.scoreboardBackgroundColor] as? String ?? ""
+            
+            findToWinModel.gameElementsExtended?.scoreboardPageposition = gameficationElementExtended[RDConstants.scoreboardPageposition] as? String ?? ""
+            findToWinModel.gameElementsExtended?.backofcardsImage = gameficationElementExtended[RDConstants.backofcardsImage] as? String ?? ""
+            findToWinModel.gameElementsExtended?.backofcardsColor = gameficationElementExtended[RDConstants.backofcardsColor] as? String ?? ""
+            findToWinModel.gameElementsExtended?.blankcardImage = gameficationElementExtended[RDConstants.blankcardImage] as? String ?? ""
+
+        }
+
+        if let gameficationResultElementExtended = extendedProps[RDConstants.gameResultElements] as? [String: Any] {
+            
+            findToWinModel.gameResultElementsExtended?.titleTextColor = gameficationResultElementExtended[RDConstants.titleTextColor] as? String ?? ""
+            findToWinModel.gameResultElementsExtended?.titleTextSize = gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? ""
+            findToWinModel.gameResultElementsExtended?.textColor = gameficationResultElementExtended[RDConstants.textColor] as? String ?? ""
+            findToWinModel.gameResultElementsExtended?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
+            
+            findToWinModel.gameResultElementsExtended?.losebuttonColor = gameficationResultElementExtended[RDConstants.losebuttonColor] as? String ?? ""
+            findToWinModel.gameResultElementsExtended?.losebuttonTextColor = gameficationResultElementExtended[RDConstants.losebuttonTextColor] as? String ?? ""
+            findToWinModel.gameResultElementsExtended?.losebuttonTextSize = extendedProps[RDConstants.losebuttonTextSize] as? String ?? ""
+            
+        }
+        
+        return findToWinModel
+    }
 
     private func parseScratchToWin(_ scratchToWin: [String: Any?]) -> ScratchToWinModel? {
         guard let actionData = scratchToWin[RDConstants.actionData] as? [String: Any] else { return nil }

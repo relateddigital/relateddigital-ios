@@ -96,8 +96,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                    if self.showGamefication(gameficationVİewModel: gamification) {
                       self.markTargetingActionShown(model: gamification)
                   }
+               }  else if model.targetingActionType == .findToWin, let findToWin = model as? FindToWinViewModel {
+                   if self.showFindToWin(findToWinModel: findToWin) {
+                      self.markTargetingActionShown(model: findToWin)
+                  }
                }
-                
             }
         }
     }
@@ -114,14 +117,15 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         return false
     }
     
-    func showFindToWin() {
-        let controller = FindToWinViewController()
+    func showFindToWin(findToWinModel: FindToWinViewModel) ->Bool {
+        let controller = FindToWinViewController(findToWinModel)
         controller.modalPresentationStyle = .fullScreen
         controller.delegate = self
         if let rootViewController = RDHelper.getRootViewController() {
             rootViewController.present(controller, animated: true, completion: nil)
-            
+            return true
         }
+        return false
     }
     
     func showDrawer(model:DrawerServiceModel) ->Bool {

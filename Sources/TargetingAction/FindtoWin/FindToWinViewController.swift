@@ -19,8 +19,9 @@ class FindToWinViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
     
-    init() {
+    init(_ findToWin : FindToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
+        self.findToWin = findToWin
     }
     
     required init?(coder: NSCoder) {
@@ -64,8 +65,8 @@ class FindToWinViewController: RDBaseNotificationViewController {
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "index", ofType: "html") ?? ""
-        let bundleJsPath = bundle.path(forResource: "game", ofType: "js") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "find_to_win_index", ofType: "html") ?? ""
+        let bundleJsPath = bundle.path(forResource: "find_to_win", ofType: "js") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
         let bundleJsUrl = URL(fileURLWithPath: bundleJsPath)
@@ -123,11 +124,12 @@ extension FindToWinViewController: WKScriptMessageHandler {
                     RDLogger.info("console.log: \(message)")
                 }
                 
-                if method == "initGiftCatch" {
-                    RDLogger.info("initGiftCatch")
+                if method == "initFindToWinGame" {
+                    RDLogger.info("initFindToWinGame")
                     //burada spintowinModelı kaldı düzeltilmeli
-                    if let json = try? JSONEncoder().encode(self.spinToWin!), let jsonString = String(data: json, encoding: .utf8) {
-                        self.webView.evaluateJavaScript("window.initFindToWinGame(responseConfig);") { (_, err) in
+                    if let json = try? JSONEncoder().encode(self.findToWin!), let jsonString = String(data: json, encoding: .utf8) {
+                        print(jsonString)
+                        self.webView.evaluateJavaScript("window.initFindToWinGame(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
@@ -144,7 +146,7 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId)", auth: self.gameficationModel!.auth, mail: email)
+                    RelatedDigital.subscribeGamificationMail(actid: "\(self.findToWin!.actId)", auth: self.findToWin!.auth, mail: email)
                     subsEmail = email
                 }
                 

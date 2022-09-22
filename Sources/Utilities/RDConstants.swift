@@ -164,6 +164,20 @@ struct RDConstants {
     static let staticcode = "staticcode"
     static let scoreboardBackgroundColor = "scoreboard_background_color"
     static let scoreboardShape = "scoreboard_shape"
+    static let findToWin = "FindToWin"
+    static let playgroundRowcount = "playground_rowcount"
+    static let playgroundColumncount = "playground_columncount"
+    static let durationOfGame = "duration_of_game"
+    static let loseImage = "lose_image"
+    static let loseButtonLabel = "lose_button_label"
+    static let loseIosLnk = "lose_ios_lnk"
+    static let scoreboardPageposition = "scoreboard_pageposition"
+    static let backofcardsImage = "backofcards_image"
+    static let backofcardsColor = "backofcards_color"
+    static let blankcardImage = "blankcard_image"
+    static let losebuttonColor = "losebutton_color"
+    static let losebuttonTextColor = "losebutton_text_color"
+    static let losebuttonTextSize = "losebutton_text_size"
 
     
     

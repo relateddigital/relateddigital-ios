@@ -65,7 +65,8 @@ class InAppViewController: FormViewController {
             .drawer : [RDInAppNotificationType.drawer.rawValue: 203],
             .downHsView : [RDInAppNotificationType.downHsView.rawValue: 238],
             .video : [RDInAppNotificationType.video.rawValue: 73],
-            .gamification : [RDInAppNotificationType.gamification.rawValue: 131]
+            .gamification : [RDInAppNotificationType.gamification.rawValue: 131],
+            .findToWin : [RDInAppNotificationType.findToWin.rawValue: 132]
         ]
     }
     
