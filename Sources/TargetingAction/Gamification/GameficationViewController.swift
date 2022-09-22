@@ -67,14 +67,14 @@ class GameficationViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("gift_catch_index.html")
+        let htmlUrl = docUrl.appendingPathComponent("gift_catch.html")
         let jsUrl = docUrl.appendingPathComponent("gift_catch.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "gift_catch_index", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "gift_catch", ofType: "html") ?? ""
         let bundleJsPath = bundle.path(forResource: "gift_catch", ofType: "js") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
