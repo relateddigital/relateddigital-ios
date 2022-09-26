@@ -58,6 +58,7 @@ public class RDStoryHomeViewController: NSObject, UICollectionViewDataSource, UI
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let _ = self.storyAction else {return}
         if self.storyAction.stories.count == 0 {
             return
         }
