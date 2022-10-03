@@ -146,10 +146,16 @@ extension GameficationViewController: WKScriptMessageHandler {
                     }
                 }
                 
-                if method == "copyToClipboard", let couponCode = event["couponCode"] as? String {
+                if method == "copyToClipboard", let couponCode = event["couponCode"] as? String, let codeUrl = event["url"] as? String {
                     UIPasteboard.general.string = couponCode
                     RDHelper.showCopiedClipboardMessage()
                     self.close()
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        if let url = URL(string: codeUrl) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
