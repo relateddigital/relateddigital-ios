@@ -167,6 +167,14 @@ extension GameficationViewController: WKScriptMessageHandler {
                     RelatedDigital.trackGamificationClick(gameficationReport: self.gameficationModel!.report!)
                 }
                 
+                if method == "linkClicked",let urlLnk = event["url"] as? String {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        if let url = URL(string: urlLnk) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                }
+                
                 if method == "close" {
                     self.close()
                 }
