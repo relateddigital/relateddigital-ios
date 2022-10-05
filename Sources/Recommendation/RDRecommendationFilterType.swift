@@ -24,6 +24,7 @@ public enum RDRecommendationFilterType: Int {
 @objc
 public enum RDProductFilterAttribute: Int, RawRepresentable {
     case PRODUCTNAME
+    case PRODUCTCODE
     case COLOR
     case AGEGROUP
     case BRAND
@@ -45,6 +46,8 @@ public enum RDProductFilterAttribute: Int, RawRepresentable {
         switch self {
         case .PRODUCTNAME:
             return "PRODUCTNAME"
+        case .PRODUCTCODE:
+            return "PRODUCTCODE"
         case .COLOR:
             return "COLOR"
         case .AGEGROUP:
@@ -81,6 +84,8 @@ public enum RDProductFilterAttribute: Int, RawRepresentable {
         switch rawValue {
         case "PRODUCTNAME":
             self = .PRODUCTNAME
+        case "PRODUCTCODE":
+            self = .PRODUCTCODE
         case "COLOR":
             self = .COLOR
         case "AGEGROUP":
