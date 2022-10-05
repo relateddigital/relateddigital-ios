@@ -5,6 +5,10 @@
 //  Created by Orhun Akmil on 9.08.2022.
 //
 
+import Foundation
+import UserNotifications
+import UIKit
+
 extension RDPush {
     
     @available(iOS 10.0, *)
