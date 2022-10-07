@@ -34,6 +34,7 @@ protocol RDInstanceProtocol {
     var askLocationPermmissionAtStart: Bool {get set}
     func requestIDFA()
     func sendLocationPermission()
+    func requestLocationPermissions()
     func sendCampaignParameters(properties: Properties)
     func customEvent(_ pageName: String, properties: Properties)
     func login(exVisitorId: String, properties: Properties)

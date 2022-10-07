@@ -46,7 +46,7 @@ public class RelatedDigital {
     ///     - dataSource: The data source of the profile you want to integrate.
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`
     ///
-    public class func initialize(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
+    public class func initialize(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, askLocationPermmissionAtStart: Bool = true) {
         
         guard Thread.isMainThread else {
             fatalError("initialize must be called on the main thread.")
@@ -63,7 +63,7 @@ public class RelatedDigital {
             fatalError("organizationId, profileId and dataSource must have value.")
         }
         
-        _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource))
+        _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermmissionAtStart: askLocationPermmissionAtStart))
         
     }
     
@@ -147,6 +147,10 @@ public class RelatedDigital {
     
     public static func sendLocationPermission() {
         shared.rdInstance.sendLocationPermission()
+    }
+    
+    public static func requestLocationPermissions() {
+        shared.rdInstance.requestLocationPermissions()
     }
     
     public static func sendCampaignParameters(properties: Properties) {
