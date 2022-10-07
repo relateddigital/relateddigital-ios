@@ -64,7 +64,7 @@ class RDGamificationCodeBannerView: UIView {
         bannerButtonLabel.textAlignment = .center
         
         bannerCodeLabel = UILabel()
-        bannerCodeLabel.text = UIPasteboard.general.string
+        bannerCodeLabel.text = BannerCodeManager.shared.getGiftRainCode()
         bannerCodeLabel.textAlignment = .center
         
         verticalStackViewLeft.addArrangedSubview(bannerTextLabel)

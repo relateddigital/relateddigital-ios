@@ -175,6 +175,11 @@ extension GameficationViewController: WKScriptMessageHandler {
                     }
                 }
                 
+                
+                if method == "saveCodeGotten", let code = event["email"] as? String {
+                    BannerCodeManager.shared.setGiftRainCode(code: code)
+                }
+                
                 if method == "close" {
                     self.close()
                 }
