@@ -64,7 +64,7 @@ class RDGamificationCodeBannerView: UIView {
         bannerButtonLabel.textAlignment = .center
         
         bannerCodeLabel = UILabel()
-        bannerCodeLabel.text = gameficationModel.promocode_banner_text.replacingOccurrences(of: "\'", with: "")
+        bannerCodeLabel.text = UIPasteboard.general.string
         bannerCodeLabel.textAlignment = .center
         
         verticalStackViewLeft.addArrangedSubview(bannerTextLabel)
