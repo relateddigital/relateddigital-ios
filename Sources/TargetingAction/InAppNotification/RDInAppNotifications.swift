@@ -239,10 +239,16 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showSpinToWin(_ model: SpinToWinViewModel) -> Bool {
-        let spinToWinVC = SpinToWinViewController(model)
-        spinToWinVC.delegate = self
-        spinToWinVC.show(animated: true)
-        return true
+        
+        let controller = SpinToWinViewController(model)
+        controller.modalPresentationStyle = .fullScreen
+        controller.delegate = self
+        if let rootViewController = RDHelper.getRootViewController() {
+            rootViewController.present(controller, animated: true, completion: nil)
+            return true
+        }
+        return false
+        
     }
     
     func showPopUp(_ notification: RDInAppNotification) -> Bool {
