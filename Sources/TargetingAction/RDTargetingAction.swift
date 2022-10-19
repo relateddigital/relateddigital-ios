@@ -637,7 +637,7 @@ class RDTargetingAction {
             findToWinModel.gameElements?.durationOfGame = gameElements[RDConstants.durationOfGame] as? Int ?? 0
             findToWinModel.gameElements?.soundUrl = gameElements[RDConstants.soundUrl] as? String ?? ""
 
-            if let imagesString = gameElements[RDConstants.blankcardImage] as? [String] {
+            if let imagesString = gameElements[RDConstants.cardImages] as? [String] {
                 for element in imagesString {
                     findToWinModel.gameElements?.cardImages.append(element)
                 }

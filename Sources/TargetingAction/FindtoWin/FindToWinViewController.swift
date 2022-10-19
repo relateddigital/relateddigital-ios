@@ -58,14 +58,14 @@ class FindToWinViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("find_to_win_index.html")
+        let htmlUrl = docUrl.appendingPathComponent("find_to_win.html")
         let jsUrl = docUrl.appendingPathComponent("find_to_win.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "find_to_win_index", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "find_to_win", ofType: "html") ?? ""
         let bundleJsPath = bundle.path(forResource: "find_to_win", ofType: "js") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)

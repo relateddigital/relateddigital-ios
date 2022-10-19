@@ -178,6 +178,8 @@ struct RDConstants {
     static let losebuttonColor = "losebutton_color"
     static let losebuttonTextColor = "losebutton_text_color"
     static let losebuttonTextSize = "losebutton_text_size"
+    static let cardImages = "card_images"
+
 
     
     
