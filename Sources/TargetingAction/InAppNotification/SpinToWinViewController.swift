@@ -1,6 +1,6 @@
 //
 //  SpinToWinViewController.swift
-//  VisilabsIOS
+//  Related Digital IOS
 //
 //  Created by Said Alır on 29.01.2021.
 //
@@ -157,11 +157,6 @@ class SpinToWinViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
     
-    override func hide(animated: Bool, completion: @escaping () -> Void) {
-        dismiss(animated: true)
-        completion()
-    }
-    
     func configureWebView() -> WKWebView {
         let configuration = WKWebViewConfiguration()
         let userContentController = WKUserContentController()
@@ -217,6 +212,51 @@ class SpinToWinViewController: RDBaseNotificationViewController {
         }
         RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
     }
+    
+    override func show(animated: Bool) {
+            guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
+                return
+            }
+            if #available(iOS 13.0, *) {
+                let windowScene = sharedUIApplication
+                    .connectedScenes
+                    .filter { $0.activationState == .foregroundActive }
+                    .first
+                if let windowScene = windowScene as? UIWindowScene {
+                    window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                    window?.windowScene = windowScene
+                }
+            } else {
+                window = UIWindow(frame: CGRect(x: 0,
+                                                y: 0,
+                                                width: UIScreen.main.bounds.size.width,
+                                                height: UIScreen.main.bounds.size.height))
+            }
+            if let window = window {
+                window.alpha = 0
+                window.windowLevel = UIWindow.Level.alert
+                window.rootViewController = self
+                window.isHidden = false
+            }
+            
+            let duration = animated ? 0.25 : 0
+            UIView.animate(withDuration: duration, animations: {
+                self.window?.alpha = 1
+            }, completion: { _ in
+            })
+        }
+        
+        override func hide(animated: Bool, completion: @escaping () -> Void) {
+            let duration = animated ? 0.25 : 0
+            UIView.animate(withDuration: duration, animations: {
+                self.window?.alpha = 0
+            }, completion: { _ in
+                self.window?.isHidden = true
+                self.window?.removeFromSuperview()
+                self.window = nil
+                completion()
+            })
+        }
     
 }
 
