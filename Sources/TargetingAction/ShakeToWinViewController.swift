@@ -34,6 +34,14 @@ public class ShakeToWinViewController: UIViewController {
         return button
     }()
     
+    public init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(scrollView)
@@ -67,7 +75,7 @@ public class ShakeToWinViewController: UIViewController {
     }
     
     func getUIImage(named: String) -> UIImage? {
-        let bundle = Bundle(identifier: "com.relateddigital.visilabs")
+        let bundle = Bundle(for: ShakeToWinViewController.self)
         return UIImage(named: named, in: bundle, compatibleWith: nil)!.resized(withPercentage: CGFloat(0.75))
     }
     
