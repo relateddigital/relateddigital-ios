@@ -11,6 +11,10 @@ import UIKit
 import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
+
+    
+
+    
     
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
@@ -476,6 +480,10 @@ extension RDInstance: RDInAppNotificationsDelegate {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "gamification_email")
     }
     
+    func subscribeFindToWinMail(actid: String, auth: String, mail: String) {
+        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "find_to_win_email")
+    }
+    
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
@@ -489,6 +497,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = gameficationReport.click?.parseClick().omZn
         properties["OM.zpc"] = gameficationReport.click?.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
+    func trackFindToWinClick(findToWinReport: FindToWinReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = findToWinReport.click?.parseClick().omZn
+        properties["OM.zpc"] = findToWinReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
 }

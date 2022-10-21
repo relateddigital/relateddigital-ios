@@ -205,6 +205,10 @@ public class RelatedDigital {
         shared.rdInstance.subscribeGamificationMail(actid: actid, auth: auth, mail: mail)
     }
     
+    static func subscribeFindToWinMail(actid: String, auth: String, mail: String) {
+        shared.rdInstance.subscribeFindToWinMail(actid: actid, auth: auth, mail: mail)
+    }
+    
     static func subscribeMail(click: String, actid: String, auth: String, mail: String) {
         shared.rdInstance.subscribeMail(click: click, actid: actid, auth: auth, mail: mail)
     }
@@ -215,6 +219,10 @@ public class RelatedDigital {
     
     static func trackGamificationClick(gameficationReport: GameficationReport) {
         shared.rdInstance.trackGamificationClick(gameficationReport: gameficationReport)
+    }
+    
+    static func trackFindToWinClick(findToWinReport: FindToWinReport) {
+        shared.rdInstance.trackFindToWinClick(findToWinReport: findToWinReport)
     }
     
     

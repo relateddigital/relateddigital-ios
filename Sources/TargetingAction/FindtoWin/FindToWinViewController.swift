@@ -30,7 +30,14 @@ class FindToWinViewController: RDBaseNotificationViewController {
     
     private func close() {
         dismiss(animated: true) {
-            self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            if let findToWin = self.findToWin {
+                let bannerVC = RDFindToWinCodeBannerController(findToWin)
+                bannerVC.delegate = self.delegate
+                bannerVC.show(animated: true)
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            } else {
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            }
         }
     }
     
@@ -151,12 +158,25 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeGamificationMail(actid: "\(self.findToWin!.actId ?? 0)", auth: self.findToWin!.auth, mail: email)
+                    RelatedDigital.subscribeFindToWinMail(actid: "\(self.findToWin!.actId ?? 0)", auth: self.findToWin!.auth, mail: email)
                     subsEmail = email
                 }
                 
                 if method == "sendReport" {
-                    RelatedDigital.trackGamificationClick(gameficationReport: self.gameficationModel!.report!)
+                    RelatedDigital.trackFindToWinClick(findToWinReport: (self.findToWin?.report)!)
+                }
+                
+                if method == "linkClicked",let urlLnk = event["url"] as? String {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        if let url = URL(string: urlLnk) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                }
+                
+                if method == "saveCodeGotten", let code = event["email"] as? String {
+                    UIPasteboard.general.string = code
+                    BannerCodeManager.shared.setFindToWinCode(code: code)
                 }
                 
                 if method == "close" {

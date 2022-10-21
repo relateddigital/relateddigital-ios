@@ -144,6 +144,8 @@ public struct MailSubscriptionExtendedPropsGamification : Codable {
 public class BannerCodeManager {
     static let shared = BannerCodeManager()
     private let giftRainCode = "giftRainCode"
+    private let findToWinCode = "findToWinCode"
+
     
     func setGiftRainCode(code:String) {
         let defaults = UserDefaults.standard
@@ -155,6 +157,18 @@ public class BannerCodeManager {
         let defaults = UserDefaults.standard
         let string = defaults.string(forKey: giftRainCode) ?? ""
         defaults.set("", forKey:giftRainCode)
+        return string
+    }
+    
+    func setFindToWinCode(code:String) {
+        let defaults = UserDefaults.standard
+        defaults.set(code, forKey:findToWinCode)
+    }
+    
+    func getFindToWinCode() -> String {
+        let defaults = UserDefaults.standard
+        let string = defaults.string(forKey: findToWinCode) ?? ""
+        defaults.set("", forKey:findToWinCode)
         return string
     }
     
