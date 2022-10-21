@@ -192,7 +192,7 @@ let cardSettings = {
     emptyBackfaceImg: '',
     emptyBackfaceColor: 'gray',
     emptyFrontImg: '',
-    emptyFrontColor: 'red',
+    emptyFrontColor: 'gray',
 }
 
 /**
@@ -209,47 +209,6 @@ let gameSettings = {
  * Coupons
 */
 let couponCodes = {
-    0: "KAZANAMADINIZ",
-    1: "BGJ7S1",
-    2: "BDGJ72",
-    3: "BAGJ73",
-    4: "BGJ7V4",
-    5: "BGJ7S5",
-    6: "BGJ76Q",
-    7: "BGJ77F",
-    8: "BGJ78F",
-    9: "BGJ79Q",
-    10: "BG1J0D",
-    11: "N72X1P",
-    12: "N72X2H",
-    13: "N72X3J",
-    14: "N72X4K",
-    15: "N72X5Y",
-    16: "N72X6E",
-    17: "N72X7FD",
-    18: "N72DX8",
-    19: "N72GX9",
-    20: "BJWMD0",
-    21: "BJSWM1",
-    22: "BJWM2D",
-    23: "BJWEM3",
-    24: "BJWM4J",
-    25: "BJWWM5",
-    26: "BJWM6F",
-    27: "BJWM7Q",
-    28: "BJDWM8",
-    29: "BJWQM9",
-    30: "BCWM0G",
-    31: "BCWM1K",
-    32: "BCWM2W",
-    33: "BCWM3L",
-    34: "BCWM4Q",
-    35: "BCWM5C",
-    36: "BCWM6S",
-    37: "BCWOM7",
-    38: "BCWM8M",
-    39: "BCWM8P",
-    40: "BCWKN0",
 };
 
 let pair = [];
@@ -259,11 +218,9 @@ let pair = [];
  */
 function initFindToWinGame(responseConfig) {
     if (utils.getMobileOperatingSystem() == 'iOS') {
-        console.log("RUN IOS");
         iOSConfigRegulator(responseConfig)
     }
     else {
-        console.log("RUN ANDROID");
         androidConfigRegulator(responseConfig);
     }
 
@@ -271,22 +228,18 @@ function initFindToWinGame(responseConfig) {
 }
 
 function androidConfigRegulator(responseConfig) {
-
-    // console.log("responseConfig", responseConfig);
-
     responseConfig = JSON.parse(responseConfig)
-    responseConfig.ExtendedProps = JSON.parse(unescape(responseConfig.ExtendedProps))
+    responseConfig.actiondata.ExtendedProps = JSON.parse(unescape(responseConfig.actiondata.ExtendedProps))
 
-    console.log(responseConfig);
-
-    const res = responseConfig;
+    const res = responseConfig.actiondata;
     const ext = res.ExtendedProps;
 
     const row = res.game_elements.playground_rowcount;
     const col = res.game_elements.playground_columncount;
 
+    const blankCard = ext.game_elements.blankcard_image ? ext.game_elements.blankcard_image : false
     maxPairCalculator(row, col);
-    cardSlotAdjuster(row, col, res.game_elements.card_images); // buraya boş kart aktif mi bilgisini yolla
+    cardSlotAdjuster(row, col, res.game_elements.card_images, blankCard); // buraya boş kart aktif mi bilgisini yolla
     promoCodeCalculator(res.promo_codes);
 
 
@@ -299,6 +252,8 @@ function androidConfigRegulator(responseConfig) {
     generalData.fontName = ext.font_family;
     cardSettings.backfaceImg = ext.game_elements.backofcards_image;
     cardSettings.backfaceColor = ext.game_elements.backofcards_color;
+    cardSettings.emptyBackfaceImg = ext.game_elements.blankcard_image;
+    cardSettings.emptyFrontImg = ext.game_elements.blankcard_image;
 
     utils.loadSound();
 
@@ -351,7 +306,7 @@ function androidConfigRegulator(responseConfig) {
     }
 
     // Rules Screen Optionals
-    if (res.gamification_rules) {
+    if (res.gamification_rules && Object.keys(res.gamification_rules).length > 0) {
         activePageData.rulesScreen = true;
 
         componentsData.rulesScreen.bgImage = res.gamification_rules.background_image
@@ -416,7 +371,7 @@ function iOSConfigRegulator(responseConfig) {
     const col = res.gameElements.playgroundColumncount;
 
     maxPairCalculator(row, col);
-    cardSlotAdjuster(row, col, res.gameElements.cardImages);
+    cardSlotAdjuster(row, col, res.gameElements.cardImages); // burayı androiddeki gibi yap
     promoCodeCalculator(res.promoCodes);
 
     // General data
@@ -479,7 +434,7 @@ function iOSConfigRegulator(responseConfig) {
     }
 
     // // Rules Screen Optionals
-    if (res.gamificationRules) {
+    if (res.gamificationRules && Object.keys(res.gamificationRules).length > 0 && res.gamificationRules.buttonLabel) {
         activePageData.rulesScreen = true;
 
         componentsData.rulesScreen.bgImage = res.gamificationRules.backgroundImage
@@ -917,6 +872,7 @@ function createRulesScreen() {
         rulesScreenBluredBG.style.left = "0";
         rulesScreenBluredBG.style.zIndex = "1";
         rulesScreenBluredBG.style.filter = "blur(35px)";
+        rulesScreen.appendChild(rulesScreenBluredBG)
     }
 
 
@@ -939,7 +895,6 @@ function createRulesScreen() {
     submit.innerText = componentsData.rulesScreen.button.text;
 
     rulesScreen.appendChild(rulesIMG)
-    rulesScreen.appendChild(rulesScreenBluredBG)
     rulesScreen.appendChild(submit);
     MAIN_COMPONENT.appendChild(rulesScreen);
 
@@ -1056,20 +1011,20 @@ function createCard(data, i) {
     return card;
 }
 
-function cardSlotAdjuster(row, column, images) {
+function cardSlotAdjuster(row, column, images, blankCard) {
     let result = [];
     // console.log("rowColTotalCountWithMod(row , column)",rowColTotalCountWithMod(row , column));
     images.forEach((url, i) => {
-        if (result.length < rowColTotalCountWithMod(row , column)) {
-            const cardData = {name: 'card' + (i+1), imgUrl: url}
+        if (result.length < rowColTotalCountWithMod(row, column)) {
+            const cardData = { name: 'card' + (i + 1), imgUrl: url }
             result.push(cardData)
             result.push(cardData)
         }
     });
 
     // 3. parametre responseConfigden çekilecek 
-    if (emptyCardDataAddControl(row, column,true)) {
-        result.push({empty:true, name: 'EMPTY_CARD', imgUrl:"https://picsum.photos/id/5/300/600" })
+    if (emptyCardDataAddControl(row, column, blankCard)) {
+        result.push({ empty: true, name: 'EMPTY_CARD', imgUrl: blankCard })
     }
 
     result.sort(() => (Math.random() > .5) ? 1 : -1);
@@ -1082,8 +1037,8 @@ function cardSlotAdjuster(row, column, images) {
     utils.cardSizeCalculate();
 }
 
-function emptyCardDataAddControl(row,column,emptyCardActive){
-    if(!row || !column) return false
+function emptyCardDataAddControl(row, column, emptyCardActive) {
+    if (!row || !column) return false
 
     let result = false;
     if (emptyCardActive) {
@@ -1093,13 +1048,13 @@ function emptyCardDataAddControl(row,column,emptyCardActive){
     return result
 }
 
-function rowColTotalCountWithMod(row,column){
-    if(!row || !column) return 0
+function rowColTotalCountWithMod(row, column) {
+    if (!row || !column) return 0
 
     const x = row * column
     const result = x % 2
 
-    return result > 0 ? x-1 : x
+    return result > 0 ? x - 1 : x
 }
 
 function slotCreator(r, c, imgs) {
@@ -1383,6 +1338,10 @@ function createFinishScreen(lose) {
     copyButton.style.padding = "15px 30px";
     copyButton.style.fontSize = lose ? componentsData.finishScreen.lose.loseButtonTextSize : componentsData.finishScreen.button.fontSize;
     copyButton.style.borderRadius = generalData.borderRadius;
+    copyButton.style.position = "absolute";
+    copyButton.style.bottom = "70px";
+    copyButton.style.left = "50%";
+    copyButton.style.transform = "translate(-50%, 0%) translate3d(0,0,3px)";
     copyButton.style.width = "fit-content";
     copyButton.style.margin = "10px auto";
     copyButton.style.cursor = "pointer";
@@ -1391,15 +1350,15 @@ function createFinishScreen(lose) {
     copyButton.style.fontFamily = generalData.fontName;
     copyButton.innerText = lose ? componentsData.finishScreen.lose.buttonLabel : componentsData.finishScreen.button.text;
 
-
     container.appendChild(copyButton);
 
-    if (!lose) {
-        copyButton.addEventListener('click', function () {
-            utils.copyToClipboard(lose);
-            utils.pauseSound();
-        });
-    }
+    if (!lose) {utils.saveCodeGotten()}
+
+    copyButton.addEventListener('click', function () {
+        utils.copyToClipboard(lose);
+        utils.pauseSound();
+    });
+
 
     copyButton.addEventListener("click", function () {
         if (utils.getMobileOperatingSystem() == 'iOS' && componentsData.finishScreen.button.iOSLink) {
@@ -1419,9 +1378,7 @@ function createFinishScreen(lose) {
 function finish(lose) {
     clearInterval(TIME_INTERVAL.timer)
     createFinishScreen(lose);
-    utils.saveCodeGotten()
     document.querySelector('#' + componentsData.gameScreen.id).remove();
-
 }
 
 function maxPairCalculator(row, col) {
@@ -1680,7 +1637,7 @@ let utils = {
     copyToClipboard: (lose) => {
         console.log("NATIVE COPYCLIPBORD");
         if (window.Android) {
-            Android.copyToClipboard(couponCodes[SCORE], getAndroidLink(lose))
+            Android.copyToClipboard(lose ? "" : couponCodes[SCORE], getAndroidLink(lose))
         } else if (window.webkit.messageHandlers.eventHandler) {
             window.webkit.messageHandlers.eventHandler.postMessage({
                 method: "copyToClipboard",
