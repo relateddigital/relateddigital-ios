@@ -158,6 +158,13 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                     button.isEnabled = false
                 }
                 addButton(button)
+                //TODO: for second Button for 5. Template
+//                let button1 = RDPopupDialogButton(title: notification.buttonText!,
+//                                                       font: notification.buttonTextFont,
+//                                                       buttonTextColor: notification.buttonTextColor,
+//                                                       buttonColor: notification.buttonColor, action: commonButtonAction)
+//                addButton(button1)
+
             }
 
             if notification.messageTitle.isNilOrWhiteSpace {
