@@ -32,7 +32,8 @@ class GameficationViewController: RDBaseNotificationViewController {
     
     private func close() {
         dismiss(animated: true) {
-            if let gamefication = self.gameficationModel {
+            
+            if let gamefication = self.gameficationModel, !gamefication.promocode_banner_button_label.isEmptyOrWhitespace {
                 let bannerVC = RDGamificationCodeBannerController(gamefication)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
