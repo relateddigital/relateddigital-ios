@@ -104,20 +104,15 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             }
         }
     }
-    
-    
-    func showGamefication(gameficationVİewModel: GameficationViewModel) ->Bool{
-        let controller = GameficationViewController(gameficationVİewModel)
-        controller.modalPresentationStyle = .fullScreen
-        controller.delegate = self
-        if let rootViewController = RDHelper.getRootViewController() {
-            rootViewController.present(controller, animated: true, completion: nil)
-            return true
-        }
-        return false
+
+    func showGamefication(gameficationVİewModel: GameficationViewModel) -> Bool {
+        let gameficationVC = GameficationViewController(gameficationVİewModel)
+        gameficationVC.delegate = self
+        gameficationVC.show(animated: true)
+        return true
     }
-    
-    func showFindToWin(findToWinModel: FindToWinViewModel) ->Bool {
+
+    func showFindToWin(findToWinModel: FindToWinViewModel) -> Bool {
         let controller = FindToWinViewController(findToWinModel)
         controller.modalPresentationStyle = .fullScreen
         controller.delegate = self
@@ -127,15 +122,15 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         }
         return false
     }
-    
-    func showDrawer(model:DrawerServiceModel) ->Bool {
-        let drawerViewController = RDDrawerViewController(model:model)
+
+    func showDrawer(model: DrawerServiceModel) -> Bool {
+        let drawerViewController = RDDrawerViewController(model: model)
         drawerViewController.delegate = self
         drawerViewController.show(animated: true)
         return true
     }
-    
-    public func showDownhs(model: downHsViewServiceModel) ->Bool {
+
+    public func showDownhs(model: downHsViewServiceModel) -> Bool {
         let downhsViewController = downHsViewController(model: model)
         downhsViewController.delegate = self
         downhsViewController.show(animated: true)
@@ -229,7 +224,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             root.present(alertController, animated: true, completion: alertDismiss)
         }
     }
-    
+
     func showScratchToWin(_ model: ScratchToWinModel) -> Bool {
         let popUpVC = RDPopupNotificationViewController(scratchToWin: model)
         popUpVC.delegate = self
@@ -239,18 +234,12 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showSpinToWin(_ model: SpinToWinViewModel) -> Bool {
-        
-        let controller = SpinToWinViewController(model)
-        controller.modalPresentationStyle = .fullScreen
-        controller.delegate = self
-        if let rootViewController = RDHelper.getRootViewController() {
-            rootViewController.present(controller, animated: true, completion: nil)
-            return true
-        }
-        return false
-        
+        let spinToWinVC = SpinToWinViewController(model)
+        spinToWinVC.delegate = self
+        spinToWinVC.show(animated: true)
+        return true
     }
-    
+
     func showPopUp(_ notification: RDInAppNotification) -> Bool {
         let popUpVC = RDPopupNotificationViewController(notification: notification)
         popUpVC.delegate = self
@@ -258,7 +247,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         popUpVC.show(animated: false)
         return true
     }
-    
+
     func showMailPopup(_ model: MailSubscriptionViewModel) -> Bool {
         let popUpVC = RDPopupNotificationViewController(mailForm: model)
         popUpVC.delegate = self
@@ -273,7 +262,6 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             // TO_DO: burada customEvent request'i atılmalı
         }
     }
-    
 
     func markTargetingActionShown(model: TargetingActionViewModel) {
         lock.write {
