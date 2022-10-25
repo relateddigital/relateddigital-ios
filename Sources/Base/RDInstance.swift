@@ -822,4 +822,11 @@ extension RDInstance {
 
 public protocol RDInappButtonDelegate: AnyObject {
     func didTapButton(_ notification: RDInAppNotification)
+    func didTapSecondButton(_ notification: RDInAppNotification)
+}
+
+public extension RDInappButtonDelegate {
+    func didTapSecondButton(_ notification: RDInAppNotification) {
+        print("Optional Delegation Triggered")
+    }
 }

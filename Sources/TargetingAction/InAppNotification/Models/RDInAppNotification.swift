@@ -54,7 +54,13 @@ public class RDInAppNotification {
         public static let carouselItems = "carousel_items"
         public static let videourl = "videourl"
         public static let secondPopupVideourl1 = "secondPopup_videourl1"
-        public static let secondPopupVideourl2 = "secondPopup_videourl2"        
+        public static let secondPopupVideourl2 = "secondPopup_videourl2"
+        public static let secondButtonFunction = "second_button_function"
+        public static let secondButtonText = "second_button_text"
+        public static let secondButtonTextColor = "second_button_text_color"
+        public static let secondButtonColor = "second_button_color"
+        public static let secondButtonIosLnk = "second_button_ios_lnk"
+
     }
 
     let actId: Int
@@ -104,6 +110,11 @@ public class RDInAppNotification {
     let videourl: String?
     let secondPopupVideourl1: String?
     let secondPopupVideourl2: String?
+    let secondButtonFunction: String?
+    let secondButtonText: String?
+    let secondButtonTextColor: UIColor?
+    let secondButtonColor: UIColor?
+    let secondButtonIosLnk: String?
 
     var imageUrl: URL?
     lazy var image: Data? = {
@@ -147,11 +158,14 @@ public class RDInAppNotification {
     }()
 
     let callToActionUrl: URL?
+    let callToSecondActionUrl: URL?
     var messageTitleFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title2),
                                           size: CGFloat(12))
     var messageBodyFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body),
                                          size: CGFloat(8))
     var buttonTextFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body),
+                                        size: CGFloat(8))
+    var secondButtonTextFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body),
                                         size: CGFloat(8))
 
     public init(actId: Int,
@@ -199,7 +213,12 @@ public class RDInAppNotification {
                 carouselItems: [RDCarouselItem]? = nil,
                 videourl:String?,
                 secondPopupVideourl1:String?,
-                secondPopupVideourl2:String?)
+                secondPopupVideourl2:String?,
+                secondButtonFunction:String?,
+                secondButtonText:String?,
+                secondButtonTextColor:String?,
+                secondButtonColor:String?,
+                secondButtonIosLnk:String?)
     {
         self.actId = actId
         messageType = type.rawValue
@@ -222,6 +241,11 @@ public class RDInAppNotification {
         self.fontFamily = fontFamily
         self.customFont = customFont
         self.closePopupActionType = closePopupActionType
+        self.secondButtonFunction = secondButtonFunction
+        self.secondButtonText = secondButtonText
+        self.secondButtonTextColor = UIColor(hex: secondButtonTextColor)
+        self.secondButtonColor = UIColor(hex: secondButtonColor)
+        self.secondButtonIosLnk = secondButtonIosLnk
         backGroundColor = UIColor(hex: backGround)
         if let cBColor = closeButtonColor {
             if cBColor.lowercased() == "white" {
@@ -254,7 +278,25 @@ public class RDInAppNotification {
                 callToActionUrl = URL(string: urlString)
             }
         }
+        
+        
+        var callToSecondActionUrl: URL?
+        if let buttonFunction = secondButtonFunction {
+            if buttonFunction == "link" || buttonFunction == "" {
+                if let urlString = secondButtonIosLnk {
+                    callToSecondActionUrl = URL(string: urlString)
+                }
+            } else if buttonFunction == "redirect" {
+                callToSecondActionUrl = URL(string: "redirect")
+            }
+        } else {
+            if let urlString = secondButtonIosLnk {
+                callToSecondActionUrl = URL(string: urlString)
+            }
+        }
+        
         self.callToActionUrl = callToActionUrl
+        self.callToSecondActionUrl = callToSecondActionUrl
         self.alertType = alertType
         self.closeButtonText = closeButtonText
         self.promotionCode = promotionCode
@@ -339,6 +381,11 @@ public class RDInAppNotification {
         promotionCode = actionData[PayloadKey.promotionCode] as? String
         promotionTextColor = UIColor(hex: actionData[PayloadKey.promotionTextColor] as? String)
         promotionBackgroundColor = UIColor(hex: actionData[PayloadKey.promotionBackgroundColor] as? String)
+        secondButtonFunction = actionData[PayloadKey.secondButtonFunction] as? String
+        secondButtonText = actionData[PayloadKey.secondButtonText] as? String
+        secondButtonTextColor = UIColor(hex: actionData[PayloadKey.secondButtonTextColor] as? String)
+        secondButtonColor = UIColor(hex: actionData[PayloadKey.secondButtonColor] as? String)
+        secondButtonIosLnk = actionData[PayloadKey.secondButtonIosLnk] as? String
         if let cBColor = actionData[PayloadKey.closeButtonColor] as? String {
             if cBColor.lowercased() == "white" {
                 closeButtonColor = UIColor.white
@@ -372,7 +419,26 @@ public class RDInAppNotification {
                 callToActionUrl = URL(string: urlString)
             }
         }
+        
+        
+        var callToSecondActionUrl: URL?
+        if let buttonFunction = secondButtonFunction {
+            if buttonFunction == "link" || buttonFunction == "" {
+                if let urlString = secondButtonIosLnk {
+                    callToSecondActionUrl = URL(string: urlString)
+                }
+            } else if buttonFunction == "redirect" {
+                callToSecondActionUrl = URL(string: "redirect")
+            }
+        } else {
+            if let urlString = secondButtonIosLnk {
+                callToSecondActionUrl = URL(string: urlString)
+            }
+        }
+        
         self.callToActionUrl = callToActionUrl
+        self.callToSecondActionUrl = callToSecondActionUrl
+
         alertType = actionData[PayloadKey.alertType] as? String
         closeButtonText = actionData[PayloadKey.closeButtonText] as? String
         if let numColors = actionData[PayloadKey.numberColors] as? [String]? {
@@ -439,5 +505,6 @@ public class RDInAppNotification {
         messageTitleFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageTitleTextSize, style: .title2, customFont: customFont)
         messageBodyFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .body, customFont: customFont)
         buttonTextFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .title2, customFont: customFont)
+        secondButtonTextFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .title2, customFont: customFont)
     }
 }

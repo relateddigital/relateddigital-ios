@@ -158,13 +158,14 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                     button.isEnabled = false
                 }
                 addButton(button)
-                //TODO: for second Button for 5. Template
-//                let button1 = RDPopupDialogButton(title: notification.buttonText!,
-//                                                       font: notification.buttonTextFont,
-//                                                       buttonTextColor: notification.buttonTextColor,
-//                                                       buttonColor: notification.buttonColor, action: commonButtonAction)
-//                addButton(button1)
-
+            }
+            
+            if !notification.secondButtonText.isNilOrWhiteSpace {
+                let secondButton = RDPopupDialogButton(title: notification.secondButtonText!,
+                                                       font: notification.secondButtonTextFont,
+                                                       buttonTextColor: notification.secondButtonTextColor,
+                                                       buttonColor: notification.secondButtonColor, action: secondButtonAction)
+                addButton(secondButton)
             }
 
             if notification.messageTitle.isNilOrWhiteSpace {
@@ -242,6 +243,22 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         if returnCallback {
             self.inappButtonDelegate?.didTapButton(notification)
         }
+    }
+    
+    func secondButtonAction() {
+        
+        guard let notification = self.notification else { return }
+        let additionalTrackingProperties = Properties()
+        
+        let callToActionURL: URL? = notification.callToSecondActionUrl
+
+        self.delegate?.notificationShouldDismiss(controller: self,
+                                                 callToActionURL: callToActionURL,
+                                                 shouldTrack: true,
+                                                 additionalTrackingProperties: additionalTrackingProperties)
+        
+        self.inappButtonDelegate?.didTapSecondButton(notification)
+        
     }
 
     fileprivate func initForEmailForm(_ viewController: RDDPNVC) {
@@ -574,7 +591,7 @@ internal extension RDPopupNotificationViewController {
             default:
                 type = .imageTextButton
             }
-            return RDInAppNotification(actId: not.actId, type: type, messageTitle: not.secondPopupTitle, messageBody: not.secondPopupBody, buttonText: not.secondPopupButtonText, buttonFunction: not.buttonFunction, iosLink: not.iosLink, imageUrlString: not.secondImageUrlString1, visitorData: not.visitorData, visitData: not.visitData, queryString: not.queryString, messageTitleColor: not.messageTitleColor?.toHexString(), messageTitleBackgroundColor: not.messageTitleBackgroundColor?.toHexString(), messageTitleTextSize: not.secondPopupBodyTextSize, messageBodyColor: not.messageBodyColor?.toHexString(), messageBodyBackgroundColor: not.messageBodyBackgroundColor?.toHexString(), messageBodyTextSize: not.secondPopupBodyTextSize, fontFamily: not.fontFamily, customFont: not.customFont, closePopupActionType: not.closePopupActionType, backGround: not.backGroundColor?.toHexString(), closeButtonColor: closeButtonColor, buttonTextColor: not.buttonTextColor?.toHexString(), buttonColor: not.buttonColor?.toHexString(), alertType: "", closeButtonText: not.closeButtonText, promotionCode: promo, promotionTextColor: not.promotionTextColor?.toHexString(), promotionBackgroundColor: not.promotionBackgroundColor?.toHexString(), numberColors: nil, numberRange: not.numberRange, waitingTime: 0, secondPopupType: nil, secondPopupTitle: nil, secondPopupBody: nil, secondPopupBodyTextSize: nil, secondPopupButtonText: nil, secondImageUrlString1: nil, secondImageUrlString2: not.secondImageUrlString2, secondPopupMinPoint: nil, previousPopupPoint: point, position: .bottom,videourl: not.videourl,secondPopupVideourl1: not.secondPopupVideourl1,secondPopupVideourl2: not.secondPopupVideourl2)
+            return RDInAppNotification(actId: not.actId, type: type, messageTitle: not.secondPopupTitle, messageBody: not.secondPopupBody, buttonText: not.secondPopupButtonText, buttonFunction: not.buttonFunction, iosLink: not.iosLink, imageUrlString: not.secondImageUrlString1, visitorData: not.visitorData, visitData: not.visitData, queryString: not.queryString, messageTitleColor: not.messageTitleColor?.toHexString(), messageTitleBackgroundColor: not.messageTitleBackgroundColor?.toHexString(), messageTitleTextSize: not.secondPopupBodyTextSize, messageBodyColor: not.messageBodyColor?.toHexString(), messageBodyBackgroundColor: not.messageBodyBackgroundColor?.toHexString(), messageBodyTextSize: not.secondPopupBodyTextSize, fontFamily: not.fontFamily, customFont: not.customFont, closePopupActionType: not.closePopupActionType, backGround: not.backGroundColor?.toHexString(), closeButtonColor: closeButtonColor, buttonTextColor: not.buttonTextColor?.toHexString(), buttonColor: not.buttonColor?.toHexString(), alertType: "", closeButtonText: not.closeButtonText, promotionCode: promo, promotionTextColor: not.promotionTextColor?.toHexString(), promotionBackgroundColor: not.promotionBackgroundColor?.toHexString(), numberColors: nil, numberRange: not.numberRange, waitingTime: 0, secondPopupType: nil, secondPopupTitle: nil, secondPopupBody: nil, secondPopupBodyTextSize: nil, secondPopupButtonText: nil, secondImageUrlString1: nil, secondImageUrlString2: not.secondImageUrlString2, secondPopupMinPoint: nil, previousPopupPoint: point, position: .bottom,videourl: not.videourl,secondPopupVideourl1: not.secondPopupVideourl1,secondPopupVideourl2: not.secondPopupVideourl2,secondButtonFunction: not.secondButtonFunction,secondButtonText: not.secondButtonText,secondButtonTextColor: not.secondButtonTextColor?.toHexString(),secondButtonColor: not.secondButtonColor?.toHexString(),secondButtonIosLnk: not.secondButtonIosLnk)
         }
         return nil
     }
