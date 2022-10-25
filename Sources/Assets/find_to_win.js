@@ -239,7 +239,7 @@ function androidConfigRegulator(responseConfig) {
 
     const blankCard = ext.game_elements.blankcard_image ? ext.game_elements.blankcard_image : false
     maxPairCalculator(row, col);
-    cardSlotAdjuster(row, col, res.game_elements.card_images, blankCard); // buraya boş kart aktif mi bilgisini yolla
+    cardSlotAdjuster(row, col, res.game_elements.card_images, blankCard);
     promoCodeCalculator(res.promo_codes);
 
 
@@ -370,8 +370,9 @@ function iOSConfigRegulator(responseConfig) {
     const row = res.gameElements.playgroundRowcount;
     const col = res.gameElements.playgroundColumncount;
 
+    const blankCard = res.gameElementsExtended.blankcardImage ? res.gameElementsExtended.blankcardImage : false
     maxPairCalculator(row, col);
-    cardSlotAdjuster(row, col, res.gameElements.cardImages); // burayı androiddeki gibi yap
+    cardSlotAdjuster(row, col, res.gameElements.cardImages, blankCard);
     promoCodeCalculator(res.promoCodes);
 
     // General data
@@ -383,6 +384,8 @@ function iOSConfigRegulator(responseConfig) {
     generalData.fontName = res.font_family;
     cardSettings.backfaceImg = res.gameElementsExtended.backofcardsImage;
     cardSettings.backfaceColor = res.gameElementsExtended.backofcardsColor;
+    cardSettings.emptyBackfaceImg = res.gameElementsExtended.blankcardImage;
+    cardSettings.emptyFrontImg = res.gameElementsExtended.blankcardImage;
 
     if (res.font_family == 'custom' && utils.getMobileOperatingSystem() == 'iOS') {
         generalData.fontName = res.custom_font_family_ios;
@@ -593,20 +596,15 @@ function createMailSubsScreen() {
     emailAlert.id = 'emailAlert';
     container.appendChild(emailAlert);
 
-
-
     if (componentsData.mailSubsScreen.emailPermission.use) {
-        var emailPermission = document.createElement("DIV");
-        emailPermission.style.color = "black";
-        emailPermission.style.fontSize = "13px";
-        emailPermission.style.margin = "15px 0";
-        emailPermission.style.width = "100%";
-        emailPermission.style.display = "flex";
-        emailPermission.style.alignItems = "center";
+        var emailPermission = createPermitRow(
+            componentsData.mailSubsScreen.emailPermission.id,
+            componentsData.mailSubsScreen.emailPermission.text,
+            componentsData.mailSubsScreen.emailPermission.fontSize,
+            generalData.fontName,
+            componentsData.mailSubsScreen.emailPermission.url
+        )
 
-        emailPermission.innerHTML = "<input style='width:20px;height:20px;display:block;margin-right:7px;float:left' id='" + componentsData.mailSubsScreen.emailPermission.id + "' type='checkbox'>\
-        <a style='font-size:"+ componentsData.mailSubsScreen.emailPermission.fontSize + ";text-decoration: underline;color: black;text-align:left; font-family:" + generalData.fontName + "'\
-        href='"+ componentsData.mailSubsScreen.emailPermission.url + "'>" + componentsData.mailSubsScreen.emailPermission.text;
         container.appendChild(emailPermission);
 
         var checkboxAlert1 = document.createElement("div");
@@ -615,18 +613,14 @@ function createMailSubsScreen() {
     }
 
     if (componentsData.mailSubsScreen.emailPermission.use) {
-        var secondPermission = document.createElement("DIV");
-        secondPermission.style.color = "black";
-        secondPermission.style.fontSize = "13px";
-        secondPermission.style.margin = "15px 0";
-        secondPermission.style.width = "100%";
-        secondPermission.style.display = "flex";
-        secondPermission.style.alignItems = "center";
+        var secondPermission = createPermitRow(
+            componentsData.mailSubsScreen.secondPermission.id,
+            componentsData.mailSubsScreen.secondPermission.text,
+            componentsData.mailSubsScreen.emailPermission.fontSize,
+            generalData.fontName,
+            componentsData.mailSubsScreen.secondPermission.url
+        )
 
-        secondPermission.innerHTML = "<input style='width:20px;height:20px;display:block;margin-right:7px;float:left' id='" + componentsData.mailSubsScreen.secondPermission.id + "' type='checkbox' >" +
-            "<a style='font-size:" + componentsData.mailSubsScreen.emailPermission.fontSize + ";text-decoration: underline;color: black;text-align:left; font-family:" + generalData.fontName + "'\
-                href='"+ componentsData.mailSubsScreen.secondPermission.url + "'>\
-                "+ componentsData.mailSubsScreen.secondPermission.text;
         container.appendChild(secondPermission);
 
         var checkboxAlert2 = document.createElement("div");
@@ -688,6 +682,42 @@ function createMailSubsScreen() {
     mailSubsScreen.appendChild(submit);
     mailSubsScreen.appendChild(container);
     MAIN_COMPONENT.appendChild(mailSubsScreen);
+}
+
+function createPermitRow(inputId,desc,fontSize,fontName,url){
+    var container = document.createElement("DIV");
+    container.style.color = "black";
+    container.style.fontSize = "13px";
+    container.style.margin = "15px 0";
+    container.style.width = "100%";
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+
+    var input = document.createElement("input");
+    input.id = inputId;
+    input.type="checkbox";
+    input.style.width="20px";
+    input.style.height="20px";
+    input.style.display="block";
+    input.style.marginRight="7px";
+    input.style.float="left";
+
+    var text = document.createElement("div");
+    text.innerText=desc;
+    text.style.fontSize=fontSize;
+    text.style.fontFamily=fontName;
+    text.style.textDecoration="underline";
+    text.style.color="black";
+
+    text.addEventListener('click',()=>{
+        utils.linkClicked(url)
+        console.log(url,desc);
+    })
+
+    container.appendChild(input);
+    container.appendChild(text);
+
+    return container;
 }
 
 function createAlert(text, id) {
@@ -1350,7 +1380,7 @@ function createFinishScreen(lose) {
     copyButton.style.fontFamily = generalData.fontName;
     copyButton.innerText = lose ? componentsData.finishScreen.lose.buttonLabel : componentsData.finishScreen.button.text;
 
-    container.appendChild(copyButton);
+    finishScreen.appendChild(copyButton);
 
     if (!lose) {utils.saveCodeGotten()}
 
@@ -1520,6 +1550,23 @@ function getAndroidLink(lose) {
     }
 }
 
+function getIOSLink(lose) {
+    if (lose) {
+        if (componentsData.finishScreen.lose.loseIOSLink) {
+            return componentsData.finishScreen.lose.loseIOSLink
+        }
+        else {
+            return ""
+        }
+    } else {
+        if (componentsData.finishScreen.button.iOSLink) {
+            return componentsData.finishScreen.button.iOSLink
+        } else {
+            return ""
+        }
+    }
+}
+
 let utils = {
     randNum: (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -1641,7 +1688,8 @@ let utils = {
         } else if (window.webkit.messageHandlers.eventHandler) {
             window.webkit.messageHandlers.eventHandler.postMessage({
                 method: "copyToClipboard",
-                couponCode: couponCodes[SCORE]
+                couponCode: lose ? "" : couponCodes[SCORE],
+                url:getIOSLink(lose)
             })
         }
     },
@@ -1686,6 +1734,16 @@ let utils = {
             window.webkit.messageHandlers.eventHandler.postMessage({
                 method: "saveCodeGotten",
                 email: couponCodes[SCORE]
+            })
+        }
+    },
+    linkClicked: (url) => {
+        if (window.Android) {
+            location.href=url ? url : ""
+        } else if (window.webkit && window.webkit.messageHandlers) {
+            window.webkit.messageHandlers.eventHandler.postMessage({
+                method: "linkClicked",
+                url: url ? url : ""
             })
         }
     },
