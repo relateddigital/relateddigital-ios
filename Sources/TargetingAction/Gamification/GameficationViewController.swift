@@ -12,6 +12,8 @@ class GameficationViewController: RDBaseNotificationViewController {
     
     weak var webView: WKWebView!
     var subsEmail = ""
+    var codeGotten = false
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +35,7 @@ class GameficationViewController: RDBaseNotificationViewController {
     private func close() {
         dismiss(animated: true) {
             
-            if let gamefication = self.gameficationModel, !gamefication.promocode_banner_button_label.isEmptyOrWhitespace {
+            if let gamefication = self.gameficationModel, !gamefication.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
                 let bannerVC = RDGamificationCodeBannerController(gamefication)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
@@ -223,6 +225,7 @@ extension GameficationViewController: WKScriptMessageHandler {
                 
                 
                 if method == "saveCodeGotten", let code = event["email"] as? String {
+                    codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setGiftRainCode(code: code)
                 }

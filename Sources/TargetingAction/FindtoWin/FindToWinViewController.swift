@@ -11,6 +11,8 @@ import WebKit
 class FindToWinViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
+    var codeGotten = false
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +32,7 @@ class FindToWinViewController: RDBaseNotificationViewController {
     
     private func close() {
         dismiss(animated: true) {
-            if let findToWin = self.findToWin {
+            if let findToWin = self.findToWin, !findToWin.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
                 let bannerVC = RDFindToWinCodeBannerController(findToWin)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
@@ -40,6 +42,51 @@ class FindToWinViewController: RDBaseNotificationViewController {
             }
         }
     }
+    
+    override func show(animated: Bool) {
+            guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
+                return
+            }
+            if #available(iOS 13.0, *) {
+                let windowScene = sharedUIApplication
+                    .connectedScenes
+                    .filter { $0.activationState == .foregroundActive }
+                    .first
+                if let windowScene = windowScene as? UIWindowScene {
+                    window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                    window?.windowScene = windowScene
+                }
+            } else {
+                window = UIWindow(frame: CGRect(x: 0,
+                                                y: 0,
+                                                width: UIScreen.main.bounds.size.width,
+                                                height: UIScreen.main.bounds.size.height))
+            }
+            if let window = window {
+                window.alpha = 0
+                window.windowLevel = UIWindow.Level.alert
+                window.rootViewController = self
+                window.isHidden = false
+            }
+            
+            let duration = animated ? 0.25 : 0
+            UIView.animate(withDuration: duration, animations: {
+                self.window?.alpha = 1
+            }, completion: { _ in
+            })
+        }
+        
+        override func hide(animated: Bool, completion: @escaping () -> Void) {
+            let duration = animated ? 0.25 : 0
+            UIView.animate(withDuration: duration, animations: {
+                self.window?.alpha = 0
+            }, completion: { _ in
+                self.window?.isHidden = true
+                self.window?.removeFromSuperview()
+                self.window = nil
+                completion()
+            })
+        }
     
     func configureWebView() -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -175,6 +222,7 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "saveCodeGotten", let code = event["email"] as? String {
+                    codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setFindToWinCode(code: code)
                 }
