@@ -982,6 +982,67 @@ class RDTargetingAction {
         }
         return RDFavoriteAttributeActionResponse(favorites: favoritesResponse, error: errorResponse)
     }
+    
+    
+    
+    
+    func getAppBanner(rdUser: RDUser, guid: String, actionId: Int? = nil, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
+
+        var props = Properties()
+        props[RDConstants.organizationIdKey] = rdProfile.organizationId
+        props[RDConstants.profileIdKey] = rdProfile.profileId
+        props[RDConstants.cookieIdKey] = rdUser.cookieId
+        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RDConstants.tokenIdKey] = rdUser.tokenId
+        props[RDConstants.appidKey] = rdUser.appId
+        props[RDConstants.apiverKey] = RDConstants.apiverValue
+        props[RDConstants.actionType] = RDConstants.appBanner
+        props[RDConstants.channelKey] = rdProfile.channel
+        props["OM.inapptype"] = "banner_carousel"
+
+        props[RDConstants.actionId] = actionId == nil ? nil : String(actionId!)
+        
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
+
+        for (key, value) in RDPersistence.readTargetParameters() {
+           if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
+               props[key] = value
+           }
+        }
+
+        RDRequest.sendMobileRequest(properties: props, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
+            completion(self.parseBannerApp(result, error, guid))
+        }, guid: guid)
+    }
+    
+    
+    private func parseBannerApp(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> AppBannerResponseModel {
+        var appBannerModelArray = [AppBannerModel]()
+        var errorResponse: RDError?
+        var transition : String?
+        if let error = error {
+            errorResponse = error
+        } else if let res = result {
+            if let bannerAction = res[RDConstants.appBanner] as? [[String: Any?]] {
+                for bannerAction in bannerAction {
+                    let actiondata = bannerAction[RDConstants.actionData] as? [String: Any?]
+                    let appData = actiondata?[RDConstants.appBanners] as? [[String: Any?]]
+                    transition = actiondata?[RDConstants.transitionAction] as? String
+                    for element in appData! {
+                        let appBannerModel = AppBannerModel(img: element[RDConstants.img] as? String, ios_lnk: element[RDConstants.iosLnk] as? String)
+                        appBannerModelArray.append(appBannerModel)
+                    }
+                }
+            } else {
+                errorResponse = RDError.noData
+            }
+        }
+        
+        return AppBannerResponseModel(app_banners: appBannerModelArray, error: errorResponse, transition: transition ?? "")
+    }
 
     // MARK: - Story
 

@@ -513,6 +513,8 @@ extension RDInstance: RDInAppNotificationsDelegate {
 
 extension RDInstance {
     
+    
+    
     public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil, completion: @escaping StoryCompletion) {
         
         if RDPersistence.isBlocked() {
@@ -559,6 +561,21 @@ extension RDInstance {
         }
     }
     
+    
+    func getAppBanner(view: UIView, addedController: UIViewController,completion: @escaping ((String) -> Void)) {
+        let guid = UUID().uuidString
+
+        self.rdTargetingActionInstance.getAppBanner(rdUser: self.rdUser, guid: guid) { response in
+                
+            DispatchQueue.main.async {
+                let _ = BannerViewController(view: view, addedController: addedController ,model: response)
+                completion(RDConstants.succesText)
+            }
+
+        }
+    }
+    
+
     public func getStoryView(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil) -> RDStoryHomeView {
         
         if RDPersistence.isBlocked() {

@@ -29,7 +29,7 @@ class SelectViewController: FormViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-
+        showBannerViewForTest()
     }
     
     func showBannerViewForTest() {
@@ -42,8 +42,8 @@ class SelectViewController: FormViewController {
                                      bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
                                      bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
         bannerView.backgroundColor = .green
-        let drawerViewController = BannerViewController(view: bannerView, addedController: self)
-//        embed(drawerViewController, inView: bannerView)
+        RelatedDigital.setAppView(view: bannerView, addedController: self)
+        //embed(bannerVC, inView: bannerView)
     }
     
     private func initializeForm() {

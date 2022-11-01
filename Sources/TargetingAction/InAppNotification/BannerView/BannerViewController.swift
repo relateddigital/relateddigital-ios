@@ -7,54 +7,64 @@
 
 import UIKit
 
-public class BannerViewController: UIViewController,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+class BannerViewController: UIViewController,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
 
     var globalBannerView : bannerView?
     var bannerViewModel : BannerViewModel?
     var timer = Timer()
     var currentPage = 1
     
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    public override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if bannerViewModel?.passAction == .slide {
             startTimer()
         }
     }
     
-    public override func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         timer.invalidate()
     }
 
-    public init (view:UIView,addedController:UIViewController) {
+    init (view:UIView,addedController:UIViewController,model:AppBannerResponseModel) {
         super.init(nibName: nil, bundle: nil)
-        self.view = view
-        let bannerView : bannerView = UIView.fromNib()
-        bannerView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(bannerView)
-        NSLayoutConstraint.activate([bannerView.topAnchor.constraint(equalTo: self.view.topAnchor),
-                                     bannerView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-                                     bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                                     bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
-        globalBannerView = bannerView
-        bannerViewModel = BannerViewModel()
-        
-        //For Workable Delegate
-        self.willMove(toParent: addedController)
-        self.view.frame = view.bounds
-        view.addSubview(bannerView)
-        addedController.addChild(self)
-        self.didMove(toParent: addedController)
-        //
-        
-        globalBannerView?.currentPageLabel.text = "\(1)/\(bannerViewModel?.pageCount ?? 10)"
-        globalBannerView?.currentPageView.layer.cornerRadius = 15
-        globalBannerView?.currentPageView.backgroundColor = UIColor.black.withAlphaComponent(0.65)
-        configureCollectionViewLayout()
+        DispatchQueue.main.async { [self] in
+            self.view = view
+            let bannerView : bannerView = UIView.fromNib()
+            bannerView.translatesAutoresizingMaskIntoConstraints = false
+            self.view.addSubview(bannerView)
+            NSLayoutConstraint.activate([bannerView.topAnchor.constraint(equalTo: self.view.topAnchor),
+                                         bannerView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+                                         bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                                         bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
+            globalBannerView = bannerView
+            bannerViewModel = BannerViewModel()
+            bannerViewModel?.pageCount = model.app_banners.count
+            if model.transition == "swipe" {
+                bannerViewModel?.passAction = .swipe
+            } else {
+                bannerViewModel?.passAction = .slide
+            }
+            bannerViewModel?.appBanners = model.app_banners
+   
+            //For Workable Delegate
+            self.willMove(toParent: addedController)
+            self.view.frame = view.bounds
+            view.addSubview(bannerView)
+            addedController.addChild(self)
+            self.didMove(toParent: addedController)
+            //
+            
+            globalBannerView?.currentPageLabel.text = "\(1)/\(bannerViewModel?.pageCount ?? 10)"
+            globalBannerView?.currentPageView.layer.cornerRadius = 15
+            globalBannerView?.currentPageView.backgroundColor = UIColor.black.withAlphaComponent(0.65)
+            configureCollectionViewLayout()
+        }
+
     }
     
     func configureCollectionViewLayout() {
@@ -77,17 +87,17 @@ public class BannerViewController: UIViewController,UICollectionViewDelegate,UIC
         globalBannerView?.pageControlView.numberOfPages = bannerViewModel?.pageCount ?? 0
     }
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return bannerViewModel?.pageCount ?? 0
     }
     
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "bannerCell", for: indexPath)
         cell.contentMode = .center
         cell.backgroundColor = .clear
         let cellTemp : bannerCollectionViewCell = UIView.fromNib()
-        cellTemp.imageView.backgroundColor = .yellow
+        cellTemp.imageView.setImage(withUrl: bannerViewModel?.appBanners[indexPath.row].img ?? "")
         cell.addSubview(cellTemp)
         cellTemp.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([cellTemp.topAnchor.constraint(equalTo: cell.topAnchor,constant: 0),
@@ -98,13 +108,20 @@ public class BannerViewController: UIViewController,UICollectionViewDelegate,UIC
         return cell
     }
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: self.view.width, height: self.view.height - (globalBannerView?.pageControlHeightConstraint.constant ?? 0.0))
     }
     
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         globalBannerView?.pageControlView.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
         globalBannerView?.currentPageLabel.text = "\(Int(scrollView.contentOffset.x) / Int(scrollView.frame.width) + 1)/\(bannerViewModel?.pageCount ?? 10)"
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedUrl = bannerViewModel?.appBanners[indexPath.row].ios_lnk
+        if let url = URL(string: selectedUrl ?? "") {
+            UIApplication.shared.open(url)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -142,6 +159,7 @@ struct BannerViewModel {
     var pageControlHidden = false
     var pageCount = 5
     var passAction : PassAction? = .slide
+    var appBanners = [AppBannerModel]()
 
 }
 

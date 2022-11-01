@@ -139,6 +139,7 @@ struct RDConstants {
     static let actionType = "action_type"
     static let favoriteAttributeAction = "FavoriteAttributeAction"
     static let story = "Story"
+    static let appBanner = "AppBanner"
     static let mailSubscriptionForm = "MailSubscriptionForm"
     static let spinToWin = "SpinToWin"
     static let scratchToWin = "ScratchToWin"
@@ -179,6 +180,11 @@ struct RDConstants {
     static let losebuttonTextColor = "losebutton_text_color"
     static let losebuttonTextSize = "losebutton_text_size"
     static let cardImages = "card_images"
+    
+    static let appBanners = "app_banners"
+    static let transitionAction = "transition_action"
+
+    
 
 
     
@@ -261,6 +267,9 @@ struct RDConstants {
     static let wheelBorderWidth = "wheel_borderWidth"
     static let wheelBorderColor = "wheel_borderColor"
     static let sliceDisplaynameFontFamily = "slice_displayname_font_family"
+    
+    static let succesText = "succes"
+
     
     //Drawer
     static let shape = "shape"

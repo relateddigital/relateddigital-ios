@@ -321,6 +321,12 @@ public class RelatedDigital {
         PushUserDefaultsUtils.saveUserDefaults(key: PushKey.notificationLoginIdKey, value: notificationLoginID as AnyObject)
     }
     
+    public static func setAppView(view: UIView, addedController: UIViewController) {
+        shared.rdInstance.getAppBanner(view: view, addedController: addedController) { response in
+            print(response)
+        }
+    }
+    
 //    private func showDownhs() ->Bool {
 //        let downhsViewController = downHsViewController(model: downHsModel())
 //        //downhsViewController.delegate = self
