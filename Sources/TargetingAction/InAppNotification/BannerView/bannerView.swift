@@ -19,6 +19,7 @@ public class bannerView: UIView,UICollectionViewDelegate,UICollectionViewDataSou
     var timer = Timer()
     var currentPage = 1
     var model : AppBannerResponseModel!
+    var viewDidLoad = true
     
     
     public override init(frame: CGRect) {
@@ -31,25 +32,29 @@ public class bannerView: UIView,UICollectionViewDelegate,UICollectionViewDataSou
     
     public override func layoutSubviews() {
         DispatchQueue.main.async { [self] in
-
-            bannerViewModel = BannerViewModel()
-            bannerViewModel?.pageCount = model.app_banners.count
-            if model.transition == "swipe" {
-                bannerViewModel?.passAction = .swipe
-            } else {
-                bannerViewModel?.passAction = .slide
-            }
-            bannerViewModel?.appBanners = model.app_banners
-   
-            self.currentPageLabel.text = "\(1)/\(bannerViewModel?.pageCount ?? 10)"
-            self.currentPageView.layer.cornerRadius = 15
-            self.currentPageView.backgroundColor = UIColor.black.withAlphaComponent(0.65)
-            configureCollectionViewLayout()
-            bannerViewModel?.passAction = .slide
-            if bannerViewModel?.passAction == .slide {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0, execute: <#T##() -> Void#>)
-                startTimer()
+            
+            if self.viewDidLoad {
                 
+                viewDidLoad = false
+                bannerViewModel = BannerViewModel()
+                bannerViewModel?.pageCount = model.app_banners.count
+                if model.transition == "swipe" {
+                    bannerViewModel?.passAction = .swipe
+                } else {
+                    bannerViewModel?.passAction = .slide
+                }
+                bannerViewModel?.appBanners = model.app_banners
+       
+                self.currentPageLabel.text = "\(1)/\(bannerViewModel?.pageCount ?? 10)"
+                self.currentPageView.layer.cornerRadius = 15
+                self.currentPageView.backgroundColor = UIColor.black.withAlphaComponent(0.65)
+                configureCollectionViewLayout()
+                                
+                if bannerViewModel?.passAction == .slide {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self.startTimer()
+                    }
+                }
             }
         }
     }
@@ -60,6 +65,7 @@ public class bannerView: UIView,UICollectionViewDelegate,UICollectionViewDataSou
         self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "bannerCell")
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
+        self.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tap)))
         self.collectionView.isPagingEnabled = true
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -133,12 +139,21 @@ public class bannerView: UIView,UICollectionViewDelegate,UICollectionViewDataSou
         self.currentPageLabel.text = "\(Int(scrollView.contentOffset.x) / Int(scrollView.frame.width) + 1)/\(bannerViewModel?.pageCount ?? 10)"
     }
     
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedUrl = bannerViewModel?.appBanners[indexPath.row].ios_lnk
-        if let url = URL(string: selectedUrl ?? "") {
-            UIApplication.shared.open(url)
+    
+    @objc func tap(sender: UITapGestureRecognizer){
+
+        if let indexPath = self.collectionView?.indexPathForItem(at: sender.location(in: self.collectionView)) {
+            let selectedUrl = bannerViewModel?.appBanners[indexPath.row].ios_lnk
+            if let url = URL(string: selectedUrl ?? "") {
+                UIApplication.shared.open(url)
+            }
+            
+            print("you can do something with the cell or index path here")
+        } else {
+            print("collection view was tapped")
         }
     }
+    
 
 }
 

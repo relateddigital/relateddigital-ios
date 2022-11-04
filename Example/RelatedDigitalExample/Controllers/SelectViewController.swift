@@ -29,11 +29,10 @@ class SelectViewController: FormViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        showBannerViewForTest()
+
     }
     
     func showBannerViewForTest() {
-        //RelatedDigital.shared.showDownhs()
         let bannerView = UIView()
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(bannerView)
@@ -46,8 +45,6 @@ class SelectViewController: FormViewController {
         
         var props = Properties()
         props["OM.inapptype"] = "banner_carousel"
-
-        
         
         RelatedDigital.getBannerView(properties: props) { banner in
             if let banner = banner {
@@ -61,7 +58,6 @@ class SelectViewController: FormViewController {
             }
 
         }
-        //embed(bannerVC, inView: bannerView)
     }
     
     private func initializeForm() {
