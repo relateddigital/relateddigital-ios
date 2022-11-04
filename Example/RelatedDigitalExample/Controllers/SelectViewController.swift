@@ -42,7 +42,25 @@ class SelectViewController: FormViewController {
                                      bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
                                      bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
         bannerView.backgroundColor = .green
-        RelatedDigital.setAppView(view: bannerView, addedController: self)
+        
+        
+        var props = Properties()
+        props["OM.inapptype"] = "banner_carousel"
+
+        
+        
+        RelatedDigital.getBannerView(properties: props) { banner in
+            if let banner = banner {
+                banner.translatesAutoresizingMaskIntoConstraints = false
+                bannerView.addSubview(banner)
+                
+                NSLayoutConstraint.activate([banner.topAnchor.constraint(equalTo: bannerView.topAnchor),
+                                             banner.bottomAnchor.constraint(equalTo: bannerView.bottomAnchor),
+                                             banner.leadingAnchor.constraint(equalTo: bannerView.leadingAnchor),
+                                             banner.trailingAnchor.constraint(equalTo: bannerView.trailingAnchor)])
+            }
+
+        }
         //embed(bannerVC, inView: bannerView)
     }
     

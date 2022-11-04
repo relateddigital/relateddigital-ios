@@ -12,9 +12,7 @@ import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
 
-    
 
-    
     
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
@@ -562,14 +560,41 @@ extension RDInstance {
     }
     
     
-    func getAppBanner(view: UIView, addedController: UIViewController,completion: @escaping ((String) -> Void)) {
+    func getAppBanner(properties:Properties,completion: @escaping ((bannerView?) -> Void)) {
         let guid = UUID().uuidString
 
-        self.rdTargetingActionInstance.getAppBanner(rdUser: self.rdUser, guid: guid) { response in
-                
-            DispatchQueue.main.async {
-                let _ = BannerViewController(view: view, addedController: addedController ,model: response)
-                completion(RDConstants.succesText)
+        var props = properties
+        props[RDConstants.organizationIdKey] = rdProfile.organizationId
+        props[RDConstants.profileIdKey] = rdProfile.profileId
+        props[RDConstants.cookieIdKey] = rdUser.cookieId
+        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RDConstants.tokenIdKey] = rdUser.tokenId
+        props[RDConstants.appidKey] = rdUser.appId
+        props[RDConstants.apiverKey] = RDConstants.apiverValue
+        props[RDConstants.actionType] = RDConstants.appBanner
+        props[RDConstants.channelKey] = rdProfile.channel
+        
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
+
+        for (key, value) in RDPersistence.readTargetParameters() {
+           if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
+               props[key] = value
+           }
+        }
+        
+        self.rdTargetingActionInstance.getAppBanner(properties: props , rdUser: self.rdUser, guid: guid) { response in
+            
+            if response.error != nil {
+                completion(nil)
+            } else {
+                DispatchQueue.main.async {
+                    let bannerView : bannerView = .fromNib()
+                    bannerView.model = response
+                    completion(bannerView)
+                }
             }
 
         }

@@ -986,34 +986,9 @@ class RDTargetingAction {
     
     
     
-    func getAppBanner(rdUser: RDUser, guid: String, actionId: Int? = nil, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
+    func getAppBanner(properties:Properties,rdUser: RDUser, guid: String, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
 
-        var props = Properties()
-        props[RDConstants.organizationIdKey] = rdProfile.organizationId
-        props[RDConstants.profileIdKey] = rdProfile.profileId
-        props[RDConstants.cookieIdKey] = rdUser.cookieId
-        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
-        props[RDConstants.tokenIdKey] = rdUser.tokenId
-        props[RDConstants.appidKey] = rdUser.appId
-        props[RDConstants.apiverKey] = RDConstants.apiverValue
-        props[RDConstants.actionType] = RDConstants.appBanner
-        props[RDConstants.channelKey] = rdProfile.channel
-        props["OM.inapptype"] = "banner_carousel"
-
-        props[RDConstants.actionId] = actionId == nil ? nil : String(actionId!)
-        
-        props[RDConstants.nrvKey] = String(rdUser.nrv)
-        props[RDConstants.pvivKey] = String(rdUser.pviv)
-        props[RDConstants.tvcKey] = String(rdUser.tvc)
-        props[RDConstants.lvtKey] = rdUser.lvt
-
-        for (key, value) in RDPersistence.readTargetParameters() {
-           if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
-               props[key] = value
-           }
-        }
-
-        RDRequest.sendMobileRequest(properties: props, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
+        RDRequest.sendMobileRequest(properties: properties, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
             completion(self.parseBannerApp(result, error, guid))
         }, guid: guid)
     }
@@ -1039,6 +1014,10 @@ class RDTargetingAction {
             } else {
                 errorResponse = RDError.noData
             }
+        }
+        
+        if appBannerModelArray.isEmpty {
+            errorResponse = RDError.noData
         }
         
         return AppBannerResponseModel(app_banners: appBannerModelArray, error: errorResponse, transition: transition ?? "")

@@ -321,9 +321,9 @@ public class RelatedDigital {
         PushUserDefaultsUtils.saveUserDefaults(key: PushKey.notificationLoginIdKey, value: notificationLoginID as AnyObject)
     }
     
-    public static func setAppView(view: UIView, addedController: UIViewController) {
-        shared.rdInstance.getAppBanner(view: view, addedController: addedController) { response in
-            print(response)
+    public static func getBannerView(properties: Properties,completion: @escaping (bannerView?) -> Void) {
+        shared.rdInstance.getAppBanner(properties: properties) { bannerView in
+            completion(bannerView)
         }
     }
     
