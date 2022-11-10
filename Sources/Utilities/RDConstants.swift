@@ -24,7 +24,7 @@ public class urlConstant {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.9"
+    static let sdkVersion = "4.0.10"
     
     static let HTTP = "http"
     static let HTTPS = urlConstant.shared.securityTag
