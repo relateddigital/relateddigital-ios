@@ -224,10 +224,19 @@ extension GameficationViewController: WKScriptMessageHandler {
                 }
                 
                 
-                if method == "saveCodeGotten", let code = event["email"] as? String {
+                if method == "saveCodeGotten", let code = event["code"] as? String , let mail = event["email"] as? String {
                     codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setGiftRainCode(code: code)
+                    let actionID = self.gameficationModel?.actId
+                    
+                    var properties = Properties()
+                    properties[RDConstants.promoActionID] = String(actionID ?? 0)
+                    properties[RDConstants.promoEmailKey] = mail
+                    properties[RDConstants.promoAction] = code
+
+                    RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
+   
                 }
                 
                 if method == "close" {
