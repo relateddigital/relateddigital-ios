@@ -12,7 +12,9 @@ public class ShakeToWinViewController: UIViewController {
     
     lazy var model: ShakeToWinViewModel? = createDummyModel()
     let scrollView = UIScrollView()
+    var multiplier = 0.0
     weak var player: AVPlayer? = nil
+    var mailFormExist = true
     var openedSecondPage = false {
         didSet {
             self.deviceDidntShake()
@@ -56,12 +58,24 @@ public class ShakeToWinViewController: UIViewController {
     public override func viewDidLayoutSubviews() {
         scrollView.frame = self.view.frame
         if scrollView.subviews.count == 2 {
+            checkMailIsAvaliable()
             configureScrollView()
         }
     }
     
+    func checkMailIsAvaliable() {
+        if mailFormExist == true {
+            multiplier = 1.0
+        }
+    }
+    
     func configureScrollView() {
-        scrollView.contentSize = CGSize(width: view.frame.width*3, height: view.frame.height)
+        if mailFormExist == true {
+            scrollView.contentSize = CGSize(width: view.frame.width*4, height: view.frame.height)
+            scrollView.addSubview(prepareMailPage())
+        } else {
+            scrollView.contentSize = CGSize(width: view.frame.width*3, height: view.frame.height)
+        }
         scrollView.isPagingEnabled = false
         scrollView.isScrollEnabled = false
         
@@ -89,7 +103,7 @@ public class ShakeToWinViewController: UIViewController {
     
     func openThirdPage(_ delay: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(delay)) {
-            self.scrollView.setContentOffset(CGPoint(x: self.view.frame.size.width*2, y: 0.0), animated: true)
+            self.scrollView.setContentOffset(CGPoint(x: self.view.frame.size.width*(self.multiplier+2), y: 0.0), animated: true)
             if let p = self.player {
                 p.pause()
                 self.player = nil
@@ -97,8 +111,43 @@ public class ShakeToWinViewController: UIViewController {
         }
     }
     
+    
+    func prepareMailPage() -> UIView {
+        let page : MailFormView = .fromNib()
+        
+        page.secondLineTicImageView.layer.cornerRadius = 10
+        page.secondLineTicImageView.layer.borderWidth = 0.5
+        page.secondLineTicImageView.layer.borderColor = UIColor.black.cgColor
+        
+        page.firstLineTickImageView.layer.cornerRadius = 10
+        page.firstLineTickImageView.layer.borderWidth = 0.5
+        page.firstLineTickImageView.layer.borderColor = UIColor.black.cgColor
+        
+        page.continueButtonView.layer.cornerRadius = 10
+        
+        page.frame = CGRect(x: 0,
+                            y: 0,
+                            width: view.frame.width,
+                            height: view.frame.height)
+        
+        
+        page.backgroundColor = .blue
+        let close = getCloseButton(.white)
+        page.addSubview(close)
+        close.top(to: page, offset: 20)
+        close.trailing(to: page, offset: -20)
+        close.width(40)
+        close.height(40)
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(goFirstPage))
+        page.continueButtonView.addGestureRecognizer(tap)
+
+        return page
+    }
+
+    
     func prepareFirstPage() -> UIView {
-        let page = UIView(frame: CGRect(x: 0,
+        let page = UIView(frame: CGRect(x: view.frame.width*multiplier,
                                         y: 0,
                                         width: view.frame.width,
                                         height: view.frame.height))
@@ -136,6 +185,7 @@ public class ShakeToWinViewController: UIViewController {
             message.text = model?.firstPage.message
             message.textColor = model?.firstPage.messageColor
             message.font = model?.firstPage.messageFont
+            message.textAlignment = .center
             message.numberOfLines = 0
             page.addSubview(message)
             
@@ -162,7 +212,7 @@ public class ShakeToWinViewController: UIViewController {
         page.backgroundColor = .red
         let close = getCloseButton(.black)
         page.addSubview(close)
-        close.top(to: page, offset: 40)
+        close.top(to: page, offset: 20)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -171,7 +221,7 @@ public class ShakeToWinViewController: UIViewController {
     }
     
     func prepareSecondPage() -> UIView {
-        let page = UIView(frame: CGRect(x: view.frame.width,
+        let page = UIView(frame: CGRect(x: view.frame.width*(multiplier+1),
                                         y: 0,
                                         width: view.frame.width,
                                         height: view.frame.height))
@@ -180,7 +230,7 @@ public class ShakeToWinViewController: UIViewController {
         page.backgroundColor = .green
         let close = getCloseButton(.white)
         page.addSubview(close)
-        close.top(to: page, offset: 40)
+        close.top(to: page, offset: 20)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -196,15 +246,23 @@ public class ShakeToWinViewController: UIViewController {
         return page
     }
     
+    
     func prepareThirdPage() -> UIView {
-        let page = UIView(frame: CGRect(x: view.frame.width*2,
-                                        y: 0,
-                                        width: view.frame.width,
-                                        height: view.frame.height))
+        let page : CupponCodePageView = .fromNib()
+        page.copyButtonView.layer.cornerRadius = 10
+        page.cupponCodeView.layer.cornerRadius = 10
+        page.goLinkVİew.layer.cornerRadius = 10
+        
+        page.frame = CGRect(x: view.frame.width*(multiplier+2),
+                            y: 0,
+                            width: view.frame.width,
+                            height: view.frame.height)
+        
+        
         page.backgroundColor = .blue
         let close = getCloseButton(.white)
         page.addSubview(close)
-        close.top(to: page, offset: 40)
+        close.top(to: page, offset: 20)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -224,13 +282,21 @@ extension ShakeToWinViewController {
                                    thirdPage: ShakeToWinThirdPage(image: nil, title: "third page", titleFont: .boldSystemFont(ofSize: 16), titleColor: .darkGray, message: "shtw message \n message can be plural", messageColor: .blue, messageFont: .italicSystemFont(ofSize: 12), buttonText: "finish", buttonTextColor: .white, buttonFont: .boldSystemFont(ofSize: 16), buttonBgColor: .black, backgroundColor: .systemPink, closeButtonColor: .white))
     }
     
-    @objc func goSecondPage() {
+    
+    
+    @objc func goFirstPage() {
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width, y: 0.0), animated: true)
+    }
+    
+    @objc func goSecondPage() {
+        scrollView.setContentOffset(CGPoint(x: view.frame.size.width*(multiplier+1), y: 0.0), animated: true)
         self.openedSecondPage = true
         if let p = self.player {
             p.play()
         }
     }
+    
+
     
     func getCloseButton(_ color: ButtonColor) -> UIButton  {
         let button = UIButton()
