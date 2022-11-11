@@ -22,5 +22,6 @@ struct RelatedDigitalProfile: Codable {
     var userKey = "userKey"
     var userEmail = "user@mail.com"
     var isIDFAEnabled = true
+    var testUrlIsActive = urlConstant.shared.getTestWithLocalData()
 
 }

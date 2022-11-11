@@ -20,6 +20,17 @@ public class urlConstant {
         organizationId = "394A48556A2F76466136733D"
         profileId = "75763259366A3345686E303D"
     }
+    
+    public func setTestWithLocalData(isActive:Bool) {
+        let defaults = UserDefaults.standard
+        defaults.set(isActive, forKey:"isTest")
+    }
+    
+    public func getTestWithLocalData() -> Bool {
+        let defaults = UserDefaults.standard
+        let bool = defaults.bool(forKey: "isTest")
+        return bool
+    }
 }
 
 struct RDConstants {

@@ -13,7 +13,7 @@ import SplitRow
 
 class HomeViewController: FormViewController {
     
-    var switchRowItems = ["inAppNotificationsEnabled": relatedDigitalProfile.inAppNotificationsEnabled, "geofenceEnabled": relatedDigitalProfile.geofenceEnabled]
+    var switchRowItems = ["inAppNotificationsEnabled": relatedDigitalProfile.inAppNotificationsEnabled, "geofenceEnabled": relatedDigitalProfile.geofenceEnabled,"TestApp": relatedDigitalProfile.testUrlIsActive]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +54,14 @@ class HomeViewController: FormViewController {
             RelatedDigital.geofenceEnabled = relatedDigitalProfile.geofenceEnabled
             let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
             appDelegate?.isRelatedInit = true
+        
+            let testUrlIsActive: SwitchRow? = self.form.rowBy(tag: "TestApp")
+
+            if testUrlIsActive?.value == true {
+                urlConstant.shared.setTestWithLocalData(isActive: true)
+            } else {
+                urlConstant.shared.setTestWithLocalData(isActive: false)
+            }
             self.goToTabBarController()
         }
     }
