@@ -96,70 +96,45 @@ class FindToWinViewController: RDBaseNotificationViewController {
         configuration.preferences.javaScriptEnabled = true
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createFindToWinFiles() {
-            webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
-            webView.backgroundColor = .clear
-            webView.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
+        var webView = WKWebView(frame: .zero, configuration: configuration)
+        laodFindToWinFiles(webView: &webView)
+        webView.backgroundColor = .clear
+        webView.translatesAutoresizingMaskIntoConstraints = false
+    
         return webView
     }
     
-    private func createFindToWinFiles() -> URL? {
-        let manager = FileManager.default
-        guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
-            RDLogger.error("Can not create documentDirectory")
-            return nil
-        }
-        let htmlUrl = docUrl.appendingPathComponent("find_to_win.html")
-        let jsUrl = docUrl.appendingPathComponent("find_to_win.js")
+    
+    
+    func laodFindToWinFiles(webView:inout WKWebView) {
+        
+        var javaScriptStr = ""
+        var htmlStr = ""
+        
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "find_to_win", ofType: "html") ?? ""
-        let bundleJsPath = bundle.path(forResource: "find_to_win", ofType: "js") ?? ""
-
-        let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
-        let bundleJsUrl = URL(fileURLWithPath: bundleJsPath)
         
-//        RDHelper.registerFonts(fontNames: getCustomFontNames())
-//        let fontUrls = getSpinToWinFonts(fontNames: getCustomFontNames())
+        if let  htmlFile = bundle.path(forResource: "find_to_win", ofType: "html") {
+            htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
+        }
 
-        do {
-            if manager.fileExists(atPath: htmlUrl.path) {
-                try manager.removeItem(atPath: htmlUrl.path)
+        if let jsUrl = URL(string: RDConstants.findToWinUrl) {
+            do {
+                javaScriptStr = try String(contentsOf: jsUrl)
+            } catch {
+                
             }
-            if manager.fileExists(atPath: jsUrl.path) {
-                try manager.removeItem(atPath: jsUrl.path)
-            }
+        } else {
             
-            try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
-            try manager.copyItem(at: bundleJsUrl, to: jsUrl)
-        } catch let error {
-            RDLogger.error(error)
-            RDLogger.error(error.localizedDescription)
-            return nil
         }
         
-//        for fontUrlKeyValue in fontUrls {
-//            do {
-//                let fontUrl = docUrl.appendingPathComponent(fontUrlKeyValue.key)
-//                if manager.fileExists(atPath: fontUrl.path) {
-//                    try manager.removeItem(atPath: fontUrl.path)
-//                }
-//                try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
-//                self.spinToWin?.fontFiles.append(fontUrlKeyValue.key)
-//            } catch let error {
-//                RDLogger.error(error)
-//                RDLogger.error(error.localizedDescription)
-//                continue
-//            }
-//        }
-        
-        return htmlUrl
+        let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        webView.configuration.userContentController.addUserScript(script)
+        webView.loadHTMLString(htmlStr, baseURL: nil)
+    
     }
 
 

@@ -452,6 +452,11 @@ struct RDConstants {
     private static let targetPrefVRDomainKey = "OM.rDomain"
     private static let targetPrefPPRKey = "OM.ppr"
     
+    //Gamification Urls
+    static let giftCatchUrl = "https://mbls.visilabs.net/gift_catch.js"
+    static let spintoWinUrl = "https://mbls.visilabs.net/spintowin.js"
+    static let findToWinUrl = "https://mbls.visilabs.net/find_to_win.js"
+
     //Location Status
     static let locationPermissionReqKey = "OM.locpermit"
     static let locationPermissionAlways = "always"

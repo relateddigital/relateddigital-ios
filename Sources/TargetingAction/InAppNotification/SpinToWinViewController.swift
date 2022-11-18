@@ -165,14 +165,45 @@ class SpinToWinViewController: RDBaseNotificationViewController {
         configuration.preferences.javaScriptEnabled = true
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createSpinToWinFiles() {
-            webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
-            webView.backgroundColor = .clear
-            webView.translatesAutoresizingMaskIntoConstraints = false
-        }
+        var webView = WKWebView(frame: .zero, configuration: configuration)
+        laodSpinToWinFiles(webView: &webView)
+        webView.backgroundColor = .clear
+        webView.translatesAutoresizingMaskIntoConstraints = false
         
         return webView
+    }
+    
+    
+    func laodSpinToWinFiles(webView:inout WKWebView) {
+        
+        var javaScriptStr = ""
+        var htmlStr = ""
+        
+#if SWIFT_PACKAGE
+        let bundle = Bundle.module
+#else
+        let bundle = Bundle(for: type(of: self))
+#endif
+
+        
+        if let  htmlFile = bundle.path(forResource: "spintowin", ofType: "html") {
+            htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
+        }
+
+        if let jsUrl = URL(string: RDConstants.spintoWinUrl) {
+            do {
+                javaScriptStr = try String(contentsOf: jsUrl)
+            } catch {
+                
+            }
+        } else {
+            
+        }
+        
+        let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        webView.configuration.userContentController.addUserScript(script)
+        webView.loadHTMLString(htmlStr, baseURL: nil)
+    
     }
     
     private func close() {
