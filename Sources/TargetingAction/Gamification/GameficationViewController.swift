@@ -100,18 +100,36 @@ class GameficationViewController: RDBaseNotificationViewController {
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
         var webView = WKWebView(frame: .zero, configuration: configuration)
-        laodGiftRainFiles(webView: &webView)
+        laodGiftRainFiles(webView: webView) { webViewAdded in
+            webView = webViewAdded
+        }
         webView.backgroundColor = .clear
         webView.translatesAutoresizingMaskIntoConstraints = false
         
         return webView
     }
     
-    func laodGiftRainFiles(webView:inout WKWebView) {
+    func laodGiftRainFiles(webView:WKWebView,complete:@escaping(WKWebView)->Void) {
         
         var javaScriptStr = ""
         var htmlStr = ""
         
+        let url = URL(string: RDConstants.giftCatchUrl)!
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard error == nil else {
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                print("data is nil")
+                return
+            }
+            guard let text = String(data: data, encoding: .utf8) else {
+                print("the response is not in UTF-8")
+                return
+            }
+            
+            javaScriptStr = text
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
@@ -122,19 +140,13 @@ class GameficationViewController: RDBaseNotificationViewController {
             htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
         }
 
-        if let jsUrl = URL(string: RDConstants.giftCatchUrl) {
-            do {
-                javaScriptStr = try String(contentsOf: jsUrl)
-            } catch {
-                
+            DispatchQueue.main.async {
+                let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+                webView.configuration.userContentController.addUserScript(script)
+                webView.loadHTMLString(htmlStr, baseURL: nil)
             }
-        } else {
-            
         }
-        
-        let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-        webView.configuration.userContentController.addUserScript(script)
-        webView.loadHTMLString(htmlStr, baseURL: nil)
+        task.resume()
     
     }
     
