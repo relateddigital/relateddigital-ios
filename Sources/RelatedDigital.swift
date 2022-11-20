@@ -63,7 +63,7 @@ public class RelatedDigital {
             fatalError("organizationId, profileId and dataSource must have value.")
         }
         
-        _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermmissionAtStart: askLocationPermmissionAtStart))
+        _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermissionAtStart: askLocationPermmissionAtStart))
         
     }
     
@@ -134,10 +134,10 @@ public class RelatedDigital {
     
     public static var askLocationPermmissionAtStart: Bool {
         get {
-            return shared.rdInstance.askLocationPermmissionAtStart
+            return shared.rdInstance.askLocationPermissionAtStart
         }
         set {
-            shared.rdInstance.askLocationPermmissionAtStart = newValue
+            shared.rdInstance.askLocationPermissionAtStart = newValue
         }
     }
     

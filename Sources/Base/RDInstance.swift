@@ -12,8 +12,6 @@ import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
 
-
-    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
@@ -70,12 +68,12 @@ public class RDInstance: RDInstanceProtocol {
         }
     }
     
-    public var askLocationPermmissionAtStart: Bool {
+    public var askLocationPermissionAtStart: Bool {
         get {
-            return rdProfile.askLocationPermmissionAtStart
+            return rdProfile.askLocationPermissionAtStart
         }
         set {
-            rdProfile.askLocationPermmissionAtStart = newValue
+            rdProfile.askLocationPermissionAtStart = newValue
             RDPersistence.saveRDProfile(rdProfile)
         }
     }
@@ -91,13 +89,13 @@ public class RDInstance: RDInstanceProtocol {
     public weak var inappButtonDelegate: RDInappButtonDelegate?
     
     // swiftlint:disable function_body_length
-    init(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIA.LaunchOptionsKey : Any]? = nil, askLocationPermmissionAtStart: Bool = true) {
+    init(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIA.LaunchOptionsKey : Any]? = nil, askLocationPermissionAtStart: Bool = true) {
         
-        rdProfile = RDPersistence.readRDProfile() ?? RDProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermmissionAtStart: askLocationPermmissionAtStart)
+        rdProfile = RDPersistence.readRDProfile() ?? RDProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermissionAtStart: askLocationPermissionAtStart)
         rdProfile.organizationId = organizationId
         rdProfile.profileId = profileId
         rdProfile.dataSource = dataSource
-        rdProfile.askLocationPermmissionAtStart = askLocationPermmissionAtStart
+        rdProfile.askLocationPermissionAtStart = askLocationPermissionAtStart
         self.launchOptions = launchOptions
         
         RDPersistence.saveRDProfile(rdProfile)
@@ -155,7 +153,7 @@ public class RDInstance: RDInstanceProtocol {
     
     convenience init?() {
         if let relatedDigitalProfile = RDPersistence.readRDProfile() {
-            self.init(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource, askLocationPermmissionAtStart: relatedDigitalProfile.askLocationPermmissionAtStart)
+            self.init(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource, askLocationPermissionAtStart: relatedDigitalProfile.askLocationPermissionAtStart)
         } else {
             return nil
         }

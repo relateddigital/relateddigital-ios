@@ -22,7 +22,7 @@ class RDLocationManager: NSObject {
     
     var RDProfile: RDProfile?
     var geofenceEnabled = false
-    var askLocationPermmissionAtStart = false
+    var askLocationPermissionAtStart = false
     
     private var started = false
     private var startedInterval = 0
@@ -64,7 +64,7 @@ class RDLocationManager: NSObject {
             }
             RDHelper.setEndpoints(dataSource: profile.dataSource)
             geofenceEnabled = profile.geofenceEnabled
-            askLocationPermmissionAtStart = profile.askLocationPermmissionAtStart
+            askLocationPermissionAtStart = profile.askLocationPermissionAtStart
             if geofenceEnabled {
                 startGeofencing(fromInit: true)
             }
@@ -79,7 +79,7 @@ class RDLocationManager: NSObject {
     }
     
     func startGeofencing(fromInit: Bool) {
-        if askLocationPermmissionAtStart {
+        if askLocationPermissionAtStart {
             requestLocationPermissions()
         }
         

@@ -31,7 +31,7 @@ protocol RDInstanceProtocol {
     var loggingEnabled: Bool { get set }
     var inAppNotificationsEnabled: Bool { get set }
     var geofenceEnabled: Bool { get set }
-    var askLocationPermmissionAtStart: Bool {get set}
+    var askLocationPermissionAtStart: Bool {get set}
     func requestIDFA()
     func sendLocationPermission()
     func requestLocationPermissions()
