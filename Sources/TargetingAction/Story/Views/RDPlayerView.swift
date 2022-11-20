@@ -14,14 +14,6 @@ struct VideoResource {
     let filePath: String
 }
 
-enum PlayerStatus {
-    case unknown
-    case playing
-    case failed
-    case paused
-    case readyToPlay
-}
-
 // Move Implementation on ViewController or cell which ever the UIElement
 // CALL BACK
 protocol RDPlayerObserver: AnyObject {
@@ -36,11 +28,10 @@ protocol PlayerControls: AnyObject {
     func play()
     func pause()
     func stop()
-    var playerStatus: PlayerStatus { get }
 }
 
 class RDPlayerView: UIView {
-
+    
     // MARK: - Private Vars
     private var timeObserverToken: AnyObject?
     private var playerItemStatusObserver: NSKeyValueObservation?
@@ -55,7 +46,7 @@ class RDPlayerView: UIView {
         didSet {
             player?.replaceCurrentItem(with: playerItem)
             playerItemStatusObserver = playerItem?.observe(\AVPlayerItem.status,
-                                        options: [.new, .initial], changeHandler: { [weak self] (item, _) in
+                                                            options: [.new, .initial], changeHandler: { [weak self] (item, _) in
                 guard let strongSelf = self else { return }
                 if item.status == .failed {
                     strongSelf.activityIndicator.stopAnimating()
@@ -71,7 +62,7 @@ class RDPlayerView: UIView {
             })
         }
     }
-
+    
     // MARK: - iVars
     var player: AVPlayer? {
         willSet {
@@ -81,7 +72,7 @@ class RDPlayerView: UIView {
         }
         didSet {
             playerTimeControlStatusObserver = player?.observe(\AVPlayer.timeControlStatus,
-                                            options: [.new, .initial], changeHandler: { [weak self] (player, _) in
+                                                               options: [.new, .initial], changeHandler: { [weak self] (player, _) in
                 guard let strongSelf = self else { return }
                 if player.timeControlStatus == .playing {
                     // Started Playing
@@ -99,17 +90,17 @@ class RDPlayerView: UIView {
         return player?.currentItem?.error
     }
     var activityIndicator: UIActivityIndicatorView!
-
+    
     var currentItem: AVPlayerItem? {
         return player?.currentItem
     }
     var currentTime: Float {
         return Float(self.player?.currentTime().value ?? 0)
     }
-
+    
     // MARK: - Public Vars
     public weak var playerObserverDelegate: RDPlayerObserver?
-
+    
     // MARK: - Init methods
     override init(frame: CGRect) {
         activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -130,7 +121,7 @@ class RDPlayerView: UIView {
             removeObservers()
         }
     }
-
+    
     // MARK: - Internal methods
     func setupActivityIndicator() {
         activityIndicator.hidesWhenStopped = true
@@ -140,7 +131,7 @@ class RDPlayerView: UIView {
         NSLayoutConstraint.activate([
             activityIndicator.igCenterXAnchor.constraint(equalTo: self.igCenterXAnchor),
             activityIndicator.igCenterYAnchor.constraint(equalTo: self.igCenterYAnchor)
-            ])
+        ])
     }
     func startAnimating() {
         activityIndicator.isHidden = false
@@ -161,30 +152,30 @@ class RDPlayerView: UIView {
     func setupPlayerPeriodicTimeObserver() {
         // Only add the time observer if one hasn't been created yet.
         guard timeObserverToken == nil else { return }
-
+        
         // Use a weak self variable to avoid a retain cycle in the block.
         timeObserverToken =
-            player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100),
-                                    queue: DispatchQueue.main) { [weak self] time in
-                let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
-                if let currentItem = self?.player?.currentItem {
-                    let totalTimeString =  String(format: "%02.2f", CMTimeGetSeconds(currentItem.asset.duration))
-                    if timeString == totalTimeString {
-                        self?.playerObserverDelegate?.didCompletePlay()
-                    }
+        player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100),
+                                        queue: DispatchQueue.main) { [weak self] time in
+            let timeString = String(format: "%02.2f", CMTimeGetSeconds(time))
+            if let currentItem = self?.player?.currentItem {
+                let totalTimeString =  String(format: "%02.2f", CMTimeGetSeconds(currentItem.asset.duration))
+                if timeString == totalTimeString {
+                    self?.playerObserverDelegate?.didCompletePlay()
                 }
-                if let time = Float(timeString) {
-                    self?.playerObserverDelegate?.didTrack(progress: time)
-                }
-            } as AnyObject
+            }
+            if let time = Float(timeString) {
+                self?.playerObserverDelegate?.didTrack(progress: time)
+            }
+        } as AnyObject
     }
 }
 
 // MARK: - Protocol | PlayerControls
 extension RDPlayerView: PlayerControls {
-
+    
     func play(with resource: VideoResource) {
-
+        
         guard let url = URL(string: resource.filePath) else {fatalError("Unable to form URL from resource")}
         if let existingPlayer = player {
             DispatchQueue.main.async { [weak self] in
@@ -222,7 +213,7 @@ extension RDPlayerView: PlayerControls {
             DispatchQueue.main.async {[weak self] in
                 guard let strongSelf = self else { return }
                 existingPlayer.pause()
-
+                
                 // Remove observer if observer presents before setting player to nil
                 if existingPlayer.observationInfo != nil {
                     strongSelf.removeObservers()
@@ -236,16 +227,5 @@ extension RDPlayerView: PlayerControls {
             // player was already deallocated
         }
     }
-    var playerStatus: PlayerStatus {
-        if let plyr = player {
-            switch plyr.status {
-            case .unknown: return .unknown
-            case .readyToPlay: return .readyToPlay
-            case .failed: return .failed
-            @unknown default:
-                return .unknown
-            }
-        }
-        return .unknown
-    }
+    
 }
