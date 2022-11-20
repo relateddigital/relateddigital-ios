@@ -69,6 +69,7 @@ final public class RDPopupDialogContainerView: UIView {
     internal init(frame: CGRect, preferredWidth: CGFloat) {
         self.preferredWidth = preferredWidth
         super.init(frame: frame)
+        self.backgroundColor = UIColor(white: 0.035, alpha: 0.5)
         setupViews()
     }
 
