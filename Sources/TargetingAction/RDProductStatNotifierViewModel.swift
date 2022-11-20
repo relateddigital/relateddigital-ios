@@ -24,6 +24,9 @@ public struct RDProductStatNotifierViewModel: TargetingActionViewModel {
     var contentCount = 0  // TODO: kullanmayalım
     var attributedString: NSAttributedString? = nil
     
+    
+    public var jsContent: String?
+    
     func getContentFont() -> UIFont {
         return RDHelper.getFont(fontFamily: content_font_family, fontSize: content_text_size, style: .title2)
     }

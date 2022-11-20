@@ -22,6 +22,8 @@ public struct MailSubscriptionModel {
     var extendedProps: MailSubscriptionExtendedProps
     var checkConsentMessage: String
     var report: TargetingActionReport
+    
+    var jsContent: String?
 }
 
 public struct MailSubscriptionExtendedProps {
@@ -80,6 +82,8 @@ public struct MailSubscriptionViewModel: TargetingActionViewModel {
     var permitTextSize: Int
     var consentTextSize: Int
     var report: TargetingActionReport
+    
+    public var jsContent: String?
 }
 
 public struct TargetingActionReport {

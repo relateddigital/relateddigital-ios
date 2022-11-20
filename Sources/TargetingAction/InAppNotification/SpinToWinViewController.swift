@@ -21,12 +21,135 @@ class SpinToWinViewController: RDBaseNotificationViewController {
     var sIndexDisplayNames = [Int: String]()
     
     var sliceLinks = [Int: String]()
-
+    
     
     init(_ spinToWin: SpinToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.spinToWin = spinToWin
     }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        webView = configureWebView()
+        self.view.addSubview(webView)
+        webView.allEdges(to: self.view)
+    }
+    
+    func configureWebView() -> WKWebView {
+        let configuration = WKWebViewConfiguration()
+        let userContentController = WKUserContentController()
+        userContentController.add(self, name: "eventHandler")
+        configuration.userContentController = userContentController
+        configuration.preferences.javaScriptEnabled = true
+        configuration.mediaTypesRequiringUserActionForPlayback = []
+        configuration.allowsInlineMediaPlayback = true
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        if let htmlUrl = createSpinToWinFiles() {
+            webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
+            webView.backgroundColor = .clear
+            webView.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        return webView
+    }
+    
+    private func close() {
+        self.dismiss(animated: true) {
+            
+            if let sliceLink = self.sliceLink,
+               !sliceLink.isEmptyOrWhitespace,
+               let url = URL(string: sliceLink),
+               self.spinToWin?.copyButtonFunction == "copy_redirect" {
+                DispatchQueue.main.async {
+                    let app = RDInstance.sharedUIApplication()
+                    app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: url, waitUntilDone: true)
+                }
+            }
+            
+            if let spinToWin = self.spinToWin, spinToWin.showPromoCodeBanner {
+                let bannerVC = RDSpinToWinCodeBannerController(spinToWin)
+                bannerVC.delegate = self.delegate
+                bannerVC.show(animated: true)
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            } else {
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            }
+        }
+    }
+    
+    private func sendPromotionCodeInfo(promo: String, actId: String, email: String? = "", promoTitle: String, promoSlice: String) {
+        var properties = Properties()
+        properties[RDConstants.promoAction] = promo
+        properties[RDConstants.promoActionID] = actId
+        if !self.subsEmail.isEmptyOrWhitespace {
+            properties[RDConstants.promoEmailKey] = email
+        }
+        properties[RDConstants.promoTitleKey] = promoTitle
+        if !self.sliceText.isEmptyOrWhitespace {
+            properties[RDConstants.promoSlice] = promoSlice
+        }
+        RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
+    override func show(animated: Bool) {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
+            return
+        }
+        if #available(iOS 13.0, *) {
+            let windowScene = sharedUIApplication
+                .connectedScenes
+                .filter { $0.activationState == .foregroundActive }
+                .first
+            if let windowScene = windowScene as? UIWindowScene {
+                window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                window?.windowScene = windowScene
+            }
+        } else {
+            window = UIWindow(frame: CGRect(x: 0,
+                                            y: 0,
+                                            width: UIScreen.main.bounds.size.width,
+                                            height: UIScreen.main.bounds.size.height))
+        }
+        if let window = window {
+            window.alpha = 0
+            window.windowLevel = UIWindow.Level.alert
+            window.rootViewController = self
+            window.isHidden = false
+        }
+        
+        let duration = animated ? 0.25 : 0
+        UIView.animate(withDuration: duration, animations: {
+            self.window?.alpha = 1
+        }, completion: { _ in
+        })
+    }
+    
+    override func hide(animated: Bool, completion: @escaping () -> Void) {
+        let duration = animated ? 0.25 : 0
+        UIView.animate(withDuration: duration, animations: {
+            self.window?.alpha = 0
+        }, completion: { _ in
+            self.window?.isHidden = true
+            self.window?.removeFromSuperview()
+            self.window = nil
+            completion()
+        })
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     private func getCustomFontNames() -> Set<String> {
         var customFontNames = Set<String>()
@@ -70,14 +193,12 @@ class SpinToWinViewController: RDBaseNotificationViewController {
         let bundle = Bundle(for: type(of: self))
 #endif
         let bundleHtmlPath = bundle.path(forResource: "spintowin", ofType: "html") ?? ""
-        let bundleJsPath = bundle.path(forResource: "spintowin", ofType: "js") ?? ""
-
+        
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
-        let bundleJsUrl = URL(fileURLWithPath: bundleJsPath)
         
         RDHelper.registerFonts(fontNames: getCustomFontNames())
         let fontUrls = getSpinToWinFonts(fontNames: getCustomFontNames())
-
+        
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
                 try manager.removeItem(atPath: htmlUrl.path)
@@ -87,7 +208,16 @@ class SpinToWinViewController: RDBaseNotificationViewController {
             }
             
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
-            try manager.copyItem(at: bundleJsUrl, to: jsUrl)
+            
+            if let jsContent = spinToWin?.jsContent?.utf8 {
+                guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+            
+            
         } catch let error {
             RDLogger.error(error)
             RDLogger.error(error.localizedDescription)
@@ -146,37 +276,12 @@ class SpinToWinViewController: RDBaseNotificationViewController {
         return fontUrls
     }
     
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        webView = configureWebView()
-        self.view.addSubview(webView)
-        webView.allEdges(to: self.view)
-    }
-    
-    func configureWebView() -> WKWebView {
-        let configuration = WKWebViewConfiguration()
-        let userContentController = WKUserContentController()
-        userContentController.add(self, name: "eventHandler")
-        configuration.userContentController = userContentController
-        configuration.preferences.javaScriptEnabled = true
-        configuration.mediaTypesRequiringUserActionForPlayback = []
-        configuration.allowsInlineMediaPlayback = true
-        var webView = WKWebView(frame: .zero, configuration: configuration)
-        laodSpinToWinFiles(webView: webView) { webViewAdded in 
-            webView = webViewAdded
-        }
-        webView.backgroundColor = .clear
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return webView
-    }
     
     
-    func laodSpinToWinFiles(webView:WKWebView,complete:@escaping(WKWebView)->Void) {
+    
+    
+    
+    func laodSpinToWinFiles(webView: WKWebView, complete:@escaping(WKWebView) -> Void) {
         
         var javaScriptStr = ""
         var htmlStr = ""
@@ -198,15 +303,15 @@ class SpinToWinViewController: RDBaseNotificationViewController {
             
             javaScriptStr = text
 #if SWIFT_PACKAGE
-        let bundle = Bundle.module
+            let bundle = Bundle.module
 #else
-        let bundle = Bundle(for: type(of: self))
+            let bundle = Bundle(for: type(of: self))
 #endif
-        
-        if let  htmlFile = bundle.path(forResource: "spintowin", ofType: "html") {
-            htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
-        }
-
+            
+            if let  htmlFile = bundle.path(forResource: "spintowin", ofType: "html") {
+                htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
+            }
+            
             DispatchQueue.main.async {
                 let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
                 webView.configuration.userContentController.addUserScript(script)
@@ -214,91 +319,14 @@ class SpinToWinViewController: RDBaseNotificationViewController {
             }
         }
         task.resume()
-    
-    }
-    
-    private func close() {
-        self.dismiss(animated: true) {
-            
-            if let sliceLink = self.sliceLink,
-               !sliceLink.isEmptyOrWhitespace,
-               let url = URL(string: sliceLink),
-               self.spinToWin?.copyButtonFunction == "copy_redirect" {
-                DispatchQueue.main.async {
-                    let app = RDInstance.sharedUIApplication()
-                    app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: url, waitUntilDone: true)
-                }
-            }
-            
-            if let spinToWin = self.spinToWin, spinToWin.showPromoCodeBanner {
-                let bannerVC = RDSpinToWinCodeBannerController(spinToWin)
-                bannerVC.delegate = self.delegate
-                bannerVC.show(animated: true)
-                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
-            } else {
-                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
-            }
-        }
-    }
-    
-    private func sendPromotionCodeInfo(promo: String, actId: String, email: String? = "", promoTitle: String, promoSlice: String) {
-        var properties = Properties()
-        properties[RDConstants.promoAction] = promo
-        properties[RDConstants.promoActionID] = actId
-        if !self.subsEmail.isEmptyOrWhitespace {
-            properties[RDConstants.promoEmailKey] = email
-        }
-        properties[RDConstants.promoTitleKey] = promoTitle
-        if !self.sliceText.isEmptyOrWhitespace {
-            properties[RDConstants.promoSlice] = promoSlice
-        }
-        RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
-    }
-    
-    override func show(animated: Bool) {
-            guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
-                return
-            }
-            if #available(iOS 13.0, *) {
-                let windowScene = sharedUIApplication
-                    .connectedScenes
-                    .filter { $0.activationState == .foregroundActive }
-                    .first
-                if let windowScene = windowScene as? UIWindowScene {
-                    window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-                    window?.windowScene = windowScene
-                }
-            } else {
-                window = UIWindow(frame: CGRect(x: 0,
-                                                y: 0,
-                                                width: UIScreen.main.bounds.size.width,
-                                                height: UIScreen.main.bounds.size.height))
-            }
-            if let window = window {
-                window.alpha = 0
-                window.windowLevel = UIWindow.Level.alert
-                window.rootViewController = self
-                window.isHidden = false
-            }
-            
-            let duration = animated ? 0.25 : 0
-            UIView.animate(withDuration: duration, animations: {
-                self.window?.alpha = 1
-            }, completion: { _ in
-            })
-        }
         
-        override func hide(animated: Bool, completion: @escaping () -> Void) {
-            let duration = animated ? 0.25 : 0
-            UIView.animate(withDuration: duration, animations: {
-                self.window?.alpha = 0
-            }, completion: { _ in
-                self.window?.isHidden = true
-                self.window?.removeFromSuperview()
-                self.window = nil
-                completion()
-            })
-        }
+    }
+    
+    
+    
+    
+    
+    
     
 }
 

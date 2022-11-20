@@ -47,6 +47,8 @@ public struct FindToWinViewModel: TargetingActionViewModel,Codable {
     var gamificationRulesExtended : GamificationRulesExtended? = GamificationRulesExtended()
     var gameElementsExtended : GameElementsExtendedFindToWin? = GameElementsExtendedFindToWin()
     var gameResultElementsExtended : GameResultElementsExtendedFindToWin? = GameResultElementsExtendedFindToWin()
+    
+    public var jsContent: String?
 }
 
 

@@ -116,6 +116,8 @@ struct DrawerServiceModel: TargetingActionViewModel {
     var contentMinimizedArrowColor:String?
     var contentMaximizedBackgroundImage:String?
     var contentMaximizedBackgroundColor:String?
+    
+    public var jsContent: String?
 }
 
 struct DrawerViewModel {

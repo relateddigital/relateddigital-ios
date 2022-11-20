@@ -183,6 +183,23 @@ class RDRequest {
     
     // MARK: - Mobile
     
+    class func sendSpinToWinScriptRequest(completion: @escaping (String?, RDError?) -> Void) {
+        let responseParser: (Data) -> String? = { data in
+            return String(data: data, encoding: .utf8)
+        }
+        let resource = RDNetwork.buildResource(endPoint: .spinToWinJs, method: .get, queryItems: [], headers: [:], parse: responseParser, guid: nil)
+        sendSpinToWinScriptRequestHandler(resource: resource, completion: { result, error in completion(result, error)})
+    }
+    
+    private class func sendSpinToWinScriptRequestHandler(resource: RDResource<String>, completion: @escaping (String?, RDError?) -> Void) {
+        RDNetwork.apiRequest(resource: resource, failure: { (error, _, _) in
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            completion(nil, error)
+        }, success: { (result, _) in
+            completion(result, nil)
+        })
+    }
+    
     class func sendMobileRequest(properties: Properties, headers: Properties, completion: @escaping ([String: Any]?, RDError?, String?) -> Void, guid: String? = nil) {
         
         var queryItems = [URLQueryItem]()
@@ -203,7 +220,6 @@ class RDRequest {
         let resource = RDNetwork.buildResource(endPoint: .mobile, method: .get, queryItems: queryItems, headers: headers, parse: responseParser, guid: guid)
         
         sendMobileRequestHandler(resource: resource, completion: { result, error, guid in completion(result, error, guid)})
-        
     }
     
     private class func sendMobileRequestHandler(resource: RDResource<[String: Any]>, completion: @escaping ([String: Any]?, RDError?, String?) -> Void) {

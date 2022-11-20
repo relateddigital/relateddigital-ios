@@ -49,6 +49,9 @@ public struct GameficationViewModel : TargetingActionViewModel,Codable {
     var gameElementsExtended : GameElementsExtended? = GameElementsExtended()
     var gameResultElementsExtended : GameResultElementsExtended? = GameResultElementsExtended()
     
+    
+    public var jsContent: String?
+    
 }
 
 public struct GameficationReport: Codable {

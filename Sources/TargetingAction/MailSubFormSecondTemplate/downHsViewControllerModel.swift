@@ -116,4 +116,6 @@ struct downHsViewServiceModel : TargetingActionViewModel {
     var consentTextUrl:String?
     var closeButtonColor:String?
     var backgroundColor:String?
+    
+    var jsContent: String?
 }

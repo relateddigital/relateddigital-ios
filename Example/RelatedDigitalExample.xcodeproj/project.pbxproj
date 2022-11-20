@@ -35,6 +35,8 @@
 		88680B192694FC0C004B8DE8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 88680B172694FC0C004B8DE8 /* LaunchScreen.storyboard */; };
 		88680B242694FC0D004B8DE8 /* RelatedDigitalExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88680B232694FC0D004B8DE8 /* RelatedDigitalExampleTests.swift */; };
 		88680B2F2694FC0D004B8DE8 /* RelatedDigitalExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88680B2E2694FC0D004B8DE8 /* RelatedDigitalExampleUITests.swift */; };
+		88A44ADA292A76B2002F90FA /* android101.otf in Resources */ = {isa = PBXBuildFile; fileRef = 88A44AD8292A76B2002F90FA /* android101.otf */; };
+		88A44ADB292A76B2002F90FA /* sydneysignature.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 88A44AD9292A76B2002F90FA /* sydneysignature.ttf */; };
 		94C8E15F496E5053E428ED2D /* Pods_NotificationContent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A52E59BAC45E8EBA60C3AA85 /* Pods_NotificationContent.framework */; };
 /* End PBXBuildFile section */
 
@@ -124,6 +126,8 @@
 		88680B2A2694FC0D004B8DE8 /* RelatedDigitalExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RelatedDigitalExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88680B2E2694FC0D004B8DE8 /* RelatedDigitalExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedDigitalExampleUITests.swift; sourceTree = "<group>"; };
 		88680B302694FC0D004B8DE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		88A44AD8292A76B2002F90FA /* android101.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = android101.otf; sourceTree = "<group>"; };
+		88A44AD9292A76B2002F90FA /* sydneysignature.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = sydneysignature.ttf; sourceTree = "<group>"; };
 		8C65DCB10210318632CB04A1 /* Pods_RelatedDigitalExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RelatedDigitalExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EDAD231028D78D540CECEB7 /* Pods-RelatedDigitalExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RelatedDigitalExample.debug.xcconfig"; path = "Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample.debug.xcconfig"; sourceTree = "<group>"; };
 		A52E59BAC45E8EBA60C3AA85 /* Pods_NotificationContent.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationContent.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -253,6 +257,7 @@
 			isa = PBXGroup;
 			children = (
 				2F325DEE27BFBB5A00817023 /* RelatedDigitalExample.entitlements */,
+				88A44AD7292A76B2002F90FA /* Fonts */,
 				2F4250CD27B2678F00D53F97 /* Helpers */,
 				88C8886F2695456000E50A10 /* Controllers */,
 				88680B0C2694FC09004B8DE8 /* AppDelegate.swift */,
@@ -279,6 +284,15 @@
 				88680B302694FC0D004B8DE8 /* Info.plist */,
 			);
 			path = RelatedDigitalExampleUITests;
+			sourceTree = "<group>";
+		};
+		88A44AD7292A76B2002F90FA /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				88A44AD8292A76B2002F90FA /* android101.otf */,
+				88A44AD9292A76B2002F90FA /* sydneysignature.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		88C8886F2695456000E50A10 /* Controllers */ = {
@@ -482,7 +496,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				88680B192694FC0C004B8DE8 /* LaunchScreen.storyboard in Resources */,
+				88A44ADB292A76B2002F90FA /* sydneysignature.ttf in Resources */,
 				88680B162694FC0C004B8DE8 /* Assets.xcassets in Resources */,
+				88A44ADA292A76B2002F90FA /* android101.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

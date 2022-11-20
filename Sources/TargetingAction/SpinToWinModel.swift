@@ -108,6 +108,9 @@ public struct SpinToWinViewModel: TargetingActionViewModel, Codable {
     
     var fontFiles: [String] = []
     
+    
+    public var jsContent: String?
+    
 }
 
 public struct SpinToWinReport: Codable {

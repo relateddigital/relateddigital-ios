@@ -52,6 +52,8 @@ public class ScratchToWinModel: TargetingActionViewModel {
     let buttonCustomFontFamilyIos : String?
     let promocodeCustomFontFamilyIos : String?
     let copybuttonCustomFontFamilyIos : String?
+    
+    public var jsContent: String?
 
     var imageUrl: URL?
     lazy var image: Data? = {

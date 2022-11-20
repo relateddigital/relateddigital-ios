@@ -116,6 +116,21 @@ class RDTargetingAction {
             semaphore.signal()
         })
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        
+        
+        if targetingActionViewModel?.targetingActionType == .spinToWin {
+            RDRequest.sendSpinToWinScriptRequest(completion: {(result: String?, _: RDError?) in
+                guard let result = result else {
+                    semaphore.signal()
+                    completion(nil)
+                    return
+                }
+                targetingActionViewModel?.jsContent = result
+                semaphore.signal()
+            })
+            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+        }
+        
         completion(targetingActionViewModel)
     }
 

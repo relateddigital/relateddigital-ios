@@ -22,6 +22,8 @@ enum RDEndpoint {
     case subsjson
     case promotion
     case remote
+    
+    case spinToWinJs
 }
 
 struct RDResource<A> {

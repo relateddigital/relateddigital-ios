@@ -93,6 +93,8 @@ internal class RDHelper {
         RDBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RDConstants.subsjsonEndpoint)"
         RDBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RDConstants.promotionEndpoint)"
         RDBasePath.endpoints[.remote] = "https://\(RDConstants.remoteConfigEndpoint)"
+        RDBasePath.endpoints[.spinToWinJs] = RDConstants.spintoWinUrl
+        
     }
     
     static private let dateFormatter = DateFormatter()
