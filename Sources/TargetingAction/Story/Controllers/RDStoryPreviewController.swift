@@ -28,7 +28,6 @@ final class RDStoryPreviewController: UIViewController, UIGestureRecognizerDeleg
 
     // check whether device rotation is happening or not
     private(set) var isTransitioning = false
-    private(set) var currentIndexPath: IndexPath?
 
     private let dismissGesture: UISwipeGestureRecognizer = {
         let gesture = UISwipeGestureRecognizer()
@@ -36,21 +35,13 @@ final class RDStoryPreviewController: UIViewController, UIGestureRecognizerDeleg
         return gesture
     }()
 
-    private var currentCell: RDStoryPreviewCell? {
-        guard let indexPath = self.currentIndexPath else {
-            debugPrint("Current IndexPath is nil")
-            return nil
-        }
-        return self._view.snapsCollectionView.cellForItem(at: indexPath) as? RDStoryPreviewCell
-    }
-
     weak var storyUrlDelegate: RDStoryURLDelegate?
 
     // MARK: - Overriden functions
     override func loadView() {
         super.loadView()
         view = RDStoryPreviewView.init(layoutType: self.layoutType)
-        viewModel = RDStoryPreviewModel.init(self.stories, self.handPickedStoryIndex)
+        viewModel = RDStoryPreviewModel(self.stories)
         _view.snapsCollectionView.decelerationRate = .fast
         dismissGesture.delegate = self
         dismissGesture.addTarget(self, action: #selector(didSwipeDown(_:)))
@@ -132,7 +123,6 @@ extension RDStoryPreviewController: UICollectionViewDataSource {
         cell.story = story
         cell.delegate = self
         cell.storyUrlDelegate = self.storyUrlDelegate
-        currentIndexPath = indexPath
         nStoryIndex = indexPath.item
         return cell
     }

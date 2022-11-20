@@ -13,7 +13,6 @@ enum MimeType: String {
     case unknown
 }
 class RDStoryItem {
-    let internalIdentifier: String
     let mimeType: String
     let url: String
     let displayTime: Int
@@ -42,7 +41,6 @@ class RDStoryItem {
         self.url = fileSrc // TO_DO:
         self.targetUrl = targetUrl
         self.buttonText = buttonText
-        self.internalIdentifier = UUID().uuidString
         self.buttonTextColor = buttonTextColor
         self.buttonColor = buttonColor
         self.countDown = countDown

@@ -29,7 +29,6 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 10
         button.setTitle("Show Story", for: .normal)
-        button.addTarget(self, action: #selector(showStory), for: .touchUpInside)
         return button
     }()
     
@@ -38,7 +37,6 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 10
         button.setTitle("Show Story Async", for: .normal)
-        button.addTarget(self, action: #selector(showStoryAsync), for: .touchUpInside)
         return button
     }()
     
@@ -48,6 +46,8 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         actionIdTextField.delegate = self
         actionIdTextField.addTarget(self, action: #selector(self.textFieldFilter), for: .editingChanged)
+        storyButton.addTarget(self, action: #selector(showStory), for: .touchUpInside)
+        storyAsyncButton.addTarget(self, action: #selector(showStoryAsync), for: .touchUpInside)
         self.view.addSubview(actionIdTextField)
         self.view.addSubview(storyButton)
         self.view.addSubview(storyAsyncButton)
@@ -92,7 +92,7 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
         self.view.endEditing(true)
     }
     
-    @objc func showStory(sender: UIButton!) {
+    @objc func showStory(sender: UIButton) {
         storyHomeView?.removeFromSuperview()
         storyHomeView = RelatedDigital.getStoryView(actionId: Int(self.actionIdTextField.text ?? ""), urlDelegate: self)
         self.view.addSubview(storyHomeView!)
@@ -102,7 +102,7 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
         storyHomeView!.heightAnchor.constraint(equalToConstant: 100).isActive = true
     }
     
-    @objc func showStoryAsync(sender: UIButton!) {
+    @objc func showStoryAsync(sender: UIButton) {
         RelatedDigital.getStoryViewAsync(actionId: Int(self.actionIdTextField.text ?? "")){ storyHomeView in
             DispatchQueue.main.async {
                 self.storyHomeView?.removeFromSuperview()

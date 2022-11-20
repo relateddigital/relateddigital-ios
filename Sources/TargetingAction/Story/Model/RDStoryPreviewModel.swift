@@ -8,20 +8,18 @@
 import Foundation
 
 class RDStoryPreviewModel: NSObject {
-
+    
     // MARK: - iVars
     let stories: [RDStory]
-    let handPickedStoryIndex: Int // starts with(i)
-
+    
     // MARK: - Init method
-    init(_ stories: [RDStory], _ handPickedStoryIndex: Int) {
+    init(_ stories: [RDStory]) {
         self.stories = stories
-        self.handPickedStoryIndex = handPickedStoryIndex
     }
-
+    
     // MARK: - Functions
     func numberOfItemsInSection(_ section: Int) -> Int {
-            return stories.count
+        return stories.count
     }
     func cellForItemAtIndexPath(_ indexPath: IndexPath) -> RDStory? {
         if indexPath.item < stories.count {

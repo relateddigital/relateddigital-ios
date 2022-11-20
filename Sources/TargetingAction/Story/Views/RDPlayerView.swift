@@ -19,7 +19,6 @@ struct VideoResource {
 protocol RDPlayerObserver: AnyObject {
     func didStartPlaying()
     func didCompletePlay()
-    func didTrack(progress: Float)
     func didFailed(withError error: String, for url: URL?)
 }
 
@@ -163,9 +162,6 @@ class RDPlayerView: UIView {
                 if timeString == totalTimeString {
                     self?.playerObserverDelegate?.didCompletePlay()
                 }
-            }
-            if let time = Float(timeString) {
-                self?.playerObserverDelegate?.didTrack(progress: time)
             }
         } as AnyObject
     }
