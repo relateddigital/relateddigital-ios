@@ -23,7 +23,6 @@ class RatingCollectionViewCell: UICollectionViewCell {
         }
     }
     var borderColor: UIColor = .white
-    var gradientColors: [CGColor] = [UIColor.blue.cgColor, UIColor.red.cgColor]
 
     override var isSelected: Bool {
         didSet {
@@ -53,7 +52,6 @@ class RatingCollectionViewCell: UICollectionViewCell {
         DispatchQueue.main.async {
             self.contentView.addGradientBackground(colors: colors)
         }
-        self.gradientColors = colors
     }
 
     func setBackgroundColor(_ color: UIColor) {
@@ -73,14 +71,6 @@ extension UIView {
         let bundle = Bundle(for: RDTargetingAction.self)
 #endif
         return bundle.loadNibNamed(String(describing: T.self), owner: nil, options: nil)![0] as! T
-    }
-
-    func removeGradient() {
-        if let sublayers = self.layer.sublayers {
-            for layer in sublayers where layer.name == "gradient" {
-                layer.removeFromSuperlayer()
-            }
-        }
     }
 
     func addGradientBackground(colors: [CGColor]) {
@@ -223,17 +213,6 @@ extension UIColor {
 }
 
 extension CALayer {
-
-    func addShadow() {
-        self.shadowOffset = .zero
-        self.shadowOpacity = 0.2
-        self.shadowRadius = 4
-        self.shadowColor = UIColor.black.cgColor
-        self.masksToBounds = false
-        if cornerRadius != 0 {
-            addShadowWithRoundedCorners()
-        }
-    }
 
     func roundCorners(radius: CGFloat) {
         self.cornerRadius = radius
