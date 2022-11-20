@@ -111,7 +111,7 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
     open var closedCompletion:                 (() -> Void)?
     /// If set, launched after all animations finish when the close() method is invoked via public API.
     open var programmaticallyClosedCompletion: (() -> Void)?
- 
+    
     @available(*, unavailable)
     required public init?(coder: NSCoder) { fatalError() }
     
@@ -158,10 +158,6 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
             view.addGestureRecognizer(overlayViewTapGestureRecognizer)
         }
         
-        //footerView = UIPageControl()
-        //footerView?.numberOfPages = notification.carouselItems.count
-        //footerView?.currentPage = startIndex
-        
     }
     
     @objc func overlayViewTapped(tapGestureRecognizer: UITapGestureRecognizer) {
@@ -181,17 +177,6 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
         self.view.addSubview(overlayView)
         self.view.sendSubviewToBack(overlayView)
     }
-    
-    
-    /*
-    fileprivate func configureFooterView() {
-        if let footer = footerView {
-            footer.alpha = 0
-            self.view.addSubview(footer)
-        }
-    }
-     */
-    
     
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -257,7 +242,7 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
         
         overlayView.frame = view.bounds.insetBy(dx: -UIScreen.main.bounds.width * 2, dy: -UIScreen.main.bounds.height * 2)
     }
-
+    
     public func page(toIndex index: Int) {
         
         guard currentIndex != index && index >= 0 && index < self.itemCount() else { return }
@@ -332,7 +317,7 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
     @objc fileprivate func closeInteractively() {
     }
     
-
+    
     
     fileprivate func animateDecorationViews(visible: Bool) {
         
@@ -389,9 +374,9 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
     public func closeCarousel(shouldTrack: Bool, callToActionURL: URL?) {
         
         self.rdDelegate?.notificationShouldDismiss(controller: self,
-                                            callToActionURL: callToActionURL,
-                                            shouldTrack: shouldTrack,
-                                            additionalTrackingProperties: nil)
+                                                   callToActionURL: callToActionURL,
+                                                   shouldTrack: shouldTrack,
+                                                   additionalTrackingProperties: nil)
     }
     
     public override func hide(animated: Bool, completion: @escaping () -> Void) {

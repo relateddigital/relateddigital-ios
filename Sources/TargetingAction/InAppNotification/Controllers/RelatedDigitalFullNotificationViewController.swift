@@ -31,7 +31,6 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
     @IBOutlet weak var buttonTopNormal: NSLayoutConstraint!
     @IBOutlet weak var bodyButtonNormal: NSLayoutConstraint!
 
-    var isCopyEnabled = true
     let pasteboard = UIPasteboard.general
     var player : AVPlayer?
 

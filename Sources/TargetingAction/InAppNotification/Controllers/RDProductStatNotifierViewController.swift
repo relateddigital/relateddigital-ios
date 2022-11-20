@@ -18,8 +18,6 @@ class RDProductStatNotifierViewController: RDBaseNotificationViewController {
     var halfScreenHeight = 0.0
     
     var isDismissing = false
-    var position: CGPoint!
-
     
     init(productStatNotifier: RDProductStatNotifierViewModel) {
         super.init(nibName: nil, bundle: nil)
@@ -35,7 +33,7 @@ class RDProductStatNotifierViewController: RDBaseNotificationViewController {
         relatedDigitalProductStatNotifierView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
     }
     
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -61,7 +59,7 @@ class RDProductStatNotifierViewController: RDBaseNotificationViewController {
                                                      additionalTrackingProperties: nil)
         }
     }
-
+    
     override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
@@ -69,9 +67,9 @@ class RDProductStatNotifierViewController: RDBaseNotificationViewController {
         var bounds: CGRect
         if #available(iOS 13.0, *) {
             let windowScene = sharedUIApplication
-                           .connectedScenes
-                           .filter { $0.activationState == .foregroundActive }
-                           .first
+                .connectedScenes
+                .filter { $0.activationState == .foregroundActive }
+                .first
             guard let scene = windowScene as? UIWindowScene else { return }
             bounds = scene.coordinateSpace.bounds
         } else {
@@ -101,17 +99,14 @@ class RDProductStatNotifierViewController: RDBaseNotificationViewController {
         } else {
             window = UIWindow(frame: frame)
         }
-
+        
         if let window = window {
             window.windowLevel = UIWindow.Level.alert
             window.clipsToBounds = false // true
             window.rootViewController = self
             window.isHidden = false
         }
-        self.position = self.window?.layer.position
     }
-    
-
     
     override func hide(animated: Bool, completion: @escaping () -> Void) {
         if !isDismissing {
@@ -128,15 +123,15 @@ class RDProductStatNotifierViewController: RDBaseNotificationViewController {
                 }
                 
                 self.window?.frame.origin.y += CGFloat(originY)
-                }, completion: { _ in
-                    self.window?.isHidden = true
-                    self.window?.removeFromSuperview()
-                    self.window = nil
-                    completion()
+            }, completion: { _ in
+                self.window?.isHidden = true
+                self.window?.removeFromSuperview()
+                self.window = nil
+                completion()
             })
         }
     }
-
+    
 }
 
 

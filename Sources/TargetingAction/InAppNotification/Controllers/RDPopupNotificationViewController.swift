@@ -25,7 +25,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             completion()
         })
     }
-
+    
     override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
@@ -51,7 +51,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             window.rootViewController = self
             window.isHidden = false
         }
-
+        
         window?.alpha = 1
     }
     
@@ -59,40 +59,40 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
     /// First init flag
     fileprivate var initialized = false
     weak var rdInAppNotification: RDInAppNotification?
-
+    
     /// StatusBar display related
     fileprivate let hideStatusBar: Bool
     fileprivate var statusBarShouldBeHidden: Bool = false
-
+    
     /// Width for iPad displays
     fileprivate let preferredWidth: CGFloat
-
+    
     /// The completion handler
     fileprivate var completion: (() -> Void)?
-
+    
     /// The custom transition presentation manager
     fileprivate var presentationManager: RDPresentationManager!
-
+    
     /// Interactor class for pan gesture dismissal
     fileprivate lazy var interactor = RDInteractiveTransition()
-
+    
     /// Returns the controllers view
     internal var popupContainerView: RDPopupDialogContainerView {
         return view as! RDPopupDialogContainerView // swiftlint:disable:this force_cast
     }
-
+    
     /// The set of buttons
     fileprivate var buttons = [RDPopupDialogButton]()
-
+    
     fileprivate var closeButton: UIButton!
-
+    
     // MARK: Public
-
+    
     /// The content view of the popup dialog
     public var viewController: RDDPNVC
-
+    
     // MARK: - Initializers
-
+    
     @objc func imageTapped(tapGestureRecognizer: UITGR) {
         dismiss(animated: true) {
             guard let notification = self.notification else { return }
@@ -113,7 +113,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
     }
     
     @objc func closeButtonTapped(tapGestureRecognizer: UITGR) {
-    
+        
         if let closeButtonActionType = rdInAppNotification?.closePopupActionType {
             if closeButtonActionType == "closebutton" || closeButtonActionType == "all"  {
                 dismiss(animated: true) {
@@ -132,27 +132,27 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             }
         }
     }
-
+    
     func changeCloseButtonConstraints() {
-
+        
     }
-
+    
     fileprivate func initForInAppNotification(_ viewController: RDDPNVC) {
         guard let notification = self.notification else { return }
         if notification.type == .secondNps {
             let button = RDPopupDialogButton(title: notification.buttonText!,
-                                                   font: notification.buttonTextFont,
-                                                   buttonTextColor: notification.buttonTextColor,
-                                                   buttonColor: notification.buttonColor,
-                                                   action: openSecondPopup)
+                                             font: notification.buttonTextFont,
+                                             buttonTextColor: notification.buttonTextColor,
+                                             buttonColor: notification.buttonColor,
+                                             action: openSecondPopup)
             button.isEnabled = false
             addButton(button)
         } else if notification.type == .imageTextButton {
             if !notification.buttonText.isNilOrWhiteSpace {
                 let button = RDPopupDialogButton(title: notification.buttonText!,
-                                                       font: notification.buttonTextFont,
-                                                       buttonTextColor: notification.buttonTextColor,
-                                                       buttonColor: notification.buttonColor, action: commonButtonAction)
+                                                 font: notification.buttonTextFont,
+                                                 buttonTextColor: notification.buttonTextColor,
+                                                 buttonColor: notification.buttonColor, action: commonButtonAction)
                 if notification.type == .npsWithNumbers ||
                     notification.type == .nps {
                     button.isEnabled = false
@@ -167,19 +167,19 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                                                        buttonColor: notification.secondButtonColor, action: secondButtonAction)
                 addButton(secondButton)
             }
-
+            
             if notification.messageTitle.isNilOrWhiteSpace {
                 viewController.hideTitle()
             }
-
+            
             if notification.messageBody.isNilOrWhiteSpace {
                 viewController.hideMessage()
             }
         } else if notification.type != .fullImage && notification.type != .imageButtonImage {
             let button = RDPopupDialogButton(title: notification.buttonText!,
-                                                   font: notification.buttonTextFont,
-                                                   buttonTextColor: notification.buttonTextColor,
-                                                   buttonColor: notification.buttonColor, action: commonButtonAction)
+                                             font: notification.buttonTextFont,
+                                             buttonTextColor: notification.buttonTextColor,
+                                             buttonColor: notification.buttonColor, action: commonButtonAction)
             if notification.type == .npsWithNumbers ||
                 notification.type == .nps {
                 button.isEnabled = false
@@ -193,20 +193,20 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             }
         }
     }
-
+    
     func commonButtonAction() {
         guard let notification = self.notification else { return }
         var returnCallback = true
         var additionalTrackingProperties = Properties()
         if notification.type == .smileRating {
             additionalTrackingProperties["OM.s_point"]
-                = String(Int(viewController.standardView.sliderStepRating.value))
+            = String(Int(viewController.standardView.sliderStepRating.value))
             additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
             additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
         } else if notification.type == .nps {
             additionalTrackingProperties["OM.s_point"]
-                = String(viewController.standardView.npsView.rating).replacingOccurrences(of: ",",
-                                                                                          with: ".")
+            = String(viewController.standardView.npsView.rating).replacingOccurrences(of: ",",
+                                                                                      with: ".")
             additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
             additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
         } else if notification.type == .npsWithNumbers {
@@ -251,7 +251,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         let additionalTrackingProperties = Properties()
         
         let callToActionURL: URL? = notification.callToSecondActionUrl
-
+        
         self.delegate?.notificationShouldDismiss(controller: self,
                                                  callToActionURL: callToActionURL,
                                                  shouldTrack: true,
@@ -260,26 +260,26 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         self.inappButtonDelegate?.didTapSecondButton(notification)
         
     }
-
+    
     fileprivate func initForEmailForm(_ viewController: RDDPNVC) {
         guard let mailForm = self.mailForm else { return }
-
+        
         let button = RDPopupDialogButton(title: mailForm.buttonTitle,
-                                                font: mailForm.buttonFont,
-                                                   buttonTextColor: mailForm.buttonTextColor,
-                                                   buttonColor: mailForm.buttonColor, action: nil)
+                                         font: mailForm.buttonFont,
+                                         buttonTextColor: mailForm.buttonTextColor,
+                                         buttonColor: mailForm.buttonColor, action: nil)
         addButton(button)
-
+        
     }
-
+    
     fileprivate func initForScratchToWin(_ viewController: RDDPNVC) {
         viewController.standardView.delegate = self
     }
-
+    
     public convenience init(notification: RDInAppNotification? = nil,
                             mailForm: MailSubscriptionViewModel? = nil,
                             scratchToWin: ScratchToWinModel? = nil) {
-
+        
         let viewController = RDDPNVC(rdInAppNotification: notification, emailForm: mailForm, scratchToWin: scratchToWin)
         
         self.init(notification: notification,
@@ -302,10 +302,10 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         viewController.standardView.imgButtonDelegate = self
         viewController.standardView.npsDelegate = self
     }
-
+    
     /*!
      Creates a popup dialog containing a custom view
-
+     
      - parameter viewController:   A custom view controller to be displayed
      - parameter buttonAlignment:  The dialog button alignment
      - parameter transitionStyle:  The dialog transition style
@@ -314,7 +314,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
      - parameter panGestureDismissal: Indicates if dialog can be dismissed via pan gesture
      - parameter hideStatusBar:    Whether to hide the status bar on PopupDialog presentation
      - parameter completion:       Completion block invoked when dialog was dismissed
-
+     
      - returns: Popup dialog with a custom view controller
      */
     public init(
@@ -329,51 +329,51 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         panGestureDismissal: Bool = true,
         hideStatusBar: Bool = false,
         completion: (() -> Void)? = nil) {
-
-        self.viewController = viewController as? RDDPNVC ?? RDDPNVC()
-        self.preferredWidth = preferredWidth
-        self.hideStatusBar = hideStatusBar
-        self.completion = completion
-        super.init(nibName: nil, bundle: nil)
-        self.notification = notification
-        self.mailForm = mailForm
-        self.scratchToWin = scratchToWin
-        // Init the presentation manager
-        presentationManager = RDPresentationManager(transitionStyle: transitionStyle, interactor: interactor)
-        popupContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
-
-        // Assign the interactor view controller
-        interactor.viewController = self
-
-        // Define presentation styles
-        transitioningDelegate = presentationManager
-        modalPresentationStyle = .custom
-
-        // StatusBar setup
-        modalPresentationCapturesStatusBarAppearance = true
-
-        // Add our custom view to the container
-        addChild(viewController)
-        popupContainerView.stackView.insertArrangedSubview(viewController.view, at: 0)
-        popupContainerView.buttonStackView.axis = buttonAlignment
-        viewController.didMove(toParent: self)
-
-        // Allow for dialog dismissal on background tap
-        if tapGestureDismissal {
-            let tapRecognizer = UITGR(target: self, action: #selector(handleTap))
-            tapRecognizer.cancelsTouchesInView = false
-            popupContainerView.addGestureRecognizer(tapRecognizer)
+            
+            self.viewController = viewController as? RDDPNVC ?? RDDPNVC()
+            self.preferredWidth = preferredWidth
+            self.hideStatusBar = hideStatusBar
+            self.completion = completion
+            super.init(nibName: nil, bundle: nil)
+            self.notification = notification
+            self.mailForm = mailForm
+            self.scratchToWin = scratchToWin
+            // Init the presentation manager
+            presentationManager = RDPresentationManager(transitionStyle: transitionStyle, interactor: interactor)
+            popupContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
+            
+            // Assign the interactor view controller
+            interactor.viewController = self
+            
+            // Define presentation styles
+            transitioningDelegate = presentationManager
+            modalPresentationStyle = .custom
+            
+            // StatusBar setup
+            modalPresentationCapturesStatusBarAppearance = true
+            
+            // Add our custom view to the container
+            addChild(viewController)
+            popupContainerView.stackView.insertArrangedSubview(viewController.view, at: 0)
+            popupContainerView.buttonStackView.axis = buttonAlignment
+            viewController.didMove(toParent: self)
+            
+            // Allow for dialog dismissal on background tap
+            if tapGestureDismissal {
+                let tapRecognizer = UITGR(target: self, action: #selector(handleTap))
+                tapRecognizer.cancelsTouchesInView = false
+                popupContainerView.addGestureRecognizer(tapRecognizer)
+            }
+            // Allow for dialog dismissal on dialog pan gesture
+            if panGestureDismissal {
+                let panRecognizer = UIPGR(target: interactor, action: #selector(RDInteractiveTransition.handlePan))
+                panRecognizer.cancelsTouchesInView = false
+                popupContainerView.stackView.addGestureRecognizer(panRecognizer)
+            }
+            
+            // addCloseButton()
         }
-        // Allow for dialog dismissal on dialog pan gesture
-        if panGestureDismissal {
-            let panRecognizer = UIPGR(target: interactor, action: #selector(RDInteractiveTransition.handlePan))
-            panRecognizer.cancelsTouchesInView = false
-            popupContainerView.stackView.addGestureRecognizer(panRecognizer)
-        }
-        
-        // addCloseButton()
-    }
-
+    
     func openSecondPopup() {
         commonButtonAction()
         guard let type = self.notification?.secondPopupType else { return }
@@ -392,19 +392,19 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             RelatedDigital.showNotification(n)
         }
     }
-
+    
     // Init with coder not implemented
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     // MARK: - View life cycle
-
+    
     /// Replaces controller view with popup view
     public override func loadView() {
         view = RDPopupDialogContainerView(frame: UIScreen.main.bounds, preferredWidth: preferredWidth)
     }
-
+    
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObservers()
@@ -414,7 +414,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         }
         initialized = true
     }
-
+    
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         statusBarShouldBeHidden = hideStatusBar
@@ -422,33 +422,33 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             self.setNeedsStatusBarAppearanceUpdate()
         }
     }
-
+    
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         removeObservers()
     }
-
+    
     deinit {
         completion?()
         completion = nil
     }
-
+    
     // MARK: - Dismissal related
-
+    
     @objc fileprivate func handleTap(_ sender: UITGR) {
         let point = sender.location(in: popupContainerView.stackView)
         guard !popupContainerView.stackView.point(inside: point, with: nil) else { return }
         dismiss()
     }
-
+    
     @objc public func dismiss(_ completion: (() -> Void)? = nil) {
         dismiss(animated: true) {
             completion?()
         }
     }
-
+    
     // MARK: - Button related
-
+    
     fileprivate func appendButtons() {
         let stackView = popupContainerView.stackView
         let buttonStackView = popupContainerView.buttonStackView
@@ -456,22 +456,22 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         if buttons.isEmpty {
             stackView.removeArrangedSubview(popupContainerView.buttonStackView)
         }
-
+        
         for (index, button) in buttons.enumerated() {
             button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
             buttonStackView.addArrangedSubview(button)
             button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         }
     }
-
+    
     @objc public func addButton(_ button: RDPopupDialogButton) {
         buttons.append(button)
     }
-
+    
     @objc public func addButtons(_ buttons: [RDPopupDialogButton]) {
         self.buttons += buttons
     }
-
+    
     /// Calls the action closure of the button instance tapped
     @objc fileprivate func buttonTapped(_ button: RDPopupDialogButton) {
         if self.mailForm != nil {
@@ -482,7 +482,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                 second = defaultView.secondCheckBox.isChecked
             }
             let mail = defaultView.emailTF.text ?? ""
-
+            
             DispatchQueue.main.async {
                 if !RDHelper.checkEmail(email: mail) {// If mail is not valid
                     defaultView.resultLabel.text = self.mailForm?.invalidEmailMessage
@@ -492,9 +492,9 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                     defaultView.resultLabel.textColor = .systemGreen
                     defaultView.resultLabel.isHidden = false
                     RelatedDigital.subscribeMail(click: self.mailForm!.report.click,
-                                                     actid: "\(self.mailForm!.actId)",
-                                                     auth: self.mailForm!.auth,
-                                                     mail: mail)
+                                                 actid: "\(self.mailForm!.actId)",
+                                                 auth: self.mailForm!.auth,
+                                                 mail: mail)
                     self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: Properties())
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         self.dismiss()
@@ -510,28 +510,28 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             button.buttonAction?()
         }
     }
-
+    
     public func tapButtonWithIndex(_ index: Int) {
         let button = buttons[index]
         button.buttonAction?()
     }
-
+    
     // MARK: - StatusBar display related
-
+    
     public override var prefersStatusBarHidden: Bool {
         return statusBarShouldBeHidden
     }
-
+    
     public override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return .slide
     }
-
+    
 }
 
 // MARK: - View proxy values
 
 extension RDPopupNotificationViewController {
-
+    
     @objc public var buttonAlignment: NSLayoutConstraint.Axis {
         get {
             return popupContainerView.buttonStackView.axis
@@ -541,7 +541,7 @@ extension RDPopupNotificationViewController {
             popupContainerView.pv_layoutIfNeededAnimated()
         }
     }
-
+    
     @objc public var transitionStyle: PopupDialogTransitionStyle {
         get { return presentationManager.transitionStyle }
         set { presentationManager.transitionStyle = newValue }
@@ -550,26 +550,26 @@ extension RDPopupNotificationViewController {
 
 internal extension RDPopupNotificationViewController {
     // MARK: - Keyboard & orientation observers
-
+    
     func addObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(orientationChanged),
                                                name: UIDevice.orientationDidChangeNotification,
                                                object: nil)
     }
-
+    
     func removeObservers() {
         NotificationCenter.default.removeObserver(self,
                                                   name: UIDevice.orientationDidChangeNotification,
                                                   object: nil)
     }
-
+    
     // MARK: - Actions
-
-
+    
+    
     @objc fileprivate func orientationChanged(_ notification: Notification) {
-
+        
     }
-
+    
     func createSecondPopup() -> RDInAppNotification? {
         if let not = self.notification {
             let point = viewController.standardView.npsView.rating
@@ -595,7 +595,7 @@ internal extension RDPopupNotificationViewController {
         }
         return nil
     }
-
+    
 }
 extension RDPopupNotificationViewController: ImageButtonImageDelegate {
     func imageButtonTapped() {
@@ -612,7 +612,7 @@ extension UIColor {
         let red: CGFloat = components?[0] ?? 0.0
         let green: CGFloat = components?[1] ?? 0.0
         let blue: CGFloat = components?[2] ?? 0.0
-
+        
         let hexString = String.init(format: "#%02lX%02lX%02lX",
                                     lroundf(Float(red * 255)),
                                     lroundf(Float(green * 255)),
@@ -631,9 +631,9 @@ extension RDPopupNotificationViewController: RDPopupDialogDefaultViewDelegate {
                                          action: nil)
         addButton(button)
         appendButtons()
-
+        
     }
-
+    
     func dismissSctw() {
         guard let _ = self.scratchToWin else { return }
         delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: true, additionalTrackingProperties: nil)
