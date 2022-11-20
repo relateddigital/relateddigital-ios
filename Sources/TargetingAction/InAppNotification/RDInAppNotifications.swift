@@ -234,7 +234,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showSpinToWin(_ model: SpinToWinViewModel) -> Bool {
-        let spinToWinVC = SpinToWinViewController(model)
+        let spinToWinVC = RDSpinToWinViewController(model)
         spinToWinVC.delegate = self
         spinToWinVC.show(animated: true)
         return true

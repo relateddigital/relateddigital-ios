@@ -1,5 +1,5 @@
 //
-//  SpinToWinViewController.swift
+//  RDSpinToWinViewController.swift
 //  Related Digital IOS
 //
 //  Created by Said Alır on 29.01.2021.
@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-class SpinToWinViewController: RDBaseNotificationViewController {
+class RDSpinToWinViewController: RDBaseNotificationViewController {
     
     weak var webView: WKWebView!
     var subsEmail = ""
@@ -278,59 +278,9 @@ class SpinToWinViewController: RDBaseNotificationViewController {
     
     
     
-    
-    
-    
-    func laodSpinToWinFiles(webView: WKWebView, complete:@escaping(WKWebView) -> Void) {
-        
-        var javaScriptStr = ""
-        var htmlStr = ""
-        
-        let url = URL(string: RDConstants.spintoWinUrl)!
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("data is nil")
-                return
-            }
-            guard let text = String(data: data, encoding: .utf8) else {
-                print("the response is not in UTF-8")
-                return
-            }
-            
-            javaScriptStr = text
-#if SWIFT_PACKAGE
-            let bundle = Bundle.module
-#else
-            let bundle = Bundle(for: type(of: self))
-#endif
-            
-            if let  htmlFile = bundle.path(forResource: "spintowin", ofType: "html") {
-                htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
-            }
-            
-            DispatchQueue.main.async {
-                let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-                webView.configuration.userContentController.addUserScript(script)
-                webView.loadHTMLString(htmlStr, baseURL: nil)
-            }
-        }
-        task.resume()
-        
-    }
-    
-    
-    
-    
-    
-    
-    
 }
 
-extension SpinToWinViewController: WKScriptMessageHandler {
+extension RDSpinToWinViewController: WKScriptMessageHandler {
     
     private func chooseSlice(selectedIndex: Int, selectedPromoCode: String) {
         

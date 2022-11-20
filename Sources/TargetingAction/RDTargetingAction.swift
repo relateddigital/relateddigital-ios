@@ -113,24 +113,22 @@ class RDTargetingAction {
                 return
             }
             targetingActionViewModel = self.parseTargetingAction(result)
-            semaphore.signal()
+            
+            if targetingActionViewModel?.targetingActionType == .spinToWin {
+                RDRequest.sendSpinToWinScriptRequest(completion: {(result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
+            } else {
+                semaphore.signal()
+            }
         })
         _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        
-        
-        if targetingActionViewModel?.targetingActionType == .spinToWin {
-            RDRequest.sendSpinToWinScriptRequest(completion: {(result: String?, _: RDError?) in
-                guard let result = result else {
-                    semaphore.signal()
-                    completion(nil)
-                    return
-                }
-                targetingActionViewModel?.jsContent = result
-                semaphore.signal()
-            })
-            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
-        }
-        
+
         completion(targetingActionViewModel)
     }
 
