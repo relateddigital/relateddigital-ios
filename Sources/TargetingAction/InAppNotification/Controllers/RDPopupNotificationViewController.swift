@@ -341,6 +341,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             // Init the presentation manager
             presentationManager = RDPresentationManager(transitionStyle: transitionStyle, interactor: interactor)
             popupContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
+            popupContainerView.container.backgroundColor = notification?.backGroundColor
             
             // Assign the interactor view controller
             interactor.viewController = self
@@ -355,7 +356,12 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             // Add our custom view to the container
             addChild(viewController)
             popupContainerView.stackView.insertArrangedSubview(viewController.view, at: 0)
-            popupContainerView.buttonStackView.axis = buttonAlignment
+            if !(notification?.secondButtonText.isNilOrWhiteSpace ?? false) {
+                popupContainerView.buttonStackView.axis = .horizontal
+                popupContainerView.buttonStackView.spacing = 5
+            } else {
+                popupContainerView.buttonStackView.axis = buttonAlignment
+            }
             viewController.didMove(toParent: self)
             
             // Allow for dialog dismissal on background tap

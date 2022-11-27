@@ -32,7 +32,6 @@ final public class RDPopupDialogContainerView: UIView {
     internal lazy var container: UIView = {
         let container = UIView(frame: .zero)
         container.translatesAutoresizingMaskIntoConstraints = false
-        container.backgroundColor = UIColor.white
         container.clipsToBounds = true
         container.layer.cornerRadius = 4
         return container
@@ -41,6 +40,7 @@ final public class RDPopupDialogContainerView: UIView {
     // The container stack view for buttons
     internal lazy var buttonStackView: UIStackView = {
         let buttonStackView = UIStackView()
+        buttonStackView.backgroundColor = .clear
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
         buttonStackView.distribution = .fillEqually
         buttonStackView.spacing = 0

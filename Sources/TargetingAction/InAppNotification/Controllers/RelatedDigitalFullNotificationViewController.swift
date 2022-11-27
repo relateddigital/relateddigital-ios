@@ -33,6 +33,7 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
 
     let pasteboard = UIPasteboard.general
     var player : AVPlayer?
+    let buttonCornerRadius = 20.0
 
 
     convenience init(notification: RDInAppNotification) {
@@ -164,7 +165,7 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
     func setupButtonView(buttonView: UIButton) {
         buttonView.setTitle(fullNotification.buttonText, for: UIControl.State.normal)
         buttonView.titleLabel?.adjustsFontSizeToFitWidth = true
-        buttonView.layer.cornerRadius = 20
+        buttonView.layer.cornerRadius = buttonCornerRadius
         buttonView.layer.borderWidth = 2
 
         var buttonColor = UIColor.black

@@ -92,7 +92,7 @@ open class RDPopupDialogButton: UIButton {
      - returns: PopupDialogButton
      */
     @objc public init(title: String, height: Int = 45, font: UIFont, buttonTextColor: UIColor?,
-                      buttonColor: UIColor?, dismissOnTap: Bool = true, action: PopupDialogButtonAction?) {
+                      buttonColor: UIColor?, dismissOnTap: Bool = true, action: PopupDialogButtonAction?,buttonCornerRadius: CGFloat = 0.0) {
 
         // Assign the button height
         buttonHeight = height
@@ -115,7 +115,7 @@ open class RDPopupDialogButton: UIButton {
         setTitle(title, for: UIControl.State())
 
         self.dismissOnTap = dismissOnTap
-
+        self.layer.cornerRadius = buttonCornerRadius
         // Setup the views
         setupView()
     }
@@ -132,8 +132,8 @@ open class RDPopupDialogButton: UIButton {
         setTitleColor(self.titleColor, for: UIControl.State())
         titleLabel?.font              = defaultTitleFont
         backgroundColor               = self.buttonColor
-        separator.backgroundColor     = self.buttonColor
-        leftSeparator.backgroundColor = self.buttonColor
+        separator.backgroundColor     = .clear
+        leftSeparator.backgroundColor = .clear
 
         // Add and layout views
         addSubview(separator)
