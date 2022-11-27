@@ -341,7 +341,11 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
             // Init the presentation manager
             presentationManager = RDPresentationManager(transitionStyle: transitionStyle, interactor: interactor)
             popupContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
-            popupContainerView.container.backgroundColor = notification?.backGroundColor
+            
+            if let backgroundColor = notification?.backGroundColor {
+                popupContainerView.container.backgroundColor = backgroundColor
+            }
+            
             
             // Assign the interactor view controller
             interactor.viewController = self
