@@ -94,7 +94,10 @@ internal class RDHelper {
         RDBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RDConstants.promotionEndpoint)"
         RDBasePath.endpoints[.remote] = "https://\(RDConstants.remoteConfigEndpoint)"
         RDBasePath.endpoints[.spinToWinJs] = RDConstants.spintoWinUrl
-        
+        RDBasePath.endpoints[.giftCatchJs] = RDConstants.giftCatchUrl
+        RDBasePath.endpoints[.findToWinJs] = RDConstants.findToWinUrl
+
+       
     }
     
     static private let dateFormatter = DateFormatter()

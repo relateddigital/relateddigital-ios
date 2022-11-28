@@ -96,56 +96,122 @@ class FindToWinViewController: RDBaseNotificationViewController {
         configuration.preferences.javaScriptEnabled = true
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
-        var webView = WKWebView(frame: .zero, configuration: configuration)
-        laodFindToWinFiles(webView: webView) { webViewAdded in
-            webView = webViewAdded
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        if let htmlUrl = createFindtoWinFiles() {
+            webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
+            webView.backgroundColor = .clear
+            webView.translatesAutoresizingMaskIntoConstraints = false
         }
-        webView.backgroundColor = .clear
-        webView.translatesAutoresizingMaskIntoConstraints = false
     
         return webView
     }
     
     
-    func laodFindToWinFiles(webView:WKWebView,complete:@escaping(WKWebView)->Void) {
-        
-        var javaScriptStr = ""
-        var htmlStr = ""
-        
-        let url = URL(string: RDConstants.findToWinUrl)!
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("data is nil")
-                return
-            }
-            guard let text = String(data: data, encoding: .utf8) else {
-                print("the response is not in UTF-8")
-                return
-            }
-            
-            javaScriptStr = text
+    private func createFindtoWinFiles() -> URL? {
+        let manager = FileManager.default
+        guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
+            RDLogger.error("Can not create documentDirectory")
+            return nil
+        }
+        let htmlUrl = docUrl.appendingPathComponent("find_to_win.html")
+        let jsUrl = docUrl.appendingPathComponent("find_to_win.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
+        let bundleHtmlPath = bundle.path(forResource: "find_to_win", ofType: "html") ?? ""
         
-        if let  htmlFile = bundle.path(forResource: "find_to_win", ofType: "html") {
-            htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
+        let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
+        
+        RDHelper.registerFonts(fontNames: getCustomFontNames())
+        let fontUrls = findToWinFonts(fontNames: getCustomFontNames())
+        
+        do {
+            if manager.fileExists(atPath: htmlUrl.path) {
+                try manager.removeItem(atPath: htmlUrl.path)
+            }
+            if manager.fileExists(atPath: jsUrl.path) {
+                try manager.removeItem(atPath: jsUrl.path)
+            }
+            
+            try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
+            
+            if let jsContent = findToWin?.jsContent?.utf8 {
+                guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+            
+            
+        } catch let error {
+            RDLogger.error(error)
+            RDLogger.error(error.localizedDescription)
+            return nil
         }
-
-            DispatchQueue.main.async {
-                let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-                webView.configuration.userContentController.addUserScript(script)
-                webView.loadHTMLString(htmlStr, baseURL: nil)
+        
+        for fontUrlKeyValue in fontUrls {
+            do {
+                let fontUrl = docUrl.appendingPathComponent(fontUrlKeyValue.key)
+                if manager.fileExists(atPath: fontUrl.path) {
+                    try manager.removeItem(atPath: fontUrl.path)
+                }
+                try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
+                self.findToWin?.fontFiles.append(fontUrlKeyValue.key)
+            } catch let error {
+                RDLogger.error(error)
+                RDLogger.error(error.localizedDescription)
+                continue
             }
         }
-        task.resume()
+        
+        return htmlUrl
+    }
     
+    private func findToWinFonts(fontNames: Set<String>) -> [String: URL] {
+        var fontUrls = [String: URL]()
+        if let infos = Bundle.main.infoDictionary {
+            if let uiAppFonts = infos["UIAppFonts"] as? [String] {
+                for uiAppFont in uiAppFonts {
+                    let uiAppFontParts = uiAppFont.split(separator: ".")
+                    guard uiAppFontParts.count == 2 else{
+                        continue
+                    }
+                    let fontName = String(uiAppFontParts[0])
+                    let fontExtension = String(uiAppFontParts[1])
+                    
+                    var register = false
+                    for name in fontNames {
+                        if name.contains(fontName, options: .caseInsensitive) {
+                            register = true
+                        }
+                    }
+                    
+                    if !register {
+                        continue
+                    }
+                    
+                    guard let url = Bundle.main.url(forResource: fontName, withExtension: fontExtension) else {
+                        RDLogger.error("UIFont+:  Failed to register font - path for resource not found.")
+                        continue
+                    }
+                    fontUrls[uiAppFont] = url
+                }
+            }
+        }
+        return fontUrls
+    }
+    
+    private func getCustomFontNames() -> Set<String> {
+        var customFontNames = Set<String>()
+        if let findToWin = self.findToWin {
+            if !findToWin.custom_font_family_ios.isEmptyOrWhitespace {
+                customFontNames.insert(findToWin.custom_font_family_ios)
+            }
+        }
+        return customFontNames
     }
 
 
@@ -166,7 +232,6 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
-                    //burada spintowinModelı kaldı düzeltilmeli
                     if let json = try? JSONEncoder().encode(self.findToWin!), let jsonString = String(data: json, encoding: .utf8) {
                         print(jsonString)
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in

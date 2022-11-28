@@ -8,7 +8,7 @@
 import Foundation
 
 
-public struct GameficationViewModel : TargetingActionViewModel,Codable {
+public struct GiftCatchViewModel : TargetingActionViewModel,Codable {
     
     public var targetingActionType: TargetingActionType
     var actId: Int? = 0
@@ -49,6 +49,8 @@ public struct GameficationViewModel : TargetingActionViewModel,Codable {
     var gameElementsExtended : GameElementsExtended? = GameElementsExtended()
     var gameResultElementsExtended : GameResultElementsExtended? = GameResultElementsExtended()
     
+    
+    var fontFiles: [String] = []
     
     public var jsContent: String?
     

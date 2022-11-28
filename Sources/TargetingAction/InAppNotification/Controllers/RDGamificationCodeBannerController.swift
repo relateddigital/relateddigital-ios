@@ -14,7 +14,7 @@ class RDGamificationCodeBannerController: RDBaseNotificationViewController {
     
     var isDismissing = false
     
-    init(_ gamefication: GameficationViewModel) {
+    init(_ gamefication: GiftCatchViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.gameficationModel = gamefication
         RDGameficationCodeBannerView = RDGamificationCodeBannerView(frame: UIScreen.main.bounds, gamefication:  self.gameficationModel!)

@@ -14,7 +14,7 @@ public enum TargetingActionType: String, Codable {
     case productStatNotifier = "ProductStatNotifier"
     case drawer = "Drawer"
     case downHsView = "downHsView"
-    case gamification = "giftrain"
+    case giftCatch = "giftrain"
     case findToWin = "findtowin"
 }
 

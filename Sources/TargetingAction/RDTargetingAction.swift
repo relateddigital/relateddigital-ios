@@ -123,6 +123,24 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
+            } else if targetingActionViewModel?.targetingActionType == .giftCatch {
+                RDRequest.sendGiftCatchScriptRequest(completion: {(result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
+            }  else if targetingActionViewModel?.targetingActionType == .findToWin {
+                RDRequest.sendFindToWinScriptRequest(completion: {(result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
             } else {
                 semaphore.signal()
             }
@@ -483,10 +501,10 @@ class RDTargetingAction {
         return sideBarServiceModel
     }
     
-    private func parseGamification(_ gamification: [String: Any?]) -> GameficationViewModel? {
+    private func parseGamification(_ gamification: [String: Any?]) -> GiftCatchViewModel? {
         
         guard let actionData = gamification[RDConstants.actionData] as? [String: Any] else { return nil }
-        var gamificationModel = GameficationViewModel(targetingActionType: .gamification)
+        var gamificationModel = GiftCatchViewModel(targetingActionType: .giftCatch)
         gamificationModel.actId = gamification[RDConstants.actid] as? Int ?? 0
         gamificationModel.title = gamification[RDConstants.title] as? String ?? ""
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""

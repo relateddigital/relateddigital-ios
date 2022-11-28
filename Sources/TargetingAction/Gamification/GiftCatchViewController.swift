@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-class GameficationViewController: RDBaseNotificationViewController {
+class GiftCatchViewController: RDBaseNotificationViewController {
     
     weak var webView: WKWebView!
     var subsEmail = ""
@@ -23,7 +23,7 @@ class GameficationViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
     
-    init(_ gamefication : GameficationViewModel) {
+    init(_ gamefication : GiftCatchViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.gameficationModel = gamefication
     }
@@ -99,62 +99,128 @@ class GameficationViewController: RDBaseNotificationViewController {
         configuration.preferences.javaScriptEnabled = true
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
-        var webView = WKWebView(frame: .zero, configuration: configuration)
-        laodGiftRainFiles(webView: webView) { webViewAdded in
-            webView = webViewAdded
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        if let htmlUrl = createGiftCatchFiles() {
+            webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
+            webView.backgroundColor = .clear
+            webView.translatesAutoresizingMaskIntoConstraints = false
         }
-        webView.backgroundColor = .clear
-        webView.translatesAutoresizingMaskIntoConstraints = false
         
         return webView
     }
+        
     
-    func laodGiftRainFiles(webView:WKWebView,complete:@escaping(WKWebView)->Void) {
-        
-        var javaScriptStr = ""
-        var htmlStr = ""
-        
-        let url = URL(string: RDConstants.giftCatchUrl)!
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard error == nil else {
-                print(error!)
-                return
-            }
-            guard let data = data else {
-                print("data is nil")
-                return
-            }
-            guard let text = String(data: data, encoding: .utf8) else {
-                print("the response is not in UTF-8")
-                return
-            }
-            
-            javaScriptStr = text
+    private func createGiftCatchFiles() -> URL? {
+        let manager = FileManager.default
+        guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
+            RDLogger.error("Can not create documentDirectory")
+            return nil
+        }
+        let htmlUrl = docUrl.appendingPathComponent("gift_catch.html")
+        let jsUrl = docUrl.appendingPathComponent("gift_catch.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
+        let bundleHtmlPath = bundle.path(forResource: "gift_catch", ofType: "html") ?? ""
         
-        if let  htmlFile = bundle.path(forResource: "gift_catch", ofType: "html") {
-            htmlStr = try! String(contentsOfFile: htmlFile, encoding: String.Encoding.utf8)
+        let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
+        
+        RDHelper.registerFonts(fontNames: getCustomFontNames())
+        let fontUrls = getGiftCatchFonts(fontNames: getCustomFontNames())
+        
+        do {
+            if manager.fileExists(atPath: htmlUrl.path) {
+                try manager.removeItem(atPath: htmlUrl.path)
+            }
+            if manager.fileExists(atPath: jsUrl.path) {
+                try manager.removeItem(atPath: jsUrl.path)
+            }
+            
+            try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
+            
+            if let jsContent = gameficationModel?.jsContent?.utf8 {
+                guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+            
+            
+        } catch let error {
+            RDLogger.error(error)
+            RDLogger.error(error.localizedDescription)
+            return nil
         }
-
-            DispatchQueue.main.async {
-                let script = WKUserScript(source: javaScriptStr, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-                webView.configuration.userContentController.addUserScript(script)
-                webView.loadHTMLString(htmlStr, baseURL: nil)
+        
+        for fontUrlKeyValue in fontUrls {
+            do {
+                let fontUrl = docUrl.appendingPathComponent(fontUrlKeyValue.key)
+                if manager.fileExists(atPath: fontUrl.path) {
+                    try manager.removeItem(atPath: fontUrl.path)
+                }
+                try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
+                self.gameficationModel?.fontFiles.append(fontUrlKeyValue.key)
+            } catch let error {
+                RDLogger.error(error)
+                RDLogger.error(error.localizedDescription)
+                continue
             }
         }
-        task.resume()
-    
+        
+        return htmlUrl
     }
     
+    private func getGiftCatchFonts(fontNames: Set<String>) -> [String: URL] {
+        var fontUrls = [String: URL]()
+        if let infos = Bundle.main.infoDictionary {
+            if let uiAppFonts = infos["UIAppFonts"] as? [String] {
+                for uiAppFont in uiAppFonts {
+                    let uiAppFontParts = uiAppFont.split(separator: ".")
+                    guard uiAppFontParts.count == 2 else{
+                        continue
+                    }
+                    let fontName = String(uiAppFontParts[0])
+                    let fontExtension = String(uiAppFontParts[1])
+                    
+                    var register = false
+                    for name in fontNames {
+                        if name.contains(fontName, options: .caseInsensitive) {
+                            register = true
+                        }
+                    }
+                    
+                    if !register {
+                        continue
+                    }
+                    
+                    guard let url = Bundle.main.url(forResource: fontName, withExtension: fontExtension) else {
+                        RDLogger.error("UIFont+:  Failed to register font - path for resource not found.")
+                        continue
+                    }
+                    fontUrls[uiAppFont] = url
+                }
+            }
+        }
+        return fontUrls
+    }
+    
+    private func getCustomFontNames() -> Set<String> {
+        var customFontNames = Set<String>()
+        if let giftCatch = self.gameficationModel {
+            if !giftCatch.custom_font_family_ios.isEmptyOrWhitespace {
+                customFontNames.insert(giftCatch.custom_font_family_ios)
+            }
+        }
+        return customFontNames
+    }
 
 
 }
 
-extension GameficationViewController: WKScriptMessageHandler {
+extension GiftCatchViewController: WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
@@ -166,7 +232,6 @@ extension GameficationViewController: WKScriptMessageHandler {
                 
                 if method == "initGiftCatch" {
                     RDLogger.info("initGiftCatch")
-                    //burada spintowinModelı kaldı düzeltilmeli
                     if let json = try? JSONEncoder().encode(self.gameficationModel), let jsonString = String(data: json, encoding: .utf8) {
                         print(jsonString)
                         self.webView.evaluateJavaScript("window.initGiftCatch(\(jsonString));") { (_, err) in

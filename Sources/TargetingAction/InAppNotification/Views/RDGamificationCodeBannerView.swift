@@ -9,7 +9,7 @@ import UIKit
 
 class RDGamificationCodeBannerView: UIView {
     
-    var gameficationModel: GameficationViewModel
+    var gameficationModel: GiftCatchViewModel
     
     var horizontalStackView: UIStackView!
     var verticalStackViewLeft: UIStackView!
@@ -19,7 +19,7 @@ class RDGamificationCodeBannerView: UIView {
     var bannerCodeLabel: UILabel!
     var closeButton: UIButton!
     
-    init(frame: CGRect, gamefication : GameficationViewModel) {
+    init(frame: CGRect, gamefication : GiftCatchViewModel) {
         self.gameficationModel = gamefication
         super.init(frame: frame)
         setupLabels()

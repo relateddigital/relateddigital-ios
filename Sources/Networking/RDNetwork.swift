@@ -24,6 +24,10 @@ enum RDEndpoint {
     case remote
     
     case spinToWinJs
+    case giftCatchJs
+    case findToWinJs
+
+
 }
 
 struct RDResource<A> {

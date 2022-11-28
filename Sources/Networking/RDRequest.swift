@@ -199,6 +199,41 @@ class RDRequest {
             completion(result, nil)
         })
     }
+        
+    class func sendGiftCatchScriptRequest(completion: @escaping (String?, RDError?) -> Void) {
+        let responseParser: (Data) -> String? = { data in
+            return String(data: data, encoding: .utf8)
+        }
+        let resource = RDNetwork.buildResource(endPoint: .giftCatchJs, method: .get, queryItems: [], headers: [:], parse: responseParser, guid: nil)
+        sendGiftCatchScriptRequestHandler(resource: resource, completion: { result, error in completion(result, error)})
+    }
+    
+    private class func sendGiftCatchScriptRequestHandler(resource: RDResource<String>, completion: @escaping (String?, RDError?) -> Void) {
+        RDNetwork.apiRequest(resource: resource, failure: { (error, _, _) in
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            completion(nil, error)
+        }, success: { (result, _) in
+            completion(result, nil)
+        })
+    }
+    
+    
+    class func sendFindToWinScriptRequest(completion: @escaping (String?, RDError?) -> Void) {
+        let responseParser: (Data) -> String? = { data in
+            return String(data: data, encoding: .utf8)
+        }
+        let resource = RDNetwork.buildResource(endPoint: .findToWinJs, method: .get, queryItems: [], headers: [:], parse: responseParser, guid: nil)
+        sendFindToWinScriptRequestHandler(resource: resource, completion: { result, error in completion(result, error)})
+    }
+    
+    private class func sendFindToWinScriptRequestHandler(resource: RDResource<String>, completion: @escaping (String?, RDError?) -> Void) {
+        RDNetwork.apiRequest(resource: resource, failure: { (error, _, _) in
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            completion(nil, error)
+        }, success: { (result, _) in
+            completion(result, nil)
+        })
+    }
     
     class func sendMobileRequest(properties: Properties, headers: Properties, completion: @escaping ([String: Any]?, RDError?, String?) -> Void, guid: String? = nil) {
         

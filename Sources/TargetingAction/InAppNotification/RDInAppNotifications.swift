@@ -92,7 +92,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showDownhs(model: downHsView) {
                         self.markTargetingActionShown(model: downHsView)
                     }
-                } else if model.targetingActionType == .gamification, let gamification = model as? GameficationViewModel {
+                } else if model.targetingActionType == .giftCatch, let gamification = model as? GiftCatchViewModel {
                     if self.showGamefication(gameficationVİewModel: gamification) {
                         self.markTargetingActionShown(model: gamification)
                     }
@@ -105,8 +105,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         }
     }
     
-    func showGamefication(gameficationVİewModel: GameficationViewModel) -> Bool {
-        let gameficationVC = GameficationViewController(gameficationVİewModel)
+    func showGamefication(gameficationVİewModel: GiftCatchViewModel) -> Bool {
+        let gameficationVC = GiftCatchViewController(gameficationVİewModel)
         gameficationVC.delegate = self
         gameficationVC.show(animated: true)
         return true

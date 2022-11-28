@@ -33,7 +33,7 @@ class RDBaseNotificationViewController: UIViewController, RDBaseViewControllerPr
     var scratchToWin: ScratchToWinModel?
     var spinToWin: SpinToWinViewModel?
     var productStatNotifier: RDProductStatNotifierViewModel?
-    var gameficationModel: GameficationViewModel?
+    var gameficationModel: GiftCatchViewModel?
     var findToWin: FindToWinViewModel?
 
     weak var delegate: RDNotificationViewControllerDelegate?

@@ -48,6 +48,7 @@ public struct FindToWinViewModel: TargetingActionViewModel,Codable {
     var gameElementsExtended : GameElementsExtendedFindToWin? = GameElementsExtendedFindToWin()
     var gameResultElementsExtended : GameResultElementsExtendedFindToWin? = GameResultElementsExtendedFindToWin()
     
+    var fontFiles: [String] = []
     public var jsContent: String?
 }
 
