@@ -31,6 +31,8 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case findToWin = "findtowin"
     case video = "video"
     case downHsView = "downHsView"
+    case bannerCarousel = "banner_carousel"
+
 }
 
 public enum RDSecondPopupType: String, CaseIterable {

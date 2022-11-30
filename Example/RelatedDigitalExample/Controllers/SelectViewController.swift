@@ -28,38 +28,6 @@ class SelectViewController: FormViewController {
         initializeForm()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-
-    }
-    
-    func showBannerViewForTest() {
-        let bannerView = UIView()
-        bannerView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(bannerView)
-        NSLayoutConstraint.activate([bannerView.topAnchor.constraint(equalTo: self.view.topAnchor,constant:  100),
-                                     bannerView.heightAnchor.constraint(equalToConstant: 80),
-                                     bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                                     bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
-        bannerView.backgroundColor = .green
-        
-        
-        var props = Properties()
-        props["OM.inapptype"] = "banner_carousel"
-        
-        RelatedDigital.getBannerView(properties: props) { banner in
-            if let banner = banner {
-                banner.translatesAutoresizingMaskIntoConstraints = false
-                bannerView.addSubview(banner)
-                
-                NSLayoutConstraint.activate([banner.topAnchor.constraint(equalTo: bannerView.topAnchor),
-                                             banner.bottomAnchor.constraint(equalTo: bannerView.bottomAnchor),
-                                             banner.leadingAnchor.constraint(equalTo: bannerView.leadingAnchor),
-                                             banner.trailingAnchor.constraint(equalTo: bannerView.trailingAnchor)])
-            }
-
-        }
-    }
-    
     private func initializeForm() {
         let pushSection = Section("Push Module")
         let analyticsSection = Section("Analytics Module")

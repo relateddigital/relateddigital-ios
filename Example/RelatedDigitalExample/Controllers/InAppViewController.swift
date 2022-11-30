@@ -35,14 +35,22 @@ class InAppViewController: FormViewController {
     }
     
     private func inAppEvent(_ queryStringFilter: String) {
-        var properties = [String: String]()
-        properties["OM.inapptype"] = queryStringFilter
-        if queryStringFilter.lowercased() == RDInAppNotificationType.productStatNotifier.rawValue {
-            properties["OM.pv"] = "CV7933-837-837"
+        
+        if queryStringFilter == "banner_carousel" {
+            showBannerCarousel()
+        } else {
+            var properties = [String: String]()
+            properties["OM.inapptype"] = queryStringFilter
+            if queryStringFilter.lowercased() == RDInAppNotificationType.productStatNotifier.rawValue {
+                properties["OM.pv"] = "CV7933-837-837"
+            }
+            RelatedDigital.customEvent("InAppTest", properties: properties)
+            RelatedDigital.inappButtonDelegate = self
         }
-        RelatedDigital.customEvent("InAppTest", properties: properties)
-        RelatedDigital.inappButtonDelegate = self
+
     }
+    
+    
     
     private func getInApps() -> [RDInAppNotificationType: [String: Int]]{
         return [
@@ -66,7 +74,8 @@ class InAppViewController: FormViewController {
             .downHsView : [RDInAppNotificationType.downHsView.rawValue: 238],
             .video : [RDInAppNotificationType.video.rawValue: 73],
             .gamification : [RDInAppNotificationType.gamification.rawValue: 131],
-            .findToWin : [RDInAppNotificationType.findToWin.rawValue: 132]
+            .findToWin : [RDInAppNotificationType.findToWin.rawValue: 132],
+            .bannerCarousel : [RDInAppNotificationType.bannerCarousel.rawValue: 155]
         ]
     }
     
@@ -78,5 +87,33 @@ extension InAppViewController: RDInappButtonDelegate {
     func didTapButton(_ notification: RDInAppNotification) {
         print("notification did tapped...")
         print(notification)
+    }
+    
+    func showBannerCarousel() {
+        let bannerView = UIView()
+        bannerView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(bannerView)
+        NSLayoutConstraint.activate([bannerView.topAnchor.constraint(equalTo: self.view.topAnchor,constant:  80),
+                                     bannerView.heightAnchor.constraint(equalToConstant: 80),
+                                     bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                                     bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
+        bannerView.backgroundColor = .black
+        
+        
+        var props = Properties()
+        props["OM.inapptype"] = "banner_carousel"
+        
+        RelatedDigital.getBannerView(properties: props) { banner in
+            if let banner = banner {
+                banner.translatesAutoresizingMaskIntoConstraints = false
+                bannerView.addSubview(banner)
+                
+                NSLayoutConstraint.activate([banner.topAnchor.constraint(equalTo: bannerView.topAnchor),
+                                             banner.bottomAnchor.constraint(equalTo: bannerView.bottomAnchor),
+                                             banner.leadingAnchor.constraint(equalTo: bannerView.leadingAnchor),
+                                             banner.trailingAnchor.constraint(equalTo: bannerView.trailingAnchor)])
+            }
+
+        }
     }
 }
