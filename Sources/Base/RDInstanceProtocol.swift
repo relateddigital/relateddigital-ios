@@ -44,10 +44,12 @@ protocol RDInstanceProtocol {
     func subscribeSpinToWinMail(actid: String, auth: String, mail: String)
     func subscribeGamificationMail(actid: String, auth: String, mail: String)
     func subscribeFindToWinMail(actid: String, auth: String, mail: String)
+    func subscribeJackpotMail(actid: String, auth: String, mail: String)
     func subscribeMail(click: String, actid: String, auth: String, mail: String)
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport)
     func trackGamificationClick(gameficationReport: GameficationReport)
     func trackFindToWinClick(findToWinReport: FindToWinReport)
+    func trackJackpotClick(jackpotReport: JackpotReport)
     func trackRecommendationClick(qs: String)
     func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView
     func getStoryViewAsync(actionId: Int?, urlDelegate: RDStoryURLDelegate?, completion: @escaping StoryCompletion)

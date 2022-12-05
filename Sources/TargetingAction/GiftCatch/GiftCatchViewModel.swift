@@ -150,6 +150,8 @@ public class BannerCodeManager {
     static let shared = BannerCodeManager()
     private let giftRainCode = "giftRainCode"
     private let findToWinCode = "findToWinCode"
+    private let jackpotCode = "jackpotCode"
+
 
     
     func setGiftRainCode(code:String) {
@@ -174,6 +176,19 @@ public class BannerCodeManager {
         let defaults = UserDefaults.standard
         let string = defaults.string(forKey: findToWinCode) ?? ""
         defaults.set("", forKey:findToWinCode)
+        return string
+    }
+    
+    
+    func setJackpotCode(code:String) {
+        let defaults = UserDefaults.standard
+        defaults.set(code, forKey:jackpotCode)
+    }
+    
+    func getJackpotCode() -> String {
+        let defaults = UserDefaults.standard
+        let string = defaults.string(forKey: jackpotCode) ?? ""
+        defaults.set("", forKey:jackpotCode)
         return string
     }
     
