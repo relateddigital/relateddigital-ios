@@ -16,9 +16,12 @@ class NotificationService: UNNotificationServiceExtension {
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-        RelatedDigital.initialize(organizationId: urlConstant.shared.organizationId, profileId: urlConstant.shared.profileId, dataSource: "visistore", launchOptions: nil)
-        RelatedDigital.enablePushNotifications(appAlias: "RDIOSExample", launchOptions: nil, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital")
-        RDPush.didReceive(bestAttemptContent, withContentHandler: contentHandler)
+        DispatchQueue.main.async {
+            RelatedDigital.initialize(organizationId: urlConstant.shared.organizationId, profileId: urlConstant.shared.profileId, dataSource: "visistore", launchOptions: nil)
+            
+            RelatedDigital.enablePushNotifications(appAlias: "RDIOSExample", launchOptions: nil, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital")
+            RDPush.didReceive(self.bestAttemptContent, withContentHandler: contentHandler)
+        }
     }
 
     override func serviceExtensionTimeWillExpire() {

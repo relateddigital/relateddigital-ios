@@ -113,7 +113,7 @@ class RDGeofenceState {
     static var locationServicesEnabledForDevice: Bool {
         let authorizationStatus = CLLocationManager.authorizationStatus()
         
-        if authorizationStatus == .authorizedWhenInUse && authorizationStatus == .authorizedAlways && authorizationStatus == .restricted {
+        if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways || authorizationStatus == .restricted {
             return CLLocationManager.locationServicesEnabled()
         } else {
             return false
