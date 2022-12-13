@@ -96,7 +96,7 @@ class RDTargetingAction {
         props[RDConstants.lvtKey] = rdUser.lvt
         
         
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -169,7 +169,9 @@ class RDTargetingAction {
         } else if let downHsViewArr = result[RDConstants.downHsView] as? [[String: Any?]], let downHs = downHsViewArr.first {
             return parseDownHsView(downHs)
         } else if let gamification = result[RDConstants.gamification] as? [[String: Any?]], let gamifi = gamification.first {
-            return parseGamification(gamifi)
+            return parseGiftCatch(gamifi)
+        } else if let shakeToWin = result[RDConstants.shakeToWin] as? [[String: Any?]], let shakeToWn = shakeToWin.first {
+            return parseShakeToWin(shakeToWn)
         } else if let findToWin = result[RDConstants.findToWin] as? [[String: Any?]], let findTown = findToWin.first {
             return parseFindToWin(findTown)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
@@ -186,6 +188,117 @@ class RDTargetingAction {
         }
         return nil
     }
+    
+    
+    private func parseShakeToWin(_ shakeToWin: [String: Any?]) -> ShakeToWinViewModel? {
+        
+        guard let actionData = shakeToWin[RDConstants.actionData] as? [String: Any] else { return nil }
+        var shakeToWinModel = ShakeToWinViewModel(targetingActionType: .shakeToWin)
+        shakeToWinModel.actId = shakeToWin[RDConstants.actid] as? Int ?? 0
+        shakeToWinModel.title = shakeToWin[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        
+        
+        
+        var mailFormPage = MailSubscriptionModelGamification()
+        if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
+            mailFormPage.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
+            mailFormPage.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
+            mailFormPage.consentText = mailForm[RDConstants.consentText] as? String
+            mailFormPage.invalidEmailMessage = mailForm[RDConstants.invalidEmailMessage] as? String ?? ""
+            mailFormPage.successMessage = mailForm[RDConstants.successMessage] as? String ?? ""
+            mailFormPage.emailPermitText = mailForm[RDConstants.emailPermitText] as? String ?? ""
+            mailFormPage.checkConsentMessage = mailForm[RDConstants.checkConsentMessage] as? String ?? ""
+            mailFormPage.title = mailForm[RDConstants.title] as? String ?? ""
+            mailFormPage.message = mailForm[RDConstants.message] as? String ?? ""
+
+        }
+        shakeToWinModel.mailForm = mailFormPage
+        
+        var mailExtendedProps = MailSubscriptionExtendedPropsGamification()
+        
+        if let mailFormExtended = extendedProps[RDConstants.gMailSubscriptionForm] as? [String: Any] {
+
+            mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
+            mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
+            mailExtendedProps.textColor = mailFormExtended[RDConstants.textColor] as? String ?? ""
+            mailExtendedProps.textSize = mailFormExtended[RDConstants.textSize] as? String ?? ""
+            mailExtendedProps.titleTextSize = mailFormExtended[RDConstants.titleTextSize] as? String ?? ""
+            mailExtendedProps.buttonColor = mailFormExtended[RDConstants.button_color] as? String ?? ""
+            mailExtendedProps.buttonTextColor = mailFormExtended[RDConstants.button_text_color] as? String ?? ""
+            mailExtendedProps.buttonTextSize = mailFormExtended[RDConstants.buttonTextSize] as? String ?? ""
+            mailExtendedProps.emailPermitTextSize = mailFormExtended[RDConstants.emailpermitTextSize] as? String ?? ""
+            mailExtendedProps.emailPermitTextUrl = mailFormExtended[RDConstants.emailpermitTextUrl] as? String ?? ""
+            mailExtendedProps.consentTextSize = mailFormExtended[RDConstants.consentTextSize] as? String ?? ""
+            mailExtendedProps.consentTextUrl = mailFormExtended[RDConstants.consentTextUrl] as? String ?? ""
+            mailExtendedProps.titleFontFamily = mailFormExtended[RDConstants.titleFontFamily] as? String ?? ""
+        }
+        
+        shakeToWinModel.mailExtendedProps = mailExtendedProps
+        
+
+        var firstPage = ShakeToWinFirstPage()
+        if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
+            firstPage.image = gamificationRules[RDConstants.backgroundImage] as? String ?? ""
+            firstPage.buttonText = gamificationRules[RDConstants.buttonLabel] as? String ?? ""
+        }
+        
+        if let gameficationRuleExtended = extendedProps[RDConstants.gamificationRules] as? [String: Any] {
+            firstPage.buttonBgColor = UIColor(hex: gameficationRuleExtended[RDConstants.button_color] as? String ?? "")
+            firstPage.buttonTextColor = UIColor(hex: gameficationRuleExtended[RDConstants.button_text_color] as? String ?? "") 
+            firstPage.buttonFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+        }
+        firstPage.backgroundColor = UIColor(hex: extendedProps[RDConstants.backgroundColor] as? String ?? "")
+
+        shakeToWinModel.firstPage = firstPage
+        
+        
+        var secondPage = ShakeToWinSecondPage()
+        if let gameElements = actionData[RDConstants.gameElements] as? [String: Any] {
+            secondPage.videoURL =  URL(string: gameElements[RDConstants.videoUrl] as? String ?? "")
+            secondPage.waitSeconds = gameElements[RDConstants.videoUrl] as? Int ?? 5
+            secondPage.soundURL = URL(string: gameElements[RDConstants.soundUrl] as? String ?? "")
+        }
+        secondPage.backGroundColor = UIColor(hex: extendedProps[RDConstants.backgroundColor] as? String ?? "")
+        shakeToWinModel.secondPage = secondPage
+
+        var thirdPage = ShakeToWinThirdPage()
+        if let gameResultElements = actionData[RDConstants.gameResultElements] as? [String: Any] {
+            thirdPage.title = gameResultElements[RDConstants.title] as? String ?? ""
+            thirdPage.message = gameResultElements[RDConstants.message] as? String ?? ""
+        }
+        thirdPage.buttonText = actionData[RDConstants.copybuttonLabel] as? String
+        thirdPage.iosLink = actionData[RDConstants.iosLnk] as? String
+        thirdPage.staticCode = actionData[RDConstants.code] as? String
+        
+        if let gameficationResultElementExtended = extendedProps[RDConstants.gameResultElements] as? [String: Any] {
+            
+            thirdPage.titleColor = UIColor(hex: gameficationResultElementExtended[RDConstants.titleTextColor] as? String ?? "")
+            thirdPage.titleFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+            
+            thirdPage.messageColor = UIColor(hex: gameficationResultElementExtended[RDConstants.textColor] as? String ?? "")
+            thirdPage.messageFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: gameficationResultElementExtended[RDConstants.textSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+        }
+        
+        thirdPage.backgroundColor = UIColor(hex: extendedProps[RDConstants.backgroundColor] as? String ?? "")
+        thirdPage.buttonBgColor = UIColor(hex: extendedProps[RDConstants.copybuttonColor] as? String ?? "")
+        thirdPage.buttonTextColor = UIColor(hex: extendedProps[RDConstants.copybuttonTextColor] as? String ?? "")
+        thirdPage.buttonFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: extendedProps[RDConstants.copybuttonTextSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+        
+        shakeToWinModel.thirdPage = thirdPage
+        
+        shakeToWinModel.promocode_background_color = extendedProps[RDConstants.promocodeBackgroundColor] as? String ?? ""
+        shakeToWinModel.promocode_text_color = extendedProps[RDConstants.promocodeTextColor] as? String ?? ""
+        shakeToWinModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        shakeToWinModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        shakeToWinModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        shakeToWinModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+
+        return shakeToWinModel
+    }
+    
+    
     
     // MARK: SpinToWin
 
@@ -501,7 +614,7 @@ class RDTargetingAction {
         return sideBarServiceModel
     }
     
-    private func parseGamification(_ gamification: [String: Any?]) -> GiftCatchViewModel? {
+    private func parseGiftCatch(_ gamification: [String: Any?]) -> GiftCatchViewModel? {
         
         guard let actionData = gamification[RDConstants.actionData] as? [String: Any] else { return nil }
         var gamificationModel = GiftCatchViewModel(targetingActionType: .giftCatch)

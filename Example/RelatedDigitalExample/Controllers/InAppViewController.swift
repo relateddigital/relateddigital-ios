@@ -75,8 +75,9 @@ class InAppViewController: FormViewController {
             .video : [RDInAppNotificationType.video.rawValue: 73],
             .gamification : [RDInAppNotificationType.gamification.rawValue: 131],
             .findToWin : [RDInAppNotificationType.findToWin.rawValue: 132],
-            .bannerCarousel : [RDInAppNotificationType.bannerCarousel.rawValue: 155]
-        ]
+            .bannerCarousel : [RDInAppNotificationType.bannerCarousel.rawValue: 155],
+            .shakeToWin : [RDInAppNotificationType.shakeToWin.rawValue: 255]
+            ]
     }
     
 }

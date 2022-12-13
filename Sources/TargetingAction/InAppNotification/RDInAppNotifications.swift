@@ -100,9 +100,21 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showFindToWin(findToWinModel: findToWin) {
                         self.markTargetingActionShown(model: findToWin)
                     }
+                }  else if model.targetingActionType == .shakeToWin, let shakeToWin = model as? ShakeToWinViewModel {
+                    if self.showShakeToWin(model: shakeToWin) {
+                        self.markTargetingActionShown(model: shakeToWin)
+                    }
                 }
             }
         }
+    }
+    
+    
+    func showShakeToWin(model: ShakeToWinViewModel) -> Bool {
+        let shakeToWinViewController = ShakeToWinViewController(model: model)
+        shakeToWinViewController.delegate = self
+        shakeToWinViewController.show(animated: true)
+        return true
     }
     
     func showGamefication(gameficationVİewModel: GiftCatchViewModel) -> Bool {

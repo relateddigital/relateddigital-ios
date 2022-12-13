@@ -191,6 +191,8 @@ struct RDConstants {
     static let losebuttonTextColor = "losebutton_text_color"
     static let losebuttonTextSize = "losebutton_text_size"
     static let cardImages = "card_images"
+    static let shakeToWin = "ShakeToWin"
+
     
     static let appBanners = "app_banners"
     static let transitionAction = "transition_action"
@@ -399,6 +401,9 @@ struct RDConstants {
     static let promocodeCustomFontFamilyIos = "promocode_custom_font_family_ios"
     
     
+    //ShakeToWin
+    static let videoUrl = "video_url"
+    static let shakingTime = "shaking_time"
     
     // ProductStatNotifier constants
     static let content = "content"

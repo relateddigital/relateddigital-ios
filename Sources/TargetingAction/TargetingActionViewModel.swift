@@ -16,6 +16,8 @@ public enum TargetingActionType: String, Codable {
     case downHsView = "downHsView"
     case giftCatch = "giftrain"
     case findToWin = "findtowin"
+    case shakeToWin = "ShakeToWin"
+
 }
 
 public protocol TargetingActionViewModel {

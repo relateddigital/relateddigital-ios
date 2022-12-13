@@ -7,14 +7,31 @@
 
 import UIKit
 
-struct ShakeToWinViewModel {
-    var firstPage: ShakeToWinFirstPage
-    var secondPage: ShakeToWinSecondPage
-    var thirdPage: ShakeToWinThirdPage
+struct ShakeToWinViewModel : TargetingActionViewModel {
+    
+    var targetingActionType: TargetingActionType
+    var actId:Int?
+    var title:String?
+    
+    var mailForm = MailSubscriptionModelGamification()
+    var mailExtendedProps = MailSubscriptionExtendedPropsGamification()
+
+    var firstPage: ShakeToWinFirstPage?
+    var secondPage: ShakeToWinSecondPage?
+    var thirdPage: ShakeToWinThirdPage?
+    
+    var promocode_background_color:String?
+    var promocode_text_color:String?
+    var promocode_banner_text:String?
+    var promocode_banner_text_color:String?
+    var promocode_banner_background_color:String?
+    var promocode_banner_button_label:String?
+    
+    var jsContent: String?
 }
 
 struct ShakeToWinFirstPage {
-    var image: UIImage?
+    var image: String?
     var title: String?
     var titleFont: UIFont?
     var titleColor: UIColor?
@@ -22,17 +39,19 @@ struct ShakeToWinFirstPage {
     var messageColor: UIColor?
     var messageFont: UIFont?
     var buttonText: String?
-    var buttonTextColor: UIColor
+    var buttonTextColor: UIColor?
     var buttonFont: UIFont?
-    var buttonBgColor: UIColor
+    var buttonBgColor: UIColor?
     var backgroundColor: UIColor?
-    var closeButtonColor: ButtonColor = .white
+    var closeButtonColor: ButtonColor? = .white
 }
 
 struct ShakeToWinSecondPage {
     var waitSeconds: Int?
     var videoURL: URL?
-    var closeButtonColor: ButtonColor = .white
+    var soundURL: URL?
+    var backGroundColor : UIColor?
+    var closeButtonColor: ButtonColor? = .white
 }
 
 //For this page button will be coupon code
@@ -45,10 +64,13 @@ struct ShakeToWinThirdPage {
     var messageColor: UIColor?
     var messageFont: UIFont?
     var buttonText: String?
-    var buttonTextColor: UIColor
+    var buttonTextColor: UIColor?
     var buttonFont: UIFont?
-    var buttonBgColor: UIColor
+    var buttonBgColor: UIColor?
     var backgroundColor: UIColor?
-    var closeButtonColor: ButtonColor = .white
+    var iosLink : String?
+    var staticCode : String?
+    
+    var closeButtonColor: ButtonColor? = .white
 }
 

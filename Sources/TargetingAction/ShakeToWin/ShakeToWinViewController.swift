@@ -8,9 +8,9 @@
 import UIKit
 import AVFoundation
 
-public class ShakeToWinViewController: UIViewController {
+class ShakeToWinViewController : RDBaseNotificationViewController {
     
-    lazy var model: ShakeToWinViewModel? = createDummyModel()
+    var model: ShakeToWinViewModel?
     let scrollView = UIScrollView()
     var multiplier = 0.0
     weak var player: AVPlayer? = nil
@@ -23,21 +23,22 @@ public class ShakeToWinViewController: UIViewController {
     
     var didShake = false {
         didSet {
-            self.openThirdPage(self.model?.secondPage.waitSeconds ?? 0)
+            self.openThirdPage(self.model?.secondPage?.waitSeconds ?? 0)
         }
     }
 
     lazy var mainButton: UIButton = {
         let button = UIButton()
-        button.setTitle(model?.firstPage.buttonText, for: .normal)
-        button.backgroundColor = model?.firstPage.buttonBgColor
-        button.titleLabel?.font = model?.firstPage.buttonFont
-        button.titleLabel?.textColor = model?.firstPage.buttonTextColor
+        button.setTitle(model?.firstPage?.buttonText, for: .normal)
+        button.backgroundColor = model?.firstPage?.buttonBgColor
+        button.titleLabel?.font = model?.firstPage?.buttonFont
+        button.titleLabel?.textColor = model?.firstPage?.buttonTextColor
         return button
     }()
     
-    public init() {
+    init(model:ShakeToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
+        self.model = model
     }
     
     required public init?(coder: NSCoder) {
@@ -158,19 +159,20 @@ public class ShakeToWinViewController: UIViewController {
             var imageAdded = false
             if let img = firstPage.image {
                 imageView = UIImageView(frame: .zero)
-                imageView.image = img
+                
                 page.addSubview(imageView)
                 imageView.top(to: page, offset: 20)
                 imageView.centerX(to: page)
-                imageView.height(imageView.image?.size.height ?? 0.0)
-                imageView.width(imageView.image?.size.width ?? 0.0)
+//                imageView.height(imageView.image?.size.height ?? 0.0)
+                imageView.width(self.view.width*0.9)
                 page.bringSubviewToFront(imageView)
+                imageView.setImage(withUrl: img)
                 imageAdded = true
             }
             let title = UILabel(frame: .zero)
-            title.text = model?.firstPage.title
-            title.textColor = model?.firstPage.titleColor
-            title.font = model?.firstPage.titleFont
+            title.text = model?.firstPage?.title
+            title.textColor = model?.firstPage?.titleColor
+            title.font = model?.firstPage?.titleFont
             title.numberOfLines = 0
             page.addSubview(title)
             title.height(40.0)
@@ -182,9 +184,9 @@ public class ShakeToWinViewController: UIViewController {
             }
             
             let message = UILabel(frame: .zero)
-            message.text = model?.firstPage.message
-            message.textColor = model?.firstPage.messageColor
-            message.font = model?.firstPage.messageFont
+            message.text = model?.firstPage?.message
+            message.textColor = model?.firstPage?.messageColor
+            message.font = model?.firstPage?.messageFont
             message.textAlignment = .center
             message.numberOfLines = 0
             page.addSubview(message)
@@ -194,10 +196,10 @@ public class ShakeToWinViewController: UIViewController {
             message.height(40.0)
             
             let button = UIButton(frame: .zero)
-            button.setTitle(model?.firstPage.buttonText, for: .normal)
-            button.setTitleColor(model?.firstPage.buttonTextColor, for: .normal)
-            button.titleLabel?.font = model?.firstPage.buttonFont
-            button.backgroundColor = model?.firstPage.buttonBgColor
+            button.setTitle(model?.firstPage?.buttonText, for: .normal)
+            button.setTitleColor(model?.firstPage?.buttonTextColor, for: .normal)
+            button.titleLabel?.font = model?.firstPage?.buttonFont
+            button.backgroundColor = model?.firstPage?.buttonBgColor
             page.addSubview(button)
             
             button.height(60.0)
@@ -236,7 +238,7 @@ public class ShakeToWinViewController: UIViewController {
         close.height(40)
         close.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
         
-        if let videoUrl = model?.secondPage.videoURL {
+        if let videoUrl = model?.secondPage?.videoURL {
             let player = AVPlayer(url: videoUrl)
             let playerLayer = AVPlayerLayer(player: player)
             playerLayer.frame = page.bounds
@@ -268,19 +270,65 @@ public class ShakeToWinViewController: UIViewController {
         close.height(40)
         return page
     }
+    
+    override func show(animated: Bool) {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
+            return
+        }
+        if #available(iOS 13.0, *) {
+            let windowScene = sharedUIApplication
+                .connectedScenes
+                .filter { $0.activationState == .foregroundActive }
+                .first
+            if let windowScene = windowScene as? UIWindowScene {
+                window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                window?.windowScene = windowScene
+            }
+        } else {
+            window = UIWindow(frame: CGRect(x: 0,
+                                            y: 0,
+                                            width: UIScreen.main.bounds.size.width,
+                                            height: UIScreen.main.bounds.size.height))
+        }
+        if let window = window {
+            window.alpha = 0
+            window.windowLevel = UIWindow.Level.alert
+            window.rootViewController = self
+            window.isHidden = false
+        }
+
+        let duration = animated ? 0.25 : 0
+        UIView.animate(withDuration: duration, animations: {
+            self.window?.alpha = 1
+            }, completion: { _ in
+        })
+    }
+
+    override func hide(animated: Bool, completion: @escaping () -> Void) {
+        let duration = animated ? 0.25 : 0
+        UIView.animate(withDuration: duration, animations: {
+            self.window?.alpha = 0
+            }, completion: { _ in
+                self.window?.isHidden = true
+                self.window?.removeFromSuperview()
+                self.window = nil
+                completion()
+        })
+    }
 }
 
 extension ShakeToWinViewController {
     
-    func createDummyModel() -> ShakeToWinViewModel? {
-        var img: UIImage? = nil
-        if let data = getImageDataOfUrl(URL(string: "https://placekitten.com/300/500")) {
-            img = UIImage(data: data)
-        }
-        return ShakeToWinViewModel(firstPage: ShakeToWinFirstPage(image: img, title: "shtw first page", titleFont: .boldSystemFont(ofSize: 16), titleColor: .yellow, message: "shtw message \n message can be plural", messageColor: .white, messageFont: .systemFont(ofSize: 12), buttonText: "hit me for next", buttonTextColor: .blue, buttonFont: .boldSystemFont(ofSize: 16), buttonBgColor: .white, backgroundColor: .green, closeButtonColor: .white),
-                                   secondPage: ShakeToWinSecondPage(waitSeconds: 8, videoURL: URL(string: "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4"), closeButtonColor: .white),
-                                   thirdPage: ShakeToWinThirdPage(image: nil, title: "third page", titleFont: .boldSystemFont(ofSize: 16), titleColor: .darkGray, message: "shtw message \n message can be plural", messageColor: .blue, messageFont: .italicSystemFont(ofSize: 12), buttonText: "finish", buttonTextColor: .white, buttonFont: .boldSystemFont(ofSize: 16), buttonBgColor: .black, backgroundColor: .systemPink, closeButtonColor: .white))
-    }
+//    func createDummyModel() -> ShakeToWinViewModel? {
+//        var img: UIImage? = nil
+//        if let data = getImageDataOfUrl(URL(string: "https://placekitten.com/300/500")) {
+//            img = UIImage(data: data)
+//        }
+//
+//        return ShakeToWinViewModel(targetingActionType: .shakeToWin, mailForm: nil,firstPage: ShakeToWinFirstPage(image: "img", title: "shtw first page", titleFont: .boldSystemFont(ofSize: 16), titleColor: .yellow, message: "shtw message \n message can be plural", messageColor: .white, messageFont: .systemFont(ofSize: 12), buttonText: "hit me for next", buttonTextColor: .blue, buttonFont: .boldSystemFont(ofSize: 16), buttonBgColor: .white, backgroundColor: .green, closeButtonColor: .white),
+//                                   secondPage: ShakeToWinSecondPage(waitSeconds: 8, videoURL: URL(string: "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4"), closeButtonColor: .white),
+//                                   thirdPage: ShakeToWinThirdPage(image: nil, title: "third page", titleFont: .boldSystemFont(ofSize: 16), titleColor: .darkGray, message: "shtw message \n message can be plural", messageColor: .blue, messageFont: .italicSystemFont(ofSize: 12), buttonText: "finish", buttonTextColor: .white, buttonFont: .boldSystemFont(ofSize: 16), buttonBgColor: .black, backgroundColor: .systemPink, closeButtonColor: .white))
+//    }
     
     
     
@@ -295,9 +343,7 @@ extension ShakeToWinViewController {
             p.play()
         }
     }
-    
 
-    
     func getCloseButton(_ color: ButtonColor) -> UIButton  {
         let button = UIButton()
         button.setImage(getUIImage(named: "VisilabsCloseButton"), for: .normal)
@@ -307,6 +353,8 @@ extension ShakeToWinViewController {
         }
         return button
     }
+    
+    
     
     func getImageDataOfUrl(_ url: URL?) -> Data? {
         var data: Data? = nil

@@ -28,6 +28,12 @@ class SelectViewController: FormViewController {
         initializeForm()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+//        let vc = ShakeToWinViewController()
+//        self.present(vc, animated: true)
+    }
+    
     private func initializeForm() {
         let pushSection = Section("Push Module")
         let analyticsSection = Section("Analytics Module")

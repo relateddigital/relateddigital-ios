@@ -32,6 +32,7 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case video = "video"
     case downHsView = "downHsView"
     case bannerCarousel = "banner_carousel"
+    case shakeToWin = "ShakeToWin"
 
 }
 
