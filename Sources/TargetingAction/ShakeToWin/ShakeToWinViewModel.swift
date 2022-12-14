@@ -12,6 +12,7 @@ struct ShakeToWinViewModel : TargetingActionViewModel {
     var targetingActionType: TargetingActionType
     var actId:Int?
     var title:String?
+    var auth:String?
     
     var mailForm = MailSubscriptionModelGamification()
     var mailExtendedProps = MailSubscriptionExtendedPropsGamification()
@@ -28,6 +29,8 @@ struct ShakeToWinViewModel : TargetingActionViewModel {
     var promocode_banner_button_label:String?
     
     var closeButtonColor: String?
+    
+    var report : shakeToWinReport?
     
     var jsContent: String?
 }
@@ -76,3 +79,8 @@ struct ShakeToWinThirdPage {
     var closeButtonColor: ButtonColor? = .white
 }
 
+
+public struct shakeToWinReport: Codable {
+    var impression: String?
+    var click: String?
+}

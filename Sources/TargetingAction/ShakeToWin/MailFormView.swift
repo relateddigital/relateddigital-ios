@@ -20,7 +20,7 @@ class MailFormView: UIView {
     @IBOutlet weak var secondLineWarningLabel: UILabel!
     @IBOutlet weak var continueButtonView: UIView!
     @IBOutlet weak var continueButtonLabel: UILabel!
-    
+    @IBOutlet weak var mailInvalidLabel: UILabel!
     
     override init(frame: CGRect) {
         super.init(frame: frame)

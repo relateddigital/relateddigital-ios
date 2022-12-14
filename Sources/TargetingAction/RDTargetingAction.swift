@@ -198,7 +198,14 @@ class RDTargetingAction {
         shakeToWinModel.title = shakeToWin[RDConstants.title] as? String ?? ""
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        guard let report = actionData[RDConstants.report] as? [String: Any] else { return nil }
+        shakeToWinModel.auth = actionData[RDConstants.authentication] as? String ?? ""
+
         
+        let impression = report[RDConstants.impression] as? String ?? ""
+        let click = report[RDConstants.click] as? String ?? ""
+        let mailReport = shakeToWinReport(impression: impression, click: click)
+        shakeToWinModel.report = mailReport
         
         
         var mailFormPage = MailSubscriptionModelGamification()
@@ -214,6 +221,7 @@ class RDTargetingAction {
             mailFormPage.message = mailForm[RDConstants.message] as? String ?? ""
 
         }
+        
         shakeToWinModel.mailForm = mailFormPage
         
         var mailExtendedProps = MailSubscriptionExtendedPropsGamification()

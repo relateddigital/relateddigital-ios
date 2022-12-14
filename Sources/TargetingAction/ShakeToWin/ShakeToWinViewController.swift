@@ -15,6 +15,9 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     var multiplier = 0.0
     weak var player: AVPlayer? = nil
     var mailFormExist = true
+    var firstChecked = false
+    var secondChecked = false
+    
     var openedSecondPage = false {
         didSet {
             self.deviceDidntShake()
@@ -40,6 +43,12 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         super.init(nibName: nil, bundle: nil)
         self.model = model
         self.shakeToWin = model
+        
+        if model.mailForm.title?.count ?? 0 > 0 && model.mailForm.title != nil {
+            mailFormExist = true
+        } else {
+            mailFormExist = false
+        }
     }
     
     required public init?(coder: NSCoder) {
@@ -147,7 +156,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                             height: view.frame.height)
         
         
-        page.backgroundColor = UIColor(hex: self.model?.mailExtendedProps.backgroundColor)
+        page.backgroundColor = .white
         let close = getCloseButton()
         page.addSubview(close)
         close.top(to: page, offset: 35)
@@ -155,8 +164,94 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         close.width(40)
         close.height(40)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(goFirstPage))
-        page.continueButtonView.addGestureRecognizer(tap)
+        page.titleLabel.text = model?.mailForm.title
+        page.titleLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.titleFontFamily, fontSize: model?.mailExtendedProps.titleTextSize, style: .title2)
+        page.titleLabel.textColor = UIColor(hex: model?.mailExtendedProps.titleTextColor)
+        
+        
+        page.subTİtleLabel.text = model?.mailForm.message
+        page.subTİtleLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.textFontFamily, fontSize: model?.mailExtendedProps.textSize, style: .title2)
+        page.subTİtleLabel.textColor = UIColor(hex: model?.mailExtendedProps.textColor)
+        
+        page.firsLineTickLabel.text = model?.mailForm.emailPermitText
+        page.firsLineTickLabel.font = RDHelper.getFont(fontFamily: "default", fontSize: model?.mailExtendedProps.emailPermitTextSize, style: .body)
+        page.firsLineTickLabel.textColor = .black
+        
+        page.secondLineTickLabel.text = model?.mailForm.consentText
+        page.secondLineTickLabel.font = RDHelper.getFont(fontFamily: "default", fontSize: model?.mailExtendedProps.consentTextSize, style: .body)
+        page.secondLineTickLabel.textColor = .black
+        
+        page.firstLineWarningLabel.text = model?.mailForm.emailPermitText
+        page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage
+        
+        page.mailTextView.placeholder = model?.mailForm.placeholder
+        
+        page.continueButtonView.backgroundColor = UIColor(hex: model?.mailExtendedProps.buttonColor)
+        page.continueButtonLabel.textColor = UIColor(hex: model?.mailExtendedProps.buttonTextColor)
+        page.continueButtonLabel.text = model?.mailForm.buttonTitle
+        page.continueButtonLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.buttonFontFamily, fontSize: model?.mailExtendedProps.buttonTextSize, style: .body)
+        
+        page.mailInvalidLabel.text = model?.mailForm.invalidEmailMessage
+        page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage
+
+        
+        
+        page.firsLineTickLabel.setOnClickedListener {
+            if let url = URL(string: self.model?.mailExtendedProps.emailPermitTextUrl ?? "") {
+                UIApplication.shared.open(url)
+            }
+        }
+        
+        page.secondLineTickLabel.setOnClickedListener {
+            if let url = URL(string: self.model?.mailExtendedProps.consentTextUrl ?? "") {
+                UIApplication.shared.open(url)
+            }
+        }
+        
+        page.firstLineTickImageView.setOnClickedListener { [self] in
+            firstChecked = !firstChecked
+            if firstChecked {
+                page.firstLineTickImageView.image = getUIImage(named: "tickImage")
+            } else {
+                page.firstLineTickImageView.image = UIImage()
+            }
+        }
+        
+        page.secondLineTicImageView.setOnClickedListener { [self] in
+            secondChecked = !secondChecked
+            if secondChecked {
+                page.secondLineTicImageView.image = getUIImage(named: "tickImage")
+            } else {
+                page.secondLineTicImageView.image = UIImage()
+            }
+        }
+        
+        page.continueButtonView.setOnClickedListener { [self] in
+            let mail = page.mailTextView.text ?? ""
+            if !RDHelper.checkEmail(email: mail) {
+                page.mailInvalidLabel.isHidden = false
+                return
+            }
+            
+            if !firstChecked {
+                //page.firstLineWarningLabel.isHidden = false
+            }
+            
+            if !secondChecked {
+                page.secondLineWarningLabel.isHidden = false
+            }
+            
+            
+            if firstChecked && secondChecked {
+                RelatedDigital.subscribeMail(click: self.model!.report?.click ?? "",
+                                             actid: "\(self.model!.actId ?? 0)",
+                                             auth: self.model!.auth ?? "",
+                                             mail: mail)
+                scrollView.setContentOffset(CGPoint(x: view.frame.size.width, y: 0.0), animated: true)
+            }
+
+        }
+
 
         return page
     }
@@ -377,9 +472,7 @@ extension ShakeToWinViewController {
     
     
     
-    @objc func goFirstPage() {
-        scrollView.setContentOffset(CGPoint(x: view.frame.size.width, y: 0.0), animated: true)
-    }
+
     
     @objc func goSecondPage() {
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width*(multiplier+1), y: 0.0), animated: true)
