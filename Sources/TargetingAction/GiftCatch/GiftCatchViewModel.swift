@@ -151,6 +151,8 @@ public class BannerCodeManager {
     private let giftRainCode = "giftRainCode"
     private let findToWinCode = "findToWinCode"
     private let jackpotCode = "jackpotCode"
+    private let shakeToWinCode = "shakeToWinCode"
+
 
 
     
@@ -189,6 +191,19 @@ public class BannerCodeManager {
         let defaults = UserDefaults.standard
         let string = defaults.string(forKey: jackpotCode) ?? ""
         defaults.set("", forKey:jackpotCode)
+        return string
+    }
+    
+    
+    func setShakeToWinCode(code:String) {
+        let defaults = UserDefaults.standard
+        defaults.set(code, forKey:shakeToWinCode)
+    }
+    
+    func getShakeToWinCode() -> String {
+        let defaults = UserDefaults.standard
+        let string = defaults.string(forKey: shakeToWinCode) ?? ""
+        defaults.set("", forKey:shakeToWinCode)
         return string
     }
     

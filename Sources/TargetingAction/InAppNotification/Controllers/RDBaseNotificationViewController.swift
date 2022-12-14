@@ -35,6 +35,7 @@ class RDBaseNotificationViewController: UIViewController, RDBaseViewControllerPr
     var productStatNotifier: RDProductStatNotifierViewModel?
     var gameficationModel: GiftCatchViewModel?
     var findToWin: FindToWinViewModel?
+    var shakeToWin: ShakeToWinViewModel?
     var jackpot: jackpotModel?
 
 

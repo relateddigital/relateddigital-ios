@@ -39,6 +39,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     init(model:ShakeToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.model = model
+        self.shakeToWin = model
     }
     
     required public init?(coder: NSCoder) {
@@ -86,7 +87,21 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     }
     
     @objc func closeButtonTapped(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: nil)
+
+        close()
+    }
+    
+    func close() {
+        dismiss(animated: true) {
+            if let shakeToWin = self.shakeToWin {
+                let bannerVC = RDShakeToWinCodeBannerController(shakeToWin)
+                bannerVC.delegate = self.delegate
+                bannerVC.show(animated: true)
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            } else {
+                self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
+            }
+        }
     }
     
     func getUIImage(named: String) -> UIImage? {
@@ -116,8 +131,8 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     func prepareMailPage() -> UIView {
         let page : MailFormView = .fromNib()
         
-        page.secondLineTicImageView.layer.cornerRadius = 10
-        page.secondLineTicImageView.layer.borderWidth = 0.5
+        page.secondLineTicImageView.layer.cornerRadius = 8
+        page.secondLineTicImageView.layer.borderWidth = 0.3
         page.secondLineTicImageView.layer.borderColor = UIColor.black.cgColor
         
         page.firstLineTickImageView.layer.cornerRadius = 10
@@ -132,10 +147,10 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                             height: view.frame.height)
         
         
-        page.backgroundColor = .blue
-        let close = getCloseButton(.white)
+        page.backgroundColor = UIColor(hex: self.model?.mailExtendedProps.backgroundColor)
+        let close = getCloseButton()
         page.addSubview(close)
-        close.top(to: page, offset: 20)
+        close.top(to: page, offset: 35)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -211,10 +226,10 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             button.addTarget(self, action: #selector(goSecondPage), for: .touchUpInside)
         }
         
-        page.backgroundColor = .red
-        let close = getCloseButton(.black)
+        page.backgroundColor = model?.firstPage?.backgroundColor
+        let close = getCloseButton()
         page.addSubview(close)
-        close.top(to: page, offset: 20)
+        close.top(to: page, offset: 35)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -229,10 +244,10 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                                         height: view.frame.height))
         
     
-        page.backgroundColor = .green
-        let close = getCloseButton(.white)
+        page.backgroundColor = model?.secondPage?.backGroundColor
+        let close = getCloseButton()
         page.addSubview(close)
-        close.top(to: page, offset: 20)
+        close.top(to: page, offset: 35)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -260,15 +275,45 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                             width: view.frame.width,
                             height: view.frame.height)
         
+        page.coppyButtonLabel.text = model?.thirdPage?.buttonText
+        page.coppyButtonLabel.textColor = model?.thirdPage?.buttonTextColor
+        page.coppyButtonLabel.font = model?.thirdPage?.buttonFont
+        page.copyButtonView.backgroundColor = model?.thirdPage?.buttonBgColor
+        page.cupponCodeLabel.text = model?.thirdPage?.staticCode
+        page.cupponCodeLabel.textColor =  UIColor(hex: model?.promocode_text_color)
+        page.cupponCodeView.backgroundColor = UIColor(hex: model?.promocode_background_color)
         
-        page.backgroundColor = .blue
-        let close = getCloseButton(.white)
+        page.copyButtonView.setOnClickedListener {
+            self.copyClicked()
+        }
+        
+        page.titleLabel.text = model?.thirdPage?.title
+        page.titleLabel.textColor = model?.thirdPage?.titleColor
+        page.titleLabel.font = model?.thirdPage?.titleFont
+        page.subTitleLabel.text = model?.thirdPage?.message
+        page.subTitleLabel.textColor = model?.thirdPage?.messageColor
+        page.subTitleLabel.font = model?.thirdPage?.messageFont
+        page.backgroundColor = model?.thirdPage?.backgroundColor
+        let close = getCloseButton()
         page.addSubview(close)
         close.top(to: page, offset: 20)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
         return page
+    }
+    
+    
+    func copyClicked() {
+        UIPasteboard.general.string = model?.thirdPage?.staticCode
+        RDHelper.showCopiedClipboardMessage()
+        BannerCodeManager.shared.setShakeToWinCode(code: model?.thirdPage?.staticCode ?? "")
+        close()
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            if let url = URL(string: self.model?.thirdPage?.iosLink ?? "") {
+                UIApplication.shared.open(url)
+            }
+        }
     }
     
     override func show(animated: Bool) {
@@ -344,11 +389,12 @@ extension ShakeToWinViewController {
         }
     }
 
-    func getCloseButton(_ color: ButtonColor) -> UIButton  {
+    func getCloseButton() -> UIButton  {
         let button = UIButton()
         button.setImage(getUIImage(named: "VisilabsCloseButton"), for: .normal)
         button.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
-        if color == .black {
+        
+        if self.model?.closeButtonColor == "black" {
             button.setImage(getUIImage(named: "VisilabsCloseButtonBlack"), for: .normal)
         }
         return button

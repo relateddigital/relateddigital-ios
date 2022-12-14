@@ -294,6 +294,8 @@ class RDTargetingAction {
         shakeToWinModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
         shakeToWinModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
         shakeToWinModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        
+        shakeToWinModel.closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
 
         return shakeToWinModel
     }

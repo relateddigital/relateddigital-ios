@@ -27,6 +27,8 @@ struct ShakeToWinViewModel : TargetingActionViewModel {
     var promocode_banner_background_color:String?
     var promocode_banner_button_label:String?
     
+    var closeButtonColor: String?
+    
     var jsContent: String?
 }
 
