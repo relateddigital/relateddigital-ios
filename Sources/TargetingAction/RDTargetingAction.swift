@@ -200,6 +200,7 @@ class RDTargetingAction {
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
         guard let report = actionData[RDConstants.report] as? [String: Any] else { return nil }
         shakeToWinModel.auth = actionData[RDConstants.authentication] as? String ?? ""
+        shakeToWinModel.backGroundImage = extendedProps[RDConstants.backgroundImage] as? String
 
         
         let impression = report[RDConstants.impression] as? String ?? ""

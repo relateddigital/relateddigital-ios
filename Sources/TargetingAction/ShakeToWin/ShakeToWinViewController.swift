@@ -265,6 +265,10 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         
         var imageView = UIImageView(frame: .zero)
         
+        if let bgImg = self.model?.backGroundImage {
+            page.setBackGround(url: bgImg)
+        }
+        
         if let firstPage = model?.firstPage {
             var imageAdded = false
             if let img = firstPage.image {
@@ -329,6 +333,10 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         close.width(40)
         close.height(40)
         
+        close.setOnClickedListener {
+            self.close()
+        }
+        
         return page
     }
     
@@ -337,6 +345,10 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                                         y: 0,
                                         width: view.frame.width,
                                         height: view.frame.height))
+        
+        if let bgImg = self.model?.backGroundImage {
+            page.setBackGround(url: bgImg)
+        }
         
     
         page.backgroundColor = model?.secondPage?.backGroundColor
@@ -370,6 +382,10 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                             width: view.frame.width,
                             height: view.frame.height)
         
+        if let bgImg = self.model?.backGroundImage {
+            page.setBackGround(url: bgImg)
+        }
+        
         page.coppyButtonLabel.text = model?.thirdPage?.buttonText
         page.coppyButtonLabel.textColor = model?.thirdPage?.buttonTextColor
         page.coppyButtonLabel.font = model?.thirdPage?.buttonFont
@@ -395,6 +411,9 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
+        close.setOnClickedListener {
+            self.close()
+        }
         return page
     }
     
@@ -505,5 +524,23 @@ extension ShakeToWinViewController {
             }
         }
         return data
+    }
+}
+
+
+
+extension UIView {
+    func setBackGround(url:String) {
+        
+        let bgImageView = UIImageView()
+        bgImageView.setImage(withUrl: url)
+        bgImageView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(bgImageView)
+        bgImageView.layer.zPosition = -100
+        NSLayoutConstraint.activate([
+            bgImageView.topAnchor.constraint(equalTo: self.topAnchor),
+            bgImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            bgImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            bgImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor)])
     }
 }

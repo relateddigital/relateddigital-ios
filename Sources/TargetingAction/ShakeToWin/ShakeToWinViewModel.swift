@@ -21,6 +21,8 @@ struct ShakeToWinViewModel : TargetingActionViewModel {
     var secondPage: ShakeToWinSecondPage?
     var thirdPage: ShakeToWinThirdPage?
     
+    var backGroundImage : String?
+    
     var promocode_background_color:String?
     var promocode_text_color:String?
     var promocode_banner_text:String?
