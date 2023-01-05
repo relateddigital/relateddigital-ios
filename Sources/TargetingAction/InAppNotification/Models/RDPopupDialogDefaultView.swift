@@ -233,9 +233,10 @@ public class RDPopupDialogDefaultView: UIView {
     func setupInitialForScratchToWin() {
         guard let model = self.scratchToWin else { return }
         var imageAdded = false
-        if model.image != nil {
+        if model.imageUrl != nil {
             addSubview(imageView)
             imageView.allEdges(to: self, excluding: .bottom)
+            imageView.setImage(withUrl: model.imageUrl)
             imageAdded = true
         }
         titleLabel.text = model.title?.removeEscapingCharacters()

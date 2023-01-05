@@ -8,7 +8,7 @@
 
 import UIKit
 
-public typealias ImageCompletion = (UIImage?, UIImage?, RDCarouselItem) -> Void
+public typealias ImageCompletion = (URL?, UIImage?, RDCarouselItem) -> Void
 public typealias FetchImageBlock = (@escaping ImageCompletion) -> Void
 
 public struct RDCarouselItemBlock {

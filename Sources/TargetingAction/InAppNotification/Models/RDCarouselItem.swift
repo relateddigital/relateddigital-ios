@@ -74,31 +74,8 @@ public class RDCarouselItem {
     var linkUrl: URL? = nil
     
     var imageUrl: URL? = nil
-    public lazy var image: Data? = {
-        var data: Data?
-        if let iUrl = self.imageUrl {
-            do {
-                data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-            } catch {
-                RDLogger.error("image failed to load from url \(iUrl)")
-            }
-        }
-        return data
-    }()
-    
     
     var backgroundImageUrl: URL? = nil
-    public lazy var backgroundImage: Data? = {
-        var data: Data?
-        if let iUrl = self.backgroundImageUrl {
-            do {
-                data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-            } catch {
-                RDLogger.error("image failed to load from url \(iUrl)")
-            }
-        }
-        return data
-    }()
     
     
     public var fetchImageBlock: FetchImageBlock? = nil
@@ -154,17 +131,13 @@ public class RDCarouselItem {
         self.setFonts()
         
         self.fetchImageBlock = { imageCompletion in
-            var image: UIImage? = nil
             var backgroundImage: UIImage? = nil
             
-            if let imageUrl = self.imageUrl, let imageData: Data = try? Data(contentsOf: imageUrl) {
-                image = UIImage(data: imageData as Data)
-            }
             if let backgroundImageUrl = self.backgroundImageUrl, let imageData: Data = try? Data(contentsOf: backgroundImageUrl) {
                 backgroundImage = UIImage(data: imageData as Data)
             }
             
-            imageCompletion(image, backgroundImage, self)
+            imageCompletion(self.imageUrl, backgroundImage, self)
         }
         
     }
@@ -220,17 +193,12 @@ public class RDCarouselItem {
         self.setFonts()
         
         self.fetchImageBlock = { imageCompletion in
-            var image: UIImage? = nil
             var backgroundImage: UIImage? = nil
-            
-            if let imageUrl = self.imageUrl, let imageData: Data = try? Data(contentsOf: imageUrl) {
-                image = UIImage(data: imageData as Data)
-            }
             if let backgroundImageUrl = self.backgroundImageUrl, let imageData: Data = try? Data(contentsOf: backgroundImageUrl) {
                 backgroundImage = UIImage(data: imageData as Data)
             }
             
-            imageCompletion(image, backgroundImage, self)
+            imageCompletion(self.imageUrl, backgroundImage, self)
         }
     }
     
