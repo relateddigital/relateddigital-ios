@@ -373,6 +373,16 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
     
     public func closeCarousel(shouldTrack: Bool, callToActionURL: URL?) {
         
+        if let buttonFunc = notification?.carouselItems[currentIndex].buttonFunction {
+            
+            if buttonFunc == RDConstants.copyRedirect {
+                if let promoCode = notification?.carouselItems[currentIndex].promotionCode {
+                    UIPasteboard.general.string = promoCode
+                    RDHelper.showCopiedClipboardMessage()
+                }
+            }
+        }
+        
         self.rdDelegate?.notificationShouldDismiss(controller: self,
                                                    callToActionURL: callToActionURL,
                                                    shouldTrack: shouldTrack,

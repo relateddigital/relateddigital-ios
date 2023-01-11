@@ -37,6 +37,7 @@ public class RDCarouselItem {
         public static let ios_lnk = "ios_lnk"
         public static let close_button_color = "close_button_color"
         public static let videourl = "videourl"
+        public static let buttonFunction = "button_function"
     }
     
     public let imageUrlString: String?
@@ -65,6 +66,7 @@ public class RDCarouselItem {
     public let linkString: String?
     public var closeButtonColor: UIColor?
     public var videourl : String?
+    public var buttonFunction : String?
 
     
     var titleFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title2), size: CGFloat(12))
@@ -86,7 +88,7 @@ public class RDCarouselItem {
                 ,bodyTextsize: String?, promocodeType: String?, promotionCode: String?, promocodeBackgroundColor: UIColor?
                 ,promocodeTextColor: UIColor?, buttonText: String?, buttonTextColor: UIColor?, buttonColor: UIColor?
                 ,buttonFontFamily: String?, buttonCustomFontFamily: String?, buttonTextsize: String?, backgroundImageString: String?
-                ,backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?,videourl: String?) {
+                ,backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?,videourl: String?,buttonFunction:String) {
         self.imageUrlString = imageUrlString
         self.title = title
         self.titleColor = UIColor(hex: titleColor)
@@ -112,6 +114,7 @@ public class RDCarouselItem {
         self.backgroundColor = backgroundColor
         self.linkString = linkString
         self.videourl = videourl
+        self.buttonFunction = buttonFunction
 
         
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
@@ -174,6 +177,7 @@ public class RDCarouselItem {
         self.backgroundColor = UIColor(hex: object[PayloadKey.background_color] as? String)
         self.linkString = object[PayloadKey.ios_lnk] as? String
         self.videourl = object[PayloadKey.videourl] as? String
+        self.buttonFunction = object[PayloadKey.buttonFunction] as? String
 
         
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {

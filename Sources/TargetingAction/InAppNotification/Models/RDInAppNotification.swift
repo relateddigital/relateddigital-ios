@@ -235,7 +235,7 @@ public class RDInAppNotification {
 
         var callToActionUrl: URL?
         if let buttonFunction = buttonFunction {
-            if buttonFunction == "link" || buttonFunction == "" {
+            if buttonFunction == "link" || buttonFunction == ""  {
                 if let urlString = iosLink {
                     callToActionUrl = URL(string: urlString)
                 }
@@ -376,7 +376,7 @@ public class RDInAppNotification {
 
         var callToActionUrl: URL?
         if let buttonFunction = buttonFunction {
-            if buttonFunction == "link" || buttonFunction == "" {
+            if buttonFunction == "link" || buttonFunction == "" || buttonFunction == RDConstants.copyRedirect{
                 if let urlString = iosLink {
                     callToActionUrl = URL(string: urlString)
                 }
@@ -392,7 +392,7 @@ public class RDInAppNotification {
         
         var callToSecondActionUrl: URL?
         if let buttonFunction = secondButtonFunction {
-            if buttonFunction == "link" || buttonFunction == "" {
+            if buttonFunction == "link" || buttonFunction == "" || buttonFunction == RDConstants.copyRedirect {
                 if let urlString = secondButtonIosLnk {
                     callToSecondActionUrl = URL(string: urlString)
                 }

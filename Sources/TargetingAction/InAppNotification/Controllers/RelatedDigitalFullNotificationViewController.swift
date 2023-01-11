@@ -230,10 +230,25 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
 
     // TO_DO: burada additionalTrackingProperties kısmında aksiyon id'si gönderilebilir.
     @objc func buttonTapped(_ sender: AnyObject) {
-        delegate?.notificationShouldDismiss(controller: self,
-                                            callToActionURL: fullNotification.callToActionUrl,
-                                            shouldTrack: true,
-                                            additionalTrackingProperties: nil)
+        
+        
+        if let promo = self.fullNotification.promotionCode , !promo.isEmptyOrWhitespace {
+            pasteboard.string = promo
+            RDHelper.showCopiedClipboardMessage()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0, execute: { [self] in
+                delegate?.notificationShouldDismiss(controller: self,
+                                                    callToActionURL: fullNotification.callToActionUrl,
+                                                    shouldTrack: true,
+                                                    additionalTrackingProperties: nil)
+            })
+        } else {
+            delegate?.notificationShouldDismiss(controller: self,
+                                                callToActionURL: fullNotification.callToActionUrl,
+                                                shouldTrack: true,
+                                                additionalTrackingProperties: nil)
+        }
+        
+
     }
 
     @IBAction func tappedClose(_ sender: Any) {
