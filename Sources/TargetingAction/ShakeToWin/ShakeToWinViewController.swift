@@ -511,20 +511,7 @@ extension ShakeToWinViewController {
         }
         return button
     }
-    
-    
-    
-    func getImageDataOfUrl(_ url: URL?) -> Data? {
-        var data: Data? = nil
-        if let iUrl = url {
-            do {
-                data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-            } catch {
-                RDLogger.error("image failed to load from url \(iUrl)")
-            }
-        }
-        return data
-    }
+ 
 }
 
 

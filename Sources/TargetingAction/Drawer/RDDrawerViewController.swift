@@ -56,25 +56,25 @@ class RDDrawerViewController : RDBaseNotificationViewController {
     func initializeData() {
         
         if model.screenXcoordinate == .right {
-            globDrawerView?.leftDrawerMiniContentImageView.image = model.miniDrawerContentImage
+            globDrawerView?.leftDrawerMiniContentImageView.setImage(withUrl: model.miniDrawerContentImage ?? "")
             globDrawerView?.leftTitleLabel.text = model.titleString
             globDrawerView?.leftTitleLabel.font = model.miniDrawerTextFont
             globDrawerView?.leftTitleLabel.textColor = model.miniDrawerTextColor
-            globDrawerView?.leftDrawerMiniImageView.image = model.miniDrawerBackgroundImage
+            globDrawerView?.leftDrawerMiniImageView.setImage(withUrl: model.miniDrawerBackgroundImage ?? "")
             globDrawerView?.leftDrawerMiniImageView.backgroundColor = model.miniDrawerBackgroundColor
             globDrawerView?.leftDrawerMiniArrow.textColor = model.arrowColor
         } else {
-            globDrawerView?.rightDrawerMiniContentImageView.image = model.miniDrawerContentImage
+            globDrawerView?.rightDrawerMiniContentImageView.setImage(withUrl: model.miniDrawerContentImage ?? "")
             globDrawerView?.rightTitleLabel.text = model.titleString
             globDrawerView?.rightTitleLabel.font = model.miniDrawerTextFont
             globDrawerView?.rightTitleLabel.textColor = model.miniDrawerTextColor
-            globDrawerView?.rightDrawerMiniImageView.image = model.miniDrawerBackgroundImage
+            globDrawerView?.rightDrawerMiniImageView.setImage(withUrl: model.miniDrawerBackgroundImage ?? "")
             globDrawerView?.rightDrawerMiniImageView.backgroundColor = model.miniDrawerBackgroundColor
             globDrawerView?.rightDrawerMiniArrow.textColor = model.arrowColor
         }
-        globDrawerView?.drawerGrandImageView.image = model.drawerBackgroundImage
+        globDrawerView?.drawerGrandImageView.setImage(withUrl: model.drawerBackgroundImage ?? "")
         globDrawerView?.drawerGrandImageView.backgroundColor = model.drawerBackgroundColor
-        globDrawerView?.drawerGrandContentImageView.image = model.drawerContentImage
+        globDrawerView?.drawerGrandContentImageView.setImage(withUrl: model.drawerContentImage ?? "")
 
     }
     

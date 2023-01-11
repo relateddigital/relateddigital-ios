@@ -241,6 +241,13 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                                                  additionalTrackingProperties: additionalTrackingProperties)
         
         if returnCallback {
+            
+            if notification.buttonFunction == RDConstants.copyRedirect {
+                if let promoCode = notification.promotionCode {
+                    UIPasteboard.general.string = promoCode
+                    RDHelper.showCopiedClipboardMessage()
+                }
+            }
             self.inappButtonDelegate?.didTapButton(notification)
         }
     }

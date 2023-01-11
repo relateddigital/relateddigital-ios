@@ -78,29 +78,55 @@ extension UIImageView {
     
     
     func setImage(withUrl urlString : String) {
-        let url = URL(string: urlString)
-        self.image = nil
+        if let url = URL(string: urlString) {
+            self.image = nil
 
-        // check cached image
-        if let cachedImage = imageCache.object(forKey: urlString as NSString) as? UIImage {
-            self.image = cachedImage
-            return
-        }
-
-        // if not, download image from url
-        URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
-            if error != nil {
-                print(error!)
+            // check cached image
+            if let cachedImage = imageCache.object(forKey: urlString as NSString) as? UIImage {
+                self.image = cachedImage
                 return
             }
-
-            DispatchQueue.main.async {
-                if let image = UIImage.gif(data: data!) {
-                    imageCache.setObject(image, forKey: urlString as NSString)
-                    self.image = image
+            // if not, download image from url
+            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+                if error != nil {
+                    print(error!)
+                    return
                 }
-            }
 
-        }).resume()
+                DispatchQueue.main.async {
+                    if let image = UIImage.gif(data: data!) {
+                        imageCache.setObject(image, forKey: urlString as NSString)
+                        self.image = image
+                    }
+                }
+
+            }).resume()
+        }
+    }
+    
+    func setImage(withUrl urlString : URL?) {
+        if let url = urlString {
+            self.image = nil
+
+            // if not, download image from url
+            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+                if error != nil {
+                    print(error!)
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    if let image = UIImage.gif(data: data!) {
+                        self.image = image
+                        if self.superview is RDPopupDialogDefaultView {
+                            let viewPop = self.superview as! RDPopupDialogDefaultView
+                            viewPop.imageHeightConstraint?.constant = viewPop.imageView.pv_heightForImageView(isVideoExist: false)
+                        }
+                        
+                    }
+                }
+
+            }).resume()
+        }
     }
 }

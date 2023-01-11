@@ -23,18 +23,8 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
         self.mailForm = emailForm
         self.scratchToWin = scratchToWin
         
-        
-        if let image = rdInAppNotification?.image ?? scratchToWin?.image {
-            if let imageGif = UIImage.gif(data: image) {
-                self.image = imageGif
-            } else {
-                self.image = UIImage(data: image)
-            }
-        }
-        
-        if let secondImage = rdInAppNotification?.secondImage2 {
-            self.secondImage = UIImage.gif(data: secondImage)
-        }
+        self.image = UIImage()
+        self.secondImage = UIImage()
     }
     
     public var standardView: RDPopupDialogDefaultView {
@@ -85,11 +75,11 @@ public extension RDDefaultPopupNotificationViewController {
     var image: UIImage? {
         get { return standardView.imageView.image }
         set {
-            standardView.imageView.image = newValue
             if rdInAppNotification?.videourl?.count ?? 0 > 0 {
                 standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
             } else {
                 standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                standardView.imageView.setImage(withUrl: rdInAppNotification?.imageUrl)
             }
         }
     }
@@ -98,11 +88,11 @@ public extension RDDefaultPopupNotificationViewController {
         get { return standardView.secondImageView.image }
         set {
             
-            standardView.secondImageView.image = newValue
             if rdInAppNotification?.videourl?.count ?? 0 > 0 {
                 standardView.secondImageHeight?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
             } else {
                 standardView.secondImageHeight?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                standardView.secondImageView.setImage(withUrl: rdInAppNotification?.secondImageUrl2)
             }
         }
     }

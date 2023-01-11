@@ -41,9 +41,9 @@ class RDDrawerViewControllerModel {
             drawerModel.screenXcoordinate = .left
         }
          
-        drawerModel.miniDrawerContentImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMinimizedImage ?? ""))
+        drawerModel.miniDrawerContentImage = serviceModel?.contentMinimizedImage ?? ""
         drawerModel.titleString = serviceModel?.contentMinimizedText ?? ""
-        drawerModel.drawerContentImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMaximizedImage ?? ""))
+        drawerModel.drawerContentImage = serviceModel?.contentMaximizedImage ?? ""
         drawerModel.waitTime = serviceModel?.waitingTime
         drawerModel.linkToGo = serviceModel?.iosLnk
         
@@ -56,7 +56,7 @@ class RDDrawerViewControllerModel {
             drawerModel.labelType = .downToUp
         }
         
-        drawerModel.miniDrawerBackgroundImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMinimizedBackgroundImage ?? ""))
+        drawerModel.miniDrawerBackgroundImage = serviceModel?.contentMinimizedBackgroundImage ?? ""
         drawerModel.miniDrawerBackgroundColor = UIColor(hex: serviceModel?.contentMinimizedBackgroundColor)
         
         if serviceModel?.contentMinimizedArrowColor?.count == 0 {
@@ -65,27 +65,10 @@ class RDDrawerViewControllerModel {
             drawerModel.arrowColor = UIColor(hex: serviceModel?.contentMinimizedArrowColor)
         }
         
-        drawerModel.drawerBackgroundImage = UIImage(data: getDataOfImage(urlString: serviceModel?.contentMaximizedBackgroundImage ?? ""))
+        drawerModel.drawerBackgroundImage = serviceModel?.contentMaximizedBackgroundImage ?? ""
         drawerModel.drawerBackgroundColor = UIColor(hex: serviceModel?.contentMaximizedBackgroundColor)
 
         return drawerModel
-    }
-    
-    private func getDataOfImage(urlString : String) -> Data {
-        
-        let image: Data? = {
-            var data: Data?
-            if let iUrl = URL(string: urlString)  {
-                do {
-                    data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-                } catch {
-                    RDLogger.error("image failed to load from url \(iUrl)")
-                }
-            }
-            return data
-        }()
-        
-        return image ?? Data()
     }
 }
 
@@ -139,9 +122,9 @@ struct DrawerViewModel {
     var screenYcoordinate : screenYcoordinate?
     var screenXcoordinate : screenXcoordinate?
     //
-    var miniDrawerContentImage : UIImage?
+    var miniDrawerContentImage : String?
     var titleString : String = "Label"
-    var drawerContentImage : UIImage?
+    var drawerContentImage : String?
     var waitTime : Int?
     var linkToGo : String?
     
@@ -150,10 +133,10 @@ struct DrawerViewModel {
     var miniDrawerTextFont : UIFont?
     var miniDrawerTextColor : UIColor?
     var labelType : labelType?
-    var miniDrawerBackgroundImage:UIImage?
+    var miniDrawerBackgroundImage:String?
     var miniDrawerBackgroundColor:UIColor?
     var arrowColor:UIColor?
-    var drawerBackgroundImage:UIImage?
+    var drawerBackgroundImage:String?
     var drawerBackgroundColor:UIColor?
     
 }

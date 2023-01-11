@@ -56,17 +56,6 @@ public class ScratchToWinModel: TargetingActionViewModel {
     public var jsContent: String?
 
     var imageUrl: URL?
-    lazy var image: Data? = {
-        var data: Data?
-        if let iUrl = self.imageUrl {
-            do {
-                data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-            } catch {
-                RDLogger.error("image failed to load from url \(iUrl)")
-            }
-        }
-        return data
-    }()
 
     var messageTitleFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title2),
                                           size: CGFloat(12))
