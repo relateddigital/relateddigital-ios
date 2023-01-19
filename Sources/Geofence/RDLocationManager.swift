@@ -79,20 +79,24 @@ class RDLocationManager: NSObject {
     }
     
     func startGeofencing(fromInit: Bool) {
-        if askLocationPermissionAtStart {
-            requestLocationPermissions()
-        }
         
-        let authorizationStatus = RDGeofenceState.locationAuthorizationStatus
-        if !(authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways) {
-            return
+        if RelatedDigital._shared != nil {
+            if askLocationPermissionAtStart {
+                requestLocationPermissions()
+            }
+            
+            let authorizationStatus = RDGeofenceState.locationAuthorizationStatus
+            if !(authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways) {
+                return
+            }
+            RDGeofenceState.setGeofenceEnabled(true)
+            updateTracking(location: nil, fromInit: fromInit)
+            if let geoEntities = geofenceHistory.fetchHistory.sorted(by: { $0.key > $1.key }).first?.value {
+                replaceSyncedGeofences(geoEntities)
+            }
+            fetchGeofences()
         }
-        RDGeofenceState.setGeofenceEnabled(true)
-        updateTracking(location: nil, fromInit: fromInit)
-        if let geoEntities = geofenceHistory.fetchHistory.sorted(by: { $0.key > $1.key }).first?.value {
-            replaceSyncedGeofences(geoEntities)
-        }
-        fetchGeofences()
+
     }
 
     func startUpdates(_ interval: Int) {
@@ -544,116 +548,119 @@ extension RDLocationManager {
                          lastKnownLongitude: Double?,
                          completion: @escaping ((_ response: Bool, _ fetchedGeofences: [RDGeofenceEntity]) -> Void)) {
         
-        guard let profile = RDProfile else {
-            completion(false, [RDGeofenceEntity]())
-            return
-        }
-        
-        if profile.geofenceEnabled, RDGeofenceState.locationServicesEnabledForDevice, RDGeofenceState.locationServiceEnabledForApplication {
-            let now = Date()
-            let timeInterval = now.timeIntervalSince1970 - self.lastGeofenceFetchTime.timeIntervalSince1970
-            if timeInterval < RDConstants.geofenceFetchTimeInterval {
+        DispatchQueue.global().async { [self] in
+            
+            guard let profile = RDProfile else {
                 completion(false, [RDGeofenceEntity]())
                 return
             }
-
-            self.lastGeofenceFetchTime = now
-            let user = RDPersistence.unarchiveUser()
-            let geofenceHistory = RDPersistence.readRDGeofenceHistory()
-            var props = [String: String]()
-            props[RDConstants.organizationIdKey] = profile.organizationId
-            props[RDConstants.profileIdKey] = profile.profileId
-            props[RDConstants.cookieIdKey] = user.cookieId
-            props[RDConstants.exvisitorIdKey] = user.exVisitorId
-            props[RDConstants.actKey] = RDConstants.getList
-            props[RDConstants.tokenIdKey] = user.tokenId
-            props[RDConstants.appidKey] = user.appId
-            props[RDConstants.channelKey] = profile.channel
-            if let lat = lastKnownLatitude, let lon = lastKnownLongitude {
-                props[RDConstants.latitudeKey] = String(format: "%.013f", lat)
-                props[RDConstants.longitudeKey] = String(format: "%.013f", lon)
-            } else if let lat = geofenceHistory.lastKnownLatitude, let lon = geofenceHistory.lastKnownLongitude {
-                props[RDConstants.latitudeKey] = String(format: "%.013f", lat)
-                props[RDConstants.longitudeKey] = String(format: "%.013f", lon)
-            }
             
-            props[RDConstants.nrvKey] = String(user.nrv)
-            props[RDConstants.pvivKey] = String(user.pviv)
-            props[RDConstants.tvcKey] = String(user.tvc)
-            props[RDConstants.lvtKey] = user.lvt
-
-            for (key, value) in RDPersistence.readTargetParameters() {
-               if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
-                   props[key] = value
-               }
-            }
-
-            RDRequest.sendGeofenceRequest(properties: props, headers: [String: String]()) {
-                [lastKnownLatitude, lastKnownLongitude, geofenceHistory, now] (result, error) in
-
-                if error != nil {
-                    self.geofenceHistory.lastKnownLatitude = lastKnownLatitude ?? geofenceHistory.lastKnownLatitude
-                    self.geofenceHistory.lastKnownLongitude = lastKnownLongitude ?? geofenceHistory.lastKnownLongitude
-                    if self.geofenceHistory.errorHistory.count > RDConstants.geofenceHistoryErrorMaxCount {
-                        let ascendingKeys = Array(self.geofenceHistory.errorHistory.keys).sorted(by: { $0 < $1 })
-                        let keysToBeDeleted = ascendingKeys[0..<(ascendingKeys.count
-                                            - RDConstants.geofenceHistoryErrorMaxCount)]
-                        for key in keysToBeDeleted {
-                            self.geofenceHistory.errorHistory[key] = nil
-                        }
-                    }
-                    RDPersistence.saveRDGeofenceHistory(self.geofenceHistory)
+            if profile.geofenceEnabled, RDGeofenceState.locationServicesEnabledForDevice, RDGeofenceState.locationServiceEnabledForApplication {
+                let now = Date()
+                let timeInterval = now.timeIntervalSince1970 - self.lastGeofenceFetchTime.timeIntervalSince1970
+                if timeInterval < RDConstants.geofenceFetchTimeInterval {
                     completion(false, [RDGeofenceEntity]())
                     return
                 }
-                self.geofenceHistory.lastFetchTime = now
-                var fetchedGeofences = [RDGeofenceEntity]()
-                if let res = result {
-                    for targetingAction in res {
-                        if let actionId = targetingAction["actid"] as? Int,
-                           let targetEvent = targetingAction["trgevt"] as? String,
-                           let durationInSeconds = targetingAction["dis"] as? Int,
-                           let geofences = targetingAction["geo"] as? [[String: Any]] {
-
-                            for geofence in geofences {
-                                if let geofenceId = geofence["id"] as? Int,
-                                   let latitude = geofence["lat"] as? Double,
-                                   let longitude = geofence["long"] as? Double,
-                                   let radius = geofence["rds"] as? Double {
-                                    var distanceFromCurrentLastKnownLocation: Double?
-                                    if let lastLat = lastKnownLatitude, let lastLong = lastKnownLongitude {
-                                        distanceFromCurrentLastKnownLocation = RDHelper.distanceSquared(lat1: lastLat,
-                                                                            lng1: lastLong,
-                                                                            lat2: latitude,
-                                                                            lng2: longitude)
+                
+                self.lastGeofenceFetchTime = now
+                let user = RDPersistence.unarchiveUser()
+                let geofenceHistory = RDPersistence.readRDGeofenceHistory()
+                var props = [String: String]()
+                props[RDConstants.organizationIdKey] = profile.organizationId
+                props[RDConstants.profileIdKey] = profile.profileId
+                props[RDConstants.cookieIdKey] = user.cookieId
+                props[RDConstants.exvisitorIdKey] = user.exVisitorId
+                props[RDConstants.actKey] = RDConstants.getList
+                props[RDConstants.tokenIdKey] = user.tokenId
+                props[RDConstants.appidKey] = user.appId
+                props[RDConstants.channelKey] = profile.channel
+                if let lat = lastKnownLatitude, let lon = lastKnownLongitude {
+                    props[RDConstants.latitudeKey] = String(format: "%.013f", lat)
+                    props[RDConstants.longitudeKey] = String(format: "%.013f", lon)
+                } else if let lat = geofenceHistory.lastKnownLatitude, let lon = geofenceHistory.lastKnownLongitude {
+                    props[RDConstants.latitudeKey] = String(format: "%.013f", lat)
+                    props[RDConstants.longitudeKey] = String(format: "%.013f", lon)
+                }
+                
+                props[RDConstants.nrvKey] = String(user.nrv)
+                props[RDConstants.pvivKey] = String(user.pviv)
+                props[RDConstants.tvcKey] = String(user.tvc)
+                props[RDConstants.lvtKey] = user.lvt
+                
+                for (key, value) in RDPersistence.readTargetParameters() {
+                    if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
+                        props[key] = value
+                    }
+                }
+                
+                RDRequest.sendGeofenceRequest(properties: props, headers: [String: String]()) {
+                    [lastKnownLatitude, lastKnownLongitude, geofenceHistory, now] (result, error) in
+                    
+                    if error != nil {
+                        self.geofenceHistory.lastKnownLatitude = lastKnownLatitude ?? geofenceHistory.lastKnownLatitude
+                        self.geofenceHistory.lastKnownLongitude = lastKnownLongitude ?? geofenceHistory.lastKnownLongitude
+                        if self.geofenceHistory.errorHistory.count > RDConstants.geofenceHistoryErrorMaxCount {
+                            let ascendingKeys = Array(self.geofenceHistory.errorHistory.keys).sorted(by: { $0 < $1 })
+                            let keysToBeDeleted = ascendingKeys[0..<(ascendingKeys.count
+                                                                     - RDConstants.geofenceHistoryErrorMaxCount)]
+                            for key in keysToBeDeleted {
+                                self.geofenceHistory.errorHistory[key] = nil
+                            }
+                        }
+                        RDPersistence.saveRDGeofenceHistory(self.geofenceHistory)
+                        completion(false, [RDGeofenceEntity]())
+                        return
+                    }
+                    self.geofenceHistory.lastFetchTime = now
+                    var fetchedGeofences = [RDGeofenceEntity]()
+                    if let res = result {
+                        for targetingAction in res {
+                            if let actionId = targetingAction["actid"] as? Int,
+                               let targetEvent = targetingAction["trgevt"] as? String,
+                               let durationInSeconds = targetingAction["dis"] as? Int,
+                               let geofences = targetingAction["geo"] as? [[String: Any]] {
+                                
+                                for geofence in geofences {
+                                    if let geofenceId = geofence["id"] as? Int,
+                                       let latitude = geofence["lat"] as? Double,
+                                       let longitude = geofence["long"] as? Double,
+                                       let radius = geofence["rds"] as? Double {
+                                        var distanceFromCurrentLastKnownLocation: Double?
+                                        if let lastLat = lastKnownLatitude, let lastLong = lastKnownLongitude {
+                                            distanceFromCurrentLastKnownLocation = RDHelper.distanceSquared(lat1: lastLat,
+                                                                                                            lng1: lastLong,
+                                                                                                            lat2: latitude,
+                                                                                                            lng2: longitude)
+                                        }
+                                        fetchedGeofences.append(RDGeofenceEntity(actId: actionId,
+                                                                                 geofenceId: geofenceId,
+                                                                                 latitude: latitude,
+                                                                                 longitude: longitude,
+                                                                                 radius: radius,
+                                                                                 durationInSeconds: durationInSeconds,
+                                                                                 targetEvent: targetEvent,
+                                                                                 distanceFromCurrentLastKnownLocation: distanceFromCurrentLastKnownLocation))
                                     }
-                                    fetchedGeofences.append(RDGeofenceEntity(actId: actionId,
-                                                                                   geofenceId: geofenceId,
-                                                                                   latitude: latitude,
-                                                                                   longitude: longitude,
-                                                                                   radius: radius,
-                                                                                   durationInSeconds: durationInSeconds,
-                                                                                   targetEvent: targetEvent,
-                                        distanceFromCurrentLastKnownLocation: distanceFromCurrentLastKnownLocation))
                                 }
                             }
                         }
                     }
-                }
-                self.geofenceHistory.lastFetchTime = now
-                self.geofenceHistory.lastKnownLatitude = lastKnownLatitude
-                self.geofenceHistory.lastKnownLongitude = lastKnownLongitude
-                self.geofenceHistory.fetchHistory[now] = fetchedGeofences
-                if self.geofenceHistory.fetchHistory.count > RDConstants.geofenceHistoryMaxCount {
-                    let ascendingKeys = Array(self.geofenceHistory.fetchHistory.keys).sorted(by: { $0 < $1 })
-                    let keysToBeDeleted = ascendingKeys[0..<(ascendingKeys.count
-                                                            - RDConstants.geofenceHistoryMaxCount)]
-                    for key in keysToBeDeleted {
-                        self.geofenceHistory.fetchHistory[key] = nil
+                    self.geofenceHistory.lastFetchTime = now
+                    self.geofenceHistory.lastKnownLatitude = lastKnownLatitude
+                    self.geofenceHistory.lastKnownLongitude = lastKnownLongitude
+                    self.geofenceHistory.fetchHistory[now] = fetchedGeofences
+                    if self.geofenceHistory.fetchHistory.count > RDConstants.geofenceHistoryMaxCount {
+                        let ascendingKeys = Array(self.geofenceHistory.fetchHistory.keys).sorted(by: { $0 < $1 })
+                        let keysToBeDeleted = ascendingKeys[0..<(ascendingKeys.count
+                                                                 - RDConstants.geofenceHistoryMaxCount)]
+                        for key in keysToBeDeleted {
+                            self.geofenceHistory.fetchHistory[key] = nil
+                        }
                     }
+                    RDPersistence.saveRDGeofenceHistory(self.geofenceHistory)
+                    completion(true, fetchedGeofences)
                 }
-                RDPersistence.saveRDGeofenceHistory(self.geofenceHistory)
-                completion(true, fetchedGeofences)
             }
         }
     }

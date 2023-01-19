@@ -107,7 +107,7 @@ public class RDInstance: RDInstanceProtocol {
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
         rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
         rdRemoteConfigInstance = RDRemoteConfig(profileId: rdProfile.profileId)
-        rdLocationManager = RDLocationManager()
+        rdLocationManager = RDLocationManager()    
         
         RDHelper.setEndpoints(dataSource: rdProfile.dataSource)
         
