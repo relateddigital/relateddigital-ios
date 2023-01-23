@@ -229,6 +229,10 @@ public class RelatedDigital {
         shared.rdInstance.trackFindToWinClick(findToWinReport: findToWinReport)
     }
     
+    static func trackScratchToWinClick(scratchToWinReport: TargetingActionReport) {
+        shared.rdInstance.trackScratchToWinClick(scratchToWinReport: scratchToWinReport)
+    }
+    
     static func trackJackpotClick(jackpotReport: JackpotReport) {
         shared.rdInstance.trackJackpotClick(jackpotReport: jackpotReport)
     }

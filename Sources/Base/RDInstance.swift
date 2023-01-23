@@ -508,6 +508,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
     }
     
     
+    func trackScratchToWinClick(scratchToWinReport: TargetingActionReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = scratchToWinReport.click.parseClick().omZn
+        properties["OM.zpc"] = scratchToWinReport.click.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
     func trackJackpotClick(jackpotReport: JackpotReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
