@@ -49,6 +49,7 @@ protocol RDInstanceProtocol {
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport)
     func trackGamificationClick(gameficationReport: GameficationReport)
     func trackFindToWinClick(findToWinReport: FindToWinReport)
+    func trackScratchToWinClick(scratchToWinReport: TargetingActionReport)
     func trackJackpotClick(jackpotReport: JackpotReport)
     func trackRecommendationClick(qs: String)
     func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView

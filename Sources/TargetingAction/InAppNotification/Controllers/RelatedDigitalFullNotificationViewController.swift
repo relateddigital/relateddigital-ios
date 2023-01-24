@@ -52,12 +52,8 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let notificationImage = notification!.image, let image = UIImage(data: notificationImage, scale: 1) {
-            if let imageGif = UIImage.gif(data: notificationImage) {
-                imageView.image = imageGif
-            } else {
-                imageView.image = image
-            }
+        if let notUrl = notification!.imageUrl {
+            imageView.setImage(withUrl: notUrl)
             
             if let width = imageView.image?.size.width,
                width / UIScreen.main.bounds.width <= 0.6, let height = imageView.image?.size.height,
@@ -234,10 +230,25 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
 
     // TO_DO: burada additionalTrackingProperties kısmında aksiyon id'si gönderilebilir.
     @objc func buttonTapped(_ sender: AnyObject) {
-        delegate?.notificationShouldDismiss(controller: self,
-                                            callToActionURL: fullNotification.callToActionUrl,
-                                            shouldTrack: true,
-                                            additionalTrackingProperties: nil)
+        
+        
+        if let promo = self.fullNotification.promotionCode , !promo.isEmptyOrWhitespace {
+            pasteboard.string = promo
+            RDHelper.showCopiedClipboardMessage()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0, execute: { [self] in
+                delegate?.notificationShouldDismiss(controller: self,
+                                                    callToActionURL: fullNotification.callToActionUrl,
+                                                    shouldTrack: true,
+                                                    additionalTrackingProperties: nil)
+            })
+        } else {
+            delegate?.notificationShouldDismiss(controller: self,
+                                                callToActionURL: fullNotification.callToActionUrl,
+                                                shouldTrack: true,
+                                                additionalTrackingProperties: nil)
+        }
+        
+
     }
 
     @IBAction func tappedClose(_ sender: Any) {

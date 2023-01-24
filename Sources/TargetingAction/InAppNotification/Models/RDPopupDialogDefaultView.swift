@@ -233,9 +233,10 @@ public class RDPopupDialogDefaultView: UIView {
     func setupInitialForScratchToWin() {
         guard let model = self.scratchToWin else { return }
         var imageAdded = false
-        if model.image != nil {
+        if model.imageUrl != nil {
             addSubview(imageView)
             imageView.allEdges(to: self, excluding: .bottom)
+            imageView.setImage(withUrl: model.imageUrl)
             imageAdded = true
         }
         titleLabel.text = model.title?.removeEscapingCharacters()
@@ -482,6 +483,8 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
         sctwButton.addTarget(self, action: #selector(copyCodeAndDismiss), for: .touchDown)
         let actid = String(scratchToWin?.actId ?? 0)
         let auth = scratchToWin?.auth ?? ""
+        
+        RelatedDigital.trackScratchToWinClick(scratchToWinReport: (self.scratchToWin?.report)!)
         RelatedDigital.subscribeSpinToWinMail(actid: actid, auth: auth, mail: sctwMail)
         sctwButton.allEdges(to: self, excluding: .top)
         sctwButton.height(50)

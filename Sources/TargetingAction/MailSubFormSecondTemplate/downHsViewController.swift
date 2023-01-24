@@ -37,8 +37,8 @@ class downHsViewController: RDBaseNotificationViewController, UITextFieldDelegat
     
     func assignInfos() {
         
-        globDownhsView?.leftImageVİew.image = model.image
-        globDownhsView?.rightImageView.image = model.image
+        globDownhsView?.leftImageVİew.setImage(withUrl: model.image ?? "")
+        globDownhsView?.rightImageView.setImage(withUrl: model.image ?? "")
         globDownhsView?.titleLabel.text = model.serviceModel?.title
         globDownhsView?.consentLabel.text = model.serviceModel?.consentText
         globDownhsView?.mailPermitLabel.text = model.serviceModel?.emailPermitText

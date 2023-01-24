@@ -107,7 +107,7 @@ public class RDInstance: RDInstanceProtocol {
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
         rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
         rdRemoteConfigInstance = RDRemoteConfig(profileId: rdProfile.profileId)
-        rdLocationManager = RDLocationManager()
+        rdLocationManager = RDLocationManager()    
         
         RDHelper.setEndpoints(dataSource: rdProfile.dataSource)
         
@@ -507,6 +507,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
     
+    
+    func trackScratchToWinClick(scratchToWinReport: TargetingActionReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = scratchToWinReport.click.parseClick().omZn
+        properties["OM.zpc"] = scratchToWinReport.click.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
     
     func trackJackpotClick(jackpotReport: JackpotReport) {
         var properties = Properties()

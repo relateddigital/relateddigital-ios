@@ -19,11 +19,9 @@ class RDHalfScreenView: UIView {
         self.notification = notification
         super.init(frame: frame)
         setupTitle()
-        if let imageData = notification.image, var image = UIImage(data: imageData, scale: 1) {
-            if let imageGif = UIImage.gif(data: imageData) {
-                image = imageGif
-            }
-            setupImageView(image: image)
+        
+        if let notUrl = notification.imageUrl {
+            setupImageView(url: notUrl)
         }
         setCloseButton()
         layoutContent()
@@ -45,12 +43,12 @@ class RDHalfScreenView: UIView {
         addSubview(titleLabel)
     }
     
-    private func setupImageView(image: UIImage) {
+    private func setupImageView(url: URL) {
         imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .center
         imageView.clipsToBounds = true
-        imageView.image = image
+        imageView.setImage(withUrl: url)
         addSubview(imageView)
     }
     
@@ -78,12 +76,20 @@ class RDHalfScreenView: UIView {
         imageView?.leading(to: self, offset: 0, relation: .equal, priority: .required)
         imageView?.trailing(to: self, offset: 0, relation: .equal, priority: .required)
         
+        if let _ = notification.imageUrl {
+            let screenSize: CGRect = UIScreen.main.bounds
+            imageView.height(screenSize.height/3.3)
+        }
+
+        
         closeButton.top(to: self, offset: -5.0)
         closeButton.trailing(to: self, offset: -10.0)
         
         self.window?.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
         self.window?.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
         self.layoutIfNeeded()
+        
+        
     }
     
     override func layoutSubviews() {

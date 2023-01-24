@@ -117,45 +117,14 @@ public class RDInAppNotification {
     let secondButtonIosLnk: String?
 
     var imageUrl: URL?
-    lazy var image: Data? = {
-        var data: Data?
-        if let iUrl = self.imageUrl {
-            do {
-                data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-            } catch {
-                RDLogger.error("image failed to load from url \(iUrl)")
-            }
-        }
-        return data
-    }()
 
     /// Second Popup First Image
     var secondImageUrl1: URL?
-    lazy var secondImage1: Data? = {
-        var data: Data?
-        if let iUrl = self.secondImageUrl1 {
-            do {
-                data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-            } catch {
-                RDLogger.error("image failed to load from url \(iUrl)")
-            }
-        }
-        return data
-    }()
+
 
     /// Second Popup Second Image
     var secondImageUrl2: URL?
-    lazy var secondImage2: Data? = {
-        var data: Data?
-        if let iUrl = self.secondImageUrl2 {
-            do {
-                data = try Data(contentsOf: iUrl, options: [.mappedIfSafe])
-            } catch {
-                RDLogger.error("image failed to load from url \(iUrl)")
-            }
-        }
-        return data
-    }()
+
 
     let callToActionUrl: URL?
     let callToSecondActionUrl: URL?
@@ -266,7 +235,7 @@ public class RDInAppNotification {
 
         var callToActionUrl: URL?
         if let buttonFunction = buttonFunction {
-            if buttonFunction == "link" || buttonFunction == "" {
+            if buttonFunction == "link" || buttonFunction == ""  {
                 if let urlString = iosLink {
                     callToActionUrl = URL(string: urlString)
                 }
@@ -407,7 +376,7 @@ public class RDInAppNotification {
 
         var callToActionUrl: URL?
         if let buttonFunction = buttonFunction {
-            if buttonFunction == "link" || buttonFunction == "" {
+            if buttonFunction == "link" || buttonFunction == "" || buttonFunction == RDConstants.copyRedirect{
                 if let urlString = iosLink {
                     callToActionUrl = URL(string: urlString)
                 }
@@ -423,7 +392,7 @@ public class RDInAppNotification {
         
         var callToSecondActionUrl: URL?
         if let buttonFunction = secondButtonFunction {
-            if buttonFunction == "link" || buttonFunction == "" {
+            if buttonFunction == "link" || buttonFunction == "" || buttonFunction == RDConstants.copyRedirect {
                 if let urlString = secondButtonIosLnk {
                     callToSecondActionUrl = URL(string: urlString)
                 }

@@ -32,8 +32,8 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
 
         titleLabel.text = notification!.messageTitle
         titleLabel.font = notification!.messageTitleFont
-        if let image = notification!.image {
-            imageView.image = UIImage.gif(data: image)
+        if let url = notification!.imageUrl {
+            imageView.setImage(withUrl: url)
         }
 
         view.backgroundColor = UIColor(hex: "#000000", alpha: 0.8)

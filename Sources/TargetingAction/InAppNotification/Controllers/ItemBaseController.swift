@@ -110,7 +110,7 @@ public class ItemBaseController: UIViewController, ItemController, UIGestureReco
 
                     s.itemView.titleColor = carouselItem.titleColor
                     s.itemView.titleFont = carouselItem.titleFont
-                    s.itemView.imageView.image = image
+                    s.itemView.imageView.setImage(withUrl: image)
                     s.itemView.contentMode = .scaleAspectFill
                     s.itemView.centerYAnchor.constraint(equalTo: s.scrollView.centerYAnchor).isActive = true
                     if s.rdInAppNotification?.videourl?.count ?? 0 > 0 {
