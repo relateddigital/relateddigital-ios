@@ -92,9 +92,9 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showDownhs(model: downHsView) {
                         self.markTargetingActionShown(model: downHsView)
                     }
-                } else if model.targetingActionType == .giftCatch, let gamification = model as? GiftCatchViewModel {
-                    if self.showGamefication(gameficationVİewModel: gamification) {
-                        self.markTargetingActionShown(model: gamification)
+                } else if model.targetingActionType == .giftCatch, let giftCatchViewModel = model as? GiftCatchViewModel {
+                    if self.showGiftCatch(giftCatchViewModel: giftCatchViewModel) {
+                        self.markTargetingActionShown(model: giftCatchViewModel)
                     }
                 }  else if model.targetingActionType == .findToWin, let findToWin = model as? FindToWinViewModel {
                     if self.showFindToWin(findToWinModel: findToWin) {
@@ -117,22 +117,18 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         return true
     }
     
-    func showGamefication(gameficationVİewModel: GiftCatchViewModel) -> Bool {
-        let gameficationVC = GiftCatchViewController(gameficationVİewModel)
-        gameficationVC.delegate = self
-        gameficationVC.show(animated: true)
+    func showGiftCatch(giftCatchViewModel: GiftCatchViewModel) -> Bool {
+        let giftCatchVC = GiftCatchViewController(giftCatchViewModel)
+        giftCatchVC.delegate = self
+        giftCatchVC.show(animated: true)
         return true
     }
     
     func showFindToWin(findToWinModel: FindToWinViewModel) -> Bool {
-        let controller = FindToWinViewController(findToWinModel)
-        controller.modalPresentationStyle = .fullScreen
-        controller.delegate = self
-        if let rootViewController = RDHelper.getRootViewController() {
-            rootViewController.present(controller, animated: true, completion: nil)
-            return true
-        }
-        return false
+        let findToWinVC = FindToWinViewController(findToWinModel)
+        findToWinVC.delegate = self
+        findToWinVC.show(animated: true)
+        return true
     }
     
     func showDrawer(model: DrawerServiceModel) -> Bool {
