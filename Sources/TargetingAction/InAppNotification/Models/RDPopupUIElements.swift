@@ -67,6 +67,18 @@ extension RDPopupDialogDefaultView {
         copyCodeImage.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
         return copyCodeImage
     }
+    
+    internal func setCopyCodeButtonWithText() -> UIButton {
+        let copyCodeButton = UIButton(frame: .zero)
+        copyCodeButton.layer.cornerRadius = 5
+        copyCodeButton.translatesAutoresizingMaskIntoConstraints = false
+        copyCodeButton.backgroundColor = rdInAppNotification?.promotionBackgroundColor
+        copyCodeButton.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
+        copyCodeButton.setTitle("kopyala", for: .normal)
+        copyCodeButton.setTitleColor(.yellow, for: .normal)
+        copyCodeButton.backgroundColor = .red
+        return copyCodeButton
+    }
 
     internal func setMessageLabel() -> UILabel {
         let messageLabel = UILabel(frame: .zero)
@@ -281,20 +293,23 @@ extension RDPopupDialogDefaultView {
            let _ = rdInAppNotification?.promotionTextColor,
            !promo.isEmpty {
             addSubview(copyCodeTextButton)
-            addSubview(copyCodeImageButton)
-            copyCodeTextButton.bottom(to: self, offset: 0.0)
+            addSubview(copyCodeButtonWithText)
+            copyCodeTextButton.bottom(to: self, offset: -10.0)
             if rdInAppNotification?.messageTitleColor != nil {
-                copyCodeTextButton.topToBottom(of: messageLabel, offset: 0)
-                copyCodeImageButton.topToBottom(of: messageLabel, offset: 0)
+                copyCodeTextButton.topToBottom(of: messageLabel, offset: 10)
+                copyCodeButtonWithText.topToBottom(of: messageLabel, offset: 10)
             } else {
                 copyCodeTextButton.topToBottom(of: messageLabel, offset: 10.0)
-                copyCodeImageButton.topToBottom(of: messageLabel, offset: 10.0)
+                copyCodeButtonWithText.topToBottom(of: messageLabel, offset: 10.0)
             }
-            copyCodeImageButton.bottom(to: copyCodeTextButton)
-            copyCodeTextButton.leading(to: self)
-            copyCodeImageButton.width(50.0)
-            copyCodeImageButton.trailing(to: self)
-            copyCodeTextButton.trailingToLeading(of: copyCodeImageButton, offset: 20.0)
+
+            copyCodeButtonWithText.bottom(to: copyCodeTextButton)
+            copyCodeTextButton.leading(to: self,offset: 10)
+            copyCodeTextButton.layer.cornerRadius = 5
+            copyCodeButtonWithText.width(80.0) //TODO:Buton olmazsa width 0 olacak
+            copyCodeButtonWithText.height(50.0)
+            copyCodeButtonWithText.trailing(to: self,offset: -10)
+            copyCodeTextButton.trailingToLeading(of: copyCodeButtonWithText, offset: -10.0)
         } else if withFeedback == false {
             messageLabel.bottom(to: self, offset: -10)
         } else {
@@ -312,6 +327,11 @@ extension RDPopupDialogDefaultView {
 
         titleLabel.centerX(to: self)
         messageLabel.centerX(to: self)
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        self.copyCodeTextButton.setDashedBorder(width: 2,color: .black)
     }
 
     internal func setupForImageButtonImage() {
