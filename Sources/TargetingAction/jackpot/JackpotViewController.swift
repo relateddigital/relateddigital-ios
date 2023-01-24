@@ -1,5 +1,5 @@
 //
-//  FindToWinViewController.swift
+//  JackpotViewController.swift
 //  RelatedDigitalIOS
 //
 //  Created by Orhun Akmil on 29.06.2022.
@@ -8,11 +8,11 @@
 import UIKit
 import WebKit
 
-class FindToWinViewController: RDBaseNotificationViewController {
+class JackpotViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,9 +21,9 @@ class FindToWinViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
     
-    init(_ findToWin : FindToWinViewModel) {
+    init(_ jackPot : JackpotModel) {
         super.init(nibName: nil, bundle: nil)
-        self.findToWin = findToWin
+        self.jackpot = jackPot
     }
     
     required init?(coder: NSCoder) {
@@ -32,8 +32,8 @@ class FindToWinViewController: RDBaseNotificationViewController {
     
     private func close() {
         dismiss(animated: true) {
-            if let findToWin = self.findToWin, !findToWin.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
-                let bannerVC = RDFindToWinCodeBannerController(findToWin)
+            if let jackPot = self.findToWin, !jackPot.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
+                let bannerVC = RDFindToWinCodeBannerController(jackPot)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -44,49 +44,49 @@ class FindToWinViewController: RDBaseNotificationViewController {
     }
     
     override func show(animated: Bool) {
-        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
-            return
-        }
-        if #available(iOS 13.0, *) {
-            let windowScene = sharedUIApplication
-                .connectedScenes
-                .filter { $0.activationState == .foregroundActive }
-                .first
-            if let windowScene = windowScene as? UIWindowScene {
-                window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-                window?.windowScene = windowScene
+            guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
+                return
             }
-        } else {
-            window = UIWindow(frame: CGRect(x: 0,
-                                            y: 0,
-                                            width: UIScreen.main.bounds.size.width,
-                                            height: UIScreen.main.bounds.size.height))
-        }
-        if let window = window {
-            window.alpha = 0
-            window.windowLevel = UIWindow.Level.alert
-            window.rootViewController = self
-            window.isHidden = false
+            if #available(iOS 13.0, *) {
+                let windowScene = sharedUIApplication
+                    .connectedScenes
+                    .filter { $0.activationState == .foregroundActive }
+                    .first
+                if let windowScene = windowScene as? UIWindowScene {
+                    window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                    window?.windowScene = windowScene
+                }
+            } else {
+                window = UIWindow(frame: CGRect(x: 0,
+                                                y: 0,
+                                                width: UIScreen.main.bounds.size.width,
+                                                height: UIScreen.main.bounds.size.height))
+            }
+            if let window = window {
+                window.alpha = 0
+                window.windowLevel = UIWindow.Level.alert
+                window.rootViewController = self
+                window.isHidden = false
+            }
+            
+            let duration = animated ? 0.25 : 0
+            UIView.animate(withDuration: duration, animations: {
+                self.window?.alpha = 1
+            }, completion: { _ in
+            })
         }
         
-        let duration = animated ? 0.25 : 0
-        UIView.animate(withDuration: duration, animations: {
-            self.window?.alpha = 1
-        }, completion: { _ in
-        })
-    }
-    
-    override func hide(animated: Bool, completion: @escaping () -> Void) {
-        let duration = animated ? 0.25 : 0
-        UIView.animate(withDuration: duration, animations: {
-            self.window?.alpha = 0
-        }, completion: { _ in
-            self.window?.isHidden = true
-            self.window?.removeFromSuperview()
-            self.window = nil
-            completion()
-        })
-    }
+        override func hide(animated: Bool, completion: @escaping () -> Void) {
+            let duration = animated ? 0.25 : 0
+            UIView.animate(withDuration: duration, animations: {
+                self.window?.alpha = 0
+            }, completion: { _ in
+                self.window?.isHidden = true
+                self.window?.removeFromSuperview()
+                self.window = nil
+                completion()
+            })
+        }
     
     func configureWebView() -> WKWebView {
         let configuration = WKWebViewConfiguration()
@@ -97,17 +97,17 @@ class FindToWinViewController: RDBaseNotificationViewController {
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createFindtoWinFiles() {
+        if let htmlUrl = createJackpotFiles() {
             webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
             webView.backgroundColor = .clear
             webView.translatesAutoresizingMaskIntoConstraints = false
         }
-        
+    
         return webView
     }
     
     
-    private func createFindtoWinFiles() -> URL? {
+    private func createJackpotFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
             RDLogger.error("Can not create documentDirectory")
@@ -125,7 +125,7 @@ class FindToWinViewController: RDBaseNotificationViewController {
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
         
         RDHelper.registerFonts(fontNames: getCustomFontNames())
-        let fontUrls = findToWinFonts(fontNames: getCustomFontNames())
+        let fontUrls = jackpotFonts(fontNames: getCustomFontNames())
         
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
@@ -137,7 +137,7 @@ class FindToWinViewController: RDBaseNotificationViewController {
             
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
             
-            if let jsContent = findToWin?.jsContent?.utf8 {
+            if let jsContent = jackpot?.jsContent?.utf8 {
                 guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
                     return nil
                 }
@@ -159,7 +159,7 @@ class FindToWinViewController: RDBaseNotificationViewController {
                     try manager.removeItem(atPath: fontUrl.path)
                 }
                 try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
-                self.findToWin?.fontFiles.append(fontUrlKeyValue.key)
+                self.jackpot?.fontFiles.append(fontUrlKeyValue.key)
             } catch let error {
                 RDLogger.error(error)
                 RDLogger.error(error.localizedDescription)
@@ -170,7 +170,7 @@ class FindToWinViewController: RDBaseNotificationViewController {
         return htmlUrl
     }
     
-    private func findToWinFonts(fontNames: Set<String>) -> [String: URL] {
+    private func jackpotFonts(fontNames: Set<String>) -> [String: URL] {
         var fontUrls = [String: URL]()
         if let infos = Bundle.main.infoDictionary {
             if let uiAppFonts = infos["UIAppFonts"] as? [String] {
@@ -206,21 +206,21 @@ class FindToWinViewController: RDBaseNotificationViewController {
     
     private func getCustomFontNames() -> Set<String> {
         var customFontNames = Set<String>()
-        if let findToWin = self.findToWin {
-            if !findToWin.custom_font_family_ios.isEmptyOrWhitespace {
-                customFontNames.insert(findToWin.custom_font_family_ios)
+        if let jackpot = self.jackpot {
+            if !jackpot.custom_font_family_ios.isEmptyOrWhitespace {
+                customFontNames.insert(jackpot.custom_font_family_ios)
             }
         }
         return customFontNames
     }
-    
-    
+
+
 }
 
 
 
 
-extension FindToWinViewController: WKScriptMessageHandler {
+extension JackpotViewController: WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
@@ -232,7 +232,7 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
-                    if let json = try? JSONEncoder().encode(self.findToWin!), let jsonString = String(data: json, encoding: .utf8) {
+                    if let json = try? JSONEncoder().encode(self.jackpot!), let jsonString = String(data: json, encoding: .utf8) {
                         print(jsonString)
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {
@@ -256,12 +256,12 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeFindToWinMail(actid: "\(self.findToWin!.actId ?? 0)", auth: self.findToWin!.auth, mail: email)
+                    RelatedDigital.subscribeJackpotMail(actid: "\(self.jackpot!.actId ?? 0)", auth: self.jackpot!.auth, mail: email)
                     subsEmail = email
                 }
                 
                 if method == "sendReport" {
-                    RelatedDigital.trackFindToWinClick(findToWinReport: (self.findToWin?.report)!)
+                    RelatedDigital.trackJackpotClick(jackpotReport: (self.jackpot?.report)!)
                 }
                 
                 if method == "linkClicked",let urlLnk = event["url"] as? String {
@@ -272,10 +272,10 @@ extension FindToWinViewController: WKScriptMessageHandler {
                     }
                 }
                 
-                if method == "saveCodeGotten", let code = event["code"] as? String {
+                if method == "saveCodeGotten", let code = event["email"] as? String {
                     codeGotten = true
                     UIPasteboard.general.string = code
-                    BannerCodeManager.shared.setFindToWinCode(code: code)
+                    BannerCodeManager.shared.setJackpotCode(code: code)
                 }
                 
                 if method == "close" {

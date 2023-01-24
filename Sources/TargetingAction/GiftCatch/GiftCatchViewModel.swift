@@ -152,6 +152,7 @@ public class BannerCodeManager {
     private let findToWinCode = "findToWinCode"
     private let jackpotCode = "jackpotCode"
     private let shakeToWinCode = "shakeToWinCode"
+    private let giftBoxCode = "giftBoxCode"
 
 
 
@@ -178,6 +179,19 @@ public class BannerCodeManager {
         let defaults = UserDefaults.standard
         let string = defaults.string(forKey: findToWinCode) ?? ""
         defaults.set("", forKey:findToWinCode)
+        return string
+    }
+    
+    
+    func setGiftBoxCode(code:String) {
+        let defaults = UserDefaults.standard
+        defaults.set(code, forKey:giftBoxCode)
+    }
+    
+    func getGiftBoxCode() -> String {
+        let defaults = UserDefaults.standard
+        let string = defaults.string(forKey: giftBoxCode) ?? ""
+        defaults.set("", forKey:giftBoxCode)
         return string
     }
     

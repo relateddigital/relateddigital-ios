@@ -1,14 +1,15 @@
 //
-//  JackpotViewController.swift
-//  RelatedDigitalIOS
+//  GiftBoxViewController.swift
+//  CleanyModal
 //
-//  Created by Orhun Akmil on 29.06.2022.
+//  Created by Orhun Akmil on 23.01.2023.
 //
 
 import UIKit
 import WebKit
 
-class jackpotViewController: RDBaseNotificationViewController {
+class GiftBoxViewController: RDBaseNotificationViewController {
+    
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
@@ -21,9 +22,9 @@ class jackpotViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
     
-    init(_ jackPot : jackpotModel) {
+    init(_ findToWin : FindToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
-        self.jackpot = jackPot
+        self.findToWin = findToWin
     }
     
     required init?(coder: NSCoder) {
@@ -32,8 +33,8 @@ class jackpotViewController: RDBaseNotificationViewController {
     
     private func close() {
         dismiss(animated: true) {
-            if let jackPot = self.findToWin, !jackPot.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
-                let bannerVC = RDFindToWinCodeBannerController(jackPot)
+            if let findToWin = self.findToWin, !findToWin.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
+                let bannerVC = RDFindToWinCodeBannerController(findToWin)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -88,6 +89,8 @@ class jackpotViewController: RDBaseNotificationViewController {
             })
         }
     
+    
+    
     func configureWebView() -> WKWebView {
         let configuration = WKWebViewConfiguration()
         let userContentController = WKUserContentController()
@@ -97,7 +100,7 @@ class jackpotViewController: RDBaseNotificationViewController {
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createJackpotFiles() {
+        if let htmlUrl = createFindtoWinFiles() {
             webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
             webView.backgroundColor = .clear
             webView.translatesAutoresizingMaskIntoConstraints = false
@@ -107,7 +110,7 @@ class jackpotViewController: RDBaseNotificationViewController {
     }
     
     
-    private func createJackpotFiles() -> URL? {
+    private func createFindtoWinFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
             RDLogger.error("Can not create documentDirectory")
@@ -125,7 +128,7 @@ class jackpotViewController: RDBaseNotificationViewController {
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
         
         RDHelper.registerFonts(fontNames: getCustomFontNames())
-        let fontUrls = jackpotFonts(fontNames: getCustomFontNames())
+        let fontUrls = findToWinFonts(fontNames: getCustomFontNames())
         
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
@@ -137,7 +140,7 @@ class jackpotViewController: RDBaseNotificationViewController {
             
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
             
-            if let jsContent = jackpot?.jsContent?.utf8 {
+            if let jsContent = findToWin?.jsContent?.utf8 {
                 guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
                     return nil
                 }
@@ -159,7 +162,7 @@ class jackpotViewController: RDBaseNotificationViewController {
                     try manager.removeItem(atPath: fontUrl.path)
                 }
                 try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
-                self.jackpot?.fontFiles.append(fontUrlKeyValue.key)
+                self.findToWin?.fontFiles.append(fontUrlKeyValue.key)
             } catch let error {
                 RDLogger.error(error)
                 RDLogger.error(error.localizedDescription)
@@ -170,7 +173,7 @@ class jackpotViewController: RDBaseNotificationViewController {
         return htmlUrl
     }
     
-    private func jackpotFonts(fontNames: Set<String>) -> [String: URL] {
+    private func findToWinFonts(fontNames: Set<String>) -> [String: URL] {
         var fontUrls = [String: URL]()
         if let infos = Bundle.main.infoDictionary {
             if let uiAppFonts = infos["UIAppFonts"] as? [String] {
@@ -206,9 +209,9 @@ class jackpotViewController: RDBaseNotificationViewController {
     
     private func getCustomFontNames() -> Set<String> {
         var customFontNames = Set<String>()
-        if let jackpot = self.jackpot {
-            if !jackpot.custom_font_family_ios.isEmptyOrWhitespace {
-                customFontNames.insert(jackpot.custom_font_family_ios)
+        if let findToWin = self.findToWin {
+            if !findToWin.custom_font_family_ios.isEmptyOrWhitespace {
+                customFontNames.insert(findToWin.custom_font_family_ios)
             }
         }
         return customFontNames
@@ -220,7 +223,7 @@ class jackpotViewController: RDBaseNotificationViewController {
 
 
 
-extension jackpotViewController: WKScriptMessageHandler {
+extension GiftBoxViewController: WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
@@ -232,7 +235,7 @@ extension jackpotViewController: WKScriptMessageHandler {
                 
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
-                    if let json = try? JSONEncoder().encode(self.jackpot!), let jsonString = String(data: json, encoding: .utf8) {
+                    if let json = try? JSONEncoder().encode(self.findToWin!), let jsonString = String(data: json, encoding: .utf8) {
                         print(jsonString)
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {
@@ -256,12 +259,12 @@ extension jackpotViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeJackpotMail(actid: "\(self.jackpot!.actId ?? 0)", auth: self.jackpot!.auth, mail: email)
+                    RelatedDigital.subscribeFindToWinMail(actid: "\(self.findToWin!.actId ?? 0)", auth: self.findToWin!.auth, mail: email)
                     subsEmail = email
                 }
                 
                 if method == "sendReport" {
-                    RelatedDigital.trackJackpotClick(jackpotReport: (self.jackpot?.report)!)
+                    RelatedDigital.trackFindToWinClick(findToWinReport: (self.findToWin?.report)!)
                 }
                 
                 if method == "linkClicked",let urlLnk = event["url"] as? String {
@@ -272,10 +275,10 @@ extension jackpotViewController: WKScriptMessageHandler {
                     }
                 }
                 
-                if method == "saveCodeGotten", let code = event["email"] as? String {
+                if method == "saveCodeGotten", let code = event["code"] as? String {
                     codeGotten = true
                     UIPasteboard.general.string = code
-                    BannerCodeManager.shared.setJackpotCode(code: code)
+                    BannerCodeManager.shared.setGiftBoxCode(code: code)
                 }
                 
                 if method == "close" {

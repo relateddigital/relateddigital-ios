@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct jackpotModel: TargetingActionViewModel,Codable {
+public struct JackpotModel: TargetingActionViewModel,Codable {
     
     public var targetingActionType: TargetingActionType
     var actId: Int? = 0
