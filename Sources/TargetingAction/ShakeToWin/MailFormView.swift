@@ -29,4 +29,11 @@ class MailFormView: UIView {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.setOnClickedListener {
+            self.endEditing(true)
+        }
+    }
 }
