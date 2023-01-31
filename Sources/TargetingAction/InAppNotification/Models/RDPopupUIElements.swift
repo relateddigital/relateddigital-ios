@@ -72,11 +72,14 @@ extension RDPopupDialogDefaultView {
         let copyCodeButton = UIButton(frame: .zero)
         copyCodeButton.layer.cornerRadius = 5
         copyCodeButton.translatesAutoresizingMaskIntoConstraints = false
-        copyCodeButton.backgroundColor = rdInAppNotification?.promotionBackgroundColor
+        if let color = UIColor(hex: rdInAppNotification?.promocodeCopybuttonColor) {
+            copyCodeButton.backgroundColor = color
+        }
+        if let textColor = UIColor(hex: rdInAppNotification?.promocodeCopybuttonTextColor) {
+            copyCodeButton.setTitleColor(textColor, for: .normal)
+        }
         copyCodeButton.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
-        copyCodeButton.setTitle("kopyala", for: .normal)
-        copyCodeButton.setTitleColor(.yellow, for: .normal)
-        copyCodeButton.backgroundColor = .red
+        copyCodeButton.setTitle(rdInAppNotification?.promocodeCopybuttonText, for: .normal)
         return copyCodeButton
     }
 
@@ -306,10 +309,16 @@ extension RDPopupDialogDefaultView {
             copyCodeButtonWithText.bottom(to: copyCodeTextButton)
             copyCodeTextButton.leading(to: self,offset: 10)
             copyCodeTextButton.layer.cornerRadius = 5
-            copyCodeButtonWithText.width(80.0) //TODO:Buton olmazsa width 0 olacak
+            if let _ = rdInAppNotification?.promocodeCopybuttonText {
+                copyCodeButtonWithText.width(80.0)
+                copyCodeTextButton.trailingToLeading(of: copyCodeButtonWithText, offset: -10.0)
+            } else {
+                copyCodeTextButton.trailingToLeading(of: copyCodeButtonWithText, offset: 0.0)
+                copyCodeButtonWithText.width(0.0)
+                copyCodeButtonWithText.isHidden = true
+            }
             copyCodeButtonWithText.height(50.0)
             copyCodeButtonWithText.trailing(to: self,offset: -10)
-            copyCodeTextButton.trailingToLeading(of: copyCodeButtonWithText, offset: -10.0)
         } else if withFeedback == false {
             messageLabel.bottom(to: self, offset: -10)
         } else {
