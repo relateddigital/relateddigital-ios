@@ -17,6 +17,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     var mailFormExist = true
     var firstChecked = false
     var secondChecked = false
+    var lastPageOpened = false
     
     var openedSecondPage = false {
         didSet {
@@ -103,9 +104,11 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     func close() {
         dismiss(animated: true) {
             if let shakeToWin = self.shakeToWin {
-                let bannerVC = RDShakeToWinCodeBannerController(shakeToWin)
-                bannerVC.delegate = self.delegate
-                bannerVC.show(animated: true)
+                if self.lastPageOpened {
+                    let bannerVC = RDShakeToWinCodeBannerController(shakeToWin)
+                    bannerVC.delegate = self.delegate
+                    bannerVC.show(animated: true)
+                }
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             } else {
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -128,6 +131,8 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     
     func openThirdPage(_ delay: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(delay)) {
+            BannerCodeManager.shared.setShakeToWinCode(code: self.model?.thirdPage?.staticCode ?? "")
+            self.lastPageOpened = true
             self.scrollView.setContentOffset(CGPoint(x: self.view.frame.size.width*(self.multiplier+2), y: 0.0), animated: true)
             if let p = self.player {
                 p.pause()
@@ -155,11 +160,14 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                             width: view.frame.width,
                             height: view.frame.height)
         
+        if let bgImg = self.model?.backGroundImage {
+            page.setBackGround(url: bgImg)
+        }
         
-        page.backgroundColor = .white
+        page.backgroundColor = model?.firstPage?.backgroundColor
         let close = getCloseButton()
         page.addSubview(close)
-        close.top(to: page, offset: 35)
+        close.top(to: page, offset: 50)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -328,7 +336,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         page.backgroundColor = model?.firstPage?.backgroundColor
         let close = getCloseButton()
         page.addSubview(close)
-        close.top(to: page, offset: 35)
+        close.top(to: page, offset: 50)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -354,7 +362,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         page.backgroundColor = model?.secondPage?.backGroundColor
         let close = getCloseButton()
         page.addSubview(close)
-        close.top(to: page, offset: 35)
+        close.top(to: page, offset: 50)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
@@ -407,7 +415,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         page.backgroundColor = model?.thirdPage?.backgroundColor
         let close = getCloseButton()
         page.addSubview(close)
-        close.top(to: page, offset: 20)
+        close.top(to: page, offset: 50)
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
