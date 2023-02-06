@@ -20,6 +20,7 @@ public class RDPopupDialogDefaultView: UIView {
     internal lazy var titleLabel = setTitleLabel()
     internal lazy var copyCodeTextButton = setCopyCodeText()
     internal lazy var copyCodeImageButton = setCopyCodeImage()
+    internal lazy var copyCodeButtonWithText = setCopyCodeButtonWithText()
     internal lazy var messageLabel = setMessageLabel()
     internal lazy var npsView = setNpsView()
 

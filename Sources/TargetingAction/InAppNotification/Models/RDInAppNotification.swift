@@ -60,6 +60,12 @@ public class RDInAppNotification {
         public static let secondButtonTextColor = "second_button_text_color"
         public static let secondButtonColor = "second_button_color"
         public static let secondButtonIosLnk = "second_button_ios_lnk"
+        
+        public static let promocodeCopybuttonText = "promocode_copybutton_text"
+        public static let promocodeCopybuttonTextColor = "promocode_copybutton_text_color"
+        public static let promocodeCopybuttonColor = "promocode_copybutton_color"
+
+        
 
     }
 
@@ -115,6 +121,10 @@ public class RDInAppNotification {
     let secondButtonTextColor: UIColor?
     let secondButtonColor: UIColor?
     let secondButtonIosLnk: String?
+    
+    let promocodeCopybuttonText : String?
+    let promocodeCopybuttonTextColor : String?
+    let promocodeCopybuttonColor : String?
 
     var imageUrl: URL?
 
@@ -187,7 +197,10 @@ public class RDInAppNotification {
                 secondButtonText:String?,
                 secondButtonTextColor:String?,
                 secondButtonColor:String?,
-                secondButtonIosLnk:String?)
+                secondButtonIosLnk:String?,
+                promocodeCopybuttonText:String?,
+                promocodeCopybuttonTextColor:String?,
+                promocodeCopybuttonColor:String?)
     {
         self.actId = actId
         messageType = type.rawValue
@@ -298,6 +311,10 @@ public class RDInAppNotification {
         self.videourl = videourl
         self.secondPopupVideourl1 = secondPopupVideourl1
         self.secondPopupVideourl2 = secondPopupVideourl2
+        
+        self.promocodeCopybuttonText = promocodeCopybuttonText
+        self.promocodeCopybuttonTextColor = promocodeCopybuttonTextColor
+        self.promocodeCopybuttonColor = promocodeCopybuttonColor
 
         setFonts()
     }
@@ -355,6 +372,10 @@ public class RDInAppNotification {
         secondButtonTextColor = UIColor(hex: actionData[PayloadKey.secondButtonTextColor] as? String)
         secondButtonColor = UIColor(hex: actionData[PayloadKey.secondButtonColor] as? String)
         secondButtonIosLnk = actionData[PayloadKey.secondButtonIosLnk] as? String
+        promocodeCopybuttonText = actionData[PayloadKey.promocodeCopybuttonText] as? String
+        promocodeCopybuttonTextColor = actionData[PayloadKey.promocodeCopybuttonTextColor] as? String
+        promocodeCopybuttonColor = actionData[PayloadKey.promocodeCopybuttonColor] as? String
+        
         if let cBColor = actionData[PayloadKey.closeButtonColor] as? String {
             if cBColor.lowercased() == "white" {
                 closeButtonColor = UIColor.white

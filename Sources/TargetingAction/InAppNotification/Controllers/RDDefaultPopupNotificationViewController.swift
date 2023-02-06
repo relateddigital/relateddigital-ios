@@ -44,7 +44,7 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
         
         if !inAppCurrentState.shared.isFirstPageOpened {
             player = standardView.imageView.addVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
-            if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 || rdInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 {
+            if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 || rdInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 || rdInAppNotification?.secondPopupTitle?.count ?? 0 > 0 {
                 inAppCurrentState.shared.isFirstPageOpened = true
             }
         } else {
@@ -75,12 +75,22 @@ public extension RDDefaultPopupNotificationViewController {
     var image: UIImage? {
         get { return standardView.imageView.image }
         set {
-            if rdInAppNotification?.videourl?.count ?? 0 > 0 {
-                standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+            if inAppCurrentState.shared.isFirstPageOpened == true {
+                if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 {
+                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+                } else {
+                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                    standardView.imageView.setImage(withUrl: rdInAppNotification?.secondImageUrl1)
+                }
             } else {
-                standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
-                standardView.imageView.setImage(withUrl: rdInAppNotification?.imageUrl)
+                if rdInAppNotification?.videourl?.count ?? 0 > 0 {
+                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+                } else {
+                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                    standardView.imageView.setImage(withUrl: rdInAppNotification?.imageUrl)
+                }
             }
+
         }
     }
     /// Second Image View
@@ -88,7 +98,7 @@ public extension RDDefaultPopupNotificationViewController {
         get { return standardView.secondImageView.image }
         set {
             
-            if rdInAppNotification?.videourl?.count ?? 0 > 0 {
+            if rdInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 {
                 standardView.secondImageHeight?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
             } else {
                 standardView.secondImageHeight?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
