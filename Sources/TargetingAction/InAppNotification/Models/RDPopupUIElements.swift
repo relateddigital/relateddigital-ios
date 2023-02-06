@@ -272,11 +272,11 @@ extension RDPopupDialogDefaultView {
         titleLabel.topToBottom(of: imageView, offset: 0)
         titleLabel.leading(to: self)
         titleLabel.trailing(to: self)
-        titleLabel.height(32)
+        NSLayoutConstraint.activate([titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
         messageLabel.topToBottom(of: titleLabel, offset: 0)
         messageLabel.leading(to: self)
         messageLabel.trailing(to: self)
-        messageLabel.height(32)
+        NSLayoutConstraint.activate([messageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
         
         if rdInAppNotification?.imageUrlString?.isEmpty == true {
             closeButton.layer.zPosition = 1
