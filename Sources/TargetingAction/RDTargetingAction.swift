@@ -208,7 +208,6 @@ class RDTargetingAction {
         let mailReport = shakeToWinReport(impression: impression, click: click)
         shakeToWinModel.report = mailReport
         
-        
         var mailFormPage = MailSubscriptionModelGamification()
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
             mailFormPage.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
@@ -267,7 +266,7 @@ class RDTargetingAction {
         if let gameElements = actionData[RDConstants.gameElements] as? [String: Any] {
             secondPage.videoURL =  URL(string: gameElements[RDConstants.videoUrl] as? String ?? "")
             secondPage.waitSeconds = gameElements[RDConstants.videoUrl] as? Int ?? 5
-            secondPage.soundURL = URL(string: gameElements[RDConstants.soundUrl] as? String ?? "")
+            shakeToWinModel.soundUrl = gameElements[RDConstants.soundUrl] as? String ?? ""
         }
         secondPage.backGroundColor = UIColor(hex: extendedProps[RDConstants.backgroundColor] as? String ?? "")
         shakeToWinModel.secondPage = secondPage

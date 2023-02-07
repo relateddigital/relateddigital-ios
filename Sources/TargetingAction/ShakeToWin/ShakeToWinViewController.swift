@@ -18,6 +18,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
     var firstChecked = false
     var secondChecked = false
     var lastPageOpened = false
+    var audioPlayer : AVPlayer?
     
     var openedSecondPage = false {
         didSet {
@@ -73,6 +74,18 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             checkMailIsAvaliable()
             configureScrollView()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loopAudio()
+        playAudio()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        audioPlayer?.pause()
+        audioPlayer = nil
     }
     
     func checkMailIsAvaliable() {
@@ -537,5 +550,23 @@ extension UIView {
             bgImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             bgImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             bgImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor)])
+    }
+}
+
+
+extension ShakeToWinViewController {
+    func playAudio() {
+        
+        guard let url = URL.init(string: self.model?.soundUrl ?? "") else { return }
+        let playerItem = AVPlayerItem.init(url: url)
+        audioPlayer = AVPlayer.init(playerItem: playerItem)
+        audioPlayer?.play()
+    }
+    
+    func loopAudio() {
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) { notification in
+            self.audioPlayer?.seek(to: CMTime.zero)
+            self.audioPlayer?.play()
+        }
     }
 }

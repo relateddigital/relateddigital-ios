@@ -22,6 +22,7 @@ struct ShakeToWinViewModel : TargetingActionViewModel {
     var thirdPage: ShakeToWinThirdPage?
     
     var backGroundImage : String?
+    var soundUrl : String?
     
     var promocode_background_color:String?
     var promocode_text_color:String?
@@ -56,7 +57,6 @@ struct ShakeToWinFirstPage {
 struct ShakeToWinSecondPage {
     var waitSeconds: Int?
     var videoURL: URL?
-    var soundURL: URL?
     var backGroundColor : UIColor?
     var closeButtonColor: ButtonColor? = .white
 }
