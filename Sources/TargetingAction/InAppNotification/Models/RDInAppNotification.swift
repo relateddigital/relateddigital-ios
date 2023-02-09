@@ -60,6 +60,9 @@ public class RDInAppNotification {
         public static let secondButtonTextColor = "second_button_text_color"
         public static let secondButtonColor = "second_button_color"
         public static let secondButtonIosLnk = "second_button_ios_lnk"
+        public static let buttonBorderRadius = "button_border_radius"
+
+        
         
         public static let promocodeCopybuttonText = "promocode_copybutton_text"
         public static let promocodeCopybuttonTextColor = "promocode_copybutton_text_color"
@@ -125,6 +128,7 @@ public class RDInAppNotification {
     let promocodeCopybuttonText : String?
     let promocodeCopybuttonTextColor : String?
     let promocodeCopybuttonColor : String?
+    let buttonBorderRadius : String?
 
     var imageUrl: URL?
 
@@ -200,7 +204,8 @@ public class RDInAppNotification {
                 secondButtonIosLnk:String?,
                 promocodeCopybuttonText:String?,
                 promocodeCopybuttonTextColor:String?,
-                promocodeCopybuttonColor:String?)
+                promocodeCopybuttonColor:String?,
+                buttonBorderRadius:String?)
     {
         self.actId = actId
         messageType = type.rawValue
@@ -315,6 +320,7 @@ public class RDInAppNotification {
         self.promocodeCopybuttonText = promocodeCopybuttonText
         self.promocodeCopybuttonTextColor = promocodeCopybuttonTextColor
         self.promocodeCopybuttonColor = promocodeCopybuttonColor
+        self.buttonBorderRadius = buttonBorderRadius
 
         setFonts()
     }
@@ -375,6 +381,7 @@ public class RDInAppNotification {
         promocodeCopybuttonText = actionData[PayloadKey.promocodeCopybuttonText] as? String
         promocodeCopybuttonTextColor = actionData[PayloadKey.promocodeCopybuttonTextColor] as? String
         promocodeCopybuttonColor = actionData[PayloadKey.promocodeCopybuttonColor] as? String
+        buttonBorderRadius = actionData[PayloadKey.buttonBorderRadius] as? String
         
         if let cBColor = actionData[PayloadKey.closeButtonColor] as? String {
             if cBColor.lowercased() == "white" {
@@ -483,6 +490,7 @@ public class RDInAppNotification {
 
         self.carouselItems = carouselItems.map { (item) -> RDCarouselItem in
             item.closeButtonColor = closeButtonColor
+            item.buttonBorderRadius = buttonBorderRadius
             return item
         }
         

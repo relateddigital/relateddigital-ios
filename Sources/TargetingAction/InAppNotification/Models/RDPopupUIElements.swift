@@ -183,6 +183,10 @@ extension RDPopupDialogDefaultView {
         button.setTitle(rdInAppNotification?.buttonText, for: .normal)
         button.setTitleColor(rdInAppNotification?.buttonTextColor, for: .normal)
         button.addTarget(self, action: #selector(imageButtonTapped), for: .touchUpInside)
+        if let buttonCornerRadius = Double(rdInAppNotification?.buttonBorderRadius ?? "0") {
+            button.layer.cornerRadius = buttonCornerRadius
+        }
+        
         return button
     }
 

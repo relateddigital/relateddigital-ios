@@ -144,7 +144,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                                              font: notification.buttonTextFont,
                                              buttonTextColor: notification.buttonTextColor,
                                              buttonColor: notification.buttonColor,
-                                             action: openSecondPopup)
+                                             action: openSecondPopup, buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
             button.isEnabled = false
             addButton(button)
         } else if notification.type == .imageTextButton {
@@ -152,7 +152,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                 let button = RDPopupDialogButton(title: notification.buttonText!,
                                                  font: notification.buttonTextFont,
                                                  buttonTextColor: notification.buttonTextColor,
-                                                 buttonColor: notification.buttonColor, action: commonButtonAction)
+                                                 buttonColor: notification.buttonColor, action: commonButtonAction, buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
                 if notification.type == .npsWithNumbers ||
                     notification.type == .nps {
                     button.isEnabled = false
@@ -164,7 +164,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                 let secondButton = RDPopupDialogButton(title: notification.secondButtonText!,
                                                        font: notification.secondButtonTextFont,
                                                        buttonTextColor: notification.secondButtonTextColor,
-                                                       buttonColor: notification.secondButtonColor, action: secondButtonAction)
+                                                       buttonColor: notification.secondButtonColor, action: secondButtonAction, buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
                 addButton(secondButton)
             }
             
@@ -176,10 +176,11 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                 viewController.hideMessage()
             }
         } else if notification.type != .fullImage && notification.type != .imageButtonImage {
+
             let button = RDPopupDialogButton(title: notification.buttonText!,
                                              font: notification.buttonTextFont,
                                              buttonTextColor: notification.buttonTextColor,
-                                             buttonColor: notification.buttonColor, action: commonButtonAction)
+                                             buttonColor: notification.buttonColor, action: commonButtonAction, buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
             if notification.type == .npsWithNumbers ||
                 notification.type == .nps {
                 button.isEnabled = false
@@ -610,7 +611,7 @@ internal extension RDPopupNotificationViewController {
             default:
                 type = .imageTextButton
             }
-            return RDInAppNotification(actId: not.actId, type: type, messageTitle: not.secondPopupTitle, messageBody: not.secondPopupBody, buttonText: not.secondPopupButtonText, buttonFunction: not.buttonFunction, iosLink: not.iosLink, imageUrlString: not.secondImageUrlString1, visitorData: not.visitorData, visitData: not.visitData, queryString: not.queryString, messageTitleColor: not.messageTitleColor?.toHexString(), messageTitleBackgroundColor: not.messageTitleBackgroundColor?.toHexString(), messageTitleTextSize: not.secondPopupBodyTextSize, messageBodyColor: not.messageBodyColor?.toHexString(), messageBodyBackgroundColor: not.messageBodyBackgroundColor?.toHexString(), messageBodyTextSize: not.secondPopupBodyTextSize, fontFamily: not.fontFamily, customFont: not.customFont, closePopupActionType: not.closePopupActionType, backGround: not.backGroundColor?.toHexString(), closeButtonColor: closeButtonColor, buttonTextColor: not.buttonTextColor?.toHexString(), buttonColor: not.buttonColor?.toHexString(), alertType: "", closeButtonText: not.closeButtonText, promotionCode: promo, promotionTextColor: not.promotionTextColor?.toHexString(), promotionBackgroundColor: not.promotionBackgroundColor?.toHexString(), numberColors: nil, numberRange: not.numberRange, waitingTime: 0, secondPopupType: nil, secondPopupTitle: not.secondPopupTitle, secondPopupBody: not.secondPopupBody, secondPopupBodyTextSize: not.secondPopupBodyTextSize, secondPopupButtonText: not.secondButtonText, secondImageUrlString1: not.secondImageUrlString1, secondImageUrlString2: not.secondImageUrlString2, secondPopupMinPoint: not.secondPopupMinPoint, previousPopupPoint: point, position: .bottom,videourl: not.videourl,secondPopupVideourl1: not.secondPopupVideourl1,secondPopupVideourl2: not.secondPopupVideourl2,secondButtonFunction: not.secondButtonFunction,secondButtonText: not.secondButtonText,secondButtonTextColor: not.secondButtonTextColor?.toHexString(),secondButtonColor: not.secondButtonColor?.toHexString(),secondButtonIosLnk: not.secondButtonIosLnk,promocodeCopybuttonText: not.promocodeCopybuttonText,promocodeCopybuttonTextColor: not.promocodeCopybuttonTextColor,promocodeCopybuttonColor: not.promocodeCopybuttonColor)
+            return RDInAppNotification(actId: not.actId, type: type, messageTitle: not.secondPopupTitle, messageBody: not.secondPopupBody, buttonText: not.secondPopupButtonText, buttonFunction: not.buttonFunction, iosLink: not.iosLink, imageUrlString: not.secondImageUrlString1, visitorData: not.visitorData, visitData: not.visitData, queryString: not.queryString, messageTitleColor: not.messageTitleColor?.toHexString(), messageTitleBackgroundColor: not.messageTitleBackgroundColor?.toHexString(), messageTitleTextSize: not.secondPopupBodyTextSize, messageBodyColor: not.messageBodyColor?.toHexString(), messageBodyBackgroundColor: not.messageBodyBackgroundColor?.toHexString(), messageBodyTextSize: not.secondPopupBodyTextSize, fontFamily: not.fontFamily, customFont: not.customFont, closePopupActionType: not.closePopupActionType, backGround: not.backGroundColor?.toHexString(), closeButtonColor: closeButtonColor, buttonTextColor: not.buttonTextColor?.toHexString(), buttonColor: not.buttonColor?.toHexString(), alertType: "", closeButtonText: not.closeButtonText, promotionCode: promo, promotionTextColor: not.promotionTextColor?.toHexString(), promotionBackgroundColor: not.promotionBackgroundColor?.toHexString(), numberColors: nil, numberRange: not.numberRange, waitingTime: 0, secondPopupType: nil, secondPopupTitle: not.secondPopupTitle, secondPopupBody: not.secondPopupBody, secondPopupBodyTextSize: not.secondPopupBodyTextSize, secondPopupButtonText: not.secondButtonText, secondImageUrlString1: not.secondImageUrlString1, secondImageUrlString2: not.secondImageUrlString2, secondPopupMinPoint: not.secondPopupMinPoint, previousPopupPoint: point, position: .bottom,videourl: not.videourl,secondPopupVideourl1: not.secondPopupVideourl1,secondPopupVideourl2: not.secondPopupVideourl2,secondButtonFunction: not.secondButtonFunction,secondButtonText: not.secondButtonText,secondButtonTextColor: not.secondButtonTextColor?.toHexString(),secondButtonColor: not.secondButtonColor?.toHexString(),secondButtonIosLnk: not.secondButtonIosLnk,promocodeCopybuttonText: not.promocodeCopybuttonText,promocodeCopybuttonTextColor: not.promocodeCopybuttonTextColor,promocodeCopybuttonColor: not.promocodeCopybuttonColor,buttonBorderRadius: not.buttonBorderRadius)
         }
         return nil
     }

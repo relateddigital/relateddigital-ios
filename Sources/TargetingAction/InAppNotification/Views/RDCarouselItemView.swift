@@ -106,7 +106,9 @@ extension RDCarouselItemView {
         button.contentHorizontalAlignment = .center
         button.setTitleColor(UIColor.white, for: .normal)
         button.titleLabel?.numberOfLines = 0
-        //button.layer.cornerRadius = 20 TODO: Orhun backend gelince gelen data rdCarouselItem üstünden radius yapılacak
+        if let buttonRadius = Double(self.rdCarouselItem?.buttonBorderRadius ?? "0") {
+            button.layer.cornerRadius = buttonRadius
+        }
         return button
     }
 

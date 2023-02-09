@@ -38,6 +38,7 @@ public class RDCarouselItem {
         public static let close_button_color = "close_button_color"
         public static let videourl = "videourl"
         public static let buttonFunction = "button_function"
+        public static let buttonBorderRadius = "button_border_radius"
     }
     
     public let imageUrlString: String?
@@ -67,6 +68,7 @@ public class RDCarouselItem {
     public var closeButtonColor: UIColor?
     public var videourl : String?
     public var buttonFunction : String?
+    public var buttonBorderRadius : String?
 
     
     var titleFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title2), size: CGFloat(12))
@@ -88,7 +90,7 @@ public class RDCarouselItem {
                 ,bodyTextsize: String?, promocodeType: String?, promotionCode: String?, promocodeBackgroundColor: UIColor?
                 ,promocodeTextColor: UIColor?, buttonText: String?, buttonTextColor: UIColor?, buttonColor: UIColor?
                 ,buttonFontFamily: String?, buttonCustomFontFamily: String?, buttonTextsize: String?, backgroundImageString: String?
-                ,backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?,videourl: String?,buttonFunction:String) {
+                ,backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?,videourl: String?,buttonFunction:String,buttonBorderRadius:String?) {
         self.imageUrlString = imageUrlString
         self.title = title
         self.titleColor = UIColor(hex: titleColor)
@@ -115,6 +117,7 @@ public class RDCarouselItem {
         self.linkString = linkString
         self.videourl = videourl
         self.buttonFunction = buttonFunction
+        self.buttonBorderRadius = buttonBorderRadius
 
         
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
@@ -178,7 +181,7 @@ public class RDCarouselItem {
         self.linkString = object[PayloadKey.ios_lnk] as? String
         self.videourl = object[PayloadKey.videourl] as? String
         self.buttonFunction = object[PayloadKey.buttonFunction] as? String
-
+        self.buttonBorderRadius = object[PayloadKey.buttonBorderRadius] as? String
         
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
             self.linkUrl = URL(string: linkString)
