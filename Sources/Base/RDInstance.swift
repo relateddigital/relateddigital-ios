@@ -855,6 +855,15 @@ extension RDInstance {
     
     public func registerToken(tokenData: Data?) {
         RDPush.registerToken(tokenData: tokenData)
+        guard let tokenData = tokenData else {
+                    RDLogger.error("Token data cannot be nil")
+                    return
+                }
+                let tokenString = tokenData.reduce("", { $0 + String(format: "%02X", $1) })
+                rdUser.tokenId = tokenString
+                if let appAlias = rdProfile.appAlias, !appAlias.isEmptyOrWhitespace {
+                    rdUser.appId = appAlias
+                }
     }
     
     public func handlePush(pushDictionary: [AnyHashable: Any]) {

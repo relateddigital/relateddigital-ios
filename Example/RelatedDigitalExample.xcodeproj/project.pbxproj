@@ -103,6 +103,7 @@
 		2F4250D227B2745400D53F97 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		2F4250D427B275EA00D53F97 /* InAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppViewController.swift; sourceTree = "<group>"; };
 		2F4250D627B27C4900D53F97 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		2F4916B72996952800120EB4 /* Location.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Location.gpx; sourceTree = "<group>"; };
 		2F51063C27B3A5850008C996 /* StoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
 		2F51063E27B3A7380008C996 /* RecommendationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationViewController.swift; sourceTree = "<group>"; };
 		2F51064427B3A8890008C996 /* FavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewController.swift; sourceTree = "<group>"; };
@@ -264,6 +265,7 @@
 				88680B152694FC0C004B8DE8 /* Assets.xcassets */,
 				88680B172694FC0C004B8DE8 /* LaunchScreen.storyboard */,
 				88680B1A2694FC0C004B8DE8 /* Info.plist */,
+				2F4916B72996952800120EB4 /* Location.gpx */,
 			);
 			path = RelatedDigitalExample;
 			sourceTree = "<group>";

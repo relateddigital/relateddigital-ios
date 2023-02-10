@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 import CoreLocation
 
-let kIdentifierPrefix = "visilabs_"
-let kBubbleGeofenceIdentifierPrefix = "visilabs_bubble_"
-let kSyncGeofenceIdentifierPrefix = "visilabs_geofence_"
+let kIdentifierPrefix = "relateddigital_"
+let kBubbleGeofenceIdentifierPrefix = "relateddigital_bubble_"
+let kSyncGeofenceIdentifierPrefix = "relateddigital_geofence_"
 
 class RDLocationManager: NSObject {
         

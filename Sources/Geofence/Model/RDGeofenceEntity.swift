@@ -22,7 +22,7 @@ public class RDGeofenceEntity: Codable {
         self.durationInSeconds = durationInSeconds
         self.targetEvent = targetEvent
         self.distanceFromCurrentLastKnownLocation = distanceFromCurrentLastKnownLocation
-        self.identifier = "relateddigital_\(self.actId)_\(self.geofenceId)_\(self.targetEvent)"
+        self.identifier = "relateddigital_geofence_\(self.actId)_\(self.geofenceId)_\(self.targetEvent)"
     }
     public var actId: Int
     public var geofenceId: Int
