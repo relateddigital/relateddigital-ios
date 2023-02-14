@@ -205,7 +205,8 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         page.firstLineWarningLabel.text = model?.mailForm.emailPermitText
         page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage
         
-        page.mailTextView.placeholder = model?.mailForm.placeholder
+        page.mailTextView.attributedPlaceholder = NSAttributedString(string: model?.mailForm.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+        
         
         page.continueButtonView.backgroundColor = UIColor(hex: model?.mailExtendedProps.buttonColor)
         page.continueButtonLabel.textColor = UIColor(hex: model?.mailExtendedProps.buttonTextColor)
