@@ -276,11 +276,23 @@ extension RDPopupDialogDefaultView {
         titleLabel.topToBottom(of: imageView, offset: 0)
         titleLabel.leading(to: self)
         titleLabel.trailing(to: self)
-        NSLayoutConstraint.activate([titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
+        
+        if rdInAppNotification?.messageTitle?.count ?? 0 > 0 {
+            NSLayoutConstraint.activate([titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
+        } else {
+            NSLayoutConstraint.activate([titleLabel.heightAnchor.constraint(equalToConstant: 0)])
+        }
+
         messageLabel.topToBottom(of: titleLabel, offset: 0)
         messageLabel.leading(to: self)
         messageLabel.trailing(to: self)
-        NSLayoutConstraint.activate([messageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
+        
+        if rdInAppNotification?.messageBody?.count ?? 0 > 0 {
+            NSLayoutConstraint.activate([messageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
+        } else {
+            NSLayoutConstraint.activate([messageLabel.heightAnchor.constraint(equalToConstant: 0)])
+        }
+
         
         if rdInAppNotification?.imageUrlString?.isEmpty == true {
             closeButton.layer.zPosition = 1
@@ -313,7 +325,7 @@ extension RDPopupDialogDefaultView {
             copyCodeButtonWithText.bottom(to: copyCodeTextButton)
             copyCodeTextButton.leading(to: self,offset: 10)
             copyCodeTextButton.layer.cornerRadius = 5
-            if let _ = rdInAppNotification?.promocodeCopybuttonText {
+            if rdInAppNotification?.promocodeCopybuttonText?.count ?? 0 > 0 {
                 copyCodeButtonWithText.width(80.0)
                 copyCodeTextButton.trailingToLeading(of: copyCodeButtonWithText, offset: -10.0)
             } else {
@@ -344,7 +356,9 @@ extension RDPopupDialogDefaultView {
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        self.copyCodeTextButton.setDashedBorder(width: 2,color: .black)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.15, execute: {
+            self.copyCodeTextButton.setDashedBorder(width: 2,color: .black)
+        })
     }
 
     internal func setupForImageButtonImage() {
