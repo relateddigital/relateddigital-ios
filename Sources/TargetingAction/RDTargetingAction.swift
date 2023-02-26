@@ -174,6 +174,8 @@ class RDTargetingAction {
             return parseShakeToWin(shakeToWn)
         } else if let findToWin = result[RDConstants.findToWin] as? [[String: Any?]], let findTown = findToWin.first {
             return parseFindToWin(findTown)
+        } else if let giftBox = result[RDConstants.findToWin] as? [[String: Any?]], let giftBox = giftBox.first {
+            return parseGiftBoxWin(giftBox)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
@@ -887,6 +889,128 @@ class RDTargetingAction {
         }
         
         return findToWinModel
+    }
+    
+    
+    
+    private func parseGiftBoxWin(_ giftBox: [String: Any?]) -> GiftBoxModel? {
+
+        guard let actionData = giftBox[RDConstants.actionData] as? [String: Any] else { return nil }
+        var giftBoxModel = GiftBoxModel(targetingActionType: .findToWin)
+        giftBoxModel.actId = giftBox[RDConstants.actid] as? Int ?? 0
+        giftBoxModel.title = giftBox[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+
+        giftBoxModel.mailSubscription = actionData[RDConstants.mailSubscription] as? Bool ?? false
+        giftBoxModel.copybutton_label = actionData[RDConstants.copybuttonLabel] as? String ?? ""
+        giftBoxModel.copybutton_function = actionData[RDConstants.copybuttonFunction] as? String ?? ""
+        giftBoxModel.ios_lnk = actionData[RDConstants.iosLnk] as? String ?? ""
+        
+        
+        if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
+            giftBoxModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
+            giftBoxModel.mailSubscriptionForm.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
+            giftBoxModel.mailSubscriptionForm.consentText = mailForm[RDConstants.consentText] as? String
+            giftBoxModel.mailSubscriptionForm.invalidEmailMessage = mailForm[RDConstants.invalidEmailMessage] as? String ?? ""
+            giftBoxModel.mailSubscriptionForm.successMessage = mailForm[RDConstants.successMessage] as? String ?? ""
+            giftBoxModel.mailSubscriptionForm.emailPermitText = mailForm[RDConstants.emailPermitText] as? String ?? ""
+            giftBoxModel.mailSubscriptionForm.checkConsentMessage = mailForm[RDConstants.checkConsentMessage] as? String ?? ""
+            giftBoxModel.mailSubscriptionForm.title = mailForm[RDConstants.title] as? String ?? ""
+            giftBoxModel.mailSubscriptionForm.message = mailForm[RDConstants.message] as? String ?? ""
+
+        }
+        
+        if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
+            giftBoxModel.gamificationRules?.backgroundImage = gamificationRules[RDConstants.backgroundImage] as? String ?? ""
+            giftBoxModel.gamificationRules?.buttonLabel = gamificationRules[RDConstants.buttonLabel] as? String ?? ""
+        }
+
+        if let gameElements = actionData[RDConstants.gameElements] as? [String: Any] {
+
+            if let gameDetailElement = gameElements[RDConstants.giftBoxes] as? [[String: Any]] {
+                for element in gameDetailElement {
+                    var giftBoxElem = GiftBox()
+                    giftBoxElem.image = element[RDConstants.image] as? String ?? ""
+                    giftBoxElem.staticcode = element[RDConstants.staticcode] as? String ?? ""
+                    
+                    giftBoxModel.gameElements?.append(giftBoxElem)
+                }
+            }
+        }
+        
+        
+        if let gameResultElements = actionData[RDConstants.gameResultElements] as? [String: Any] {
+            giftBoxModel.gameResultElements?.image = gameResultElements[RDConstants.image] as? String ?? ""
+            giftBoxModel.gameResultElements?.title = gameResultElements[RDConstants.title] as? String ?? ""
+            giftBoxModel.gameResultElements?.message = gameResultElements[RDConstants.message] as? String ?? ""
+        }
+        
+        if let promoCodes = actionData[RDConstants.promoCodes] as? [[String: Any]] {
+            for promoCode in promoCodes {
+                var promCode = PromoCodes()
+                promCode.rangebottom = promoCode[RDConstants.rangebottom] as? Int
+                promCode.rangetop = promoCode[RDConstants.rangetop] as? Int
+                promCode.staticcode = promoCode[RDConstants.staticcode] as? String
+                giftBoxModel.promoCodes?.append(promCode)
+            }
+        }
+        
+        //extended props
+        
+        if let mailFormExtended = extendedProps[RDConstants.gMailSubscriptionForm] as? [String: Any] {
+
+            giftBoxModel.mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
+            giftBoxModel.mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
+            giftBoxModel.mailExtendedProps.textColor = mailFormExtended[RDConstants.textColor] as? String ?? ""
+            giftBoxModel.mailExtendedProps.textSize = mailFormExtended[RDConstants.textSize] as? String ?? ""
+            giftBoxModel.mailExtendedProps.titleTextSize = mailFormExtended[RDConstants.titleTextSize] as? String ?? ""
+            giftBoxModel.mailExtendedProps.buttonColor = mailFormExtended[RDConstants.button_color] as? String ?? ""
+            giftBoxModel.mailExtendedProps.buttonTextColor = mailFormExtended[RDConstants.button_text_color] as? String ?? ""
+            giftBoxModel.mailExtendedProps.buttonTextSize = mailFormExtended[RDConstants.buttonTextSize] as? String ?? ""
+            
+            giftBoxModel.mailExtendedProps.emailPermitTextSize = mailFormExtended[RDConstants.emailpermitTextSize] as? String ?? ""
+            giftBoxModel.mailExtendedProps.emailPermitTextUrl = mailFormExtended[RDConstants.emailpermitTextUrl] as? String ?? ""
+            giftBoxModel.mailExtendedProps.consentTextSize = mailFormExtended[RDConstants.consentTextSize] as? String ?? ""
+            giftBoxModel.mailExtendedProps.consentTextUrl = mailFormExtended[RDConstants.consentTextUrl] as? String ?? ""
+            giftBoxModel.mailExtendedProps.titleFontFamily = mailFormExtended[RDConstants.titleFontFamily] as? String ?? ""
+        }
+        
+        giftBoxModel.backgroundImage = extendedProps[RDConstants.backgroundImage] as? String ?? ""
+        giftBoxModel.background_color = extendedProps[RDConstants.backgroundColor] as? String ?? ""
+        giftBoxModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        giftBoxModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        giftBoxModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        giftBoxModel.promocode_background_color = extendedProps[RDConstants.promocodeBackgroundColor] as? String ?? ""
+        giftBoxModel.promocode_text_color = extendedProps[RDConstants.promocodeTextColor] as? String ?? ""
+        giftBoxModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        giftBoxModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        giftBoxModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        giftBoxModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        giftBoxModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        giftBoxModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        giftBoxModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        giftBoxModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+
+        
+        if let gameficationRuleExtended = extendedProps[RDConstants.gamificationRules] as? [String: Any] {
+            
+            giftBoxModel.gamificationRulesExtended?.buttonColor = gameficationRuleExtended[RDConstants.button_color] as? String ?? ""
+            giftBoxModel.gamificationRulesExtended?.buttonTextColor = gameficationRuleExtended[RDConstants.button_text_color] as? String ?? ""
+            giftBoxModel.gamificationRulesExtended?.buttonTextSize = gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? ""
+        }
+
+
+        if let gameficationResultElementExtended = extendedProps[RDConstants.gameResultElements] as? [String: Any] {
+            
+            giftBoxModel.gameResultElementsExtended?.titleTextColor = gameficationResultElementExtended[RDConstants.titleTextColor] as? String ?? ""
+            giftBoxModel.gameResultElementsExtended?.titleTextSize = gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? ""
+            giftBoxModel.gameResultElementsExtended?.textColor = gameficationResultElementExtended[RDConstants.textColor] as? String ?? ""
+            giftBoxModel.gameResultElementsExtended?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
+            
+        }
+        
+        return giftBoxModel
     }
 
     private func parseScratchToWin(_ scratchToWin: [String: Any?]) -> ScratchToWinModel? {

@@ -208,6 +208,9 @@ public class RelatedDigital {
     static func subscribeFindToWinMail(actid: String, auth: String, mail: String) {
         shared.rdInstance.subscribeFindToWinMail(actid: actid, auth: auth, mail: mail)
     }
+    static func subscribeGiftBoxMail(actid: String, auth: String, mail: String) {
+        shared.rdInstance.subscribeFindToWinMail(actid: actid, auth: auth, mail: mail)
+    }
     
     static func subscribeJackpotMail(actid: String, auth: String, mail: String) {
         shared.rdInstance.subscribeJackpotMail(actid: actid, auth: auth, mail: mail)
@@ -227,6 +230,10 @@ public class RelatedDigital {
     
     static func trackFindToWinClick(findToWinReport: FindToWinReport) {
         shared.rdInstance.trackFindToWinClick(findToWinReport: findToWinReport)
+    }
+    
+    static func trackGiftBoxClick(giftBoxReport: GiftBoxReport) {
+        shared.rdInstance.trackGiftBoxClick(giftBoxReport: giftBoxReport)
     }
     
     static func trackScratchToWinClick(scratchToWinReport: TargetingActionReport) {

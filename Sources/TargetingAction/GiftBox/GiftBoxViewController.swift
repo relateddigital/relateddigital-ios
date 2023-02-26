@@ -22,9 +22,9 @@ class GiftBoxViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
     
-    init(_ findToWin : FindToWinViewModel) {
+    init(_ giftBox : GiftBoxModel) {
         super.init(nibName: nil, bundle: nil)
-        self.findToWin = findToWin
+        self.giftBox = giftBox
     }
     
     required init?(coder: NSCoder) {
@@ -33,8 +33,8 @@ class GiftBoxViewController: RDBaseNotificationViewController {
     
     private func close() {
         dismiss(animated: true) {
-            if let findToWin = self.findToWin, !findToWin.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
-                let bannerVC = RDFindToWinCodeBannerController(findToWin)
+            if let giftBox = self.giftBox, !giftBox.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
+                let bannerVC = RDGiftBoxCodeBannerController(giftBox)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -100,7 +100,7 @@ class GiftBoxViewController: RDBaseNotificationViewController {
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createFindtoWinFiles() {
+        if let htmlUrl = createGiftBoxFiles() {
             webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
             webView.backgroundColor = .clear
             webView.translatesAutoresizingMaskIntoConstraints = false
@@ -110,7 +110,7 @@ class GiftBoxViewController: RDBaseNotificationViewController {
     }
     
     
-    private func createFindtoWinFiles() -> URL? {
+    private func createGiftBoxFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
             RDLogger.error("Can not create documentDirectory")
@@ -128,7 +128,7 @@ class GiftBoxViewController: RDBaseNotificationViewController {
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
         
         RDHelper.registerFonts(fontNames: getCustomFontNames())
-        let fontUrls = findToWinFonts(fontNames: getCustomFontNames())
+        let fontUrls = giftBoxFonts(fontNames: getCustomFontNames())
         
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
@@ -140,7 +140,7 @@ class GiftBoxViewController: RDBaseNotificationViewController {
             
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
             
-            if let jsContent = findToWin?.jsContent?.utf8 {
+            if let jsContent = giftBox?.jsContent?.utf8 {
                 guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
                     return nil
                 }
@@ -162,7 +162,7 @@ class GiftBoxViewController: RDBaseNotificationViewController {
                     try manager.removeItem(atPath: fontUrl.path)
                 }
                 try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
-                self.findToWin?.fontFiles.append(fontUrlKeyValue.key)
+                self.giftBox?.fontFiles.append(fontUrlKeyValue.key)
             } catch let error {
                 RDLogger.error(error)
                 RDLogger.error(error.localizedDescription)
@@ -173,7 +173,7 @@ class GiftBoxViewController: RDBaseNotificationViewController {
         return htmlUrl
     }
     
-    private func findToWinFonts(fontNames: Set<String>) -> [String: URL] {
+    private func giftBoxFonts(fontNames: Set<String>) -> [String: URL] {
         var fontUrls = [String: URL]()
         if let infos = Bundle.main.infoDictionary {
             if let uiAppFonts = infos["UIAppFonts"] as? [String] {
@@ -209,9 +209,9 @@ class GiftBoxViewController: RDBaseNotificationViewController {
     
     private func getCustomFontNames() -> Set<String> {
         var customFontNames = Set<String>()
-        if let findToWin = self.findToWin {
-            if !findToWin.custom_font_family_ios.isEmptyOrWhitespace {
-                customFontNames.insert(findToWin.custom_font_family_ios)
+        if let giftBox = self.giftBox {
+            if !giftBox.custom_font_family_ios.isEmptyOrWhitespace {
+                customFontNames.insert(giftBox.custom_font_family_ios)
             }
         }
         return customFontNames
@@ -259,12 +259,12 @@ extension GiftBoxViewController: WKScriptMessageHandler {
                 }
                 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeFindToWinMail(actid: "\(self.findToWin!.actId ?? 0)", auth: self.findToWin!.auth, mail: email)
+                    RelatedDigital.subscribeGiftBoxMail(actid: "\(self.giftBox!.actId ?? 0)", auth: self.giftBox!.auth, mail: email)
                     subsEmail = email
                 }
                 
                 if method == "sendReport" {
-                    RelatedDigital.trackFindToWinClick(findToWinReport: (self.findToWin?.report)!)
+                    RelatedDigital.trackGiftBoxClick(giftBoxReport: (self.giftBox?.report)!)
                 }
                 
                 if method == "linkClicked",let urlLnk = event["url"] as? String {

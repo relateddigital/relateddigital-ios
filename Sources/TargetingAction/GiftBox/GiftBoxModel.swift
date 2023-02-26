@@ -22,8 +22,8 @@ public struct GiftBoxModel : TargetingActionViewModel,Codable {
     
     var mailSubscriptionForm = MailSubscriptionModelGamification()
     var gamificationRules: GamificationRules? = GamificationRules()
-    var gameElements: GameElementsFindToWin? = GameElementsFindToWin()
-    var gameResultElements: GameResultElementsFindToWin? = GameResultElementsFindToWin()
+    var gameElements: [GiftBox]? = [GiftBox]()
+    var gameResultElements: GameResultElementsGiftBox? = GameResultElementsGiftBox()
     var promoCodes: [PromoCodes]? = [PromoCodes]()
 
     //extended props
@@ -45,8 +45,8 @@ public struct GiftBoxModel : TargetingActionViewModel,Codable {
     var mailExtendedProps = MailSubscriptionExtendedPropsGamification()
     
     var gamificationRulesExtended : GamificationRulesExtended? = GamificationRulesExtended()
-    var gameElementsExtended : GameElementsExtendedFindToWin? = GameElementsExtendedFindToWin()
-    var gameResultElementsExtended : GameResultElementsExtendedFindToWin? = GameResultElementsExtendedFindToWin()
+    var gameElementsExtended : GameElementsExtendedGiftBox? = GameElementsExtendedGiftBox()
+    var gameResultElementsExtended : GameResultElementsExtendedGiftBox? = GameResultElementsExtendedGiftBox()
     
     var fontFiles: [String] = []
     public var jsContent: String?
@@ -54,6 +54,28 @@ public struct GiftBoxModel : TargetingActionViewModel,Codable {
 
 
 
+
+public struct GiftBox : Codable {
+    var image : String?
+    var staticcode : String?
+}
+
+public struct GameResultElementsGiftBox : Codable {
+    var image : String?
+    var title : String?
+    var message : String?
+}
+
+public struct GameElementsExtendedGiftBox : Codable {
+
+}
+
+public struct GameResultElementsExtendedGiftBox : Codable {
+    var titleTextColor : String?
+    var titleTextSize : String?
+    var textColor : String?
+    var textSize : String?
+}
 
 
 

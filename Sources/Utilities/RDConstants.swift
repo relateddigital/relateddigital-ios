@@ -192,6 +192,7 @@ struct RDConstants {
     static let losebuttonTextSize = "losebutton_text_size"
     static let cardImages = "card_images"
     static let shakeToWin = "ShakeToWin"
+    static let giftBoxes = "gift_boxes"
 
     
     static let appBanners = "app_banners"
@@ -212,6 +213,7 @@ struct RDConstants {
     static let favorites = "favorites"
     static let stories = "stories"
     static let title = "title"
+    static let image = "image"
     static let smallImg = "smallImg"
     static let link = "link"
     static let thumbnail = "thumbnail"

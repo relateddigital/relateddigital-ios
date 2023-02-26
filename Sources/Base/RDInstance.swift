@@ -479,6 +479,11 @@ extension RDInstance: RDInAppNotificationsDelegate {
     func subscribeFindToWinMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "find_to_win_email")
     }
+    
+    func subscribeGiftBoxMail(actid: String, auth: String, mail: String) {
+        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "gift_box_email")
+    }
+    
     func subscribeJackpotMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "jackpot_email")
     }
@@ -507,6 +512,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
     
+    
+    func trackGiftBoxClick(giftBoxReport: GiftBoxReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = giftBoxReport.click?.parseClick().omZn
+        properties["OM.zpc"] = giftBoxReport.click?.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
     
     func trackScratchToWinClick(scratchToWinReport: TargetingActionReport) {
         var properties = Properties()
