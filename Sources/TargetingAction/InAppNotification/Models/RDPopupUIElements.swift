@@ -356,7 +356,7 @@ extension RDPopupDialogDefaultView {
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        DispatchQueue.main.asyncAfter(deadline: .now()+0.15, execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.25, execute: {
             self.copyCodeTextButton.setDashedBorder(width: 2,color: .black)
         })
     }

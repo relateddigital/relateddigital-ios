@@ -473,14 +473,50 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         let stackView = popupContainerView.stackView
         let buttonStackView = popupContainerView.buttonStackView
         
+        let fakeSpace = 25.0
         if buttons.isEmpty {
             stackView.removeArrangedSubview(popupContainerView.buttonStackView)
         }
         
-        for (index, button) in buttons.enumerated() {
-            button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
-            buttonStackView.addArrangedSubview(button)
-            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+        if notification?.type == .imageTextButton {
+            buttonStackView.distribution = .fillProportionally
+            buttonStackView.axis = .horizontal
+            //başlangıç boslugu
+            let leadingSpacerView = UIView()
+            leadingSpacerView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([leadingSpacerView.widthAnchor.constraint(equalToConstant: fakeSpace)])
+            buttonStackView.addArrangedSubview(leadingSpacerView)
+            
+            let stackViewButtons = UIStackView()
+            stackViewButtons.translatesAutoresizingMaskIntoConstraints = false
+            stackViewButtons.axis = .horizontal
+            stackViewButtons.distribution = .fillEqually
+            stackViewButtons.spacing = 5
+            buttonStackView.addArrangedSubview(stackViewButtons)
+            for (index, button) in buttons.enumerated() {
+                button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
+                stackViewButtons.addArrangedSubview(button)
+                button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+            }
+            
+            //Bitiş boslugu
+            let trailingSpacerView = UIView()
+            trailingSpacerView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([trailingSpacerView.widthAnchor.constraint(equalToConstant: fakeSpace)])
+            buttonStackView.addArrangedSubview(trailingSpacerView)
+            
+            //taban boslugu
+            let bottomSpacerView = UIView()
+            bottomSpacerView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([bottomSpacerView.heightAnchor.constraint(equalToConstant: fakeSpace / 2)])
+            stackView.addArrangedSubview(bottomSpacerView)
+        } else {
+            
+            for (index, button) in buttons.enumerated() {
+                button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
+                buttonStackView.addArrangedSubview(button)
+                button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+            }
         }
     }
     
