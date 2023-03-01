@@ -326,6 +326,7 @@ struct RDConstants {
     static let promocodesSoldoutMessage = "promocodes_soldout_message"
     static let copyButtonFunction = "copybutton_function"
     static let copyRedirect = "copy_redirect"
+    static let redirect = "redirect"
 
     
     

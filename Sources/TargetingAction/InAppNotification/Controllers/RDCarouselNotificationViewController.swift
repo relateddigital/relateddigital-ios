@@ -380,6 +380,15 @@ public class RDCarouselNotificationViewController: RDBasePageViewController, Ite
                     UIPasteboard.general.string = promoCode
                     RDHelper.showCopiedClipboardMessage()
                 }
+            } else if buttonFunc == RDConstants.redirect {
+                if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
+                    UIApplication.shared.open(appSettings)
+                }
+            } else {
+                if let promoCode = notification?.carouselItems[currentIndex].promotionCode {
+                    UIPasteboard.general.string = promoCode
+                    RDHelper.showCopiedClipboardMessage()
+                }
             }
         }
         
