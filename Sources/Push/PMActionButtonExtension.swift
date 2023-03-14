@@ -32,7 +32,8 @@ extension RDPush {
             print(">>> button.identifier ==> \(button.identifier ?? "")")
             print(">>> button.link ==> \(button.url ?? "")")
             guard let link = URL(string: button.url ?? "") else { return }
-            UIApplication.shared.openURL(link)
+            UIApplication.shared.open(link)
+            //UIApplication.shared.openURL(link)
             
         }
         

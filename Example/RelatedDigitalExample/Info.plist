@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>2.0</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -35,11 +35,11 @@
 	<string>Related Digital will use your location when in use!</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Related Digital uses your advertising identifier!</string>
-    <key>UIAppFonts</key>
-    <array>
-        <string>sydneysignature.ttf</string>
-        <string>android101.otf</string>
-    </array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>sydneysignature.ttf</string>
+		<string>android101.otf</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

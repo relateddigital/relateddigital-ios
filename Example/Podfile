@@ -1,40 +1,36 @@
-platform :ios, '11.0'
+platform :ios, '12.0'
 
 target 'RelatedDigitalExample' do
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'
-post_install do |installer|
-    installer.pods_project.targets.each do |target|
-        if target.name == 'RelatedDigitalIOS'
-            target.build_configurations.each do |config|
-                config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
-            end
-        end
-    end
-end
   pod 'CleanyModal'
-pod 'SplitRow'
+  pod "SplitRow", :git => 'https://github.com/EurekaCommunity/SplitRow.git'
 end
 
 target 'RelatedDigitalExampleTests' do
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'
-  pod 'CleanyModal'
-pod 'SplitRow'
 end
 
 target 'NotificationService' do
-  # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'
-  # Pods for RelatedDigital
-
+  
 end
 
 target 'NotificationContent' do
-  # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  pod 'RelatedDigitalIOS', :path => '../'
-  # Pods for RelatedDigital
+  pod 'RelatedDigitalIOS', :path => '../'  
+end
 
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+      if target.name == 'RelatedDigitalIOS'
+        config.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'No'
+      end
+    end
+  end
 end

@@ -543,6 +543,10 @@ extension RDInstance: RDInAppNotificationsDelegate {
 extension RDInstance {
     
     
+    public func getNpsWithNumbersView(completion: @escaping ((RDPopupDialogDefaultView?) -> Void)) {
+        
+    }
+    
     
     public func getStoryViewAsync(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil, completion: @escaping StoryCompletion) {
         
