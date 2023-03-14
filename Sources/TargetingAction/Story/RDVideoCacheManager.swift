@@ -59,7 +59,7 @@ class RDVideoCacheManager {
             }
         }
     }
-    
+
     private func directoryFor(stringUrl: String) -> URL? {
         guard let fileURL = URL(string: stringUrl)?.lastPathComponent,
               let mainDirURL = self.mainDirectoryUrl else {
@@ -68,5 +68,5 @@ class RDVideoCacheManager {
         let file = mainDirURL.appendingPathComponent(fileURL)
         return file
     }
-    
+
 }

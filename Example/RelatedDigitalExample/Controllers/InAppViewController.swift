@@ -38,7 +38,10 @@ class InAppViewController: FormViewController {
         
         if queryStringFilter == "banner_carousel" {
             showBannerCarousel()
-        } else {
+        } else if queryStringFilter == "nps_with_numbers_inline" {
+            showNpsWithNumbers()
+        }
+        else {
             var properties = [String: String]()
             properties["OM.inapptype"] = queryStringFilter
             if queryStringFilter.lowercased() == RDInAppNotificationType.productStatNotifier.rawValue {
@@ -63,7 +66,7 @@ class InAppViewController: FormViewController {
             .smileRating: [RDInAppNotificationType.smileRating.rawValue: 494],
             .emailForm: [RDInAppNotificationType.emailForm.rawValue: 417],
             .alert: ["alert_actionsheet": 487, "alert_native": 540],
-            .npsWithNumbers: [RDInAppNotificationType.npsWithNumbers.rawValue: 493],
+            .npsWithNumbers: [RDInAppNotificationType.npsWithNumbers.rawValue: 493, "nps_with_numbers_inline": 124],
             .halfScreenImage: [RDInAppNotificationType.halfScreenImage.rawValue: 704],
             .scratchToWin: [RDInAppNotificationType.scratchToWin.rawValue: 592],
             .secondNps: ["nps-image-text-button": 585,  "nps-image-text-button-image": 586, "nps-feedback": 587],
@@ -76,7 +79,7 @@ class InAppViewController: FormViewController {
             .gamification : [RDInAppNotificationType.gamification.rawValue: 131],
             .findToWin : [RDInAppNotificationType.findToWin.rawValue: 132],
             .bannerCarousel : [RDInAppNotificationType.bannerCarousel.rawValue: 155],
-            .shakeToWin : [RDInAppNotificationType.shakeToWin.rawValue: 255]
+            .shakeToWin : [RDInAppNotificationType.shakeToWin.rawValue: 255],
             ]
     }
     
@@ -113,6 +116,34 @@ extension InAppViewController: RDInappButtonDelegate {
                                              banner.bottomAnchor.constraint(equalTo: bannerView.bottomAnchor),
                                              banner.leadingAnchor.constraint(equalTo: bannerView.leadingAnchor),
                                              banner.trailingAnchor.constraint(equalTo: bannerView.trailingAnchor)])
+            }
+
+        }
+    }
+    
+    
+    func showNpsWithNumbers() {
+        let topView = UIView()
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(topView)
+        NSLayoutConstraint.activate([topView.topAnchor.constraint(equalTo: self.view.topAnchor,constant:  80),
+                                     topView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                                     topView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
+        topView.backgroundColor = .black
+        
+        
+        var props = Properties()
+        props["OM.inapptype"] = "nps_with_numbers"
+        
+        RelatedDigital.getNpsWithNumbersView(properties: props){ npsView in
+            if let npsView = npsView {
+                npsView.translatesAutoresizingMaskIntoConstraints = false
+                topView.addSubview(npsView)
+                
+                NSLayoutConstraint.activate([npsView.topAnchor.constraint(equalTo: topView.topAnchor),
+                                             npsView.bottomAnchor.constraint(equalTo: topView.bottomAnchor),
+                                             npsView.leadingAnchor.constraint(equalTo: topView.leadingAnchor),
+                                             npsView.trailingAnchor.constraint(equalTo: topView.trailingAnchor)])
             }
 
         }

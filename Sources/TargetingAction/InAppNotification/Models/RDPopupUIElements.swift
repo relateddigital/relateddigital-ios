@@ -67,7 +67,7 @@ extension RDPopupDialogDefaultView {
         copyCodeImage.addTarget(self, action: #selector(copyCodeTextButtonTapped(_:)), for: .touchUpInside)
         return copyCodeImage
     }
-    
+
     internal func setCopyCodeButtonWithText() -> UIButton {
         let copyCodeButton = UIButton(frame: .zero)
         copyCodeButton.layer.cornerRadius = 5
@@ -186,7 +186,7 @@ extension RDPopupDialogDefaultView {
         if let buttonCornerRadius = Double(rdInAppNotification?.buttonBorderRadius ?? "0") {
             button.layer.cornerRadius = buttonCornerRadius
         }
-        
+
         return button
     }
 
@@ -272,11 +272,11 @@ extension RDPopupDialogDefaultView {
         addSubview(titleLabel)
         addSubview(messageLabel)
         imageView.allEdges(to: self, excluding: .bottom)
-        //firstPageOpened = true
+        // firstPageOpened = true
         titleLabel.topToBottom(of: imageView, offset: 0)
         titleLabel.leading(to: self)
         titleLabel.trailing(to: self)
-        
+
         if rdInAppNotification?.messageTitle?.count ?? 0 > 0 {
             NSLayoutConstraint.activate([titleLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
         } else {
@@ -286,14 +286,13 @@ extension RDPopupDialogDefaultView {
         messageLabel.topToBottom(of: titleLabel, offset: 0)
         messageLabel.leading(to: self)
         messageLabel.trailing(to: self)
-        
+
         if rdInAppNotification?.messageBody?.count ?? 0 > 0 {
             NSLayoutConstraint.activate([messageLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 32)])
         } else {
             NSLayoutConstraint.activate([messageLabel.heightAnchor.constraint(equalToConstant: 0)])
         }
 
-        
         if rdInAppNotification?.imageUrlString?.isEmpty == true {
             closeButton.layer.zPosition = 1
             closeButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
@@ -323,7 +322,7 @@ extension RDPopupDialogDefaultView {
             }
 
             copyCodeButtonWithText.bottom(to: copyCodeTextButton)
-            copyCodeTextButton.leading(to: self,offset: 10)
+            copyCodeTextButton.leading(to: self, offset: 10)
             copyCodeTextButton.layer.cornerRadius = 5
             if rdInAppNotification?.promocodeCopybuttonText?.count ?? 0 > 0 {
                 copyCodeButtonWithText.width(80.0)
@@ -334,7 +333,7 @@ extension RDPopupDialogDefaultView {
                 copyCodeButtonWithText.isHidden = true
             }
             copyCodeButtonWithText.height(50.0)
-            copyCodeButtonWithText.trailing(to: self,offset: -10)
+            copyCodeButtonWithText.trailing(to: self, offset: -10)
         } else if withFeedback == false {
             messageLabel.bottom(to: self, offset: -10)
         } else {
@@ -353,11 +352,11 @@ extension RDPopupDialogDefaultView {
         titleLabel.centerX(to: self)
         messageLabel.centerX(to: self)
     }
-    
+
     public override func layoutSubviews() {
         super.layoutSubviews()
         DispatchQueue.main.asyncAfter(deadline: .now()+0.25, execute: {
-            self.copyCodeTextButton.setDashedBorder(width: 2,color: .black)
+            self.copyCodeTextButton.setDashedBorder(width: 2, color: .black)
         })
     }
 
@@ -367,7 +366,7 @@ extension RDPopupDialogDefaultView {
         addSubview(imageButton)
         addSubview(secondImageView)
 
-        //firstPageOpened = true
+        // firstPageOpened = true
         imageView.allEdges(to: self, excluding: .bottom)
         titleLabel.topToBottom(of: imageView, offset: 10.0)
         messageLabel.topToBottom(of: titleLabel, offset: 8.0)
@@ -553,7 +552,7 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
         } else {
             nWidth = (numberRating.frame.width - 100) / 10
         }
-        
+
         return CGSize(width: nWidth, height: nWidth)
     }
 
@@ -564,7 +563,7 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
         } else {
             return 10
         }
-        
+
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -576,7 +575,6 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
         } else {
             cell.rating = indexPath.row + 1
         }
-        
 
         cell.borderColor = numberBorderColor
         if colors.count == 11 || colors.count == 10 {
@@ -598,7 +596,7 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
             } else {
                 selectedNumber = indexPath.row + 1
             }
-            
+
             npsDelegate?.ratingSelected()
         } else {
             selectedNumber = 10
@@ -617,6 +615,6 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
         } else {
             return 10
         }
-        
+
     }
 }

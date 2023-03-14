@@ -28,19 +28,19 @@ extension UIView {
 }
 
 extension UIColor {
-    
+
     public func shadeDarker() -> UIColor {
         var r: CGFloat = 0.0, g: CGFloat = 0.0, b: CGFloat = 0.0, a: CGFloat = 0.0
         self.getRed(&r, green: &g, blue: &b, alpha: &a)
-        
+
         let variance: CGFloat = 0.4
         let newR = CGFloat.maximum(r * variance, 0.0),
         newG = CGFloat.maximum(g * variance, 0.0),
         newB = CGFloat.maximum(b * variance, 0.0)
-        
+
         return UIColor(red: newR, green: newG, blue: newB, alpha: 1.0)
     }
-    
+
 }
 
 import CoreGraphics
@@ -50,7 +50,6 @@ extension CGSize {
         return CGSize(width: self.height, height: self.width)
     }
 }
-
 
 public extension UIScreen {
     class var hasNotch: Bool {
@@ -80,4 +79,3 @@ public extension UIViewController {
         present(gallery, animated: false, completion: completion)
     }
 }
-

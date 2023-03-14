@@ -62,13 +62,11 @@ public class RDInAppNotification {
         public static let secondButtonIosLnk = "second_button_ios_lnk"
         public static let buttonBorderRadius = "button_border_radius"
 
-        
-        
         public static let promocodeCopybuttonText = "promocode_copybutton_text"
         public static let promocodeCopybuttonTextColor = "promocode_copybutton_text_color"
         public static let promocodeCopybuttonColor = "promocode_copybutton_color"
 
-        
+        public static let displayType = "display_type"
 
     }
 
@@ -124,21 +122,19 @@ public class RDInAppNotification {
     let secondButtonTextColor: UIColor?
     let secondButtonColor: UIColor?
     let secondButtonIosLnk: String?
-    
-    let promocodeCopybuttonText : String?
-    let promocodeCopybuttonTextColor : String?
-    let promocodeCopybuttonColor : String?
-    let buttonBorderRadius : String?
+
+    let promocodeCopybuttonText: String?
+    let promocodeCopybuttonTextColor: String?
+    let promocodeCopybuttonColor: String?
+    let buttonBorderRadius: String?
 
     var imageUrl: URL?
 
     /// Second Popup First Image
     var secondImageUrl1: URL?
 
-
     /// Second Popup Second Image
     var secondImageUrl2: URL?
-
 
     let callToActionUrl: URL?
     let callToSecondActionUrl: URL?
@@ -149,7 +145,9 @@ public class RDInAppNotification {
     var buttonTextFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body),
                                         size: CGFloat(8))
     var secondButtonTextFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body),
-                                        size: CGFloat(8))
+                                              size: CGFloat(8))
+
+    var displayType: String? = "popup"
 
     public init(actId: Int,
                 type: RDInAppNotificationType,
@@ -194,19 +192,19 @@ public class RDInAppNotification {
                 previousPopupPoint: Double? = nil,
                 position: RDHalfScreenPosition?,
                 carouselItems: [RDCarouselItem]? = nil,
-                videourl:String?,
-                secondPopupVideourl1:String?,
-                secondPopupVideourl2:String?,
-                secondButtonFunction:String?,
-                secondButtonText:String?,
-                secondButtonTextColor:String?,
-                secondButtonColor:String?,
-                secondButtonIosLnk:String?,
-                promocodeCopybuttonText:String?,
-                promocodeCopybuttonTextColor:String?,
-                promocodeCopybuttonColor:String?,
-                buttonBorderRadius:String?)
-    {
+                videourl: String?,
+                secondPopupVideourl1: String?,
+                secondPopupVideourl2: String?,
+                secondButtonFunction: String?,
+                secondButtonText: String?,
+                secondButtonTextColor: String?,
+                secondButtonColor: String?,
+                secondButtonIosLnk: String?,
+                promocodeCopybuttonText: String?,
+                promocodeCopybuttonTextColor: String?,
+                promocodeCopybuttonColor: String?,
+                buttonBorderRadius: String?,
+                displayType: String?) {
         self.actId = actId
         messageType = type.rawValue
         self.type = type
@@ -253,7 +251,7 @@ public class RDInAppNotification {
 
         var callToActionUrl: URL?
         if let buttonFunction = buttonFunction {
-            if buttonFunction == "link" || buttonFunction == ""  {
+            if buttonFunction == "link" || buttonFunction == "" {
                 if let urlString = iosLink {
                     callToActionUrl = URL(string: urlString)
                 }
@@ -265,8 +263,7 @@ public class RDInAppNotification {
                 callToActionUrl = URL(string: urlString)
             }
         }
-        
-        
+
         var callToSecondActionUrl: URL?
         if let buttonFunction = secondButtonFunction {
             if buttonFunction == "link" || buttonFunction == "" {
@@ -281,7 +278,7 @@ public class RDInAppNotification {
                 callToSecondActionUrl = URL(string: urlString)
             }
         }
-        
+
         self.callToActionUrl = callToActionUrl
         self.callToSecondActionUrl = callToSecondActionUrl
         self.alertType = alertType
@@ -312,15 +309,16 @@ public class RDInAppNotification {
         if let carouselItems = carouselItems {
             self.carouselItems = carouselItems
         }
-        
+
         self.videourl = videourl
         self.secondPopupVideourl1 = secondPopupVideourl1
         self.secondPopupVideourl2 = secondPopupVideourl2
-        
+
         self.promocodeCopybuttonText = promocodeCopybuttonText
         self.promocodeCopybuttonTextColor = promocodeCopybuttonTextColor
         self.promocodeCopybuttonColor = promocodeCopybuttonColor
         self.buttonBorderRadius = buttonBorderRadius
+        self.displayType = displayType
 
         setFonts()
     }
@@ -382,7 +380,9 @@ public class RDInAppNotification {
         promocodeCopybuttonTextColor = actionData[PayloadKey.promocodeCopybuttonTextColor] as? String
         promocodeCopybuttonColor = actionData[PayloadKey.promocodeCopybuttonColor] as? String
         buttonBorderRadius = actionData[PayloadKey.buttonBorderRadius] as? String
-        
+
+        displayType = actionData[PayloadKey.displayType] as? String
+
         if let cBColor = actionData[PayloadKey.closeButtonColor] as? String {
             if cBColor.lowercased() == "white" {
                 closeButtonColor = UIColor.white
@@ -404,7 +404,7 @@ public class RDInAppNotification {
 
         var callToActionUrl: URL?
         if let buttonFunction = buttonFunction {
-            if buttonFunction == "link" || buttonFunction == "" || buttonFunction == RDConstants.copyRedirect{
+            if buttonFunction == "link" || buttonFunction == "" || buttonFunction == RDConstants.copyRedirect {
                 if let urlString = iosLink {
                     callToActionUrl = URL(string: urlString)
                 }
@@ -416,8 +416,7 @@ public class RDInAppNotification {
                 callToActionUrl = URL(string: urlString)
             }
         }
-        
-        
+
         var callToSecondActionUrl: URL?
         if let buttonFunction = secondButtonFunction {
             if buttonFunction == "link" || buttonFunction == "" || buttonFunction == RDConstants.copyRedirect {
@@ -432,7 +431,7 @@ public class RDInAppNotification {
                 callToSecondActionUrl = URL(string: urlString)
             }
         }
-        
+
         self.callToActionUrl = callToActionUrl
         self.callToSecondActionUrl = callToSecondActionUrl
 
@@ -461,7 +460,7 @@ public class RDInAppNotification {
         videourl = actionData[PayloadKey.videourl] as? String
         secondPopupVideourl1 = actionData[PayloadKey.secondPopupVideourl1] as? String
         secondPopupVideourl2 = actionData[PayloadKey.secondPopupVideourl2] as? String
-        
+
         if !secondImageUrlString1.isNilOrWhiteSpace {
             secondImageUrl1 = RDHelper.getImageUrl(imageUrlString!, type: self.type)
         }
@@ -493,8 +492,6 @@ public class RDInAppNotification {
             item.buttonBorderRadius = buttonBorderRadius
             return item
         }
-        
-
 
         setFonts()
     }

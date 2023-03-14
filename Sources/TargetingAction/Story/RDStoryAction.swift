@@ -43,8 +43,8 @@ class RDStoryActionExtendedProperties {
     var imageBorderColor = UIColor.clear // "#cc3a3a"
     var labelColor = UIColor.black // "#a83c3c"
     var moveShownToEnd = true
-    var storyzLabelColor : String = ""
-    var fontFamily : String = ""
-    var customFontFamilyIos :String = ""
+    var storyzLabelColor: String = ""
+    var fontFamily: String = ""
+    var customFontFamilyIos: String = ""
 
 }

@@ -197,6 +197,8 @@ struct RDConstants {
     
     static let appBanners = "app_banners"
     static let transitionAction = "transition_action"
+    
+    static let inline = "inline"
 
     
 

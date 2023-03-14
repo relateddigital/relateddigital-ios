@@ -346,9 +346,9 @@ public class RelatedDigital {
         }
     }
     
-    public static func getNpsWithNumbersView(properties: Properties, completion: @escaping (RDPopupDialogDefaultView?) -> Void) {
+    public static func getNpsWithNumbersView(properties: Properties, completion: @escaping (RDNpsWithNumbersContainerView?) -> Void) {
         shared.rdInstance.getNpsWithNumbersView(properties: properties) { npsWithNumbersView in
-            completion(npsWithNumbersView)
+            //completion(npsWithNumbersView)
         }
     }
 }

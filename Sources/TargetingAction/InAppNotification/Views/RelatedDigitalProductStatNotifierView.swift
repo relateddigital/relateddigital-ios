@@ -8,11 +8,11 @@
 import UIKit
 
 class RelatedDigitalProductStatNotifierView: UIView {
-    
+
     var productStatNotifier: RDProductStatNotifierViewModel
     var titleLabel: UILabel!
     var closeButton: UIButton!
-    
+
     init(frame: CGRect, productStatNotifier: RDProductStatNotifierViewModel) {
         self.productStatNotifier = productStatNotifier
         super.init(frame: frame)
@@ -20,11 +20,11 @@ class RelatedDigitalProductStatNotifierView: UIView {
         setCloseButton()
         layoutContent()
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setupTitle() {
         titleLabel = UILabel()
         titleLabel.attributedText = productStatNotifier.attributedString
@@ -33,7 +33,7 @@ class RelatedDigitalProductStatNotifierView: UIView {
         titleLabel.numberOfLines = 0
         addSubview(titleLabel)
     }
-    
+
     private func setCloseButton() {
         closeButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -43,15 +43,15 @@ class RelatedDigitalProductStatNotifierView: UIView {
         closeButton.setTitle("×", for: .normal)
         closeButton.titleLabel?.font = .systemFont(ofSize: 35.0, weight: .regular)
         closeButton.contentEdgeInsets = UIEdgeInsets(top: 2.5, left: 2.5, bottom: 2.5, right: 2.5)
-        closeButton.setTitleColor(productStatNotifier.closeButtonColor.lowercased() == "white" ? UIColor.white : UIColor.black , for: .normal)
+        closeButton.setTitleColor(productStatNotifier.closeButtonColor.lowercased() == "white" ? UIColor.white : UIColor.black, for: .normal)
         addSubview(closeButton)
     }
-    
+
     private func layoutContent() {
         self.backgroundColor = UIColor(hex: productStatNotifier.bgcolor)
         titleLabel.leading(to: self, offset: 40, relation: .equal, priority: .required)
         titleLabel.trailing(to: self, offset: -40, relation: .equal, priority: .required)
-        titleLabel.centerX(to: self,priority: .required)
+        titleLabel.centerX(to: self, priority: .required)
         if productStatNotifier.showclosebtn {
             closeButton.top(to: self, offset: -5.0)
             closeButton.trailing(to: self, offset: -10.0)
@@ -62,7 +62,7 @@ class RelatedDigitalProductStatNotifierView: UIView {
         self.window?.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
         self.layoutIfNeeded()
     }
-    
+
     override func layoutSubviews() {
         if titleLabel.text.isNilOrWhiteSpace {
             titleLabel.height(0)

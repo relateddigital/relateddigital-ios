@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 public class RDPopupDialogDefaultView: UIView {
-    
+
     typealias NSLC = NSLayoutConstraint
 
     // MARK: - VARIABLES
@@ -46,41 +46,6 @@ public class RDPopupDialogDefaultView: UIView {
     var selectedNumber: Int?
     var expanded = false
     var sctwMail: String = ""
-
-    @objc public dynamic var titleFont: UIFont {
-        get { return titleLabel.font }
-        set { titleLabel.font = newValue }
-    }
-
-    @objc public dynamic var titleColor: UIColor? {
-        get { return titleLabel.textColor }
-        set { titleLabel.textColor = newValue }
-    }
-
-    @objc public dynamic var titleTextAlignment: NSTextAlignment {
-        get { return titleLabel.textAlignment }
-        set { titleLabel.textAlignment = newValue }
-    }
-
-    @objc public dynamic var messageFont: UIFont {
-        get { return messageLabel.font }
-        set { messageLabel.font = newValue }
-    }
-
-    @objc public dynamic var messageColor: UIColor? {
-        get { return messageLabel.textColor }
-        set { messageLabel.textColor = newValue}
-    }
-
-    @objc public dynamic var messageTextAlignment: NSTextAlignment {
-        get { return messageLabel.textAlignment }
-        set { messageLabel.textAlignment = newValue }
-    }
-
-    @objc public dynamic var closeButtonColor: UIColor? {
-        get { return closeButton.currentTitleColor }
-        set { closeButton.setTitleColor(newValue, for: .normal) }
-    }
 
     internal var imageHeightConstraint: NSLC?
     internal var secondImageHeight: NSLC?
@@ -484,7 +449,7 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
         sctwButton.addTarget(self, action: #selector(copyCodeAndDismiss), for: .touchDown)
         let actid = String(scratchToWin?.actId ?? 0)
         let auth = scratchToWin?.auth ?? ""
-        
+
         RelatedDigital.trackScratchToWinClick(scratchToWinReport: (self.scratchToWin?.report)!)
         RelatedDigital.subscribeSpinToWinMail(actid: actid, auth: auth, mail: sctwMail)
         sctwButton.allEdges(to: self, excluding: .top)

@@ -8,22 +8,20 @@
 import Foundation
 import UIKit
 
+class RDDrawerViewController: RDBaseNotificationViewController {
 
-class RDDrawerViewController : RDBaseNotificationViewController {
-    
     var position: CGPoint?
     var model = DrawerViewModel()
-    var globDrawerView : drawerView?
-    var drawerOpen:Bool = false
-    var drawerFirstPosition:CGPoint?
+    var globDrawerView: drawerView?
+    var drawerOpen: Bool = false
+    var drawerFirstPosition: CGPoint?
     var titleLenght = 12
     var shouldDismissed = false
-    
-    
-    init(model:DrawerServiceModel?) {
+
+    init(model: DrawerServiceModel?) {
         super.init(nibName: nil, bundle: nil)
         self.model = RDDrawerViewControllerModel().mapServiceModelToNeededModel(serviceModel: model)
-        let drawerView : drawerView = UIView.fromNib()
+        let drawerView: drawerView = UIView.fromNib()
         drawerView.drawerModel = self.model
         globDrawerView = drawerView
         addTapGestureToDrawerMiniView()
@@ -34,15 +32,15 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         }
         self.view = drawerView
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         drawerFirstPosition = self.window?.layer.position
@@ -50,11 +48,11 @@ class RDDrawerViewController : RDBaseNotificationViewController {
             configureCircleDrawer()
         }
         initializeData()
-        
+
     }
-    
+
     func initializeData() {
-        
+
         if model.screenXcoordinate == .right {
             globDrawerView?.leftDrawerMiniContentImageView.setImage(withUrl: model.miniDrawerContentImage ?? "")
             globDrawerView?.leftTitleLabel.text = model.titleString
@@ -77,10 +75,10 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         globDrawerView?.drawerGrandContentImageView.setImage(withUrl: model.drawerContentImage ?? "")
 
     }
-    
-    func createDummyModel()  -> DrawerViewModel {
+
+    func createDummyModel() -> DrawerViewModel {
         var model = DrawerViewModel()
-        
+
         model.titleString = "DenemeDeneme"
         model.isCircle = true
         model.screenYcoordinate = .middle
@@ -89,18 +87,18 @@ class RDDrawerViewController : RDBaseNotificationViewController {
 
         return model
     }
-        
+
     func configureCircleDrawer() {
 
         if model.screenXcoordinate == .right {
-            
+
             self.globDrawerView?.leftDrawerMiniView.layer.zPosition = -1
             self.globDrawerView?.leftDrawerWidthConstraint.constant = self.model.miniDrawerWidthForCircle
             self.globDrawerView?.leftDrawerMiniView.layer.cornerRadius = self.model.miniDrawerWidthForCircle / 2
             self.globDrawerView?.leftDrawerTrailingConstraint.constant = -((self.globDrawerView?.leftDrawerWidthConstraint.constant)! / 2)
             self.globDrawerView?.leftDrawerTitleLabelCenterXConstraint.constant =  self.model.xCoordPaddingConstant
             self.globDrawerView?.leftDrawerContentImageCenterXConstraint.constant =  2
-    
+
             if self.model.titleString.count > 0 {
                 self.globDrawerView?.leftDrawerMiniContentImageView.isHidden = true
                 self.globDrawerView?.leftDrawerMiniContentImageTopConstraint.constant *= 1.6
@@ -114,7 +112,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
                 self.globDrawerView?.leftDrawerMiniContentImageTrailingConstraint.constant += (self.globDrawerView?.drawerModel!.miniDrawerWidth)!
             }
             self.globDrawerView!.leftDrawerMiniView.clipsToBounds = true
-            //self.globSidebarView?.leftSideBarMiniImageView.image = self.model.dataImage
+            // self.globSidebarView?.leftSideBarMiniImageView.image = self.model.dataImage
             self.globDrawerView!.isHidden = false
         } else if model.screenXcoordinate == .left {
 
@@ -124,7 +122,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
             self.globDrawerView?.rightDrawerTrailingConstraint.constant = -((self.globDrawerView?.rightDrawerWidthConstraint.constant)! / 2)
             self.globDrawerView?.rightDrawerTitleLabelCenterXConstraint.constant =  -(self.model.xCoordPaddingConstant)
             self.globDrawerView?.rightDrawerContentImageCenterXConstraint.constant = -2
-    
+
             if self.model.titleString.count > 0 {
                 self.globDrawerView?.rightDrawerMiniContentImageView.isHidden = true
                 self.globDrawerView?.rightDrawerMiniContentImageTopConstraint.constant *= 1.6
@@ -138,14 +136,14 @@ class RDDrawerViewController : RDBaseNotificationViewController {
                 self.globDrawerView?.rightDrawerMiniContentImageLeadingConstraint.constant += (self.globDrawerView?.drawerModel!.miniDrawerWidth)!
             }
             self.globDrawerView!.rightDrawerMiniView.clipsToBounds = true
-            //self.globSidebarView?.rightSideBarMiniImageView.image = self.model.dataImage
+            // self.globSidebarView?.rightSideBarMiniImageView.image = self.model.dataImage
             self.globDrawerView!.isHidden = false
         }
     }
-    
-    func configureStandartView(drawer:drawerView) {
-        
-        //ekranın sağında mı solunda mı
+
+    func configureStandartView(drawer: drawerView) {
+
+        // ekranın sağında mı solunda mı
         if self.model.screenXcoordinate == .right {
             globDrawerView?.rightDrawerMiniWidthConstraint.constant = 0
             globDrawerView?.rightDrawerMiniView.isHidden = true
@@ -153,8 +151,8 @@ class RDDrawerViewController : RDBaseNotificationViewController {
             globDrawerView?.leftDrawerMiniWidthConstraint.constant = 0
             globDrawerView?.leftDrawerMiniView.isHidden = true
         }
-        
-        //label tipi
+
+        // label tipi
         if self.model.labelType == .downToUp  && self.model.screenXcoordinate == .right {
             globDrawerView!.leftTitleLabel.transform = CGAffineTransform(rotationAngle: -CGFloat.pi / 2)
         } else if self.model.labelType == .upToDown  && self.model.screenXcoordinate == .right {
@@ -164,7 +162,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         } else if self.model.labelType == .upToDown  && self.model.screenXcoordinate == .left {
             globDrawerView!.rightTitleLabel.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2)
         }
-        
+
         if self.model.screenXcoordinate == .right {
             if model.titleString.count > titleLenght {
                 while model.titleString.count != titleLenght {
@@ -172,7 +170,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
                 }
             }
             globDrawerView!.leftTitleLabel.text = model.titleString
-            //modele göre diğer elementlerin assign edilmesi gerek left mini viewa
+            // modele göre diğer elementlerin assign edilmesi gerek left mini viewa
         } else if self.model.screenXcoordinate == .left {
             if model.titleString.count > titleLenght {
                 while model.titleString.count != titleLenght {
@@ -180,14 +178,14 @@ class RDDrawerViewController : RDBaseNotificationViewController {
                 }
             }
             globDrawerView!.rightTitleLabel.text = model.titleString
-            //modele göre diğer elementlerin assign edilmesi gerek right mini viewa
+            // modele göre diğer elementlerin assign edilmesi gerek right mini viewa
         }
-        
+
         if !self.model.isCircle {
             globDrawerView?.rightDrawerMiniContentImageView.isHidden = true
             globDrawerView?.leftDrawerMiniContentImageView.isHidden = true
         }
-        
+
         if self.model.screenXcoordinate == .right && !(self.model.isCircle ) {
             self.globDrawerView?.leftDrawerMiniContentImageTopConstraint.constant *= 1.2
         } else if self.model.screenXcoordinate == .left && !(self.model.isCircle ) {
@@ -195,9 +193,9 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         }
 
     }
-    
+
     @objc func imageClicked(_ sender: UITapGestureRecognizer? = nil) {
-        
+
         shouldDismissed = true
         if let url = URL(string: self.model.linkToGo ?? "") {
             delegate?.notificationShouldDismiss(controller: self, callToActionURL: url, shouldTrack: false, additionalTrackingProperties: nil)
@@ -205,7 +203,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
     }
 
     @objc func viewClicked(_ sender: UITapGestureRecognizer? = nil) {
-        
+
         UIView.animate(withDuration: 0.5, animations: { [self] in
             if drawerOpen {
                 self.window?.layer.position = drawerFirstPosition!
@@ -217,12 +215,12 @@ class RDDrawerViewController : RDBaseNotificationViewController {
             } else {
                 if model.screenXcoordinate == .right {
                     if let winPos = self.window?.layer.position {
-                        self.window?.layer.position = CGPoint(x: winPos.x - globDrawerView!.width + self.model.miniDrawerWidth  , y: winPos.y)
+                        self.window?.layer.position = CGPoint(x: winPos.x - globDrawerView!.width + self.model.miniDrawerWidth, y: winPos.y)
                     }
                     globDrawerView?.leftDrawerMiniArrow.text = ">"
                 } else if model.screenXcoordinate == .left {
                     if let winPos = self.window?.layer.position {
-                        self.window?.layer.position = CGPoint(x: winPos.x + globDrawerView!.width - self.model.miniDrawerWidth  , y: winPos.y)
+                        self.window?.layer.position = CGPoint(x: winPos.x + globDrawerView!.width - self.model.miniDrawerWidth, y: winPos.y)
                     }
                     globDrawerView?.rightDrawerMiniArrow.text = "<"
                 }
@@ -230,8 +228,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         })
         drawerOpen = !drawerOpen
     }
-    
-    
+
     override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
@@ -248,7 +245,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
             bounds = UIScreen.main.bounds
         }
         let DrawerframeWidth = bounds.size.width / 2
-        
+
         var frameY = Double()
 
         if self.model.screenYcoordinate == .top {
@@ -260,13 +257,13 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         }
 
         var frame = CGRect()
-        
+
         if self.model.screenXcoordinate == .right {
             frame = CGRect(origin: CGPoint(x: bounds.maxX-self.model.miniDrawerWidth, y: CGFloat(frameY)), size: CGSize(width: DrawerframeWidth, height: CGFloat(self.model.drawerHeight)))
         } else if self.model.screenXcoordinate == .left {
             frame = CGRect(origin: CGPoint(x: bounds.minX-DrawerframeWidth+model.miniDrawerWidth, y: CGFloat(frameY)), size: CGSize(width: DrawerframeWidth, height: CGFloat(self.model.drawerHeight)))
         }
-        
+
         if #available(iOS 13.0, *) {
             let windowScene = sharedUIApplication
                 .connectedScenes
@@ -288,8 +285,7 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         self.position = self.window?.layer.position
         configureStandartView(drawer: view as! drawerView)
     }
-    
-    
+
     fileprivate func setWindowAndAddAnimation(_ animated: Bool) {
         if let window = window {
             window.windowLevel = UIWindow.Level.alert
@@ -305,9 +301,9 @@ class RDDrawerViewController : RDBaseNotificationViewController {
             self.position = self.window?.layer.position
         })
     }
-    
+
     override func hide(animated: Bool, completion: @escaping () -> Void) {
-        
+
         if shouldDismissed {
             self.window?.isHidden = true
             self.window?.removeFromSuperview()
@@ -316,7 +312,6 @@ class RDDrawerViewController : RDBaseNotificationViewController {
         }
     }
 
-    
     func addTapGestureToDrawerMiniView() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.viewClicked(_:)))
         if self.model.screenXcoordinate == .right {
@@ -325,15 +320,11 @@ class RDDrawerViewController : RDBaseNotificationViewController {
             globDrawerView?.rightDrawerMiniView.addGestureRecognizer(tap)
         }
     }
-    
-    
+
     func addTapGestureToImageOfGranDrawer() {
         globDrawerView?.drawerGrandContentImageView.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.imageClicked(_:)))
         globDrawerView?.drawerGrandContentImageView.addGestureRecognizer(tap)
-        
+
     }
 }
-
-
-

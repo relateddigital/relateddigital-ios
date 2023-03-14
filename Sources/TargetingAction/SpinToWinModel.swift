@@ -39,7 +39,7 @@ public struct SpinToWinViewModel: TargetingActionViewModel, Codable {
     var report: SpinToWinReport
     var taTemplate: String
     var img: String
-    var wheelSpinAction:String
+    var wheelSpinAction: String
     var promocodesSoldoutMessage: String
     var copyButtonFunction: String
 
@@ -75,42 +75,40 @@ public struct SpinToWinViewModel: TargetingActionViewModel, Codable {
     var wheelBorderWidth: String
     var wheelBorderColor: String
     var sliceDisplaynameFontFamily: String
-    
+
     var promocodesSoldoutMessageTextColor: String
     var promocodesSoldoutMessageFontFamily: String
     var promocodesSoldoutMessageTextSize: String
     var promocodesSoldoutMessageBackgroundColor: String
-    
+
     var displaynameCustomFontFamilyIos: String
-    var titleCustomFontFamilyIos : String
-    var textCustomFontFamilyIos : String
-    var buttonCustomFontFamilyIos : String
-    var promocodeTitleCustomFontFamilyIos : String
-    var copybuttonCustomFontFamilyIos : String
-    var promocodesSoldoutMessageCustomFontFamilyIos : String
-    
-    
+    var titleCustomFontFamilyIos: String
+    var textCustomFontFamilyIos: String
+    var buttonCustomFontFamilyIos: String
+    var promocodeTitleCustomFontFamilyIos: String
+    var copybuttonCustomFontFamilyIos: String
+    var promocodesSoldoutMessageCustomFontFamilyIos: String
+
     var titlePosition: String
     var textPosition: String
     var buttonPosition: String
     var copybuttonPosition: String
-    
+
     var promocodeBannerText: String
     var promocodeBannerTextColor: String
     var promocodeBannerBackgroundColor: String
     var promocodeBannerButtonLabel: String
-    
+
     var bannerCode: String?
-    
+
     var showPromoCodeBanner: Bool {
         return !promocodeBannerButtonLabel.isEmpty && !bannerCode.isNilOrWhiteSpace
     }
-    
+
     var fontFiles: [String] = []
-    
-    
+
     public var jsContent: String?
-    
+
 }
 
 public struct SpinToWinReport: Codable {

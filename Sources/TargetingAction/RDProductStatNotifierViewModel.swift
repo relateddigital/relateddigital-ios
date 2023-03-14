@@ -22,24 +22,23 @@ public struct RDProductStatNotifierViewModel: TargetingActionViewModel {
     var contentcount_text_size: String
     var closeButtonColor: String
     var contentCount = 0  // TODO: kullanmayalım
-    var attributedString: NSAttributedString? = nil
-    
-    
+    var attributedString: NSAttributedString?
+
     public var jsContent: String?
-    
+
     func getContentFont() -> UIFont {
         return RDHelper.getFont(fontFamily: content_font_family, fontSize: content_text_size, style: .title2)
     }
-    
+
     func getContentCountFont() -> UIFont {
         return RDHelper.getFont(fontFamily: content_font_family, fontSize: contentcount_text_size, style: .title2)
     }
-    
+
     mutating func setAttributedString() {
         if let regex = try? NSRegularExpression(pattern: "<COUNT>(.+?)</COUNT>", options: .dotMatchesLineSeparators) {
             let results = regex.matches(in: content, range: NSRange(content.startIndex..., in: content))
             if results.isEmpty {
-                if content.contains("<COUNT>"){
+                if content.contains("<COUNT>") {
                     RDLogger.error("Product stat notifier: Could not parse the number!")
                     return
                 } else {
@@ -49,7 +48,7 @@ public struct RDProductStatNotifierViewModel: TargetingActionViewModel {
                         aString.addAttribute(.foregroundColor, value: contentColor, range: NSRange(location: 0, length: content.count))
                     }
                     attributedString = aString
-                    RDLogger.warn("Product stat notifier: Tag COUNT is not used!");
+                    RDLogger.warn("Product stat notifier: Tag COUNT is not used!")
                 }
             } else {
                 var currentIndex = 0
@@ -85,6 +84,5 @@ public struct RDProductStatNotifierViewModel: TargetingActionViewModel {
             }
         }
     }
-    
-    
+
 }

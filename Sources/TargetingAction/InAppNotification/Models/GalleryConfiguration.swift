@@ -5,7 +5,6 @@
 //  Created by Egemen Gülkılık on 5.07.2022.
 //
 
-
 import UIKit
 
 public typealias MarginLeft = CGFloat
@@ -19,7 +18,6 @@ public enum ButtonLayout {
     case pinRight(MarginTop, MarginRight)
 }
 
-
 /// Represents various possible layouts for the footer
 public enum FooterLayout {
     case pinLeft(MarginBottom, MarginLeft)
@@ -29,9 +27,9 @@ public enum FooterLayout {
 }
 
 public enum GalleryRotationMode {
-    ///Gallery will rotate to orientations supported in the application.
+    /// Gallery will rotate to orientations supported in the application.
     case applicationBased
-    ///Gallery will rotate regardless of the rotation setting in the application.
+    /// Gallery will rotate regardless of the rotation setting in the application.
     case always
 }
 

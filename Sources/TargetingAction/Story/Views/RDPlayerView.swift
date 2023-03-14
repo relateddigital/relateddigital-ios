@@ -5,7 +5,6 @@
 //  Created by Egemen Gülkılık on 18.12.2021.
 //
 
-
 import UIKit
 import AVKit
 import AVFoundation
@@ -30,13 +29,13 @@ protocol PlayerControls: AnyObject {
 }
 
 class RDPlayerView: UIView {
-    
+
     // MARK: - Private Vars
     private var timeObserverToken: AnyObject?
     private var playerItemStatusObserver: NSKeyValueObservation?
     private var playerTimeControlStatusObserver: NSKeyValueObservation?
     private var playerLayer: AVPlayerLayer?
-    private var playerItem: AVPlayerItem? = nil {
+    private var playerItem: AVPlayerItem? {
         willSet {
             // Remove any previous KVO observer.
             guard let playerItemStatusObserver = playerItemStatusObserver else { return }
@@ -61,7 +60,7 @@ class RDPlayerView: UIView {
             })
         }
     }
-    
+
     // MARK: - iVars
     var player: AVPlayer? {
         willSet {
@@ -89,17 +88,17 @@ class RDPlayerView: UIView {
         return player?.currentItem?.error
     }
     var activityIndicator: UIActivityIndicatorView!
-    
+
     var currentItem: AVPlayerItem? {
         return player?.currentItem
     }
     var currentTime: Float {
         return Float(self.player?.currentTime().value ?? 0)
     }
-    
+
     // MARK: - Public Vars
     public weak var playerObserverDelegate: RDPlayerObserver?
-    
+
     // MARK: - Init methods
     override init(frame: CGRect) {
         activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -120,7 +119,7 @@ class RDPlayerView: UIView {
             removeObservers()
         }
     }
-    
+
     // MARK: - Internal methods
     func setupActivityIndicator() {
         activityIndicator.hidesWhenStopped = true
@@ -151,7 +150,7 @@ class RDPlayerView: UIView {
     func setupPlayerPeriodicTimeObserver() {
         // Only add the time observer if one hasn't been created yet.
         guard timeObserverToken == nil else { return }
-        
+
         // Use a weak self variable to avoid a retain cycle in the block.
         timeObserverToken =
         player?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 100),
@@ -169,9 +168,9 @@ class RDPlayerView: UIView {
 
 // MARK: - Protocol | PlayerControls
 extension RDPlayerView: PlayerControls {
-    
+
     func play(with resource: VideoResource) {
-        
+
         guard let url = URL(string: resource.filePath) else {fatalError("Unable to form URL from resource")}
         if let existingPlayer = player {
             DispatchQueue.main.async { [weak self] in
@@ -209,7 +208,7 @@ extension RDPlayerView: PlayerControls {
             DispatchQueue.main.async {[weak self] in
                 guard let strongSelf = self else { return }
                 existingPlayer.pause()
-                
+
                 // Remove observer if observer presents before setting player to nil
                 if existingPlayer.observationInfo != nil {
                     strongSelf.removeObservers()
@@ -223,5 +222,5 @@ extension RDPlayerView: PlayerControls {
             // player was already deallocated
         }
     }
-    
+
 }

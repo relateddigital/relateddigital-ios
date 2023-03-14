@@ -22,14 +22,11 @@ final class ClickListener: UITapGestureRecognizer {
     }
 }
 
-
 extension UIView {
-    
-    public func setOnClickedListener(_ action: @escaping() -> Void)
-    {
+
+    public func setOnClickedListener(_ action: @escaping() -> Void) {
         self.isUserInteractionEnabled = true
         let click = ClickListener(action)
         self.addGestureRecognizer(click)
     }
 }
-

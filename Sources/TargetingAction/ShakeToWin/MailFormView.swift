@@ -21,15 +21,15 @@ class MailFormView: UIView {
     @IBOutlet weak var continueButtonView: UIView!
     @IBOutlet weak var continueButtonLabel: UILabel!
     @IBOutlet weak var mailInvalidLabel: UILabel!
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         self.setOnClickedListener {

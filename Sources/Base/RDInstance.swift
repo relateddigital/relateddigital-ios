@@ -674,8 +674,8 @@ extension RDInstance {
         }
     }
     
-    
-    public func getNpsWithNumbersView(properties:Properties, completion: @escaping ((RDPopupDialogDefaultView?) -> Void)) {
+        
+    public func getNpsWithNumbersView(properties:Properties, completion: @escaping ((RDNpsWithNumbersView?) -> Void)) {
         let guid = UUID().uuidString
         
         var props = properties
@@ -700,16 +700,15 @@ extension RDInstance {
             }
         }
         
-        self.rdTargetingActionInstance.getNpsWithNumbers(properties: props , rdUser: self.rdUser, guid: guid) { response in
+        self.rdTargetingActionInstance.getNpsWithNumbers(properties: props , rdUser: self.rdUser, guid: guid) { notif in
             
-            if response.error != nil {
-                completion(nil)
-            } else {
-                DispatchQueue.main.async {
-                    let bannerView : BannerView = .fromNib()
-                    bannerView.model = response
-                    //completion(bannerView)
+            DispatchQueue.main.async {
+                var npsView: RDNpsWithNumbersView? = nil
+                if let notif = notif {
+                    npsView = RDNpsWithNumbersView(frame: UIScreen.main.bounds, rdInAppNotification: notif)
+                    //npsView?.setupForNpsWithNumbers()
                 }
+                completion(npsView)
             }
             
         }

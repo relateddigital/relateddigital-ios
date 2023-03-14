@@ -8,15 +8,15 @@
 import Foundation
 
 class RDStoryPreviewModel: NSObject {
-    
+
     // MARK: - iVars
     let stories: [RDStory]
-    
+
     // MARK: - Init method
     init(_ stories: [RDStory]) {
         self.stories = stories
     }
-    
+
     // MARK: - Functions
     func numberOfItemsInSection(_ section: Int) -> Int {
         return stories.count

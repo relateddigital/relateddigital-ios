@@ -20,8 +20,8 @@ class RDStoryItem {
     let buttonText: String
     let buttonTextColor: UIColor
     let buttonColor: UIColor
-    let countDown:RDStoryCountDown?
-    
+    let countDown: RDStoryCountDown?
+
     var kind: MimeType {
         switch mimeType {
         case MimeType.photo.rawValue:
@@ -35,7 +35,7 @@ class RDStoryItem {
 
     init (fileType: String, displayTime: Int, fileSrc: String,
           targetUrl: String, buttonText: String, buttonTextColor: UIColor,
-          buttonColor: UIColor,countDown:RDStoryCountDown) {
+          buttonColor: UIColor, countDown: RDStoryCountDown) {
         self.mimeType = fileType
         self.displayTime = displayTime // TO_DO:
         self.url = fileSrc // TO_DO:
@@ -48,14 +48,14 @@ class RDStoryItem {
 }
 
 struct RDStoryCountDown {
-    var pagePosition:String?
-    var messageText:String?
-    var messageTextSize:String?
-    var messageTextColor:String?
-    var displayType:String?
-    var endDateTime:String?
-    var endAction:String?
-    var endAnimationImageUrl:String?
-    var gifImage:UIImage?
+    var pagePosition: String?
+    var messageText: String?
+    var messageTextSize: String?
+    var messageTextColor: String?
+    var displayType: String?
+    var endDateTime: String?
+    var endAction: String?
+    var endAnimationImageUrl: String?
+    var gifImage: UIImage?
 
 }

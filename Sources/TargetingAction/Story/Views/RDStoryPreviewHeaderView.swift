@@ -79,8 +79,6 @@ final class RDStoryPreviewHeaderView: UIView {
         super.init(coder: aDecoder)
     }
 
-    
-    
     // MARK: - Private functions
     private func loadUIElements() {
         backgroundColor = .clear
@@ -91,8 +89,8 @@ final class RDStoryPreviewHeaderView: UIView {
         detailView.addSubview(snaperNameLabel)
         addSubview(closeButton)
     }
-    
-    func setStoryTitleLabelProperties(fontFamily: String?,customFont:String? = "",labelColor:String?,labelStory:UILabel?) {
+
+    func setStoryTitleLabelProperties(fontFamily: String?, customFont: String? = "", labelColor: String?, labelStory: UILabel?) {
 
         if let color = UIColor(hex: labelColor) {
             labelStory?.textColor = color
@@ -128,7 +126,7 @@ final class RDStoryPreviewHeaderView: UIView {
                 }
             }
 
-            if let uiCustomFont = UIFont(name: customFont ?? "", size:labelStory?.font.pointSize ?? 8) {
+            if let uiCustomFont = UIFont(name: customFont ?? "", size: labelStory?.font.pointSize ?? 8) {
                 labelStory?.font = uiCustomFont
                 return
             }

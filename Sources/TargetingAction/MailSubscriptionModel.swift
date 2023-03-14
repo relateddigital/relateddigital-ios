@@ -22,7 +22,7 @@ public struct MailSubscriptionModel {
     var extendedProps: MailSubscriptionExtendedProps
     var checkConsentMessage: String
     var report: TargetingActionReport
-    
+
     var jsContent: String?
 }
 
@@ -43,7 +43,7 @@ public struct MailSubscriptionExtendedProps {
     var consentTextUrl: String
     var closeButtonColor: ButtonColor
     var backgroundColor: String
-    
+
     var titleCustomFontFamilyIos: String
     var textCustomFontFamilyIos: String
     var buttonCustomFontFamilyIos: String
@@ -82,7 +82,7 @@ public struct MailSubscriptionViewModel: TargetingActionViewModel {
     var permitTextSize: Int
     var consentTextSize: Int
     var report: TargetingActionReport
-    
+
     public var jsContent: String?
 }
 

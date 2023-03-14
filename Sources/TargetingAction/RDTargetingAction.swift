@@ -52,7 +52,7 @@ class RDTargetingAction {
                props[key] = value
            }
         }
-        
+
         props[RDConstants.pushPermitPermissionReqKey] = RDConstants.pushPermitStatus
 
         RDRequest.sendInAppNotificationRequest(properties: props, headers: headers, completion: { rdInAppNotificationResult in
@@ -66,7 +66,7 @@ class RDTargetingAction {
                 if let actionData = rawNotif["actiondata"] as? [String: Any] {
                     if let typeString = actionData["msg_type"] as? String,
                        RDInAppNotificationType(rawValue: typeString) != nil,
-                       let notification = RDInAppNotification(JSONObject: rawNotif) {
+                       let notification = RDInAppNotification(JSONObject: rawNotif), notification.displayType != RDConstants.inline {
                         notifications.append(notification)
                     }
                 }
@@ -94,8 +94,7 @@ class RDTargetingAction {
         props[RDConstants.pvivKey] = String(rdUser.pviv)
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
-        
-        
+
         props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
@@ -103,7 +102,7 @@ class RDTargetingAction {
                props[key] = value
            }
         }
-        
+
         props[RDConstants.pushPermitPermissionReqKey] = RDConstants.pushPermitStatus
 
         RDRequest.sendMobileRequest(properties: props, headers: prepareHeaders(rdUser), completion: {(result: [String: Any]?, _: RDError?, _: String?) in
@@ -113,7 +112,7 @@ class RDTargetingAction {
                 return
             }
             targetingActionViewModel = self.parseTargetingAction(result)
-            
+
             if targetingActionViewModel?.targetingActionType == .spinToWin {
                 RDRequest.sendSpinToWinScriptRequest(completion: {(result: String?, _: RDError?) in
                     if let result = result {
@@ -132,7 +131,7 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
-            }  else if targetingActionViewModel?.targetingActionType == .findToWin {
+            } else if targetingActionViewModel?.targetingActionType == .findToWin {
                 RDRequest.sendFindToWinScriptRequest(completion: {(result: String?, _: RDError?) in
                     if let result = result {
                         targetingActionViewModel?.jsContent = result
@@ -190,10 +189,9 @@ class RDTargetingAction {
         }
         return nil
     }
-    
-    
+
     private func parseShakeToWin(_ shakeToWin: [String: Any?]) -> ShakeToWinViewModel? {
-        
+
         guard let actionData = shakeToWin[RDConstants.actionData] as? [String: Any] else { return nil }
         var shakeToWinModel = ShakeToWinViewModel(targetingActionType: .shakeToWin)
         shakeToWinModel.actId = shakeToWin[RDConstants.actid] as? Int ?? 0
@@ -204,12 +202,11 @@ class RDTargetingAction {
         shakeToWinModel.auth = actionData[RDConstants.authentication] as? String ?? ""
         shakeToWinModel.backGroundImage = extendedProps[RDConstants.backgroundImage] as? String
 
-        
         let impression = report[RDConstants.impression] as? String ?? ""
         let click = report[RDConstants.click] as? String ?? ""
         let mailReport = shakeToWinReport(impression: impression, click: click)
         shakeToWinModel.report = mailReport
-        
+
         var mailFormPage = MailSubscriptionModelGamification()
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
             mailFormPage.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
@@ -223,11 +220,11 @@ class RDTargetingAction {
             mailFormPage.message = mailForm[RDConstants.message] as? String ?? ""
 
         }
-        
+
         shakeToWinModel.mailForm = mailFormPage
-        
+
         var mailExtendedProps = MailSubscriptionExtendedPropsGamification()
-        
+
         if let mailFormExtended = extendedProps[RDConstants.gMailSubscriptionForm] as? [String: Any] {
 
             mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
@@ -244,26 +241,24 @@ class RDTargetingAction {
             mailExtendedProps.consentTextUrl = mailFormExtended[RDConstants.consentTextUrl] as? String ?? ""
             mailExtendedProps.titleFontFamily = mailFormExtended[RDConstants.titleFontFamily] as? String ?? ""
         }
-        
+
         shakeToWinModel.mailExtendedProps = mailExtendedProps
-        
 
         var firstPage = ShakeToWinFirstPage()
         if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
             firstPage.image = gamificationRules[RDConstants.backgroundImage] as? String ?? ""
             firstPage.buttonText = gamificationRules[RDConstants.buttonLabel] as? String ?? ""
         }
-        
+
         if let gameficationRuleExtended = extendedProps[RDConstants.gamificationRules] as? [String: Any] {
             firstPage.buttonBgColor = UIColor(hex: gameficationRuleExtended[RDConstants.button_color] as? String ?? "")
-            firstPage.buttonTextColor = UIColor(hex: gameficationRuleExtended[RDConstants.button_text_color] as? String ?? "") 
-            firstPage.buttonFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+            firstPage.buttonTextColor = UIColor(hex: gameficationRuleExtended[RDConstants.button_text_color] as? String ?? "")
+            firstPage.buttonFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "", fontSize: gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? "", style: .title2, customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
         }
         firstPage.backgroundColor = UIColor(hex: extendedProps[RDConstants.backgroundColor] as? String ?? "")
 
         shakeToWinModel.firstPage = firstPage
-        
-        
+
         var secondPage = ShakeToWinSecondPage()
         if let gameElements = actionData[RDConstants.gameElements] as? [String: Any] {
             secondPage.videoURL =  URL(string: gameElements[RDConstants.videoUrl] as? String ?? "")
@@ -281,37 +276,35 @@ class RDTargetingAction {
         thirdPage.buttonText = actionData[RDConstants.copybuttonLabel] as? String
         thirdPage.iosLink = actionData[RDConstants.iosLnk] as? String
         thirdPage.staticCode = actionData[RDConstants.code] as? String
-        
+
         if let gameficationResultElementExtended = extendedProps[RDConstants.gameResultElements] as? [String: Any] {
-            
+
             thirdPage.titleColor = UIColor(hex: gameficationResultElementExtended[RDConstants.titleTextColor] as? String ?? "")
-            thirdPage.titleFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
-            
+            thirdPage.titleFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "", fontSize: gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? "", style: .title2, customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+
             thirdPage.messageColor = UIColor(hex: gameficationResultElementExtended[RDConstants.textColor] as? String ?? "")
-            thirdPage.messageFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: gameficationResultElementExtended[RDConstants.textSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+            thirdPage.messageFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "", fontSize: gameficationResultElementExtended[RDConstants.textSize] as? String ?? "", style: .title2, customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
         }
-        
+
         thirdPage.backgroundColor = UIColor(hex: extendedProps[RDConstants.backgroundColor] as? String ?? "")
         thirdPage.buttonBgColor = UIColor(hex: extendedProps[RDConstants.copybuttonColor] as? String ?? "")
         thirdPage.buttonTextColor = UIColor(hex: extendedProps[RDConstants.copybuttonTextColor] as? String ?? "")
-        thirdPage.buttonFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "",fontSize: extendedProps[RDConstants.copybuttonTextSize] as? String ?? "",style: .title2,customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
-        
+        thirdPage.buttonFont = RDHelper.getFont(fontFamily: extendedProps[RDConstants.fontFamily] as? String ?? "", fontSize: extendedProps[RDConstants.copybuttonTextSize] as? String ?? "", style: .title2, customFont: extendedProps[RDConstants.customFontFamilyIos] as? String ?? "")
+
         shakeToWinModel.thirdPage = thirdPage
-        
+
         shakeToWinModel.promocode_background_color = extendedProps[RDConstants.promocodeBackgroundColor] as? String ?? ""
         shakeToWinModel.promocode_text_color = extendedProps[RDConstants.promocodeTextColor] as? String ?? ""
         shakeToWinModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
         shakeToWinModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
         shakeToWinModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
         shakeToWinModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
-        
+
         shakeToWinModel.closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
 
         return shakeToWinModel
     }
-    
-    
-    
+
     // MARK: SpinToWin
 
     private func parseSpinToWin(_ spinToWin: [String: Any?]) -> SpinToWinViewModel? {
@@ -334,7 +327,7 @@ class RDTargetingAction {
         let sliceCount = actionData[RDConstants.sliceCount] as? String ?? ""
         let promocodesSoldoutMessage = actionData[RDConstants.promocodesSoldoutMessage] as? String ?? ""
         let copyButtonFunction = actionData[RDConstants.copyButtonFunction] as? String ?? "copy"
-        
+
         // report
         let impression = report[RDConstants.impression] as? String ?? ""
         let click = report[RDConstants.click] as? String ?? ""
@@ -379,8 +372,7 @@ class RDTargetingAction {
         let copybuttonTextSize = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
         let emailpermitTextSize = extendedProps[RDConstants.emailpermitTextSize] as? String ?? ""
         let emailpermitTextUrl = extendedProps[RDConstants.emailpermitTextUrl] as? String ?? ""
-        
-        
+
         let displaynameCustomFontFamilyIos = extendedProps[RDConstants.displaynameCustomFontFamilyIos] as? String ?? ""
         let titleCustomFontFamilyIos = extendedProps[RDConstants.titleCustomFontFamilyIos] as? String ?? ""
         let textCustomFontFamilyIos = extendedProps[RDConstants.textCustomFontFamilyIos] as? String ?? ""
@@ -393,22 +385,21 @@ class RDTargetingAction {
         let consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
         let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
         let backgroundColor = extendedProps[RDConstants.backgroundColor] as? String ?? ""
-        
+
         let wheelBorderWidth = extendedProps[RDConstants.wheelBorderWidth] as? String ?? ""
         let wheelBorderColor = extendedProps[RDConstants.wheelBorderColor] as? String ?? ""
         let sliceDisplaynameFontFamily = extendedProps[RDConstants.sliceDisplaynameFontFamily] as? String ?? ""
-        
-        
+
         let promocodesSoldoutMessageTextColor = extendedProps[RDConstants.promocodes_soldout_message_text_color] as? String ?? ""
         let promocodesSoldoutMessageFontFamily = extendedProps[RDConstants.promocodes_soldout_message_font_family] as? String ?? ""
         let promocodesSoldoutMessageTextSize = extendedProps[RDConstants.promocodes_soldout_message_text_size] as? String ?? ""
         let promocodesSoldoutMessageBackgroundColor = extendedProps[RDConstants.promocodes_soldout_message_background_color] as? String ?? ""
-        
+
         let titlePosition = extendedProps[RDConstants.title_position] as? String ?? ""
         let textPosition = extendedProps[RDConstants.text_position] as? String ?? ""
         let buttonPosition = extendedProps[RDConstants.button_position] as? String ?? ""
         let copybuttonPosition = extendedProps[RDConstants.copybutton_position] as? String ?? ""
-        
+
         let promocodeBannerText = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
         let promocodeBannerTextColor = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
         let promocodeBannerBackgroundColor = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
@@ -427,11 +418,10 @@ class RDTargetingAction {
             sliceArray.append(spinToWinSliceViewModel)
         }
 
-        let model = SpinToWinViewModel(targetingActionType: .spinToWin, actId: actid, auth: auth, promoAuth: promoAuth, type: type, title: title, message: message, placeholder: placeholder, buttonLabel: buttonLabel, consentText: consentText, emailPermitText: emailPermitText, successMessage: successMessage, invalidEmailMessage: invalidEmailMessage, checkConsentMessage: checkConsentMessage, promocodeTitle: promocodeTitle, copyButtonLabel: copybuttonLabel, mailSubscription: mailSubscription, sliceCount: sliceCount, slices: sliceArray, report: spinToWinReport, taTemplate: taTemplate, img: img, wheelSpinAction: wheelSpinAction, promocodesSoldoutMessage: promocodesSoldoutMessage, copyButtonFunction: copyButtonFunction, displaynameTextColor: displaynameTextColor, displaynameFontFamily: displaynameFontFamily, displaynameTextSize: displaynameTextSize, titleTextColor: titleTextColor, titleFontFamily: titleFontFamily, titleTextSize: titleTextSize, textColor: textColor, textFontFamily: textFontFamily, textSize: textSize, buttonColor: button_color, buttonTextColor: button_text_color, buttonFontFamily: buttonFontFamily, buttonTextSize: buttonTextSize, promocodeTitleTextColor: promocodeTitleTextColor, promocodeTitleFontFamily: promocodeTitleFontFamily, promocodeTitleTextSize: promocodeTitleTextSize, promocodeBackgroundColor: promocodeBackgroundColor, promocodeTextColor: promocodeTextColor, copybuttonColor: copybuttonColor, copybuttonTextColor: copybuttonTextColor, copybuttonFontFamily: copybuttonFontFamily, copybuttonTextSize: copybuttonTextSize, emailpermitTextSize: emailpermitTextSize, emailpermitTextUrl: emailpermitTextUrl, consentTextSize: consentTextSize, consentTextUrl: consentTextUrl, closeButtonColor: closeButtonColor, backgroundColor: backgroundColor,wheelBorderWidth: wheelBorderWidth,wheelBorderColor: wheelBorderColor,sliceDisplaynameFontFamily: sliceDisplaynameFontFamily, promocodesSoldoutMessageTextColor: promocodesSoldoutMessageTextColor, promocodesSoldoutMessageFontFamily: promocodesSoldoutMessageFontFamily, promocodesSoldoutMessageTextSize: promocodesSoldoutMessageTextSize, promocodesSoldoutMessageBackgroundColor: promocodesSoldoutMessageBackgroundColor,displaynameCustomFontFamilyIos:displaynameCustomFontFamilyIos ,titleCustomFontFamilyIos:titleCustomFontFamilyIos,textCustomFontFamilyIos:textCustomFontFamilyIos,buttonCustomFontFamilyIos:buttonCustomFontFamilyIos,promocodeTitleCustomFontFamilyIos:promocodeTitleCustomFontFamilyIos,copybuttonCustomFontFamilyIos:copybuttonCustomFontFamilyIos,promocodesSoldoutMessageCustomFontFamilyIos:promocodesSoldoutMessageCustomFontFamilyIos, titlePosition: titlePosition, textPosition: textPosition, buttonPosition: buttonPosition, copybuttonPosition: copybuttonPosition, promocodeBannerText: promocodeBannerText, promocodeBannerTextColor: promocodeBannerTextColor, promocodeBannerBackgroundColor: promocodeBannerBackgroundColor, promocodeBannerButtonLabel: promocodeBannerButtonLabel)
+        let model = SpinToWinViewModel(targetingActionType: .spinToWin, actId: actid, auth: auth, promoAuth: promoAuth, type: type, title: title, message: message, placeholder: placeholder, buttonLabel: buttonLabel, consentText: consentText, emailPermitText: emailPermitText, successMessage: successMessage, invalidEmailMessage: invalidEmailMessage, checkConsentMessage: checkConsentMessage, promocodeTitle: promocodeTitle, copyButtonLabel: copybuttonLabel, mailSubscription: mailSubscription, sliceCount: sliceCount, slices: sliceArray, report: spinToWinReport, taTemplate: taTemplate, img: img, wheelSpinAction: wheelSpinAction, promocodesSoldoutMessage: promocodesSoldoutMessage, copyButtonFunction: copyButtonFunction, displaynameTextColor: displaynameTextColor, displaynameFontFamily: displaynameFontFamily, displaynameTextSize: displaynameTextSize, titleTextColor: titleTextColor, titleFontFamily: titleFontFamily, titleTextSize: titleTextSize, textColor: textColor, textFontFamily: textFontFamily, textSize: textSize, buttonColor: button_color, buttonTextColor: button_text_color, buttonFontFamily: buttonFontFamily, buttonTextSize: buttonTextSize, promocodeTitleTextColor: promocodeTitleTextColor, promocodeTitleFontFamily: promocodeTitleFontFamily, promocodeTitleTextSize: promocodeTitleTextSize, promocodeBackgroundColor: promocodeBackgroundColor, promocodeTextColor: promocodeTextColor, copybuttonColor: copybuttonColor, copybuttonTextColor: copybuttonTextColor, copybuttonFontFamily: copybuttonFontFamily, copybuttonTextSize: copybuttonTextSize, emailpermitTextSize: emailpermitTextSize, emailpermitTextUrl: emailpermitTextUrl, consentTextSize: consentTextSize, consentTextUrl: consentTextUrl, closeButtonColor: closeButtonColor, backgroundColor: backgroundColor, wheelBorderWidth: wheelBorderWidth, wheelBorderColor: wheelBorderColor, sliceDisplaynameFontFamily: sliceDisplaynameFontFamily, promocodesSoldoutMessageTextColor: promocodesSoldoutMessageTextColor, promocodesSoldoutMessageFontFamily: promocodesSoldoutMessageFontFamily, promocodesSoldoutMessageTextSize: promocodesSoldoutMessageTextSize, promocodesSoldoutMessageBackgroundColor: promocodesSoldoutMessageBackgroundColor, displaynameCustomFontFamilyIos: displaynameCustomFontFamilyIos, titleCustomFontFamilyIos: titleCustomFontFamilyIos, textCustomFontFamilyIos: textCustomFontFamilyIos, buttonCustomFontFamilyIos: buttonCustomFontFamilyIos, promocodeTitleCustomFontFamilyIos: promocodeTitleCustomFontFamilyIos, copybuttonCustomFontFamilyIos: copybuttonCustomFontFamilyIos, promocodesSoldoutMessageCustomFontFamilyIos: promocodesSoldoutMessageCustomFontFamilyIos, titlePosition: titlePosition, textPosition: textPosition, buttonPosition: buttonPosition, copybuttonPosition: copybuttonPosition, promocodeBannerText: promocodeBannerText, promocodeBannerTextColor: promocodeBannerTextColor, promocodeBannerBackgroundColor: promocodeBannerBackgroundColor, promocodeBannerButtonLabel: promocodeBannerButtonLabel)
 
         return model
     }
-
 
     // MARK: ProductStatNotifier
 
@@ -448,7 +438,7 @@ class RDTargetingAction {
         let bgcolor = actionData[RDConstants.bgcolor] as? String ?? ""
         let threshold = actionData[RDConstants.threshold] as? Int ?? 0
         let showclosebtn = actionData[RDConstants.showclosebtn] as? Bool ?? false
-        
+
         // extended properties
         let content_text_color = extendedProps[RDConstants.content_text_color] as? String ?? ""
         let content_font_family = extendedProps[RDConstants.content_font_family] as? String ?? ""
@@ -456,23 +446,22 @@ class RDTargetingAction {
         let contentcount_text_color = extendedProps[RDConstants.contentcount_text_color] as? String ?? ""
         let contentcount_text_size = extendedProps[RDConstants.contentcount_text_size] as? String ?? ""
         let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
-        
+
         var productStatNotifier = RDProductStatNotifierViewModel(targetingActionType: .productStatNotifier, content: content, timeout: timeout, position: position, bgcolor: bgcolor, threshold: threshold, showclosebtn: showclosebtn, content_text_color: content_text_color, content_font_family: content_font_family, content_text_size: content_text_size, contentcount_text_color: contentcount_text_color, contentcount_text_size: contentcount_text_size, closeButtonColor: closeButtonColor)
         productStatNotifier.setAttributedString()
         return productStatNotifier
     }
-    
-    
+
     private func parseDownHsView(_ downHsView: [String: Any?]) -> downHsViewServiceModel? {
 
         guard let actionData = downHsView[RDConstants.actionData] as? [String: Any] else { return nil }
         var downHsViewServiceModel = downHsViewServiceModel(targetingActionType: .downHsView)
         downHsViewServiceModel.actId = downHsView[RDConstants.actid] as? Int ?? 0
         downHsViewServiceModel.auth = actionData[RDConstants.authentication] as? String ?? ""
-        
+
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
-        
+
         downHsViewServiceModel.title = actionData[RDConstants.title] as? String ?? ""
         downHsViewServiceModel.message = actionData[RDConstants.message] as? String ?? ""
         downHsViewServiceModel.buttonLabel = actionData[RDConstants.buttonLabel] as? String ?? ""
@@ -484,8 +473,7 @@ class RDTargetingAction {
         downHsViewServiceModel.placeholder = actionData[RDConstants.placeholder] as? String ?? ""
         downHsViewServiceModel.img = actionData[RDConstants.img] as? String ?? ""
 
-
-        //extended props
+        // extended props
         downHsViewServiceModel.titleTextColor = extendedProps[RDConstants.titleTextColor] as? String ?? ""
         downHsViewServiceModel.titleFontFamily = extendedProps[RDConstants.titleFontFamily] as? String ?? ""
         downHsViewServiceModel.titleTextSize = extendedProps[RDConstants.titleTextSize] as? String ?? ""
@@ -502,14 +490,13 @@ class RDTargetingAction {
         downHsViewServiceModel.consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
         downHsViewServiceModel.closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
         downHsViewServiceModel.backgroundColor = extendedProps[RDConstants.backgroundColor] as? String ?? ""
-        
+
         downHsViewServiceModel.titleCustomFontFamilyIos = extendedProps[RDConstants.titleCustomFontFamilyIos] as? String ?? ""
         downHsViewServiceModel.textCustomFontFamilyIos = extendedProps[RDConstants.textCustomFontFamilyIos] as? String ?? ""
         downHsViewServiceModel.buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
         downHsViewServiceModel.textPosition = extendedProps[RDConstants.textPosition] as? String ?? ""
         downHsViewServiceModel.imagePosition = extendedProps[RDConstants.imagePosition] as? String ?? ""
 
-        
         return downHsViewServiceModel
     }
 
@@ -549,11 +536,11 @@ class RDTargetingAction {
         let consentTextUrl = extendedProps[RDConstants.consentTextUrl] as? String ?? ""
         let closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
         let backgroundColor = extendedProps[RDConstants.backgroundColor] as? String ?? ""
-        
+
         let titleCustomFontFamilyIos = extendedProps[RDConstants.titleCustomFontFamilyIos] as? String ?? ""
         let textCustomFontFamilyIos = extendedProps[RDConstants.textCustomFontFamilyIos] as? String ?? ""
         let buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
-        
+
         let impression = report[RDConstants.impression] as? String ?? ""
         let click = report[RDConstants.click] as? String ?? ""
         let mailReport = TargetingActionReport(impression: impression, click: click)
@@ -572,7 +559,7 @@ class RDTargetingAction {
                                                                consentTextSize: consentTextSize,
                                                                consentTextUrl: consentTextUrl,
                                                                closeButtonColor: ButtonColor(rawValue: closeButtonColor) ?? ButtonColor.black,
-                                                               backgroundColor: backgroundColor,titleCustomFontFamilyIos:titleCustomFontFamilyIos,textCustomFontFamilyIos:textCustomFontFamilyIos,buttonCustomFontFamilyIos:buttonCustomFontFamilyIos)
+                                                               backgroundColor: backgroundColor, titleCustomFontFamilyIos: titleCustomFontFamilyIos, textCustomFontFamilyIos: textCustomFontFamilyIos, buttonCustomFontFamilyIos: buttonCustomFontFamilyIos)
 
         let mailModel = MailSubscriptionModel(auth: auth,
                                               title: title,
@@ -590,9 +577,9 @@ class RDTargetingAction {
                                               report: mailReport)
         return convertJsonToEmailViewModel(emailForm: mailModel)
     }
-    
+
     private func parseDrawer(_ drawer: [String: Any?]) -> DrawerServiceModel? {
-        
+
         guard let actionData = drawer[RDConstants.actionData] as? [String: Any] else { return nil }
         var sideBarServiceModel = DrawerServiceModel(targetingActionType: .drawer)
         sideBarServiceModel.actId = drawer[RDConstants.actid] as? Int ?? 0
@@ -600,8 +587,7 @@ class RDTargetingAction {
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
         guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
 
-        
-        //actionData
+        // actionData
         sideBarServiceModel.shape = actionData[RDConstants.shape] as? String ?? ""
         sideBarServiceModel.pos = actionData[RDConstants.position] as? String ?? ""
         sideBarServiceModel.contentMinimizedImage  = actionData[RDConstants.contentMinimizedImage] as? String ?? ""
@@ -609,8 +595,8 @@ class RDTargetingAction {
         sideBarServiceModel.contentMaximizedImage = actionData[RDConstants.contentMaximizedImage] as? String ?? ""
         sideBarServiceModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
         sideBarServiceModel.iosLnk = actionData[RDConstants.iosLnk] as? String ?? ""
-        
-        //extended Props
+
+        // extended Props
         sideBarServiceModel.contentMinimizedTextSize = extendedProps[RDConstants.contentMinimizedTextSize] as? String ?? ""
         sideBarServiceModel.contentMinimizedTextColor = extendedProps[RDConstants.contentMinimizedTextColor] as? String ?? ""
         sideBarServiceModel.contentMinimizedFontFamily = extendedProps[RDConstants.contentMinimizedFontFamily] as? String ?? ""
@@ -621,13 +607,12 @@ class RDTargetingAction {
         sideBarServiceModel.contentMinimizedArrowColor = extendedProps[RDConstants.contentMinimizedArrowColor] as? String ?? ""
         sideBarServiceModel.contentMaximizedBackgroundImage = extendedProps[RDConstants.contentMaximizedBackgroundImage] as? String ?? ""
         sideBarServiceModel.contentMaximizedBackgroundColor = extendedProps[RDConstants.contentMaximizedBackgroundColor] as? String ?? ""
-    
 
         return sideBarServiceModel
     }
-    
+
     private func parseGiftCatch(_ gamification: [String: Any?]) -> GiftCatchViewModel? {
-        
+
         guard let actionData = gamification[RDConstants.actionData] as? [String: Any] else { return nil }
         var gamificationModel = GiftCatchViewModel(targetingActionType: .giftCatch)
         gamificationModel.actId = gamification[RDConstants.actid] as? Int ?? 0
@@ -639,8 +624,7 @@ class RDTargetingAction {
         gamificationModel.copybutton_label = actionData[RDConstants.copybuttonLabel] as? String ?? ""
         gamificationModel.copybutton_function = actionData[RDConstants.copybuttonFunction] as? String ?? ""
         gamificationModel.ios_lnk = actionData[RDConstants.iosLnk] as? String ?? ""
-        
-        
+
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
             gamificationModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
             gamificationModel.mailSubscriptionForm.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
@@ -653,7 +637,7 @@ class RDTargetingAction {
             gamificationModel.mailSubscriptionForm.message = mailForm[RDConstants.message] as? String ?? ""
 
         }
-        
+
         if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
             gamificationModel.gamificationRules?.backgroundImage = gamificationRules[RDConstants.backgroundImage] as? String ?? ""
             gamificationModel.gamificationRules?.buttonLabel = gamificationRules[RDConstants.buttonLabel] as? String ?? ""
@@ -671,14 +655,13 @@ class RDTargetingAction {
                 }
             }
         }
-        
-        
+
         if let gameResultElements = actionData[RDConstants.gameResultElements] as? [String: Any] {
             gamificationModel.gameResultElements?.title = gameResultElements[RDConstants.title] as? String ?? ""
             gamificationModel.gameResultElements?.message = gameResultElements[RDConstants.message] as? String ?? ""
-            
+
         }
-        
+
         if let promoCodes = actionData[RDConstants.promoCodes] as? [[String: Any]] {
             for promoCode in promoCodes {
                 var promCode = PromoCodes()
@@ -688,9 +671,9 @@ class RDTargetingAction {
                 gamificationModel.promoCodes?.append(promCode)
             }
         }
-        
-        //extended props
-        
+
+        // extended props
+
         if let mailFormExtended = extendedProps[RDConstants.gMailSubscriptionForm] as? [String: Any] {
 
             gamificationModel.mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
@@ -699,18 +682,17 @@ class RDTargetingAction {
             gamificationModel.mailExtendedProps.textSize = mailFormExtended[RDConstants.textSize] as? String ?? ""
             gamificationModel.mailExtendedProps.titleTextSize = mailFormExtended[RDConstants.titleTextSize] as? String ?? ""
 
-            
             gamificationModel.mailExtendedProps.buttonColor = mailFormExtended[RDConstants.button_color] as? String ?? ""
             gamificationModel.mailExtendedProps.buttonTextColor = mailFormExtended[RDConstants.button_text_color] as? String ?? ""
             gamificationModel.mailExtendedProps.buttonTextSize = mailFormExtended[RDConstants.buttonTextSize] as? String ?? ""
-            
+
             gamificationModel.mailExtendedProps.emailPermitTextSize = mailFormExtended[RDConstants.emailpermitTextSize] as? String ?? ""
             gamificationModel.mailExtendedProps.emailPermitTextUrl = mailFormExtended[RDConstants.emailpermitTextUrl] as? String ?? ""
             gamificationModel.mailExtendedProps.consentTextSize = mailFormExtended[RDConstants.consentTextSize] as? String ?? ""
             gamificationModel.mailExtendedProps.consentTextUrl = mailFormExtended[RDConstants.consentTextUrl] as? String ?? ""
             gamificationModel.mailExtendedProps.titleFontFamily = mailFormExtended[RDConstants.titleFontFamily] as? String ?? ""
         }
-        
+
         gamificationModel.backgroundImage = extendedProps[RDConstants.backgroundImage] as? String ?? ""
         gamificationModel.background_color = extendedProps[RDConstants.backgroundColor] as? String ?? ""
         gamificationModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
@@ -727,9 +709,8 @@ class RDTargetingAction {
         gamificationModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         gamificationModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
 
-        
         if let gameficationRuleExtended = extendedProps[RDConstants.gamificationRules] as? [String: Any] {
-            
+
             gamificationModel.gamificationRulesExtended?.buttonColor = gameficationRuleExtended[RDConstants.button_color] as? String ?? ""
             gamificationModel.gamificationRulesExtended?.buttonTextColor = gameficationRuleExtended[RDConstants.button_text_color] as? String ?? ""
             gamificationModel.gamificationRulesExtended?.buttonTextSize = gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? ""
@@ -741,7 +722,7 @@ class RDTargetingAction {
         }
 
         if let gameficationResultElementExtended = extendedProps[RDConstants.gameResultElements] as? [String: Any] {
-            
+
             gamificationModel.gameResultElementsExtended?.titleTextColor = gameficationResultElementExtended[RDConstants.titleTextColor] as? String ?? ""
             gamificationModel.gameResultElementsExtended?.titleTextSize = gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? ""
             gamificationModel.gameResultElementsExtended?.textColor = gameficationResultElementExtended[RDConstants.textColor] as? String ?? ""
@@ -749,11 +730,10 @@ class RDTargetingAction {
 
             gamificationModel.gameResultElementsExtended?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
         }
-        
+
         return gamificationModel
     }
 
-    
     private func parseFindToWin(_ findToWin: [String: Any?]) -> FindToWinViewModel? {
 
         guard let actionData = findToWin[RDConstants.actionData] as? [String: Any] else { return nil }
@@ -767,8 +747,7 @@ class RDTargetingAction {
         findToWinModel.copybutton_label = actionData[RDConstants.copybuttonLabel] as? String ?? ""
         findToWinModel.copybutton_function = actionData[RDConstants.copybuttonFunction] as? String ?? ""
         findToWinModel.ios_lnk = actionData[RDConstants.iosLnk] as? String ?? ""
-        
-        
+
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
             findToWinModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
             findToWinModel.mailSubscriptionForm.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
@@ -781,7 +760,7 @@ class RDTargetingAction {
             findToWinModel.mailSubscriptionForm.message = mailForm[RDConstants.message] as? String ?? ""
 
         }
-        
+
         if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
             findToWinModel.gamificationRules?.backgroundImage = gamificationRules[RDConstants.backgroundImage] as? String ?? ""
             findToWinModel.gamificationRules?.buttonLabel = gamificationRules[RDConstants.buttonLabel] as? String ?? ""
@@ -799,17 +778,16 @@ class RDTargetingAction {
                 }
             }
         }
-        
-        
+
         if let gameResultElements = actionData[RDConstants.gameResultElements] as? [String: Any] {
             findToWinModel.gameResultElements?.title = gameResultElements[RDConstants.title] as? String ?? ""
             findToWinModel.gameResultElements?.message = gameResultElements[RDConstants.message] as? String ?? ""
             findToWinModel.gameResultElements?.loseImage = gameResultElements[RDConstants.loseImage] as? String ?? ""
             findToWinModel.gameResultElements?.loseButtonLabel = gameResultElements[RDConstants.loseButtonLabel] as? String ?? ""
             findToWinModel.gameResultElements?.loseIosLnk = gameResultElements[RDConstants.loseIosLnk] as? String ?? ""
-            
+
         }
-        
+
         if let promoCodes = actionData[RDConstants.promoCodes] as? [[String: Any]] {
             for promoCode in promoCodes {
                 var promCode = PromoCodes()
@@ -819,9 +797,9 @@ class RDTargetingAction {
                 findToWinModel.promoCodes?.append(promCode)
             }
         }
-        
-        //extended props
-        
+
+        // extended props
+
         if let mailFormExtended = extendedProps[RDConstants.gMailSubscriptionForm] as? [String: Any] {
 
             findToWinModel.mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
@@ -832,14 +810,14 @@ class RDTargetingAction {
             findToWinModel.mailExtendedProps.buttonColor = mailFormExtended[RDConstants.button_color] as? String ?? ""
             findToWinModel.mailExtendedProps.buttonTextColor = mailFormExtended[RDConstants.button_text_color] as? String ?? ""
             findToWinModel.mailExtendedProps.buttonTextSize = mailFormExtended[RDConstants.buttonTextSize] as? String ?? ""
-            
+
             findToWinModel.mailExtendedProps.emailPermitTextSize = mailFormExtended[RDConstants.emailpermitTextSize] as? String ?? ""
             findToWinModel.mailExtendedProps.emailPermitTextUrl = mailFormExtended[RDConstants.emailpermitTextUrl] as? String ?? ""
             findToWinModel.mailExtendedProps.consentTextSize = mailFormExtended[RDConstants.consentTextSize] as? String ?? ""
             findToWinModel.mailExtendedProps.consentTextUrl = mailFormExtended[RDConstants.consentTextUrl] as? String ?? ""
             findToWinModel.mailExtendedProps.titleFontFamily = mailFormExtended[RDConstants.titleFontFamily] as? String ?? ""
         }
-        
+
         findToWinModel.backgroundImage = extendedProps[RDConstants.backgroundImage] as? String ?? ""
         findToWinModel.background_color = extendedProps[RDConstants.backgroundColor] as? String ?? ""
         findToWinModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
@@ -856,9 +834,8 @@ class RDTargetingAction {
         findToWinModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         findToWinModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
 
-        
         if let gameficationRuleExtended = extendedProps[RDConstants.gamificationRules] as? [String: Any] {
-            
+
             findToWinModel.gamificationRulesExtended?.buttonColor = gameficationRuleExtended[RDConstants.button_color] as? String ?? ""
             findToWinModel.gamificationRulesExtended?.buttonTextColor = gameficationRuleExtended[RDConstants.button_text_color] as? String ?? ""
             findToWinModel.gamificationRulesExtended?.buttonTextSize = gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? ""
@@ -867,7 +844,7 @@ class RDTargetingAction {
         if let gameficationElementExtended = extendedProps[RDConstants.gameElements] as? [String: Any] {
             findToWinModel.gameElementsExtended?.scoreboardShape = gameficationElementExtended[RDConstants.scoreboardShape] as? String ?? ""
             findToWinModel.gameElementsExtended?.scoreboardBackgroundColor = gameficationElementExtended[RDConstants.scoreboardBackgroundColor] as? String ?? ""
-            
+
             findToWinModel.gameElementsExtended?.scoreboardPageposition = gameficationElementExtended[RDConstants.scoreboardPageposition] as? String ?? ""
             findToWinModel.gameElementsExtended?.backofcardsImage = gameficationElementExtended[RDConstants.backofcardsImage] as? String ?? ""
             findToWinModel.gameElementsExtended?.backofcardsColor = gameficationElementExtended[RDConstants.backofcardsColor] as? String ?? ""
@@ -876,23 +853,21 @@ class RDTargetingAction {
         }
 
         if let gameficationResultElementExtended = extendedProps[RDConstants.gameResultElements] as? [String: Any] {
-            
+
             findToWinModel.gameResultElementsExtended?.titleTextColor = gameficationResultElementExtended[RDConstants.titleTextColor] as? String ?? ""
             findToWinModel.gameResultElementsExtended?.titleTextSize = gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? ""
             findToWinModel.gameResultElementsExtended?.textColor = gameficationResultElementExtended[RDConstants.textColor] as? String ?? ""
             findToWinModel.gameResultElementsExtended?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
-            
+
             findToWinModel.gameResultElementsExtended?.losebuttonColor = gameficationResultElementExtended[RDConstants.losebuttonColor] as? String ?? ""
             findToWinModel.gameResultElementsExtended?.losebuttonTextColor = gameficationResultElementExtended[RDConstants.losebuttonTextColor] as? String ?? ""
             findToWinModel.gameResultElementsExtended?.losebuttonTextSize = extendedProps[RDConstants.losebuttonTextSize] as? String ?? ""
-            
+
         }
-        
+
         return findToWinModel
     }
-    
-    
-    
+
     private func parseGiftBoxWin(_ giftBox: [String: Any?]) -> GiftBoxModel? {
 
         guard let actionData = giftBox[RDConstants.actionData] as? [String: Any] else { return nil }
@@ -906,8 +881,7 @@ class RDTargetingAction {
         giftBoxModel.copybutton_label = actionData[RDConstants.copybuttonLabel] as? String ?? ""
         giftBoxModel.copybutton_function = actionData[RDConstants.copybuttonFunction] as? String ?? ""
         giftBoxModel.ios_lnk = actionData[RDConstants.iosLnk] as? String ?? ""
-        
-        
+
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
             giftBoxModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
             giftBoxModel.mailSubscriptionForm.buttonTitle = mailForm[RDConstants.buttonLabel] as? String ?? ""
@@ -920,7 +894,7 @@ class RDTargetingAction {
             giftBoxModel.mailSubscriptionForm.message = mailForm[RDConstants.message] as? String ?? ""
 
         }
-        
+
         if let gamificationRules = actionData[RDConstants.gamificationRules] as? [String: Any] {
             giftBoxModel.gamificationRules?.backgroundImage = gamificationRules[RDConstants.backgroundImage] as? String ?? ""
             giftBoxModel.gamificationRules?.buttonLabel = gamificationRules[RDConstants.buttonLabel] as? String ?? ""
@@ -933,19 +907,18 @@ class RDTargetingAction {
                     var giftBoxElem = GiftBox()
                     giftBoxElem.image = element[RDConstants.image] as? String ?? ""
                     giftBoxElem.staticcode = element[RDConstants.staticcode] as? String ?? ""
-                    
+
                     giftBoxModel.gameElements?.append(giftBoxElem)
                 }
             }
         }
-        
-        
+
         if let gameResultElements = actionData[RDConstants.gameResultElements] as? [String: Any] {
             giftBoxModel.gameResultElements?.image = gameResultElements[RDConstants.image] as? String ?? ""
             giftBoxModel.gameResultElements?.title = gameResultElements[RDConstants.title] as? String ?? ""
             giftBoxModel.gameResultElements?.message = gameResultElements[RDConstants.message] as? String ?? ""
         }
-        
+
         if let promoCodes = actionData[RDConstants.promoCodes] as? [[String: Any]] {
             for promoCode in promoCodes {
                 var promCode = PromoCodes()
@@ -955,9 +928,9 @@ class RDTargetingAction {
                 giftBoxModel.promoCodes?.append(promCode)
             }
         }
-        
-        //extended props
-        
+
+        // extended props
+
         if let mailFormExtended = extendedProps[RDConstants.gMailSubscriptionForm] as? [String: Any] {
 
             giftBoxModel.mailExtendedProps.titleTextColor = mailFormExtended[RDConstants.titleTextColor] as? String ?? ""
@@ -968,14 +941,14 @@ class RDTargetingAction {
             giftBoxModel.mailExtendedProps.buttonColor = mailFormExtended[RDConstants.button_color] as? String ?? ""
             giftBoxModel.mailExtendedProps.buttonTextColor = mailFormExtended[RDConstants.button_text_color] as? String ?? ""
             giftBoxModel.mailExtendedProps.buttonTextSize = mailFormExtended[RDConstants.buttonTextSize] as? String ?? ""
-            
+
             giftBoxModel.mailExtendedProps.emailPermitTextSize = mailFormExtended[RDConstants.emailpermitTextSize] as? String ?? ""
             giftBoxModel.mailExtendedProps.emailPermitTextUrl = mailFormExtended[RDConstants.emailpermitTextUrl] as? String ?? ""
             giftBoxModel.mailExtendedProps.consentTextSize = mailFormExtended[RDConstants.consentTextSize] as? String ?? ""
             giftBoxModel.mailExtendedProps.consentTextUrl = mailFormExtended[RDConstants.consentTextUrl] as? String ?? ""
             giftBoxModel.mailExtendedProps.titleFontFamily = mailFormExtended[RDConstants.titleFontFamily] as? String ?? ""
         }
-        
+
         giftBoxModel.backgroundImage = extendedProps[RDConstants.backgroundImage] as? String ?? ""
         giftBoxModel.background_color = extendedProps[RDConstants.backgroundColor] as? String ?? ""
         giftBoxModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
@@ -992,24 +965,22 @@ class RDTargetingAction {
         giftBoxModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         giftBoxModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
 
-        
         if let gameficationRuleExtended = extendedProps[RDConstants.gamificationRules] as? [String: Any] {
-            
+
             giftBoxModel.gamificationRulesExtended?.buttonColor = gameficationRuleExtended[RDConstants.button_color] as? String ?? ""
             giftBoxModel.gamificationRulesExtended?.buttonTextColor = gameficationRuleExtended[RDConstants.button_text_color] as? String ?? ""
             giftBoxModel.gamificationRulesExtended?.buttonTextSize = gameficationRuleExtended[RDConstants.buttonTextSize] as? String ?? ""
         }
 
-
         if let gameficationResultElementExtended = extendedProps[RDConstants.gameResultElements] as? [String: Any] {
-            
+
             giftBoxModel.gameResultElementsExtended?.titleTextColor = gameficationResultElementExtended[RDConstants.titleTextColor] as? String ?? ""
             giftBoxModel.gameResultElementsExtended?.titleTextSize = gameficationResultElementExtended[RDConstants.titleTextSize] as? String ?? ""
             giftBoxModel.gameResultElementsExtended?.textColor = gameficationResultElementExtended[RDConstants.textColor] as? String ?? ""
             giftBoxModel.gameResultElementsExtended?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
-            
+
         }
-        
+
         return giftBoxModel
     }
 
@@ -1079,7 +1050,6 @@ class RDTargetingAction {
         let promocodeCustomFontFamilyIos = extendedProps[RDConstants.promocodeCustomFontFamilyIos] as? String ?? ""
         let copybuttonCustomFontFamilyIos = extendedProps[RDConstants.copybuttonCustomFontFamilyIos] as? String
 
-        
         var click = ""
         var impression = ""
         if let report = actionData[RDConstants.report] as? [String: Any] {
@@ -1131,11 +1101,11 @@ class RDTargetingAction {
                                  closeButtonColor: closeButtonColor,
                                  backgroundColor: backgroundColor,
                                  report: rep,
-                                 contentTitleCustomFontFamilyIos:contentTitleCustomFontFamilyIos,
-                                 contentBodyCustomFontFamilyIos:contentBodyCustomFontFamilyIos,
-                                 buttonCustomFontFamilyIos:buttonCustomFontFamilyIos,
-                                 promocodeCustomFontFamilyIos:promocodeCustomFontFamilyIos,
-                                 copybuttonCustomFontFamilyIos:copybuttonCustomFontFamilyIos)
+                                 contentTitleCustomFontFamilyIos: contentTitleCustomFontFamilyIos,
+                                 contentBodyCustomFontFamilyIos: contentBodyCustomFontFamilyIos,
+                                 buttonCustomFontFamilyIos: buttonCustomFontFamilyIos,
+                                 promocodeCustomFontFamilyIos: promocodeCustomFontFamilyIos,
+                                 copybuttonCustomFontFamilyIos: copybuttonCustomFontFamilyIos)
     }
 
     private func convertJsonToEmailViewModel(emailForm: MailSubscriptionModel) -> MailSubscriptionViewModel {
@@ -1146,13 +1116,13 @@ class RDTargetingAction {
         let parsedPermit = emailForm.emailPermitText.parsePermissionText()
         let titleFont = RDHelper.getFont(fontFamily: emailForm.extendedProps.titleFontFamily,
                                                           fontSize: emailForm.extendedProps.titleTextSize,
-                                                          style: .title2,customFont: emailForm.extendedProps.titleCustomFontFamilyIos)
+                                                          style: .title2, customFont: emailForm.extendedProps.titleCustomFontFamilyIos)
         let messageFont = RDHelper.getFont(fontFamily: emailForm.extendedProps.textFontFamily,
                                                             fontSize: emailForm.extendedProps.textSize,
-                                                            style: .body,customFont: emailForm.extendedProps.textCustomFontFamilyIos)
+                                                            style: .body, customFont: emailForm.extendedProps.textCustomFontFamilyIos)
         let buttonFont = RDHelper.getFont(fontFamily: emailForm.extendedProps.buttonFontFamily,
                                                            fontSize: emailForm.extendedProps.buttonTextSize,
-                                                           style: .title2,customFont: emailForm.extendedProps.buttonCustomFontFamilyIos)
+                                                           style: .title2, customFont: emailForm.extendedProps.buttonCustomFontFamilyIos)
         let closeButtonColor = getCloseButtonColor(from: emailForm.extendedProps.closeButtonColor)
         let titleColor = UIColor(hex: emailForm.extendedProps.titleTextColor) ?? .white
         let textColor = UIColor(hex: emailForm.extendedProps.textColor) ?? .white
@@ -1216,8 +1186,7 @@ class RDTargetingAction {
         props[RDConstants.apiverKey] = RDConstants.apiverValue
         props[RDConstants.actionType] = RDConstants.favoriteAttributeAction
         props[RDConstants.actionId] = actionId == nil ? nil : String(actionId!)
-        
-        
+
         props[RDConstants.nrvKey] = String(rdUser.nrv)
         props[RDConstants.pvivKey] = String(rdUser.pviv)
         props[RDConstants.tvcKey] = String(rdUser.tvc)
@@ -1260,20 +1229,18 @@ class RDTargetingAction {
         }
         return RDFavoriteAttributeActionResponse(favorites: favoritesResponse, error: errorResponse)
     }
-    
-    
-    func getAppBanner(properties:Properties,rdUser: RDUser, guid: String, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
+
+    func getAppBanner(properties: Properties, rdUser: RDUser, guid: String, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
 
         RDRequest.sendMobileRequest(properties: properties, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
             completion(self.parseBannerApp(result, error, guid))
         }, guid: guid)
     }
-    
-    
+
     private func parseBannerApp(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> AppBannerResponseModel {
         var appBannerModelArray = [AppBannerModel]()
         var errorResponse: RDError?
-        var transition : String?
+        var transition: String?
         if let error = error {
             errorResponse = error
         } else if let res = result {
@@ -1291,15 +1258,13 @@ class RDTargetingAction {
                 errorResponse = RDError.noData
             }
         }
-        
+
         if appBannerModelArray.isEmpty {
             errorResponse = RDError.noData
         }
-        
+
         return AppBannerResponseModel(app_banners: appBannerModelArray, error: errorResponse, transition: transition ?? "")
     }
-    
-    
 
     // MARK: - Story
 
@@ -1319,7 +1284,7 @@ class RDTargetingAction {
         props[RDConstants.actionType] = RDConstants.story
         props[RDConstants.channelKey] = rdProfile.channel
         props[RDConstants.actionId] = actionId == nil ? nil : String(actionId!)
-        
+
         props[RDConstants.nrvKey] = String(rdUser.nrv)
         props[RDConstants.pvivKey] = String(rdUser.pviv)
         props[RDConstants.tvcKey] = String(rdUser.tvc)
@@ -1455,9 +1420,9 @@ class RDTargetingAction {
                 }
             }
         }
-        
+
         var countDownModel = RDStoryCountDown()
-        if let countDown = item[RDConstants.countDown] as? [String:String] {
+        if let countDown = item[RDConstants.countDown] as? [String: String] {
             countDownModel.pagePosition = countDown[RDConstants.pagePosition]
             countDownModel.messageText = countDown[RDConstants.messageText]
             countDownModel.messageTextSize = countDown[RDConstants.messageTextSize]
@@ -1468,7 +1433,7 @@ class RDTargetingAction {
             countDownModel.endAnimationImageUrl = countDown[RDConstants.endAnimationImageUrl]
             countDownModel.gifImage = UIImage.gif(url: countDownModel.endAnimationImageUrl ?? "")
         }
-        
+
         let relatedDigitalStoryItem = RDStoryItem(fileType: fileType,
                                                   displayTime: displayTime,
                                                   fileSrc: fileSrc,
@@ -1502,12 +1467,10 @@ class RDTargetingAction {
             props.fontFamily = fontFamily
             storyCustomVariables.shared.fontFamily = fontFamily
 
-
             let customFontFamilyIos = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
             props.customFontFamilyIos = customFontFamilyIos
             storyCustomVariables.shared.customFontFamilyIos = customFontFamilyIos
 
-            
             if let imageBorderColorString = extendedProps[RDConstants.storylbImgBorderColor] as? String
                 ?? extendedProps[RDConstants.storyzimgBorderColor] as? String {
                 if imageBorderColorString.starts(with: "rgba") {
@@ -1545,44 +1508,29 @@ class RDTargetingAction {
         return props
     }
 
-    
     // MARK: - NPS With Numbers
-    
-    func getNpsWithNumbers(properties:Properties,rdUser: RDUser, guid: String, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
 
-        RDRequest.sendMobileRequest(properties: properties, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
-            completion(self.parseNpsWithNumbers(result, error, guid))
-        }, guid: guid)
-    }
-    
-    
-    private func parseNpsWithNumbers(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> AppBannerResponseModel {
-        var appBannerModelArray = [AppBannerModel]()
-        var errorResponse: RDError?
-        var transition : String?
-        if let error = error {
-            errorResponse = error
-        } else if let res = result {
-            if let bannerAction = res[RDConstants.appBanner] as? [[String: Any?]] {
-                for bannerAction in bannerAction {
-                    let actiondata = bannerAction[RDConstants.actionData] as? [String: Any?]
-                    let appData = actiondata?[RDConstants.appBanners] as? [[String: Any?]]
-                    transition = actiondata?[RDConstants.transitionAction] as? String
-                    for element in appData! {
-                        let appBannerModel = AppBannerModel(img: element[RDConstants.img] as? String, ios_lnk: element[RDConstants.iosLnk] as? String)
-                        appBannerModelArray.append(appBannerModel)
+    func getNpsWithNumbers(properties: Properties, rdUser: RDUser, guid: String, completion: @escaping ((_ response: RDInAppNotification?) -> Void)) {
+        
+        RDRequest.sendInAppNotificationRequest(properties: properties, headers: Properties(), completion: { rdInAppNotificationResult in
+            guard let result = rdInAppNotificationResult else {
+                completion(nil)
+                return
+            }
+            var notif: RDInAppNotification? = nil
+
+            for rawNotif in result {
+                if let actionData = rawNotif["actiondata"] as? [String: Any] {
+                    if let typeString = actionData["msg_type"] as? String,
+                       RDInAppNotificationType(rawValue: typeString) != nil,
+                       let notification = RDInAppNotification(JSONObject: rawNotif), notification.displayType == RDConstants.inline {
+                        notif = notification
                     }
                 }
-            } else {
-                errorResponse = RDError.noData
             }
-        }
+            completion(notif)
+        })
         
-        if appBannerModelArray.isEmpty {
-            errorResponse = RDError.noData
-        }
-        
-        return AppBannerResponseModel(app_banners: appBannerModelArray, error: errorResponse, transition: transition ?? "")
     }
-    
+
 }

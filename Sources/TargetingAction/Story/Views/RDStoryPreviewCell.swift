@@ -18,7 +18,7 @@ enum SnapMovementDirectionState {
     case backward
 }
 
-enum timeType:String{
+enum timeType: String {
     case wdhms = "wdhms"
     case dhms
     case dhm
@@ -30,24 +30,24 @@ private let snapViewTagIndicator: Int = 8
 
 // swiftlint:disable file_length type_body_length
 final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
-    
+
     // MARK: - Delegate
     public weak var delegate: RDStoryPreviewProtocol? {
         didSet { storyHeaderView.delegate = self }
     }
-    
+
     weak var storyUrlDelegate: RDStoryURLDelegate?
-    let timerView : timerView = UIView.fromNib()
-    var currentSnapCountDown:RDStoryCountDown?
-    var countDownTimer:Timer?
-    
+    let timerView: timerView = UIView.fromNib()
+    var currentSnapCountDown: RDStoryCountDown?
+    var countDownTimer: Timer?
+
     // MARK: - Private iVars
     private lazy var storyHeaderView: RDStoryPreviewHeaderView = {
         let headerView = RDStoryPreviewHeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
         return headerView
     }()
-    
+
     private lazy var snapButton: UIButton = {
         let snapButton = UIButton()
         snapButton.isUserInteractionEnabled = true
@@ -57,7 +57,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         snapButton.addTarget(self, action: #selector(self.didTapLinkButton), for: .touchUpInside)
         return snapButton
     }()
-    
+
     private lazy var longpressGesture: UILongPressGestureRecognizer = {
         let lpgr = UILongPressGestureRecognizer.init(target: self, action: #selector(didLongPress(_:)))
         lpgr.minimumPressDuration = 0.2
@@ -78,7 +78,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
     private var handpickedSnapIndex: Int = 0
     var retryBtn: RDRetryLoaderButton!
     var longPressGestureState: UILongPressGestureRecognizer.State?
-    
+
     // MARK: - Public iVars
     public var direction: SnapMovementDirectionState = .forward
     public let scrollview: UIScrollView = {
@@ -98,25 +98,25 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             if let st = story {
                 setStoryShown(story: st)
             }
-            
+
             switch direction {
             case .forward:
                 if snapIndex < story?.items.count ?? 0 {
                     if let snap = story?.items[snapIndex] {
                         if snap.kind != MimeType.video {
                             timerView.isHidden = true
-                            if let countDown = snap.countDown,let _ = countDown.endDateTime {
+                            if let countDown = snap.countDown, let _ = countDown.endDateTime {
                                 timerView.isHidden = false
                                 timerView.gifImageView.image = UIImage()
                                 currentSnapCountDown = countDown
                                 initializeCountDownTimerForSnap(countDown: countDown)
                             }
-                            
+
                             if let snapView = getSnapview() {
                                 startRequest(snapView: snapView, with: snap.url)
                             } else {
                                 let snapView = createSnapView()
-                                
+
                                 startRequest(snapView: snapView, with: snap.url)
                             }
                         } else {
@@ -135,13 +135,13 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
                     if let snap = story?.items[snapIndex] {
                         if snap.kind != MimeType.video {
                             timerView.isHidden = true
-                            if let countDown = snap.countDown,let _ = countDown.endDateTime {
+                            if let countDown = snap.countDown, let _ = countDown.endDateTime {
                                 timerView.isHidden = false
                                 timerView.gifImageView.image = UIImage()
                                 currentSnapCountDown = countDown
                                 initializeCountDownTimerForSnap(countDown: countDown)
                             }
-                            
+
                             if let snapView = getSnapview() {
                                 self.startRequest(snapView: snapView, with: snap.url)
                             }
@@ -159,27 +159,27 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             }
         }
     }
-    
+
     @objc func countDownTimerForSecondDown() {
         initializeCountDownTimerForSnap(countDown: currentSnapCountDown)
     }
-    
-    func initializeCountDownTimerForSnap(countDown:RDStoryCountDown?) {
-        
+
+    func initializeCountDownTimerForSnap(countDown: RDStoryCountDown?) {
+
         if countDown?.pagePosition == "bottom" {
             timerView.upLabel.isHidden = true
             timerView.downLabel.isHidden = false
             timerView.downLabel.text = countDown?.messageText
-            timerView.downLabel.font = RDHelper.getFont(fontFamily: "serif",fontSize: countDown?.messageTextSize,style: .title2)
+            timerView.downLabel.font = RDHelper.getFont(fontFamily: "serif", fontSize: countDown?.messageTextSize, style: .title2)
             timerView.downLabel.textColor = UIColor(hex: countDown?.messageTextColor)
         } else {
             timerView.upLabel.isHidden = false
             timerView.downLabel.isHidden = true
             timerView.upLabel.text = countDown?.messageText
-            timerView.upLabel.font = RDHelper.getFont(fontFamily: "serif",fontSize: countDown?.messageTextSize,style: .title2)
+            timerView.upLabel.font = RDHelper.getFont(fontFamily: "serif", fontSize: countDown?.messageTextSize, style: .title2)
             timerView.upLabel.textColor = UIColor(hex: countDown?.messageTextColor)
         }
-        
+
         timerView.countDownTimerView.layer.cornerRadius = 10
         timerView.week1digitLabelView.layer.cornerRadius = 5
         timerView.week2digitLabelView.layer.cornerRadius = 5
@@ -191,8 +191,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         timerView.minute2digitLabelView.layer.cornerRadius = 5
         timerView.second1digitLabelView.layer.cornerRadius = 5
         timerView.second2digitLabelView.layer.cornerRadius = 5
-        
-        
+
         var labelParamArray = [String]()
         if countDown?.displayType == "wdhms" {
             labelParamArray = mapRemainingTime(wantToEndTime: countDown?.endDateTime, timeType: .wdhms)
@@ -208,7 +207,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             timerView.second2digitLabel.text = labelParamArray[9]
             timerView.minutePointLabel.isHidden = false
             timerView.dayPointLabel.isHidden = false
-            
+
         } else if countDown?.displayType == "dhms" {
             labelParamArray = mapRemainingTime(wantToEndTime: countDown?.endDateTime, timeType: .dhms)
             timerView.day1digitLabel.text = labelParamArray[0]
@@ -233,7 +232,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             timerView.week1digitLabelView.superview?.isHidden = true
             timerView.second1digitLabelView.superview?.isHidden = true
             timerView.minutePointLabel.isHidden = true
-            
+
         } else if countDown?.displayType == "d" {
             labelParamArray = mapRemainingTime(wantToEndTime: countDown?.endDateTime, timeType: .d)
             timerView.day1digitLabel.text = labelParamArray[0]
@@ -244,9 +243,9 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             timerView.second1digitLabelView.superview?.isHidden = true
             timerView.dayPointLabel.isHidden = true
         }
-        
+
     }
-    
+
     public var story: RDStory? {
         didSet {
             storyHeaderView.story = story
@@ -255,7 +254,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             }
         }
     }
-    
+
     // MARK: - Overriden functions
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -275,7 +274,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     // MARK: - Private functions
     private func loadUIElements() {
         scrollview.delegate = self
@@ -291,7 +290,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         contentView.addSubview(timerView)
         countDownTimer?.invalidate()
         countDownTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(countDownTimerForSecondDown), userInfo: nil, repeats: true)
-        
+
     }
     private func installLayoutConstraints() {
         // Setting constraints for scrollview
@@ -313,7 +312,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             snapButton.igBottomAnchor.constraint(equalTo: scrollview.igBottomAnchor, constant: -50),
             snapButton.centerXAnchor.constraint(equalTo: scrollview.centerXAnchor)
         ])
-        
+
         NSLayoutConstraint.activate([timerView.topAnchor.constraint(equalTo: contentView.topAnchor),
                                      timerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                                      timerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -324,7 +323,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         let snapView = UIImageView()
         snapView.translatesAutoresizingMaskIntoConstraints = false
         snapView.tag = snapIndex + snapViewTagIndicator
-        
+
         //         Delete if there is any snapview/videoview already present in that frame location.
         //         Because of snap delete functionality, snapview/videoview
         //         can occupy different frames(created in 2nd position(frame),
@@ -335,15 +334,15 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         //         - That's why we need to remove if any snap exists on the same position.
         //
         scrollview.subviews.filter({$0.tag == snapIndex + snapViewTagIndicator}).first?.removeFromSuperview()
-        
+
         scrollview.addSubview(snapView)
-        
+
         // Setting constraints for snap view.
         NSLayoutConstraint.activate([
-            
+
             // snapButton.igBottomAnchor.constraint(equalTo: scrollview.igBottomAnchor, constant: -50),
             // snapButton.centerXAnchor.constraint(equalTo: scrollview.centerXAnchor),
-            
+
             snapView.leadingAnchor.constraint(equalTo: (snapIndex == 0) ?
                                               scrollview.leadingAnchor : scrollview.subviews[previousSnapIndex].trailingAnchor),
             snapView.igTopAnchor.constraint(equalTo: scrollview.igTopAnchor),
@@ -371,7 +370,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         videoView.translatesAutoresizingMaskIntoConstraints = false
         videoView.tag = snapIndex + snapViewTagIndicator
         videoView.playerObserverDelegate = self
-        
+
         //         Delete if there is any snapview/videoview already present in that frame location.
         //         Because of snap delete functionality, snapview/videoview
         //         can occupy different frames(created in 2nd position(frame),
@@ -380,9 +379,9 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         //         - But if story contains both image and video snaps, there will be a chance
         //         in same position both snapView and videoView gets created.
         //         - That's why we need to remove if any snap exists on the same position.
-        
+
         scrollview.subviews.filter({$0.tag == snapIndex + snapViewTagIndicator}).first?.removeFromSuperview()
-        
+
         scrollview.addSubview(videoView)
         NSLayoutConstraint.activate([
             videoView.leadingAnchor.constraint(equalTo: (snapIndex == 0)
@@ -407,7 +406,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
         return nil
     }
-    
+
     private func startRequest(snapView: UIImageView, with url: String) {
         snapView.setImage(url: url, style: .squared) { result in
             DispatchQueue.main.async { [weak self] in
@@ -440,7 +439,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             }
         }
     }
-    
+
     private func showRetryButton(with url: String, for snapView: UIImageView) {
         self.retryBtn = RDRetryLoaderButton.init(withURL: url)
         self.retryBtn.translatesAutoresizingMaskIntoConstraints = false
@@ -471,7 +470,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
                     }
                 }
             }
-            
+
             if let story = self.story, story.items.count > self.snapIndex {
                 if story.items[self.snapIndex].buttonText.count > 0 {
                     let snap = story.items[self.snapIndex]
@@ -496,9 +495,9 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
     }
     @objc private func didTapSnap(_ sender: UITapGestureRecognizer) {
-        
+
         let touchLocation = sender.location(ofTouch: 0, in: self.scrollview)
-        
+
         if let snapCount = story?.items.count {
             var snpIndex = snapIndex
             /*!
@@ -559,7 +558,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
         resetSnapProgressors(with: snapIndex)
     }
-    
+
     @objc private func didTapLinkButton() {
         if let story = story {
             if story.clickQueryItems.count > 0 {
@@ -576,33 +575,31 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             delegate?.didTapCloseButton()
         }
     }
-    
-    
-    private func mapRemainingTime(wantToEndTime:String?,timeType:timeType) -> [String] {
-        
+
+    private func mapRemainingTime(wantToEndTime: String?, timeType: timeType) -> [String] {
+
         let formattedEndTime = wantToEndTime?.replacingOccurrences(of: "T", with: " ", options: .literal, range: nil)
-        
+
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let endDate = formatter.date(from: formattedEndTime ?? "21.07.2100 17:30")
         let startDate = Date()
         let differenceInSeconds = Int(endDate?.timeIntervalSince(startDate) ?? 0)
-        
+
         if startDate >= endDate ?? startDate {
             DispatchQueue.global(qos: .userInteractive).async { [self] in
                 DispatchQueue.main.async { [self] in
                     timerView.gifImageView.image = currentSnapCountDown?.gifImage
                 }
             }
-            return ["0","0","0","0","0","0","0","0","0","0"]
+            return ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
         }
-        
-        
+
         let weekInsecond = 604800
         let dayInSecond = 86400
         let hourInSecond = 3600
         let minuteInSecond = 60
-        
+
         var remainingSecond = differenceInSeconds
         var weekCount = remainingSecond / weekInsecond
         if timeType == .d || timeType == .dhm || timeType == .dhms {
@@ -622,43 +619,43 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         }
         remainingSecond = remainingSecond - minuteInSecond*minuteCount
         let secondCount = remainingSecond
-        
+
         var weekCountStr = ""
         var dayCountStr = ""
         var hourCountStr = ""
         var minuteCountStr = ""
         var secondCountStr = ""
-        
+
         if weekCount < 10 {
             weekCountStr = "0\(weekCount)"
         } else {
             weekCountStr = String(weekCount)
         }
-        
+
         if dayCount < 10 {
             dayCountStr = "0\(dayCount)"
         } else {
             dayCountStr = String(dayCount)
         }
-        
+
         if hourCount < 10 {
             hourCountStr = "0\(hourCount)"
         } else {
             hourCountStr = String(hourCount)
         }
-        
+
         if minuteCount < 10 {
             minuteCountStr = "0\(minuteCount)"
         } else {
             minuteCountStr = String(minuteCount)
         }
-        
+
         if secondCount < 10 {
             secondCountStr = "0\(secondCount)"
         } else {
             secondCountStr = String(secondCount)
         }
-        
+
         var result = [String]()
         if timeType == .wdhms {
             result.append("\(weekCountStr.first ?? "0")")
@@ -674,15 +671,15 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             result.append("\(minuteCountStr.first ?? "0")")
             result.append("\(minuteCountStr.last ?? "0")")
         }
-        
+
         if timeType == .wdhms || timeType == .dhms {
             result.append("\(secondCountStr.first ?? "0")")
             result.append("\(secondCountStr.last ?? "0")")
         }
-        
+
         return result
     }
-    
+
     private func willMoveToPreviousOrNextSnap(index: Int) {
         if let count = story?.items.count {
             if index < count {
@@ -784,12 +781,12 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
            let progressView = getProgressView(with: snapIndex) {
             progressView.storyIdentifier = self.story?.internalIdentifier
             progressView.snapIndex = snapIndex
-            
+
             var timeInterval = TimeInterval(5)
             if let displayTime = self.story?.items[snapIndex].displayTime {
                 timeInterval = TimeInterval(displayTime)
             }
-            
+
             DispatchQueue.main.async {
                 if type == .photo {
                     progressView.start(with: timeInterval,
@@ -806,7 +803,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             }
         }
     }
-    
+
     // MARK: - Internal functions
     func startProgressors() {
         DispatchQueue.main.async {
@@ -833,7 +830,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             }
         }
     }
-    
+
     func getProgressView(with index: Int) -> RDSnapProgressView? {
         let progressView = storyHeaderView.getProgressView
         if progressView.subviews.count > 0 {
@@ -855,7 +852,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
     func adjustPreviousSnapProgressorsWidth(with index: Int) {
         fillupLastPlayedSnaps(index)
     }
-    
+
     // MARK: - Public functions
     public func willDisplayCellForZerothIndex(with sIndex: Int, handpickedSnapIndex: Int) {
         self.handpickedSnapIndex = handpickedSnapIndex
@@ -870,11 +867,11 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         fillUpMissingImageViews(sIndex)
         fillupLastPlayedSnaps(sIndex)
         snapIndex = sIndex
-        
+
         // Remove the previous observors
         // swiftlint:disable notification_center_detachment
         NotificationCenter.default.removeObserver(self)
-        
+
         // Add the observer to handle application from background to foreground
         NotificationCenter.default.addObserver(self, selector: #selector(self.didEnterForeground),
                                                name: UIApplication.willEnterForegroundNotification,
@@ -922,7 +919,7 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
         getVideoView(with: sIndex)?.play()
     }
     public func didEndDisplayingCell() {
-        
+
     }
     public func resumePreviousSnapProgress(with sIndex: Int) {
         getProgressView(with: sIndex)?.resume()
@@ -959,11 +956,11 @@ final class RDStoryPreviewCell: UICollectionViewCell, UIScrollViewDelegate {
             self.startPlayer(videoView: playerView, with: url)
         }
     }
-    
+
     private func setStoryShown(story: RDStory) {
         var shownStories = UserDefaults.standard.dictionary(forKey: RDConstants.shownStories)
         as? [String: [String]] ?? [String: [String]]()
-        
+
         if shownStories["\(story.actid)"] == nil {
             shownStories["\(story.actid)"] = [story.title ?? ""]
         } else if let st = shownStories["\(story.actid)"], !st.contains(story.title ?? "-") {
@@ -989,7 +986,7 @@ extension RDStoryPreviewCell: RetryBtnDelegate {
 
 // MARK: - Extension|IGPlayerObserverDelegate
 extension RDStoryPreviewCell: RDPlayerObserver {
-    
+
     func didStartPlaying() {
         if let videoView = getVideoView(with: snapIndex), videoView.currentTime <= 0 {
             if videoView.error == nil && (story?.isCompletelyVisible)! == true {
@@ -1019,7 +1016,7 @@ extension RDStoryPreviewCell: RDPlayerObserver {
             }
         }
     }
-    
+
     func didFailed(withError error: String, for url: URL?) {
         debugPrint("Failed with error: \(error)")
         if let videoView = getVideoView(with: snapIndex), let videoURL = url {
@@ -1034,11 +1031,11 @@ extension RDStoryPreviewCell: RDPlayerObserver {
             ])
         }
     }
-    
+
     func didCompletePlay() {
         // Video completed
     }
-    
+
 }
 
 extension RDStoryPreviewCell: UIGestureRecognizerDelegate {

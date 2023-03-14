@@ -92,7 +92,7 @@ open class RDPopupDialogButton: UIButton {
      - returns: PopupDialogButton
      */
     @objc public init(title: String, height: Int = 45, font: UIFont, buttonTextColor: UIColor?,
-                      buttonColor: UIColor?, dismissOnTap: Bool = true, action: PopupDialogButtonAction?,buttonCornerRadius: CGFloat = 0.0) {
+                      buttonColor: UIColor?, dismissOnTap: Bool = true, action: PopupDialogButtonAction?, buttonCornerRadius: CGFloat = 0.0) {
 
         // Assign the button height
         buttonHeight = height

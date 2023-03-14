@@ -63,7 +63,7 @@ class RatingCollectionViewCell: UICollectionViewCell {
 }
 
 extension UIView {
-    
+
     class func fromNib<T: UIView>() -> T {
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
@@ -131,7 +131,7 @@ extension UIColor {
         }
 
         colors.append([oldColor.cgColor, color2.cgColor])
-        
+
         if numberRange == "0-10" {
 
                 let newR = c2R + ((c1R - c2R) / 10) * CGFloat(1)
@@ -144,7 +144,6 @@ extension UIColor {
 
                 oldColor = newColor
         }
-        
 
         return colors
     }
@@ -194,7 +193,7 @@ extension UIColor {
         }
 
         colors.append([oldColor.cgColor, color3.cgColor])
-        
+
         if numberRange == "0-10" {
                 let newR = c3R + ((c1R - c3R) / 5) * CGFloat(1)
                 let newG = c3G + ((c1G - c3G) / 5) * CGFloat(1)
@@ -206,7 +205,6 @@ extension UIColor {
 
                 oldColor = newColor
         }
-        
 
         return colors
     }

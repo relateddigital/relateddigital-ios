@@ -8,24 +8,24 @@
 import UIKit
 import AVFoundation
 
-class ShakeToWinViewController : RDBaseNotificationViewController {
-    
+class ShakeToWinViewController: RDBaseNotificationViewController {
+
     var model: ShakeToWinViewModel?
     let scrollView = UIScrollView()
     var multiplier = 0.0
-    weak var player: AVPlayer? = nil
+    weak var player: AVPlayer?
     var mailFormExist = true
     var firstChecked = false
     var secondChecked = false
     var lastPageOpened = false
-    var audioPlayer : AVPlayer?
-    
+    var audioPlayer: AVPlayer?
+
     var openedSecondPage = false {
         didSet {
             self.deviceDidntShake()
         }
     }
-    
+
     var didShake = false {
         didSet {
             self.openThirdPage(self.model?.secondPage?.waitSeconds ?? 0)
@@ -40,34 +40,34 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         button.titleLabel?.textColor = model?.firstPage?.buttonTextColor
         return button
     }()
-    
-    init(model:ShakeToWinViewModel) {
+
+    init(model: ShakeToWinViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.model = model
         self.shakeToWin = model
-        
+
         if model.mailForm.title?.count ?? 0 > 0 && model.mailForm.title != nil {
             mailFormExist = true
         } else {
             mailFormExist = false
         }
     }
-    
+
     required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(scrollView)
     }
-    
+
     public override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake && openedSecondPage && !didShake {
             self.didShake = true
         }
     }
-    
+
     public override func viewDidLayoutSubviews() {
         scrollView.frame = self.view.frame
         if scrollView.subviews.count == 2 {
@@ -75,25 +75,25 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             configureScrollView()
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loopAudio()
         playAudio()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         audioPlayer?.pause()
         audioPlayer = nil
     }
-    
+
     func checkMailIsAvaliable() {
         if mailFormExist == true {
             multiplier = 1.0
         }
     }
-    
+
     func configureScrollView() {
         if mailFormExist == true {
             scrollView.contentSize = CGSize(width: view.frame.width*4, height: view.frame.height)
@@ -103,17 +103,17 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         }
         scrollView.isPagingEnabled = false
         scrollView.isScrollEnabled = false
-        
+
         scrollView.addSubview(prepareFirstPage())
         scrollView.addSubview(prepareSecondPage())
         scrollView.addSubview(prepareThirdPage())
     }
-    
+
     @objc func closeButtonTapped(_ sender: UIButton) {
 
         close()
     }
-    
+
     func close() {
         dismiss(animated: true) {
             if let shakeToWin = self.shakeToWin {
@@ -128,12 +128,12 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             }
         }
     }
-    
+
     func getUIImage(named: String) -> UIImage? {
         let bundle = Bundle(for: ShakeToWinViewController.self)
         return UIImage(named: named, in: bundle, compatibleWith: nil)!.resized(withPercentage: CGFloat(0.75))
     }
-    
+
     func deviceDidntShake() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
             if self.didShake == false {
@@ -141,7 +141,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             }
         })
     }
-    
+
     func openThirdPage(_ delay: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(delay)) {
             BannerCodeManager.shared.setShakeToWinCode(code: self.model?.thirdPage?.staticCode ?? "")
@@ -153,30 +153,29 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             }
         }
     }
-    
-    
+
     func prepareMailPage() -> UIView {
-        let page : MailFormView = .fromNib()
-        
+        let page: MailFormView = .fromNib()
+
         page.secondLineTicImageView.layer.cornerRadius = 8
         page.secondLineTicImageView.layer.borderWidth = 0.3
         page.secondLineTicImageView.layer.borderColor = UIColor.black.cgColor
-        
+
         page.firstLineTickImageView.layer.cornerRadius = 10
         page.firstLineTickImageView.layer.borderWidth = 0.5
         page.firstLineTickImageView.layer.borderColor = UIColor.black.cgColor
-        
+
         page.continueButtonView.layer.cornerRadius = 10
-        
+
         page.frame = CGRect(x: 0,
                             y: 0,
                             width: view.frame.width,
                             height: view.frame.height)
-        
+
         if let bgImg = self.model?.backGroundImage {
             page.setBackGround(url: bgImg)
         }
-        
+
         page.backgroundColor = model?.firstPage?.backgroundColor
         let close = getCloseButton()
         page.addSubview(close)
@@ -184,52 +183,48 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
-        
+
         page.titleLabel.text = model?.mailForm.title
         page.titleLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.titleFontFamily, fontSize: model?.mailExtendedProps.titleTextSize, style: .title2)
         page.titleLabel.textColor = UIColor(hex: model?.mailExtendedProps.titleTextColor)
-        
-        
+
         page.subTİtleLabel.text = model?.mailForm.message
         page.subTİtleLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.textFontFamily, fontSize: model?.mailExtendedProps.textSize, style: .title2)
         page.subTİtleLabel.textColor = UIColor(hex: model?.mailExtendedProps.textColor)
-        
+
         page.firsLineTickLabel.text = model?.mailForm.emailPermitText
         page.firsLineTickLabel.font = RDHelper.getFont(fontFamily: "default", fontSize: model?.mailExtendedProps.emailPermitTextSize, style: .body)
         page.firsLineTickLabel.textColor = .black
-        
+
         page.secondLineTickLabel.text = model?.mailForm.consentText
         page.secondLineTickLabel.font = RDHelper.getFont(fontFamily: "default", fontSize: model?.mailExtendedProps.consentTextSize, style: .body)
         page.secondLineTickLabel.textColor = .black
-        
+
         page.firstLineWarningLabel.text = model?.mailForm.emailPermitText
         page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage
-        
+
         page.mailTextView.attributedPlaceholder = NSAttributedString(string: model?.mailForm.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
-        
-        
+
         page.continueButtonView.backgroundColor = UIColor(hex: model?.mailExtendedProps.buttonColor)
         page.continueButtonLabel.textColor = UIColor(hex: model?.mailExtendedProps.buttonTextColor)
         page.continueButtonLabel.text = model?.mailForm.buttonTitle
         page.continueButtonLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.buttonFontFamily, fontSize: model?.mailExtendedProps.buttonTextSize, style: .body)
-        
+
         page.mailInvalidLabel.text = model?.mailForm.invalidEmailMessage
         page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage
 
-        
-        
         page.firsLineTickLabel.setOnClickedListener {
             if let url = URL(string: self.model?.mailExtendedProps.emailPermitTextUrl ?? "") {
                 UIApplication.shared.open(url)
             }
         }
-        
+
         page.secondLineTickLabel.setOnClickedListener {
             if let url = URL(string: self.model?.mailExtendedProps.consentTextUrl ?? "") {
                 UIApplication.shared.open(url)
             }
         }
-        
+
         page.firstLineTickImageView.setOnClickedListener { [self] in
             firstChecked = !firstChecked
             if firstChecked {
@@ -238,7 +233,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                 page.firstLineTickImageView.image = UIImage()
             }
         }
-        
+
         page.secondLineTicImageView.setOnClickedListener { [self] in
             secondChecked = !secondChecked
             if secondChecked {
@@ -247,23 +242,22 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
                 page.secondLineTicImageView.image = UIImage()
             }
         }
-        
+
         page.continueButtonView.setOnClickedListener { [self] in
             let mail = page.mailTextView.text ?? ""
             if !RDHelper.checkEmail(email: mail) {
                 page.mailInvalidLabel.isHidden = false
                 return
             }
-            
+
             if !firstChecked {
-                //page.firstLineWarningLabel.isHidden = false
+                // page.firstLineWarningLabel.isHidden = false
             }
-            
+
             if !secondChecked {
                 page.secondLineWarningLabel.isHidden = false
             }
-            
-            
+
             if firstChecked && secondChecked {
                 RelatedDigital.subscribeMail(click: self.model!.report?.click ?? "",
                                              actid: "\(self.model!.actId ?? 0)",
@@ -274,28 +268,26 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
 
         }
 
-
         return page
     }
 
-    
     func prepareFirstPage() -> UIView {
         let page = UIView(frame: CGRect(x: view.frame.width*multiplier,
                                         y: 0,
                                         width: view.frame.width,
                                         height: view.frame.height))
-        
+
         var imageView = UIImageView(frame: .zero)
-        
+
         if let bgImg = self.model?.backGroundImage {
             page.setBackGround(url: bgImg)
         }
-        
+
         if let firstPage = model?.firstPage {
             var imageAdded = false
             if let img = firstPage.image {
                 imageView = UIImageView(frame: .zero)
-                
+
                 page.addSubview(imageView)
                 imageView.top(to: page, offset: 20)
                 imageView.centerX(to: page)
@@ -318,7 +310,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             } else {
                 title.top(to: page, offset: 20)
             }
-            
+
             let message = UILabel(frame: .zero)
             message.text = model?.firstPage?.message
             message.textColor = model?.firstPage?.messageColor
@@ -326,27 +318,27 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             message.textAlignment = .center
             message.numberOfLines = 0
             page.addSubview(message)
-            
+
             message.centerX(to: page)
             message.topToBottom(of: title, offset: 5)
             message.height(40.0)
-            
+
             let button = UIButton(frame: .zero)
             button.setTitle(model?.firstPage?.buttonText, for: .normal)
             button.setTitleColor(model?.firstPage?.buttonTextColor, for: .normal)
             button.titleLabel?.font = model?.firstPage?.buttonFont
             button.backgroundColor = model?.firstPage?.buttonBgColor
             page.addSubview(button)
-            
+
             button.height(60.0)
             button.centerX(to: page)
             button.topToBottom(of: message, offset: 10)
             button.bottom(to: page, offset: -20)
             button.width(120.0)
-            
+
             button.addTarget(self, action: #selector(goSecondPage), for: .touchUpInside)
         }
-        
+
         page.backgroundColor = model?.firstPage?.backgroundColor
         let close = getCloseButton()
         page.addSubview(close)
@@ -354,25 +346,24 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         close.trailing(to: page, offset: -20)
         close.width(40)
         close.height(40)
-        
+
         close.setOnClickedListener {
             self.close()
         }
-        
+
         return page
     }
-    
+
     func prepareSecondPage() -> UIView {
         let page = UIView(frame: CGRect(x: view.frame.width*(multiplier+1),
                                         y: 0,
                                         width: view.frame.width,
                                         height: view.frame.height))
-        
+
         if let bgImg = self.model?.backGroundImage {
             page.setBackGround(url: bgImg)
         }
-        
-    
+
         page.backgroundColor = model?.secondPage?.backGroundColor
         let close = getCloseButton()
         page.addSubview(close)
@@ -381,7 +372,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         close.width(40)
         close.height(40)
         close.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
-        
+
         if let videoUrl = model?.secondPage?.videoURL {
             let player = AVPlayer(url: videoUrl)
             let playerLayer = AVPlayerLayer(player: player)
@@ -391,23 +382,22 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         }
         return page
     }
-    
-    
+
     func prepareThirdPage() -> UIView {
-        let page : CupponCodePageView = .fromNib()
+        let page: CupponCodePageView = .fromNib()
         page.copyButtonView.layer.cornerRadius = 10
         page.cupponCodeView.layer.cornerRadius = 10
         page.goLinkVİew.layer.cornerRadius = 10
-        
+
         page.frame = CGRect(x: view.frame.width*(multiplier+2),
                             y: 0,
                             width: view.frame.width,
                             height: view.frame.height)
-        
+
         if let bgImg = self.model?.backGroundImage {
             page.setBackGround(url: bgImg)
         }
-        
+
         page.coppyButtonLabel.text = model?.thirdPage?.buttonText
         page.coppyButtonLabel.textColor = model?.thirdPage?.buttonTextColor
         page.coppyButtonLabel.font = model?.thirdPage?.buttonFont
@@ -415,11 +405,11 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         page.cupponCodeLabel.text = model?.thirdPage?.staticCode
         page.cupponCodeLabel.textColor =  UIColor(hex: model?.promocode_text_color)
         page.cupponCodeView.backgroundColor = UIColor(hex: model?.promocode_background_color)
-        
+
         page.copyButtonView.setOnClickedListener {
             self.copyClicked()
         }
-        
+
         page.titleLabel.text = model?.thirdPage?.title
         page.titleLabel.textColor = model?.thirdPage?.titleColor
         page.titleLabel.font = model?.thirdPage?.titleFont
@@ -438,8 +428,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
         }
         return page
     }
-    
-    
+
     func copyClicked() {
         UIPasteboard.general.string = model?.thirdPage?.staticCode
         RDHelper.showCopiedClipboardMessage()
@@ -451,7 +440,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
             }
         }
     }
-    
+
     override func show(animated: Bool) {
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
@@ -499,7 +488,7 @@ class ShakeToWinViewController : RDBaseNotificationViewController {
 }
 
 extension ShakeToWinViewController {
-    
+
 //    func createDummyModel() -> ShakeToWinViewModel? {
 //        var img: UIImage? = nil
 //        if let data = getImageDataOfUrl(URL(string: "https://placekitten.com/300/500")) {
@@ -510,11 +499,7 @@ extension ShakeToWinViewController {
 //                                   secondPage: ShakeToWinSecondPage(waitSeconds: 8, videoURL: URL(string: "https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4"), closeButtonColor: .white),
 //                                   thirdPage: ShakeToWinThirdPage(image: nil, title: "third page", titleFont: .boldSystemFont(ofSize: 16), titleColor: .darkGray, message: "shtw message \n message can be plural", messageColor: .blue, messageFont: .italicSystemFont(ofSize: 12), buttonText: "finish", buttonTextColor: .white, buttonFont: .boldSystemFont(ofSize: 16), buttonBgColor: .black, backgroundColor: .systemPink, closeButtonColor: .white))
 //    }
-    
-    
-    
 
-    
     @objc func goSecondPage() {
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width*(multiplier+1), y: 0.0), animated: true)
         self.openedSecondPage = true
@@ -523,24 +508,22 @@ extension ShakeToWinViewController {
         }
     }
 
-    func getCloseButton() -> UIButton  {
+    func getCloseButton() -> UIButton {
         let button = UIButton()
         button.setImage(getUIImage(named: "VisilabsCloseButton"), for: .normal)
         button.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
-        
+
         if self.model?.closeButtonColor == "black" {
             button.setImage(getUIImage(named: "VisilabsCloseButtonBlack"), for: .normal)
         }
         return button
     }
- 
+
 }
 
-
-
 extension UIView {
-    func setBackGround(url:String) {
-        
+    func setBackGround(url: String) {
+
         let bgImageView = UIImageView()
         bgImageView.setImage(withUrl: url)
         bgImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -554,18 +537,17 @@ extension UIView {
     }
 }
 
-
 extension ShakeToWinViewController {
     func playAudio() {
-        
+
         guard let url = URL.init(string: self.model?.soundUrl ?? "") else { return }
         let playerItem = AVPlayerItem.init(url: url)
         audioPlayer = AVPlayer.init(playerItem: playerItem)
         audioPlayer?.play()
     }
-    
+
     func loopAudio() {
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) { notification in
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) { _ in
             self.audioPlayer?.seek(to: CMTime.zero)
             self.audioPlayer?.play()
         }

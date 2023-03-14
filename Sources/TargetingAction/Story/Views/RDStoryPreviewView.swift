@@ -12,7 +12,7 @@ public enum RDLayoutType {
     case parallax
     var animator: LayoutAttributesAnimator {
         switch self {
-        case .cubic:return CubeAttributesAnimator(perspective: -1/100, totalAngle: .pi/12)
+        case .cubic: return CubeAttributesAnimator(perspective: -1/100, totalAngle: .pi/12)
         case .parallax: return ParallaxAttributesAnimator()
         }
     }

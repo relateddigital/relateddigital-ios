@@ -9,11 +9,10 @@ import UIKit
 import WebKit
 
 class GiftCatchViewController: RDBaseNotificationViewController {
-    
+
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,20 +21,20 @@ class GiftCatchViewController: RDBaseNotificationViewController {
         self.view.addSubview(webView)
         webView.allEdges(to: self.view)
     }
-    
-    init(_ gamefication : GiftCatchViewModel) {
+
+    init(_ gamefication: GiftCatchViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.gameficationModel = gamefication
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func close() {
         dismiss(animated: true) {
-            
-            if let gamefication = self.gameficationModel, !gamefication.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
+
+            if let gamefication = self.gameficationModel, !gamefication.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
                 let bannerVC = RDGamificationCodeBannerController(gamefication)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
@@ -45,7 +44,7 @@ class GiftCatchViewController: RDBaseNotificationViewController {
             }
         }
     }
-    
+
     override func show(animated: Bool) {
             guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
                 return
@@ -71,14 +70,14 @@ class GiftCatchViewController: RDBaseNotificationViewController {
                 window.rootViewController = self
                 window.isHidden = false
             }
-            
+
             let duration = animated ? 0.25 : 0
             UIView.animate(withDuration: duration, animations: {
                 self.window?.alpha = 1
             }, completion: { _ in
             })
         }
-        
+
         override func hide(animated: Bool, completion: @escaping () -> Void) {
             let duration = animated ? 0.25 : 0
             UIView.animate(withDuration: duration, animations: {
@@ -90,7 +89,7 @@ class GiftCatchViewController: RDBaseNotificationViewController {
                 completion()
             })
         }
-    
+
     func configureWebView() -> WKWebView {
         let configuration = WKWebViewConfiguration()
         let userContentController = WKUserContentController()
@@ -105,11 +104,10 @@ class GiftCatchViewController: RDBaseNotificationViewController {
             webView.backgroundColor = .clear
             webView.translatesAutoresizingMaskIntoConstraints = false
         }
-        
+
         return webView
     }
-        
-    
+
     private func createGiftCatchFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
@@ -124,12 +122,12 @@ class GiftCatchViewController: RDBaseNotificationViewController {
         let bundle = Bundle(for: type(of: self))
 #endif
         let bundleHtmlPath = bundle.path(forResource: "gift_catch", ofType: "html") ?? ""
-        
+
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
-        
+
         RDHelper.registerFonts(fontNames: getCustomFontNames())
         let fontUrls = getGiftCatchFonts(fontNames: getCustomFontNames())
-        
+
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
                 try manager.removeItem(atPath: htmlUrl.path)
@@ -137,9 +135,9 @@ class GiftCatchViewController: RDBaseNotificationViewController {
             if manager.fileExists(atPath: jsUrl.path) {
                 try manager.removeItem(atPath: jsUrl.path)
             }
-            
+
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
-            
+
             if let jsContent = gameficationModel?.jsContent?.utf8 {
                 guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
                     return nil
@@ -147,14 +145,13 @@ class GiftCatchViewController: RDBaseNotificationViewController {
             } else {
                 return nil
             }
-            
-            
+
         } catch let error {
             RDLogger.error(error)
             RDLogger.error(error.localizedDescription)
             return nil
         }
-        
+
         for fontUrlKeyValue in fontUrls {
             do {
                 let fontUrl = docUrl.appendingPathComponent(fontUrlKeyValue.key)
@@ -169,33 +166,33 @@ class GiftCatchViewController: RDBaseNotificationViewController {
                 continue
             }
         }
-        
+
         return htmlUrl
     }
-    
+
     private func getGiftCatchFonts(fontNames: Set<String>) -> [String: URL] {
         var fontUrls = [String: URL]()
         if let infos = Bundle.main.infoDictionary {
             if let uiAppFonts = infos["UIAppFonts"] as? [String] {
                 for uiAppFont in uiAppFonts {
                     let uiAppFontParts = uiAppFont.split(separator: ".")
-                    guard uiAppFontParts.count == 2 else{
+                    guard uiAppFontParts.count == 2 else {
                         continue
                     }
                     let fontName = String(uiAppFontParts[0])
                     let fontExtension = String(uiAppFontParts[1])
-                    
+
                     var register = false
                     for name in fontNames {
                         if name.contains(fontName, options: .caseInsensitive) {
                             register = true
                         }
                     }
-                    
+
                     if !register {
                         continue
                     }
-                    
+
                     guard let url = Bundle.main.url(forResource: fontName, withExtension: fontExtension) else {
                         RDLogger.error("UIFont+:  Failed to register font - path for resource not found.")
                         continue
@@ -206,7 +203,7 @@ class GiftCatchViewController: RDBaseNotificationViewController {
         }
         return fontUrls
     }
-    
+
     private func getCustomFontNames() -> Set<String> {
         var customFontNames = Set<String>()
         if let giftCatch = self.gameficationModel {
@@ -217,19 +214,18 @@ class GiftCatchViewController: RDBaseNotificationViewController {
         return customFontNames
     }
 
-
 }
 
 extension GiftCatchViewController: WKScriptMessageHandler {
-    
+
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        
+
         if message.name == "eventHandler" {
             if let event = message.body as? [String: Any], let method = event["method"] as? String {
                 if method == "console.log", let message = event["message"] as? String {
                     RDLogger.info("console.log: \(message)")
                 }
-                
+
                 if method == "initGiftCatch" {
                     RDLogger.info("initGiftCatch")
                     if let json = try? JSONEncoder().encode(self.gameficationModel), let jsonString = String(data: json, encoding: .utf8) {
@@ -238,63 +234,62 @@ extension GiftCatchViewController: WKScriptMessageHandler {
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
-                                
+
                             }
                         }
                     }
                 }
-                
+
                 if method == "copyToClipboard", let couponCode = event["couponCode"] as? String, let codeUrl = event["url"] as? String {
                     UIPasteboard.general.string = couponCode
                     RDHelper.showCopiedClipboardMessage()
                     self.close()
-                    
+
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                         if let url = URL(string: codeUrl) {
                             UIApplication.shared.open(url)
                         }
                     }
                 }
-                
+
                 if method == "subscribeEmail", let email = event["email"] as? String {
                     RelatedDigital.subscribeGamificationMail(actid: "\(self.gameficationModel!.actId ?? 0)", auth: self.gameficationModel!.auth, mail: email)
                     subsEmail = email
                 }
-                
+
                 if method == "sendReport" {
                     RelatedDigital.trackGamificationClick(gameficationReport: self.gameficationModel!.report!)
                 }
-                
-                if method == "linkClicked",let urlLnk = event["url"] as? String {
+
+                if method == "linkClicked", let urlLnk = event["url"] as? String {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                         if let url = URL(string: urlLnk) {
                             UIApplication.shared.open(url)
                         }
                     }
                 }
-                
-                
-                if method == "saveCodeGotten", let code = event["code"] as? String , let mail = event["email"] as? String {
+
+                if method == "saveCodeGotten", let code = event["code"] as? String, let mail = event["email"] as? String {
                     codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setGiftRainCode(code: code)
                     let actionID = self.gameficationModel?.actId
-                    
+
                     var properties = Properties()
                     properties[RDConstants.promoActionID] = String(actionID ?? 0)
                     properties[RDConstants.promoEmailKey] = mail
                     properties[RDConstants.promoAction] = code
 
                     RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
-   
+
                 }
-                
+
                 if method == "close" {
                     self.close()
                 }
             }
         }
-        
+
     }
-    
+
 }

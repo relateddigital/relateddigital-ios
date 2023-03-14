@@ -17,8 +17,8 @@ class RDStoryHomeViewCell: UICollectionViewCell {
     func setProperties(_ properties: RDStoryActionExtendedProperties, _ actId: Int) {
         self.profileNameLabel.textColor = properties.labelColor
         var shown = false
-        
-        setStoryTitleLabelProperties(fontFamily: properties.fontFamily,customFont: properties.customFontFamilyIos, labelColor: properties.storyzLabelColor, labelStory: self.profileNameLabel)
+
+        setStoryTitleLabelProperties(fontFamily: properties.fontFamily, customFont: properties.customFontFamilyIos, labelColor: properties.storyzLabelColor, labelStory: self.profileNameLabel)
         // check story has shown
         if let shownStories = UserDefaults.standard.dictionary(forKey: RDConstants.shownStories) as? [String: [String]] {
             if let shownStoriesWithAction = shownStories["\(actId)"], shownStoriesWithAction.contains(self.story?.title ?? "-") {
@@ -38,8 +38,8 @@ class RDStoryHomeViewCell: UICollectionViewCell {
             self.layer.shadowRadius = 10
         }
     }
-    
-    func setStoryTitleLabelProperties(fontFamily: String?,customFont:String? = "",labelColor:String?,labelStory:UILabel?) {
+
+    func setStoryTitleLabelProperties(fontFamily: String?, customFont: String? = "", labelColor: String?, labelStory: UILabel?) {
 
         if let color = UIColor(hex: labelColor) {
             labelStory?.textColor = color
@@ -73,7 +73,7 @@ class RDStoryHomeViewCell: UICollectionViewCell {
                 }
             }
 
-            if let uiCustomFont = UIFont(name: customFont ?? "", size:labelStory?.font.pointSize ?? 8) {
+            if let uiCustomFont = UIFont(name: customFont ?? "", size: labelStory?.font.pointSize ?? 8) {
                 labelStory?.font = uiCustomFont
                 return
             }

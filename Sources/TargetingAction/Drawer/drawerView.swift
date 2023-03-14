@@ -9,12 +9,12 @@ import UIKit
 
 class drawerView: UIView {
 
-    //grandView
+    // grandView
     @IBOutlet weak var drawerGrandView: UIView!
     @IBOutlet weak var drawerGrandImageView: UIImageView!
     @IBOutlet weak var drawerGrandContentImageView: UIImageView!
-    
-    //leftMini
+
+    // leftMini
     @IBOutlet weak var leftDrawerMiniView: UIView!
     @IBOutlet weak var leftDrawerMiniWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var leftDrawerMiniVerticalConstraint: NSLayoutConstraint!
@@ -30,7 +30,7 @@ class drawerView: UIView {
     @IBOutlet weak var leftDrawerTrailingConstraint: NSLayoutConstraint!
     @IBOutlet weak var leftDrawerTitleLabelCenterXConstraint: NSLayoutConstraint!
     @IBOutlet weak var leftDrawerContentImageCenterXConstraint: NSLayoutConstraint!
-    //rightMini
+    // rightMini
     @IBOutlet weak var rightDrawerMiniView: UIView!
     @IBOutlet weak var rightDrawerMiniWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var rightDrawerMiniImageView: UIImageView!
@@ -46,20 +46,19 @@ class drawerView: UIView {
     @IBOutlet weak var rightDrawerTitleLabelCenterXConstraint: NSLayoutConstraint!
     @IBOutlet weak var rightDrawerContentImageCenterXConstraint: NSLayoutConstraint!
 
-    
-    var drawerModel : DrawerViewModel?
-    
+    var drawerModel: DrawerViewModel?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         self.bounds = self.frame
         self.drawerGrandContentImageView.layer.zPosition = 1
         if drawerModel?.screenXcoordinate == .right && !(drawerModel?.isCircle ?? false) {

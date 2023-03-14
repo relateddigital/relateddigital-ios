@@ -9,7 +9,7 @@ import UIKit
 
 // swiftlint:disable type_body_length
 public class RDCarouselItem {
-    
+
     public enum PayloadKey {
         public static let imageUrlString = "image"
         public static let title = "title"
@@ -40,7 +40,7 @@ public class RDCarouselItem {
         public static let buttonFunction = "button_function"
         public static let buttonBorderRadius = "button_border_radius"
     }
-    
+
     public let imageUrlString: String?
     public let title: String?
     public let titleColor: UIColor?
@@ -66,31 +66,23 @@ public class RDCarouselItem {
     public let backgroundColor: UIColor?
     public let linkString: String?
     public var closeButtonColor: UIColor?
-    public var videourl : String?
-    public var buttonFunction : String?
-    public var buttonBorderRadius : String?
+    public var videourl: String?
+    public var buttonFunction: String?
+    public var buttonBorderRadius: String?
 
-    
     var titleFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title2), size: CGFloat(12))
     var bodyFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body), size: CGFloat(8))
     var buttonFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body), size: CGFloat(8))
-    
-    var linkUrl: URL? = nil
-    
-    var imageUrl: URL? = nil
-    
-    var backgroundImageUrl: URL? = nil
-    
-    
-    public var fetchImageBlock: FetchImageBlock? = nil
-    
-    
-    public init(imageUrlString: String?, title: String?, titleColor: String?, titleFontFamily: String?, titleCustomFontFamily: String?
-                ,titleTextsize: String?, body: String?, bodyColor: UIColor?, bodyFontFamily: String?, bodyCustomFontFamily: String?
-                ,bodyTextsize: String?, promocodeType: String?, promotionCode: String?, promocodeBackgroundColor: UIColor?
-                ,promocodeTextColor: UIColor?, buttonText: String?, buttonTextColor: UIColor?, buttonColor: UIColor?
-                ,buttonFontFamily: String?, buttonCustomFontFamily: String?, buttonTextsize: String?, backgroundImageString: String?
-                ,backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?,videourl: String?,buttonFunction:String,buttonBorderRadius:String?) {
+
+    var linkUrl: URL?
+
+    var imageUrl: URL?
+
+    var backgroundImageUrl: URL?
+
+    public var fetchImageBlock: FetchImageBlock?
+
+    public init(imageUrlString: String?, title: String?, titleColor: String?, titleFontFamily: String?, titleCustomFontFamily: String?, titleTextsize: String?, body: String?, bodyColor: UIColor?, bodyFontFamily: String?, bodyCustomFontFamily: String?, bodyTextsize: String?, promocodeType: String?, promotionCode: String?, promocodeBackgroundColor: UIColor?, promocodeTextColor: UIColor?, buttonText: String?, buttonTextColor: UIColor?, buttonColor: UIColor?, buttonFontFamily: String?, buttonCustomFontFamily: String?, buttonTextsize: String?, backgroundImageString: String?, backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?, videourl: String?, buttonFunction: String, buttonBorderRadius: String?) {
         self.imageUrlString = imageUrlString
         self.title = title
         self.titleColor = UIColor(hex: titleColor)
@@ -119,42 +111,41 @@ public class RDCarouselItem {
         self.buttonFunction = buttonFunction
         self.buttonBorderRadius = buttonBorderRadius
 
-        
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
             self.linkUrl = URL(string: linkString)
         }
-        
+
         if !imageUrlString.isNilOrWhiteSpace {
             self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: .inappcarousel)
         }
-        
+
         if !backgroundImageString.isNilOrWhiteSpace {
             self.backgroundImageUrl = RDHelper.getImageUrl(backgroundImageString!, type: .inappcarousel)
         }
-        
+
         self.closeButtonColor = closeButtonColor
-        
+
         self.setFonts()
-        
+
         self.fetchImageBlock = { imageCompletion in
-            var backgroundImage: UIImage? = nil
-            
+            var backgroundImage: UIImage?
+
             if let backgroundImageUrl = self.backgroundImageUrl, let imageData: Data = try? Data(contentsOf: backgroundImageUrl) {
                 backgroundImage = UIImage(data: imageData as Data)
             }
-            
+
             imageCompletion(self.imageUrl, backgroundImage, self)
         }
-        
+
     }
-    
+
     // swiftlint:disable function_body_length disable cyclomatic_complexity
     public init?(JSONObject: [String: Any]?) {
         guard let object = JSONObject else {
             RDLogger.error("carouselitem json object should not be nil")
             return nil
         }
-        
+
         self.imageUrlString = object[PayloadKey.imageUrlString] as? String
         self.title = object[PayloadKey.title] as? String
         self.titleColor = UIColor(hex: object[PayloadKey.titleColor] as? String)
@@ -182,40 +173,37 @@ public class RDCarouselItem {
         self.videourl = object[PayloadKey.videourl] as? String
         self.buttonFunction = object[PayloadKey.buttonFunction] as? String
         self.buttonBorderRadius = object[PayloadKey.buttonBorderRadius] as? String
-        
+
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
             self.linkUrl = URL(string: linkString)
         }
-        
+
         if !imageUrlString.isNilOrWhiteSpace {
             self.imageUrl = RDHelper.getImageUrl(imageUrlString!, type: .inappcarousel)
         }
-        
+
         if !backgroundImageString.isNilOrWhiteSpace {
             self.backgroundImageUrl = RDHelper.getImageUrl(backgroundImageString!, type: .inappcarousel)
         }
-        
+
         self.closeButtonColor = UIColor(hex: object[PayloadKey.close_button_color] as? String)
-        
+
         self.setFonts()
-        
+
         self.fetchImageBlock = { imageCompletion in
-            var backgroundImage: UIImage? = nil
+            var backgroundImage: UIImage?
             if let backgroundImageUrl = self.backgroundImageUrl, let imageData: Data = try? Data(contentsOf: backgroundImageUrl) {
                 backgroundImage = UIImage(data: imageData as Data)
             }
-            
+
             imageCompletion(self.imageUrl, backgroundImage, self)
         }
     }
-    
+
     private func setFonts() {
         self.titleFont = RDHelper.getFont(fontFamily: titleFontFamily, fontSize: titleTextsize, style: .title2, customFont: titleCustomFontFamily)
         self.bodyFont = RDHelper.getFont(fontFamily: bodyFontFamily, fontSize: bodyTextsize, style: .body, customFont: bodyCustomFontFamily)
         self.buttonFont = RDHelper.getFont(fontFamily: buttonFontFamily, fontSize: buttonTextsize, style: .title2, customFont: buttonCustomFontFamily)
     }
-    
-    
+
 }
-
-

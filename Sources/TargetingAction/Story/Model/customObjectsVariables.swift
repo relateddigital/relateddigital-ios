@@ -9,7 +9,7 @@ import Foundation
 
 class storyCustomVariables {
     static var shared = storyCustomVariables()
-    var fontFamily:String?
-    var customFontFamilyIos:String?
-    var storyzLabelColor:String?
+    var fontFamily: String?
+    var customFontFamilyIos: String?
+    var storyzLabelColor: String?
 }

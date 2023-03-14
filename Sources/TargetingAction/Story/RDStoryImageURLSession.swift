@@ -12,7 +12,7 @@ class RDStoryImageURLSession: URLSession {
     private(set) var dataTasks: [URLSessionDataTask] = []
 }
 extension RDStoryImageURLSession {
-    
+
     func downloadImage(using urlString: String, completionBlock: @escaping ImageResponse) {
         guard let url = URL(string: urlString) else {
             return completionBlock(.failure(RDStoryImageError.invalidImageURL))
@@ -27,5 +27,5 @@ extension RDStoryImageURLSession {
         }))
         dataTasks.last?.resume()
     }
-    
+
 }

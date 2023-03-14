@@ -17,14 +17,13 @@ public class RDCarouselItemView: UIView, DisplaceableView {
     internal lazy var copyCodeImageButton = setCopyCodeImage()
     internal lazy var messageLabel = setMessageLabel()
     internal lazy var button = setButton()
-    
+
     public var footerView: UIPageControl?
-    
+
     @objc public dynamic var titleFont: UIFont {
         get { return titleLabel.font }
         set { titleLabel.font = newValue }
     }
-    
 
     @objc public dynamic var titleColor: UIColor? {
         get { return titleLabel.textColor }
@@ -59,7 +58,7 @@ public class RDCarouselItemView: UIView, DisplaceableView {
     internal var imageHeightConstraint: NSLayoutConstraint?
 
     public weak var rdCarouselItem: RDCarouselItem?
-    
+
     // MARK: - CONSTRUCTOR
     public init(frame: CGRect, rdCarouselItem: RDCarouselItem?) {
         self.rdCarouselItem = rdCarouselItem
@@ -68,7 +67,7 @@ public class RDCarouselItemView: UIView, DisplaceableView {
             setupViews()
         }
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -90,7 +89,6 @@ public class RDCarouselItemView: UIView, DisplaceableView {
 
 }
 
-
 extension RDCarouselItemView {
     @objc func copyCodeTextButtonTapped(_ sender: UIButton) {
         UIPasteboard.general.string = copyCodeTextButton.currentTitle
@@ -99,7 +97,7 @@ extension RDCarouselItemView {
 }
 
 extension RDCarouselItemView {
-    
+
     internal func setButton() -> UIButton {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -141,7 +139,7 @@ extension RDCarouselItemView {
         titleLabel.font = .boldSystemFont(ofSize: 14)
         return titleLabel
     }
-    
+
     internal func setMessageLabel() -> UILabel {
         let messageLabel = UILabel(frame: .zero)
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -187,8 +185,7 @@ extension RDCarouselItemView {
         addSubview(copyCodeTextButton)
         addSubview(copyCodeImageButton)
         addSubview(button)
-        
-        
+
         if carouselItem.title.isNilOrWhiteSpace {
             titleLabel.isHidden = true
         } else {
@@ -199,7 +196,7 @@ extension RDCarouselItemView {
                 titleLabel.textColor = titleColor
             }
         }
-        
+
         if carouselItem.body.isNilOrWhiteSpace {
             messageLabel.isHidden = true
         } else {
@@ -210,7 +207,7 @@ extension RDCarouselItemView {
                 messageLabel.textColor = bodyColor
             }
         }
-        
+
         if carouselItem.buttonText.isNilOrWhiteSpace {
             button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             button.height(0.0)
@@ -228,7 +225,6 @@ extension RDCarouselItemView {
                 button.backgroundColor = buttonColor
             }
         }
-        
 
         if let promo = self.rdCarouselItem?.promotionCode,
            let _ = self.rdCarouselItem?.promocodeBackgroundColor,
@@ -240,7 +236,6 @@ extension RDCarouselItemView {
             copyCodeTextButton.isHidden = true
             copyCodeImageButton.isHidden = true
         }
-        
 
         imageView.allEdges(to: self, excluding: .bottom)
         titleLabel.topToBottom(of: imageView, offset: titleLabel.isHidden ? 0.0: 10.0)
@@ -254,19 +249,17 @@ extension RDCarouselItemView {
         copyCodeTextButton.trailingToLeading(of: copyCodeImageButton, offset: 20.0)
         button.topToBottom(of: copyCodeTextButton, offset: button.isHidden ? 0.0 :  5.0)
         button.bottom(to: self, offset: -30.0)
-        
-        
+
         titleLabel.centerX(to: self)
         messageLabel.centerX(to: self)
         button.centerX(to: self)
-        
 
         self.backgroundColor = .white
-        
+
         if let bgColor = carouselItem.backgroundColor {
             self.backgroundColor = bgColor
         }
-  
+
     }
 
 }

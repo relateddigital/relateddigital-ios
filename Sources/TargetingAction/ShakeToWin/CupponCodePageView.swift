@@ -17,13 +17,13 @@ class CupponCodePageView: UIView {
     @IBOutlet weak var coppyButtonLabel: UILabel!
     @IBOutlet weak var goLinkVİew: UIView!
     @IBOutlet weak var goLinkLabel: UILabel!
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
 }
