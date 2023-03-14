@@ -1,5 +1,5 @@
 //
-//  bannerCollectionViewCell.swift
+//  BannerCollectionViewCell.swift
 //  RelatedDigitalIOS
 //
 //  Created by Orhun Akmil on 4.05.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class bannerCollectionViewCell: UICollectionViewCell {
+class BannerCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     
 }

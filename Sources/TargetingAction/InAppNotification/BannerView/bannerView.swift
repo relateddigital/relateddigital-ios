@@ -1,5 +1,5 @@
 //
-//  bannerView.swift
+//  BannerView.swift
 //  CleanyModal
 //
 //  Created by Orhun Akmil on 1.05.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-public class bannerView: UIView,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+public class BannerView: UIView,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
 
     @IBOutlet weak var currentPageView: UIView!
     @IBOutlet weak var currentPageLabel: UILabel!
@@ -118,7 +118,7 @@ public class bannerView: UIView,UICollectionViewDelegate,UICollectionViewDataSou
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "bannerCell", for: indexPath)
         cell.contentMode = .center
         cell.backgroundColor = .clear
-        let cellTemp : bannerCollectionViewCell = UIView.fromNib()
+        let cellTemp : BannerCollectionViewCell = UIView.fromNib()
         cellTemp.imageView.setImage(withUrl: bannerViewModel?.appBanners[indexPath.row].img ?? "")
         cell.addSubview(cellTemp)
         cellTemp.translatesAutoresizingMaskIntoConstraints = false

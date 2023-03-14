@@ -340,17 +340,15 @@ public class RelatedDigital {
         PushUserDefaultsUtils.saveUserDefaults(key: PushKey.notificationLoginIdKey, value: notificationLoginID as AnyObject)
     }
     
-    public static func getBannerView(properties: Properties,completion: @escaping (bannerView?) -> Void) {
-        shared.rdInstance.getAppBanner(properties: properties) { bannerView in
+    public static func getBannerView(properties: Properties,completion: @escaping (BannerView?) -> Void) {
+        shared.rdInstance.getBannerView(properties: properties) { bannerView in
             completion(bannerView)
         }
     }
     
-//    private func showDownhs() ->Bool {
-//        let downhsViewController = downHsViewController(model: downHsModel())
-//        //downhsViewController.delegate = self
-//        downhsViewController.show(animated: true)
-//        return true
-//    }
-    
+    public static func getNpsWithNumbersView(properties: Properties, completion: @escaping (RDPopupDialogDefaultView?) -> Void) {
+        shared.rdInstance.getNpsWithNumbersView(properties: properties) { npsWithNumbersView in
+            completion(npsWithNumbersView)
+        }
+    }
 }

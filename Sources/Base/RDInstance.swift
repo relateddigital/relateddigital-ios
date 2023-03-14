@@ -11,7 +11,7 @@ import UIKit
 import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
-
+    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
@@ -107,7 +107,7 @@ public class RDInstance: RDInstanceProtocol {
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
         rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
         rdRemoteConfigInstance = RDRemoteConfig(profileId: rdProfile.profileId)
-        rdLocationManager = RDLocationManager()    
+        rdLocationManager = RDLocationManager()
         
         RDHelper.setEndpoints(dataSource: rdProfile.dataSource)
         
@@ -543,8 +543,47 @@ extension RDInstance: RDInAppNotificationsDelegate {
 extension RDInstance {
     
     
-    public func getNpsWithNumbersView(completion: @escaping ((RDPopupDialogDefaultView?) -> Void)) {
+    public func getStoryView(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil) -> RDStoryHomeView {
         
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
+            return RDStoryHomeView()
+        }
+        
+        let guid = UUID().uuidString
+        let storyHomeView = RDStoryHomeView()
+        let storyHomeViewController = RDStoryHomeViewController()
+        storyHomeViewController.urlDelegate = urlDelegate
+        storyHomeView.controller = storyHomeViewController
+        rdTargetingActionInstance.rdStoryHomeViewControllers[guid] = storyHomeViewController
+        rdTargetingActionInstance.rdStoryHomeViews[guid] = storyHomeView
+        storyHomeView.setDelegates()
+        storyHomeViewController.collectionView = storyHomeView.collectionView
+        
+        trackingQueue.async { [weak self, actionId, guid] in
+            guard let self = self else { return }
+            self.networkQueue.async { [weak self, actionId, guid] in
+                guard let self = self else { return }
+                self.rdTargetingActionInstance.getStories(rdUser: self.rdUser, guid: guid, actionId: actionId, completion: { response in
+                    if let error = response.error {
+                        RDLogger.error(error)
+                    } else {
+                        if let guid = response.guid, response.storyActions.count > 0,
+                           let storyHomeViewController = self.rdTargetingActionInstance.rdStoryHomeViewControllers[guid],
+                           let storyHomeView = self.rdTargetingActionInstance.rdStoryHomeViews[guid] {
+                            DispatchQueue.main.async {
+                                storyHomeViewController.loadStoryAction(response.storyActions.first!)
+                                storyHomeView.collectionView.reloadData()
+                                storyHomeView.setDelegates()
+                                storyHomeViewController.collectionView = storyHomeView.collectionView
+                            }
+                        }
+                    }
+                })
+            }
+        }
+        
+        return storyHomeView
     }
     
     
@@ -595,9 +634,9 @@ extension RDInstance {
     }
     
     
-    func getAppBanner(properties:Properties,completion: @escaping ((bannerView?) -> Void)) {
+    func getBannerView(properties:Properties, completion: @escaping ((BannerView?) -> Void)) {
         let guid = UUID().uuidString
-
+        
         var props = properties
         props[RDConstants.organizationIdKey] = rdProfile.organizationId
         props[RDConstants.profileIdKey] = rdProfile.profileId
@@ -613,11 +652,11 @@ extension RDInstance {
         props[RDConstants.pvivKey] = String(rdUser.pviv)
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
-
+        
         for (key, value) in RDPersistence.readTargetParameters() {
-           if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
-               props[key] = value
-           }
+            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
+                props[key] = value
+            }
         }
         
         self.rdTargetingActionInstance.getAppBanner(properties: props , rdUser: self.rdUser, guid: guid) { response in
@@ -626,57 +665,54 @@ extension RDInstance {
                 completion(nil)
             } else {
                 DispatchQueue.main.async {
-                    let bannerView : bannerView = .fromNib()
+                    let bannerView : BannerView = .fromNib()
                     bannerView.model = response
                     completion(bannerView)
                 }
             }
-
+            
         }
     }
     
-
-    public func getStoryView(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil) -> RDStoryHomeView {
-        
-        if RDPersistence.isBlocked() {
-            RDLogger.warn("Too much server load, ignoring the request!")
-            return RDStoryHomeView()
-        }
-        
+    
+    public func getNpsWithNumbersView(properties:Properties, completion: @escaping ((RDPopupDialogDefaultView?) -> Void)) {
         let guid = UUID().uuidString
-        let storyHomeView = RDStoryHomeView()
-        let storyHomeViewController = RDStoryHomeViewController()
-        storyHomeViewController.urlDelegate = urlDelegate
-        storyHomeView.controller = storyHomeViewController
-        rdTargetingActionInstance.rdStoryHomeViewControllers[guid] = storyHomeViewController
-        rdTargetingActionInstance.rdStoryHomeViews[guid] = storyHomeView
-        storyHomeView.setDelegates()
-        storyHomeViewController.collectionView = storyHomeView.collectionView
         
-        trackingQueue.async { [weak self, actionId, guid] in
-            guard let self = self else { return }
-            self.networkQueue.async { [weak self, actionId, guid] in
-                guard let self = self else { return }
-                self.rdTargetingActionInstance.getStories(rdUser: self.rdUser, guid: guid, actionId: actionId, completion: { response in
-                    if let error = response.error {
-                        RDLogger.error(error)
-                    } else {
-                        if let guid = response.guid, response.storyActions.count > 0,
-                           let storyHomeViewController = self.rdTargetingActionInstance.rdStoryHomeViewControllers[guid],
-                           let storyHomeView = self.rdTargetingActionInstance.rdStoryHomeViews[guid] {
-                            DispatchQueue.main.async {
-                                storyHomeViewController.loadStoryAction(response.storyActions.first!)
-                                storyHomeView.collectionView.reloadData()
-                                storyHomeView.setDelegates()
-                                storyHomeViewController.collectionView = storyHomeView.collectionView
-                            }
-                        }
-                    }
-                })
+        var props = properties
+        props[RDConstants.organizationIdKey] = rdProfile.organizationId
+        props[RDConstants.profileIdKey] = rdProfile.profileId
+        props[RDConstants.cookieIdKey] = rdUser.cookieId
+        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RDConstants.tokenIdKey] = rdUser.tokenId
+        props[RDConstants.appidKey] = rdUser.appId
+        props[RDConstants.apiverKey] = RDConstants.apiverValue
+        props[RDConstants.actionType] = RDConstants.appBanner
+        props[RDConstants.channelKey] = rdProfile.channel
+        
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
+        
+        for (key, value) in RDPersistence.readTargetParameters() {
+            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
+                props[key] = value
             }
         }
         
-        return storyHomeView
+        self.rdTargetingActionInstance.getNpsWithNumbers(properties: props , rdUser: self.rdUser, guid: guid) { response in
+            
+            if response.error != nil {
+                completion(nil)
+            } else {
+                DispatchQueue.main.async {
+                    let bannerView : BannerView = .fromNib()
+                    bannerView.model = response
+                    //completion(bannerView)
+                }
+            }
+            
+        }
     }
 }
 
@@ -733,7 +769,7 @@ extension RDInstance {
 
 
 extension RDInstance {
-
+    
     public var locationServicesEnabledForDevice: Bool {
         return RDGeofenceState.locationServicesEnabledForDevice
     }
@@ -873,14 +909,14 @@ extension RDInstance {
     public func registerToken(tokenData: Data?) {
         RDPush.registerToken(tokenData: tokenData)
         guard let tokenData = tokenData else {
-                    RDLogger.error("Token data cannot be nil")
-                    return
-                }
-                let tokenString = tokenData.reduce("", { $0 + String(format: "%02X", $1) })
-                rdUser.tokenId = tokenString
-                if let appAlias = rdProfile.appAlias, !appAlias.isEmptyOrWhitespace {
-                    rdUser.appId = appAlias
-                }
+            RDLogger.error("Token data cannot be nil")
+            return
+        }
+        let tokenString = tokenData.reduce("", { $0 + String(format: "%02X", $1) })
+        rdUser.tokenId = tokenString
+        if let appAlias = rdProfile.appAlias, !appAlias.isEmptyOrWhitespace {
+            rdUser.appId = appAlias
+        }
     }
     
     public func handlePush(pushDictionary: [AnyHashable: Any]) {
@@ -890,7 +926,7 @@ extension RDInstance {
     public func sync(notification: Notification? = nil) {
         RDPush.sync(notification: notification)
     }
-
+    
     public func registerEmail(email: String, permission: Bool, isCommercial: Bool = false, customDelegate: RDPushDelegate? = nil) {
         RDPush.registerEmail(email: email, permission: permission, isCommercial: isCommercial, customDelegate: customDelegate)
     }

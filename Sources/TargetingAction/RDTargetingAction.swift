@@ -1262,8 +1262,6 @@ class RDTargetingAction {
     }
     
     
-    
-    
     func getAppBanner(properties:Properties,rdUser: RDUser, guid: String, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
 
         RDRequest.sendMobileRequest(properties: properties, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
@@ -1300,6 +1298,8 @@ class RDTargetingAction {
         
         return AppBannerResponseModel(app_banners: appBannerModelArray, error: errorResponse, transition: transition ?? "")
     }
+    
+    
 
     // MARK: - Story
 
@@ -1545,4 +1545,44 @@ class RDTargetingAction {
         return props
     }
 
+    
+    // MARK: - NPS With Numbers
+    
+    func getNpsWithNumbers(properties:Properties,rdUser: RDUser, guid: String, completion: @escaping ((_ response: AppBannerResponseModel) -> Void)) {
+
+        RDRequest.sendMobileRequest(properties: properties, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
+            completion(self.parseNpsWithNumbers(result, error, guid))
+        }, guid: guid)
+    }
+    
+    
+    private func parseNpsWithNumbers(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> AppBannerResponseModel {
+        var appBannerModelArray = [AppBannerModel]()
+        var errorResponse: RDError?
+        var transition : String?
+        if let error = error {
+            errorResponse = error
+        } else if let res = result {
+            if let bannerAction = res[RDConstants.appBanner] as? [[String: Any?]] {
+                for bannerAction in bannerAction {
+                    let actiondata = bannerAction[RDConstants.actionData] as? [String: Any?]
+                    let appData = actiondata?[RDConstants.appBanners] as? [[String: Any?]]
+                    transition = actiondata?[RDConstants.transitionAction] as? String
+                    for element in appData! {
+                        let appBannerModel = AppBannerModel(img: element[RDConstants.img] as? String, ios_lnk: element[RDConstants.iosLnk] as? String)
+                        appBannerModelArray.append(appBannerModel)
+                    }
+                }
+            } else {
+                errorResponse = RDError.noData
+            }
+        }
+        
+        if appBannerModelArray.isEmpty {
+            errorResponse = RDError.noData
+        }
+        
+        return AppBannerResponseModel(app_banners: appBannerModelArray, error: errorResponse, transition: transition ?? "")
+    }
+    
 }
