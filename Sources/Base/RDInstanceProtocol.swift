@@ -57,7 +57,7 @@ protocol RDInstanceProtocol {
     func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView
     func getStoryViewAsync(actionId: Int?, urlDelegate: RDStoryURLDelegate?, completion: @escaping StoryCompletion)
     func getBannerView(properties: Properties, completion: @escaping ((BannerView?) -> Void))
-    func getNpsWithNumbersView(properties: Properties, completion: @escaping ((RDNpsWithNumbersView?) -> Void))
+    func getNpsWithNumbersView(properties: Properties, completion: @escaping ((RDNpsWithNumbersContainerView?) -> Void))
     func recommend(zoneId: String, productCode: String?, filters: [RDRecommendationFilter], properties: Properties, completion: @escaping RecommendCompletion)
     func getFavoriteAttributeActions(actionId: Int?, completion: @escaping FavoriteAttributeActionCompletion)
     func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, appGroupsKey: String?, deliveredBadge: Bool?)

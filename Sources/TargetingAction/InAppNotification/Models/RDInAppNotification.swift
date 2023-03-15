@@ -204,7 +204,7 @@ public class RDInAppNotification {
                 promocodeCopybuttonTextColor: String?,
                 promocodeCopybuttonColor: String?,
                 buttonBorderRadius: String?,
-                displayType: String?) {
+                displayType: String? = "popup") {
         self.actId = actId
         messageType = type.rawValue
         self.type = type
