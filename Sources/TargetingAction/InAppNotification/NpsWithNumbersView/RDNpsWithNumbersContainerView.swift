@@ -88,13 +88,13 @@ final public class RDNpsWithNumbersContainerView: UIView {
         // Shadow container constraints
         if UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad {
             shadowContainer.width(preferredWidth)
-            shadowContainer.leading(to: self, offset: 40.0, relation: .equalOrGreater, priority: .required)
-            shadowContainer.trailing(to: self, offset: -40.0, relation: .equalOrLess, priority: .required)
+            shadowContainer.leading(to: self, offset: 0.0, relation: .equalOrGreater, priority: .required)
+            shadowContainer.trailing(to: self, offset: 0.0, relation: .equalOrLess, priority: .required)
         } else {
-            shadowContainer.width(300, relation: .equalOrGreater)
-            shadowContainer.width(340, relation: .equalOrLess)
-            shadowContainer.leading(to: self, offset: 10, relation: .equalOrGreater)
-            shadowContainer.trailing(to: self, offset: -10, relation: .equalOrLess)
+            shadowContainer.width(preferredWidth, relation: .equalOrGreater)
+            shadowContainer.width(preferredWidth, relation: .equalOrLess)
+            shadowContainer.leading(to: self, offset: 0, relation: .equalOrGreater)
+            shadowContainer.trailing(to: self, offset: -0, relation: .equalOrLess)
         }
 
         constraints += [NSLayoutConstraint(item: shadowContainer,

@@ -91,9 +91,9 @@ class RDNpsWithNumbersViewController: UIViewController {
             notification: notification,
             viewController: viewController,
             buttonAlignment: .vertical,
-            preferredWidth: 580,
             hideStatusBar: false)
         self.notification = notification
+        initForInAppNotification(viewController)
         viewController.standardView.npsDelegate = self
     }
     
@@ -101,7 +101,6 @@ class RDNpsWithNumbersViewController: UIViewController {
         notification: RDInAppNotification?,
         viewController: UIViewController,
         buttonAlignment: NSLayoutConstraint.Axis = .vertical,
-        preferredWidth: CGFloat = 340,
         hideStatusBar: Bool = false,
         completion: (() -> Void)? = nil
     ) {
