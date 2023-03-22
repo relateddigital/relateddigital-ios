@@ -12,7 +12,6 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     typealias RDNWNDVC = RDNpsWithNumbersDefaultViewController
     typealias UITGR = UITapGestureRecognizer
-    typealias UIPGR = UIPanGestureRecognizer
     
     fileprivate var initialized = false
     weak var notification: RDInAppNotification?

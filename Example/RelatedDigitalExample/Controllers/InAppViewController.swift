@@ -127,6 +127,7 @@ extension InAppViewController: RDInappButtonDelegate {
         topView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(topView)
         NSLayoutConstraint.activate([topView.topAnchor.constraint(equalTo: self.view.topAnchor,constant:  80),
+                                     topView.heightAnchor.constraint(equalToConstant: 80),
                                      topView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
                                      topView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
         topView.backgroundColor = .black

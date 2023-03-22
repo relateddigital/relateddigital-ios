@@ -142,6 +142,7 @@ public class RDNpsWithNumbersCollectionView: UIView {
         if self.rdInAppNotification != nil {
             setupViews()
         }
+        super.layoutIfNeeded()
     }
 
     required public init?(coder aDecoder: NSCoder) {

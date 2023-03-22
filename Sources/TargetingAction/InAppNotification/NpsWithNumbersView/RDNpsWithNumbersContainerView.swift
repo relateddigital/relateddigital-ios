@@ -19,6 +19,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
         shadowContainer.layer.shadowOpacity = 0.4
         shadowContainer.layer.shadowOffset = CGSize(width: 0, height: 0)
         shadowContainer.layer.cornerRadius = 4
+        shadowContainer.clipsToBounds = false
         return shadowContainer
     }()
 
@@ -28,7 +29,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
         let container = UIView(frame: .zero)
         container.translatesAutoresizingMaskIntoConstraints = false
         container.backgroundColor = .white
-        container.clipsToBounds = true
+        container.clipsToBounds = false
         container.layer.cornerRadius = 4
         return container
     }()
@@ -67,6 +68,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
         super.init(frame: frame)
         self.backgroundColor = UIColor(white: 0.035, alpha: 0.5)
         setupViews()
+        super.layoutIfNeeded()
     }
 
     required public init?(coder aDecoder: NSCoder) {
