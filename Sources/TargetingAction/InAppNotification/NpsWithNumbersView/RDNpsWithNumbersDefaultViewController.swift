@@ -28,7 +28,7 @@ public final class RDNpsWithNumbersDefaultViewController: UIViewController {
     override public func loadView() {
         super.loadView()
         view = RDNpsWithNumbersCollectionView(frame: .zero,
-                                        rdInAppNotification: rdInAppNotification)
+                                              rdInAppNotification: rdInAppNotification)
     }
     
     public override func viewDidAppear(_ animated: Bool) {
@@ -49,29 +49,20 @@ public final class RDNpsWithNumbersDefaultViewController: UIViewController {
 
 public extension RDNpsWithNumbersDefaultViewController {
     
-
+    
     var image: UIImage? {
         get { return standardView.imageView.image }
         set {
-            if inAppCurrentState.shared.isFirstPageOpened == true {
-                if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 {
-                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
-                } else {
-                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
-                    standardView.imageView.setImage(withUrl: rdInAppNotification?.secondImageUrl1)
-                }
+            if rdInAppNotification?.videourl?.count ?? 0 > 0 {
+                standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
             } else {
-                if rdInAppNotification?.videourl?.count ?? 0 > 0 {
-                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
-                } else {
-                    standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
-                    standardView.imageView.setImage(withUrl: rdInAppNotification?.imageUrl)
-                }
+                standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                standardView.imageView.setImage(withUrl: rdInAppNotification?.imageUrl)
             }
-
+            
         }
     }
-
+    
     
     
     func hideTitle() {

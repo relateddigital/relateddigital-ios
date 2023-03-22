@@ -89,7 +89,6 @@ class RDNpsWithNumbersViewController: UIViewController {
         self.init(
             notification: notification,
             viewController: viewController,
-            buttonAlignment: .vertical,
             hideStatusBar: false)
         self.notification = notification
         initForInAppNotification(viewController)
@@ -99,7 +98,6 @@ class RDNpsWithNumbersViewController: UIViewController {
     public init(
         notification: RDInAppNotification?,
         viewController: UIViewController,
-        buttonAlignment: NSLayoutConstraint.Axis = .vertical,
         hideStatusBar: Bool = false,
         completion: (() -> Void)? = nil
     ) {
@@ -123,12 +121,7 @@ class RDNpsWithNumbersViewController: UIViewController {
         // Add our custom view to the container
         addChild(viewController)
         popupContainerView.stackView.insertArrangedSubview(viewController.view, at: 0)
-        if !(notification?.secondButtonText.isNilOrWhiteSpace ?? false) {
-            popupContainerView.buttonStackView.axis = .horizontal
-            popupContainerView.buttonStackView.spacing = 5
-        } else {
-            popupContainerView.buttonStackView.axis = buttonAlignment
-        }
+        popupContainerView.buttonStackView.axis = .vertical
         viewController.didMove(toParent: self)
         
     }
