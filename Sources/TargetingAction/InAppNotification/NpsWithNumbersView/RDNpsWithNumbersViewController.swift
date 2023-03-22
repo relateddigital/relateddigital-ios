@@ -58,10 +58,7 @@ class RDNpsWithNumbersViewController: UIViewController {
         
         // Check if second popup coming
         var callToActionURL: URL? = notification.callToActionUrl
-        if notification.type == .secondNps {
-            callToActionURL = nil
-            returnCallback = false
-        }
+
         
         /*
          self.delegate?.notificationShouldDismiss(controller: self,
@@ -83,14 +80,12 @@ class RDNpsWithNumbersViewController: UIViewController {
     }
     
     public convenience init(notification: RDInAppNotification? = nil) {
-        
         let viewController = RDNWNDVC(rdInAppNotification: notification)
         
         self.init(
             notification: notification,
             viewController: viewController,
             hideStatusBar: false)
-        self.notification = notification
         initForInAppNotification(viewController)
         viewController.standardView.npsDelegate = self
     }
@@ -101,11 +96,10 @@ class RDNpsWithNumbersViewController: UIViewController {
         hideStatusBar: Bool = false,
         completion: (() -> Void)? = nil
     ) {
-        
+        self.notification = notification
         self.viewController = viewController as? RDNWNDVC ?? RDNWNDVC()
         self.completion = completion
         super.init(nibName: nil, bundle: nil)
-        self.notification = notification
         // Init the presentation manager
         popupContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
         
@@ -142,18 +136,19 @@ class RDNpsWithNumbersViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObservers()
-        guard !initialized else { return }
-        if let not = notification, !not.buttonText.isNilOrWhiteSpace {
-            appendButtons()
-        }
+        //guard !initialized else { return }
+        appendButtons()
+        //if let not = notification, !not.buttonText.isNilOrWhiteSpace {
+        //    appendButtons()
+        //} else {
+        //    print(notification)
+        //}
         initialized = true
     }
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        UIView.animate(withDuration: 0.15) {
-            self.setNeedsStatusBarAppearanceUpdate()
-        }
+        self.setNeedsStatusBarAppearanceUpdate()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -191,51 +186,10 @@ class RDNpsWithNumbersViewController: UIViewController {
             stackView.removeArrangedSubview(popupContainerView.buttonStackView)
         }
         
-        if notification?.type == .imageTextButton {
-            buttonStackView.distribution = .fillProportionally
-            buttonStackView.axis = .horizontal
-            // başlangıç boslugu
-            let leadingSpacerView = UIView()
-            leadingSpacerView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                leadingSpacerView.widthAnchor.constraint(equalToConstant: fakeSpace)
-            ])
-            buttonStackView.addArrangedSubview(leadingSpacerView)
-            
-            let stackViewButtons = UIStackView()
-            stackViewButtons.translatesAutoresizingMaskIntoConstraints = false
-            stackViewButtons.axis = .horizontal
-            stackViewButtons.distribution = .fillEqually
-            stackViewButtons.spacing = 5
-            buttonStackView.addArrangedSubview(stackViewButtons)
-            for (index, button) in buttons.enumerated() {
-                button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
-                stackViewButtons.addArrangedSubview(button)
-                button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-            }
-            
-            // Bitiş boslugu
-            let trailingSpacerView = UIView()
-            trailingSpacerView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                trailingSpacerView.widthAnchor.constraint(equalToConstant: fakeSpace)
-            ])
-            buttonStackView.addArrangedSubview(trailingSpacerView)
-            
-            // taban boslugu
-            let bottomSpacerView = UIView()
-            bottomSpacerView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                bottomSpacerView.heightAnchor.constraint(equalToConstant: fakeSpace / 2)
-            ])
-            stackView.addArrangedSubview(bottomSpacerView)
-        } else {
-            
-            for (index, button) in buttons.enumerated() {
-                button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
-                buttonStackView.addArrangedSubview(button)
-                button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-            }
+        for (index, button) in buttons.enumerated() {
+            button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
+            buttonStackView.addArrangedSubview(button)
+            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         }
     }
     

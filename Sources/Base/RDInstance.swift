@@ -702,7 +702,8 @@ extension RDInstance {
         
         self.rdTargetingActionInstance.getNpsWithNumbers(properties: props , rdUser: self.rdUser, guid: guid) { notif in
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            //DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            DispatchQueue.main.async {
                 var npsView: RDNpsWithNumbersContainerView? = nil
                 if let notif = notif {
                     var vc = RDNpsWithNumbersViewController(notification: notif)

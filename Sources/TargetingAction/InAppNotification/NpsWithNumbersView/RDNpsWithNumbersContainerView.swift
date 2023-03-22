@@ -13,7 +13,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
     internal lazy var shadowContainer: UIView = {
         let shadowContainer = UIView(frame: .zero)
         shadowContainer.translatesAutoresizingMaskIntoConstraints = false
-        shadowContainer.backgroundColor = UIColor.clear
+        shadowContainer.backgroundColor = .clear
         shadowContainer.layer.shadowColor = UIColor.black.cgColor
         shadowContainer.layer.shadowRadius = 5
         shadowContainer.layer.shadowOpacity = 0.4
