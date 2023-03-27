@@ -11,7 +11,6 @@ import AVFoundation
 
 class RDNpsWithNumbersViewController: UIViewController {
     
-    
     var player : AVPlayer?
         
     weak var notification: RDInAppNotification?
@@ -60,15 +59,12 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     public init(notification: RDInAppNotification? = nil) {
         self.notification = notification
-        //standardView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
         super.init(nibName: nil, bundle: nil)
         npsContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
         if let backgroundColor = notification?.backGroundColor {
             npsContainerView.shadowContainer.backgroundColor = backgroundColor
         }        
-        //npsContainerView.stackView.insertArrangedSubview(standardView, at: 0)
         npsContainerView.buttonStackView.axis = .vertical
-        
                 
         guard let notification = self.notification else { return }
         button = RDPopupDialogButton(
@@ -78,15 +74,9 @@ class RDNpsWithNumbersViewController: UIViewController {
             buttonColor: notification.buttonColor, action: commonButtonAction,
             buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
         button!.isEnabled = false
-        
-        //standardView.npsDelegate = self
-        
-        
     }
     
-
     
-    // Init with coder not implemented
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -96,7 +86,7 @@ class RDNpsWithNumbersViewController: UIViewController {
     /// Replaces controller view with popup view
     public override func loadView() {
         view = RDNpsWithNumbersContainerView(frame: UIScreen.main.bounds)
-        collectionView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
+        collectionView = RDNpsWithNumbersCollectionView(frame: UIScreen.main.bounds, rdInAppNotification: notification)
         npsContainerView.stackView.insertArrangedSubview(collectionView, at: 0)
         collectionView.npsDelegate = self
         
