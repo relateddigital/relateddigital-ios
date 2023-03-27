@@ -65,8 +65,6 @@ public class RDNpsWithNumbersCollectionView: UIView {
         }
 
         imageView.allEdges(to: self, excluding: .bottom)
-        //imageView.leading(to: self, offset: 0, relation: .equal, priority: .required)
-        //imageView.trailing(to: self, offset: 0, relation: .equal, priority: .required)
         titleLabel.topToBottom(of: imageView, offset: 0.0)
         messageLabel.topToBottom(of: titleLabel, offset: 8.0)
         numberRating.topToBottom(of: messageLabel, offset: 10.0)
@@ -84,10 +82,7 @@ public class RDNpsWithNumbersCollectionView: UIView {
             imageHeightConstraint?.constant = imageView.pv_heightForImageView(isVideoExist: true)
         } else {
             imageHeightConstraint?.constant = imageView.pv_heightForImageView(isVideoExist: false)
-            //imageView.setImage(withUrl: notification.imageUrl)
         }
-        
-        
         
     }
 
@@ -148,7 +143,6 @@ public class RDNpsWithNumbersCollectionView: UIView {
         if self.rdInAppNotification != nil {
             setupViews()
         }
-        super.layoutIfNeeded()
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -165,12 +159,12 @@ public class RDNpsWithNumbersCollectionView: UIView {
 
         baseSetup(notification)
 
-        //imageHeightConstraint = NSLC(item: imageView,
-        //    attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
+        imageHeightConstraint = NSLC(item: imageView,
+            attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
 
-        //if let imageHeightConstraint = imageHeightConstraint {
-        //    constraints.append(imageHeightConstraint)
-        //}
+        if let imageHeightConstraint = imageHeightConstraint {
+            constraints.append(imageHeightConstraint)
+        }
 
 
         NSLC.activate(constraints)
@@ -184,33 +178,6 @@ extension RDNpsWithNumbersCollectionView: SliderStepDelegate {
     func didSelectedValue(sliderStep: RDSliderStep, value: Float) {
         sliderStep.value = value
     }
-}
-
-extension RDNpsWithNumbersCollectionView: UITextFieldDelegate {
-
-    public func textFieldDidBeginEditing(_ textField: UITextField) {
-
-    }
-
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-
-    }
-
-    func getTopView() -> UIView? {
-        var topView: UIView?
-        let window = UIApplication.shared.keyWindow
-        if window != nil {
-            for subview in window?.subviews ?? [] {
-                if !subview.isHidden && subview.alpha > 0
-                    && subview.frame.size.width > 0
-                    && subview.frame.size.height > 0 {
-                    topView = subview
-                }
-            }
-        }
-        return topView
-    }
-
 }
 
 

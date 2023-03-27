@@ -56,8 +56,6 @@ final public class RDNpsWithNumbersContainerView: UIView {
     internal init(frame: CGRect, notification: RDInAppNotification) {
         super.init(frame: frame)
         self.notification = notification
-        print(UIScreen.main.bounds.width)
-        print(UIScreen.main.bounds.height)
         self.backgroundColor = UIColor(white: 0.535, alpha: 0.5)
         buttonStackView.accessibilityIdentifier = "buttonStack"
         if let backgroundColor = notification.backGroundColor {
@@ -124,7 +122,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
             } else {
                 let a = collectionView.imageView.pv_heightForImageView(isVideoExist: false)
                 print(a)
-                //collectionView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                collectionView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
                 //let a = collectionView.imageView.pv_heightForImageView(isVideoExist: false)
                 //collectionView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
                 //collectionView.imageHeightConstraint?.isActive = true

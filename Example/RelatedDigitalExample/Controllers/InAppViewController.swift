@@ -126,7 +126,7 @@ extension InAppViewController: RDInappButtonDelegate {
         let topView = UIView()
         topView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(topView)
-        NSLayoutConstraint.activate([topView.topAnchor.constraint(equalTo: self.view.topAnchor,constant:  300),
+        NSLayoutConstraint.activate([topView.topAnchor.constraint(equalTo: self.view.topAnchor,constant: 300),
                                      topView.heightAnchor.constraint(greaterThanOrEqualToConstant: 300),
                                      topView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
                                      topView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])

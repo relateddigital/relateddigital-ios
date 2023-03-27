@@ -707,14 +707,6 @@ extension RDInstance {
                 if let notif = notif {
                     let vc = RDNpsWithNumbersContainerView(frame: .zero, notification: notif)
                     npsView = vc
-                    /*
-                    if let npsView = npsView {
-                        npsView.superview?.bringSubviewToFront(npsView)
-                    }
-                    */
-                    
-                    //npsView = RDNpsWithNumbersView(frame: UIScreen.main.bounds, rdInAppNotification: notif)
-                    //npsView?.setupForNpsWithNumbers()
                 }
                 completion(npsView)
             }

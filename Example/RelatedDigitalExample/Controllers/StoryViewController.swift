@@ -152,12 +152,10 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
                 if let npsView = npsView {
                     self.npsView = npsView
                     self.view.addSubview(self.npsView!)
-                    npsView.translatesAutoresizingMaskIntoConstraints = false
-                    npsView.topAnchor.constraint(equalTo: self.npsWithNumbersButton.bottomAnchor, constant: 20).isActive = true
-                    npsView.widthAnchor.constraint(equalTo: self.view.saferAreaLayoutGuide.widthAnchor).isActive = true
-                    //npsView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-                    
-                    
+                    self.npsView?.translatesAutoresizingMaskIntoConstraints = false
+                    self.npsView?.topAnchor.constraint(equalTo: self.npsWithNumbersButton.bottomAnchor, constant: 20).isActive = true
+                    self.npsView?.widthAnchor.constraint(equalTo: self.view.saferAreaLayoutGuide.widthAnchor).isActive = true
+                    npsView.heightAnchor.constraint(equalToConstant: 100).isActive = true
                     
 
                      
