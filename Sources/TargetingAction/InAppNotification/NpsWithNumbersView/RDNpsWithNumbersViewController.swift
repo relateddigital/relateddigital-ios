@@ -7,12 +7,13 @@
 
 import Foundation
 import UIKit
+import AVFoundation
 
 class RDNpsWithNumbersViewController: UIViewController {
     
-    typealias RDNWNDVC = RDNpsWithNumbersDefaultViewController
     
-    fileprivate var initialized = false
+    var player : AVPlayer?
+        
     weak var notification: RDInAppNotification?
     
     fileprivate var completion: (() -> Void)?
@@ -21,20 +22,16 @@ class RDNpsWithNumbersViewController: UIViewController {
         return view as! RDNpsWithNumbersContainerView  // swiftlint:disable:this force_cast
     }
     
-    public var standardView: RDNpsWithNumbersCollectionView {
-        return view as! RDNpsWithNumbersCollectionView  // swiftlint:disable:this force_cast
-    }
+    public var standardView: RDNpsWithNumbersCollectionView!
     
     fileprivate var button: RDPopupDialogButton?
-    
-    public var viewController: RDNWNDVC
-    
+        
     func commonButtonAction() {
         guard let notification = self.notification else { return }
         var returnCallback = true
         var additionalTrackingProperties = Properties()
         
-        if let num = viewController.standardView.selectedNumber {
+        if let num = standardView.selectedNumber {
             additionalTrackingProperties["OM.s_point"] = "\(num)"
         }
         additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
@@ -62,21 +59,19 @@ class RDNpsWithNumbersViewController: UIViewController {
     }
     
     public init(notification: RDInAppNotification? = nil) {
-        let viewController = RDNWNDVC(rdInAppNotification: notification)
         self.notification = notification
-        self.viewController = viewController
+        standardView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
         super.init(nibName: nil, bundle: nil)
         npsContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
         if let backgroundColor = notification?.backGroundColor {
-            npsContainerView.container.backgroundColor = backgroundColor
+            npsContainerView.shadowContainer.backgroundColor = backgroundColor
         }
-        modalPresentationStyle = .custom
-        modalPresentationCapturesStatusBarAppearance = true
-        addChild(viewController)
-        npsContainerView.stackView.insertArrangedSubview(viewController.view, at: 0)
-        npsContainerView.buttonStackView.axis = .vertical
-        viewController.didMove(toParent: self)
+        //modalPresentationStyle = .custom
         
+        npsContainerView.stackView.insertArrangedSubview(standardView, at: 0)
+        npsContainerView.buttonStackView.axis = .vertical
+        
+                
         guard let notification = self.notification else { return }
         button = RDPopupDialogButton(
             title: notification.buttonText!,
@@ -86,7 +81,9 @@ class RDNpsWithNumbersViewController: UIViewController {
             buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
         button!.isEnabled = false
         
-        viewController.standardView.npsDelegate = self
+        standardView.npsDelegate = self
+        
+        
     }
     
 
@@ -102,6 +99,8 @@ class RDNpsWithNumbersViewController: UIViewController {
     public override func loadView() {
         view = RDNpsWithNumbersContainerView(
             frame: UIScreen.main.bounds, preferredWidth: UIScreen.main.bounds.width)
+        standardView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
+        
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -111,12 +110,30 @@ class RDNpsWithNumbersViewController: UIViewController {
         //    appendButtons()
         //}
         appendButtons()
-        initialized = true
     }
     
     public override func viewDidAppear(_ animated: Bool) {
+        player = standardView.imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
         super.viewDidAppear(animated)
         self.setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        player?.pause()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if notification?.videourl?.count ?? 0 > 0 {
+            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+        } else {
+            let a = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+            print(a)
+            standardView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
+        }
+                
     }
     
     deinit {
@@ -155,10 +172,6 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     
     // MARK: - StatusBar display related
-    
-    public override var prefersStatusBarHidden: Bool {
-        return false
-    }
     
     public override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return .slide

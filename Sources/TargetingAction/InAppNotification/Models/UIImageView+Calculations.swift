@@ -9,6 +9,7 @@ import UIKit
 import AVFoundation
 
 extension UIImageView {
+    
     func pv_heightForImageView(isVideoExist: Bool) -> CGFloat {
         let root = self.rootSuperView()
         if isVideoExist {

@@ -15,23 +15,10 @@ final public class RDNpsWithNumbersContainerView: UIView {
         shadowContainer.translatesAutoresizingMaskIntoConstraints = false
         shadowContainer.backgroundColor = .clear
         shadowContainer.layer.shadowColor = UIColor.black.cgColor
-        shadowContainer.layer.shadowRadius = 5
-        shadowContainer.layer.shadowOpacity = 0.4
         shadowContainer.layer.shadowOffset = CGSize(width: 0, height: 0)
         shadowContainer.layer.cornerRadius = 4
         shadowContainer.clipsToBounds = false
         return shadowContainer
-    }()
-
-    /// The container view is a child of shadowContainer and contains
-    /// all other views. It clips to bounds so cornerRadius can be set
-    internal lazy var container: UIView = {
-        let container = UIView(frame: .zero)
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.backgroundColor = .white
-        container.clipsToBounds = false
-        container.layer.cornerRadius = 4
-        return container
     }()
 
     // The container stack view for buttons
@@ -44,7 +31,6 @@ final public class RDNpsWithNumbersContainerView: UIView {
         return buttonStackView
     }()
 
-    // The main stack view, containing all relevant views
     internal lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [self.buttonStackView])
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -66,7 +52,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
     internal init(frame: CGRect, preferredWidth: CGFloat) {
         self.preferredWidth = preferredWidth
         super.init(frame: frame)
-        self.backgroundColor = UIColor(white: 0.035, alpha: 0.5)
+        self.backgroundColor = UIColor(white: 0.535, alpha: 0.5)
         setupViews()
         super.layoutIfNeeded()
     }
@@ -81,8 +67,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
 
         // Add views
         addSubview(shadowContainer)
-        shadowContainer.addSubview(container)
-        container.addSubview(stackView)
+        shadowContainer.addSubview(stackView)
 
         // Layout views
         var constraints = [NSLayoutConstraint]()
@@ -96,7 +81,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
             shadowContainer.width(preferredWidth, relation: .equalOrGreater)
             shadowContainer.width(preferredWidth, relation: .equalOrLess)
             shadowContainer.leading(to: self, offset: 0, relation: .equalOrGreater)
-            shadowContainer.trailing(to: self, offset: -0, relation: .equalOrLess)
+            shadowContainer.trailing(to: self, offset: 0, relation: .equalOrLess)
         }
 
         constraints += [NSLayoutConstraint(item: shadowContainer,
@@ -119,8 +104,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
             constraints.append(centerYConstraint)
         }
 
-        container.allEdges(to: shadowContainer)
-        stackView.allEdges(to: container)
+        stackView.allEdges(to: shadowContainer)
 
         // Activate constraints
         NSLayoutConstraint.activate(constraints)

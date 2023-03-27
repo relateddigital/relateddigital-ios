@@ -10,6 +10,7 @@ import UIKit
 
 public class RDNpsWithNumbersCollectionView: UIView {
 
+    
     typealias NSLC = NSLayoutConstraint
     
     private func setBorderColorOfCell() -> UIColor {
@@ -40,12 +41,13 @@ public class RDNpsWithNumbersCollectionView: UIView {
         if let bodyColor = notification.messageBodyColor {
             messageLabel.textColor = bodyColor
         }
+        
+
+
 
         translatesAutoresizingMaskIntoConstraints = false
         addSubview(imageView)
-    }
-    
-    internal func setupForNpsWithNumbers() {
+        
         addSubview(titleLabel)
         addSubview(messageLabel)
         addSubview(numberRating)
@@ -73,8 +75,19 @@ public class RDNpsWithNumbersCollectionView: UIView {
         messageLabel.centerX(to: self)
         numberRating.delegate = self
         numberRating.dataSource = self
+        
+        if notification.videourl?.count ?? 0 > 0 {
+            imageHeightConstraint?.constant = imageView.pv_heightForImageView(isVideoExist: true)
+        } else {
+            imageHeightConstraint?.constant = imageView.pv_heightForImageView(isVideoExist: false)
+            imageView.setImage(withUrl: notification.imageUrl)
+        }
+        
+        
+        
     }
 
+    
     
     internal func setImageView() -> UIImageView {
         let imageView = UIImageView(frame: .zero)
@@ -154,11 +167,10 @@ public class RDNpsWithNumbersCollectionView: UIView {
         guard let notification = rdInAppNotification else {
             return
         }
+        
+        var constraints = [NSLC]()
 
         baseSetup(notification)
-
-        var constraints = [NSLC]()
-        setupForNpsWithNumbers()
 
         imageHeightConstraint = NSLC(item: imageView,
             attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
@@ -193,25 +205,6 @@ extension RDNpsWithNumbersCollectionView: UITextFieldDelegate {
 
     public func textFieldDidEndEditing(_ textField: UITextField) {
 
-    }
-
-    @objc func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey]
-                                as? NSValue)?.cgRectValue {
-            if let view = getTopView() {
-                if view.frame.origin.y == 0 {
-                    view.frame.origin.y -= keyboardSize.height
-                }
-            }
-        }
-    }
-
-    @objc func keyboardWillHide(notification: NSNotification) {
-        if let view = getTopView() {
-            if view.frame.origin.y != 0 {
-                view.frame.origin.y = 0
-            }
-        }
     }
 
     func getTopView() -> UIView? {

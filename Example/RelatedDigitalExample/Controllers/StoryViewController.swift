@@ -152,22 +152,9 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
                 if let npsView = npsView {
                     self.npsContainerView = npsView
                     self.view.addSubview(self.npsContainerView!)
-                    //npsView.translatesAutoresizingMaskIntoConstraints = false
-                    //npsView.topAnchor.constraint(equalTo: self.npsWithNumbersButton.bottomAnchor, constant: 20).isActive = true
-                    //npsView.widthAnchor.constraint(equalTo: self.view.saferAreaLayoutGuide.widthAnchor).isActive = true
                     self.npsContainerView!.translatesAutoresizingMaskIntoConstraints = false
                     self.npsWithNumbersButton.bottomAnchor.constraint(equalTo: self.npsContainerView!.topAnchor, constant: 20).isActive = true
                     self.npsContainerView!.widthAnchor.constraint(equalTo: self.view.saferAreaLayoutGuide.widthAnchor).isActive = true
-                    //self.npsContainerView!.heightAnchor.constraint(equalToConstant: 100).isActive = true
-                    //self.setupLayout()
-                    //npsView.heightAnchor.constraint(equalToConstant: 300).isActive = true
-                    
-                    
-                    
-                    //NSLayoutConstraint.activate([npsView.topAnchor.constraint(equalTo: topView.topAnchor),
-                    //                             npsView.bottomAnchor.constraint(equalTo: topView.bottomAnchor),
-                    //                             npsView.leadingAnchor.constraint(equalTo: topView.leadingAnchor),
-                    //                             npsView.trailingAnchor.constraint(equalTo: topView.trailingAnchor)])
                      
                 } else {
                     print("There is no story action matching your criteria.")
