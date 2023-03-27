@@ -33,12 +33,7 @@ public final class RDNpsWithNumbersDefaultViewController: UIViewController {
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if !inAppCurrentState.shared.isFirstPageOpened {
-            player = standardView.imageView.addVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
-        } else {
-            inAppCurrentState.shared.isFirstPageOpened = false
-        }
+        player = standardView.imageView.addVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -63,16 +58,6 @@ public extension RDNpsWithNumbersDefaultViewController {
         }
     }
     
-    
-    
-    func hideTitle() {
-        standardView.titleLabel.isHidden = true
-    }
-    
-    func hideMessage() {
-        standardView.messageLabel.isHidden = true
-    }
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -81,13 +66,7 @@ public extension RDNpsWithNumbersDefaultViewController {
         } else {
             standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
         }
-        
-        if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 && inAppCurrentState.shared.isFirstPageOpened {
-            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
-        } else if inAppCurrentState.shared.isFirstPageOpened {
-            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: false)
-        }
-        
+                
     }
 }
 

@@ -29,7 +29,6 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     public var viewController: RDNWNDVC
     
-    
     func commonButtonAction() {
         guard let notification = self.notification else { return }
         var returnCallback = true
@@ -107,22 +106,17 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        addObservers()
-        guard !initialized else { return }
-        if let not = self.notification, !not.buttonText.isNilOrWhiteSpace {
-            appendButtons()
-        }
+        //guard !initialized else { return }
+        //if let not = self.notification, !not.buttonText.isNilOrWhiteSpace {
+        //    appendButtons()
+        //}
+        appendButtons()
         initialized = true
     }
     
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setNeedsStatusBarAppearanceUpdate()
-    }
-    
-    public override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        removeObservers()
     }
     
     deinit {
@@ -186,35 +180,6 @@ extension RDNpsWithNumbersViewController {
     
 }
 
-extension RDNpsWithNumbersViewController {
-    // MARK: - Keyboard & orientation observers
-    
-    func addObservers() {
-        NotificationCenter.default.addObserver(
-            self, selector: #selector(orientationChanged),
-            name: UIDevice.orientationDidChangeNotification,
-            object: nil)
-    }
-    
-    func removeObservers() {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: UIDevice.orientationDidChangeNotification,
-            object: nil)
-    }
-    
-    // MARK: - Actions
-    
-    @objc fileprivate func orientationChanged(_ notification: Notification) {
-        
-    }
-    
-}
-extension RDNpsWithNumbersViewController: ImageButtonImageDelegate {
-    func imageButtonTapped() {
-        self.commonButtonAction()
-    }
-}
 
 extension RDNpsWithNumbersViewController: NPSDelegate {
     
