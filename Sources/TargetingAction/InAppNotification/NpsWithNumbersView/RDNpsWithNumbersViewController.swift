@@ -85,7 +85,7 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     /// Replaces controller view with popup view
     public override func loadView() {
-        view = RDNpsWithNumbersContainerView(frame: UIScreen.main.bounds)
+        view = RDNpsWithNumbersContainerView(frame: UIScreen.main.bounds, notification: notification!)
         collectionView = RDNpsWithNumbersCollectionView(frame: UIScreen.main.bounds, rdInAppNotification: notification)
         npsContainerView.stackView.insertArrangedSubview(collectionView, at: 0)
         collectionView.npsDelegate = self
@@ -120,7 +120,6 @@ class RDNpsWithNumbersViewController: UIViewController {
             collectionView.imageHeightConstraint?.isActive = true
             collectionView.imageView.height(a)
         }
-                
     }
     
     deinit {
@@ -177,8 +176,10 @@ extension RDNpsWithNumbersViewController: NPSDelegate {
     
 }
 
+/*
 @objc
 public protocol RDNpsWithNumbersViewURLDelegate: NSObjectProtocol {
     @objc
     func urlClicked(_ url: URL)
 }
+*/

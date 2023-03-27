@@ -122,11 +122,13 @@ extension UIImageView {
                             let viewPop = self.superview as! RDPopupDialogDefaultView
                             viewPop.imageHeightConstraint?.constant = viewPop.imageView.pv_heightForImageView(isVideoExist: false)
                         } else if self.superview is RDNpsWithNumbersCollectionView {
-                            //let viewPop = self.superview as! RDNpsWithNumbersCollectionView
-                            //let height = viewPop.imageView.pv_heightForImageView(isVideoExist: false)
-                            //viewPop.imageHeightConstraint?.constant = height
+                            let viewPop = self.superview as! RDNpsWithNumbersCollectionView
+                            let height = viewPop.imageView.pv_heightForImageView(isVideoExist: false)
+                            viewPop.imageHeightConstraint?.constant = height
                             //viewPop.imageView.height(height)
-                            self.layoutIfNeeded()
+                            //viewPop.imageView.height(400, relation: .equalOrLess)
+                            //viewPop.imageView.width(UIScreen.main.bounds.width, relation: .equalOrLess)
+                            //self.layoutIfNeeded()
                         }
                         
                     }

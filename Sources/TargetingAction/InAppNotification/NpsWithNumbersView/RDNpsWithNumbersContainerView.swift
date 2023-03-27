@@ -7,8 +7,16 @@
 
 import Foundation
 import UIKit
+import AVFoundation
 
 final public class RDNpsWithNumbersContainerView: UIView {
+    
+    var player : AVPlayer?
+    
+    var notification: RDInAppNotification?
+    
+    fileprivate var button: RDPopupDialogButton?
+    public var collectionView: RDNpsWithNumbersCollectionView!
 
     internal lazy var shadowContainer: UIView = {
         let shadowContainer = UIView(frame: .zero)
@@ -20,7 +28,6 @@ final public class RDNpsWithNumbersContainerView: UIView {
         return shadowContainer
     }()
 
-    // The container stack view for buttons
     internal lazy var buttonStackView: UIStackView = {
         let buttonStackView = UIStackView()
         buttonStackView.backgroundColor = .clear
@@ -38,8 +45,6 @@ final public class RDNpsWithNumbersContainerView: UIView {
         return stackView
     }()
 
-    // The preferred width for iPads
-    fileprivate var preferredWidth: CGFloat = 0.0
 
     // MARK: - Constraints
 
@@ -47,16 +52,112 @@ final public class RDNpsWithNumbersContainerView: UIView {
     internal var centerYConstraint: NSLayoutConstraint?
 
     // MARK: - Initializers
-
-    internal override init(frame: CGRect) {
-        self.preferredWidth = UIScreen.main.bounds.width
+    
+    internal init(frame: CGRect, notification: RDInAppNotification) {
+        super.init(frame: frame)
+        self.notification = notification
         print(UIScreen.main.bounds.width)
         print(UIScreen.main.bounds.height)
-        super.init(frame: frame)
         self.backgroundColor = UIColor(white: 0.535, alpha: 0.5)
+        buttonStackView.accessibilityIdentifier = "buttonStack"
+        if let backgroundColor = notification.backGroundColor {
+            shadowContainer.backgroundColor = backgroundColor
+        }
+        buttonStackView.axis = .vertical
+                
+        button = RDPopupDialogButton(
+            title: notification.buttonText!,
+            font: notification.buttonTextFont,
+            buttonTextColor: notification.buttonTextColor,
+            buttonColor: notification.buttonColor, action: commonButtonAction,
+            buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
+        button!.isEnabled = false
+        
+        collectionView = RDNpsWithNumbersCollectionView(frame:.zero, rdInAppNotification: notification)
+        stackView.insertArrangedSubview(collectionView, at: 0)
+        collectionView.npsDelegate = self
+        
+        appendButtons()
+        player = collectionView.imageView.addVideoPlayer(urlString: notification.videourl ?? "")
+        
         setupViews()
         super.layoutIfNeeded()
     }
+    
+    func commonButtonAction() {
+        guard let notification = self.notification else { return }
+        var returnCallback = true
+        var additionalTrackingProperties = Properties()
+        
+        if let num = collectionView.selectedNumber {
+            additionalTrackingProperties["OM.s_point"] = "\(num)"
+        }
+        additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
+        additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
+        
+        // Check if second popup coming
+        var callToActionURL: URL? = notification.callToActionUrl
+        /*
+         self.delegate?.notificationShouldDismiss(controller: self,
+         callToActionURL: callToActionURL,
+         shouldTrack: true,
+         additionalTrackingProperties: additionalTrackingProperties)
+         */
+        
+        if returnCallback {
+            
+            if notification.buttonFunction == RDConstants.copyRedirect {
+                if let promoCode = notification.promotionCode {
+                    UIPasteboard.general.string = promoCode
+                    RDHelper.showCopiedClipboardMessage()
+                }
+            }
+            //self.inappButtonDelegate?.didTapButton(notification)
+        }
+    }
+    
+    public override func layoutSubviews() {
+        DispatchQueue.main.async { [self] in
+            collectionView.npsDelegate = self
+            if notification?.videourl?.count ?? 0 > 0 {
+                collectionView.imageHeightConstraint?.constant = collectionView.imageView.pv_heightForImageView(isVideoExist: true)
+            } else {
+                let a = collectionView.imageView.pv_heightForImageView(isVideoExist: false)
+                print(a)
+                //collectionView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                //let a = collectionView.imageView.pv_heightForImageView(isVideoExist: false)
+                //collectionView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
+                //collectionView.imageHeightConstraint?.isActive = true
+                //collectionView.imageView.height(a)
+            }
+            //self.setupViews()
+        }
+    }
+
+    public override func removeFromSuperview() {
+        super.removeFromSuperview()
+        player?.pause()
+    }
+    
+    
+    
+    fileprivate func appendButtons() {
+        if button == nil {
+            stackView.removeArrangedSubview(buttonStackView)
+        }
+        button!.needsLeftSeparator = buttonStackView.axis == .horizontal
+        buttonStackView.addArrangedSubview(button!)
+        button!.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+        
+    }
+    
+
+    @objc fileprivate func buttonTapped(_ button: RDPopupDialogButton) {
+        button.buttonAction?()
+    }
+
+
+    
 
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -66,23 +167,22 @@ final public class RDNpsWithNumbersContainerView: UIView {
 
     internal func setupViews() {
 
-        // Add views
         addSubview(shadowContainer)
         shadowContainer.addSubview(stackView)
 
-        // Layout views
         var constraints = [NSLayoutConstraint]()
 
-        // Shadow container constraints
+        
         if UIDevice.current.userInterfaceIdiom == UIUserInterfaceIdiom.pad {
-            shadowContainer.width(preferredWidth)
+            //shadowContainer.width(preferredWidth)
             shadowContainer.leading(to: self, offset: 0.0, relation: .equalOrGreater, priority: .required)
             shadowContainer.trailing(to: self, offset: 0.0, relation: .equalOrLess, priority: .required)
         } else {
-            shadowContainer.width(preferredWidth, relation: .equalOrGreater)
+            //shadowContainer.width(preferredWidth, relation: .equalOrGreater)
             shadowContainer.leading(to: self, offset: 0, relation: .equal)
             shadowContainer.trailing(to: self, offset: 0, relation: .equal)
         }
+         
 
         constraints += [NSLayoutConstraint(item: shadowContainer,
                                            attribute: .centerX,
@@ -111,3 +211,25 @@ final public class RDNpsWithNumbersContainerView: UIView {
     }
 }
 
+
+extension RDNpsWithNumbersContainerView: NPSDelegate {
+    
+    func ratingSelected() {
+        if let button = button {
+            button.isEnabled = true
+        }
+    }
+    
+    func ratingUnselected() {
+        if let button = button {
+            button.isEnabled = false
+        }
+    }
+    
+}
+
+@objc
+public protocol RDNpsWithNumbersViewURLDelegate: NSObjectProtocol {
+    @objc
+    func urlClicked(_ url: URL)
+}

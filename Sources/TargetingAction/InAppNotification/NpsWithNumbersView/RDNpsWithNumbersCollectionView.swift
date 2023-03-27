@@ -32,7 +32,7 @@ public class RDNpsWithNumbersCollectionView: UIView {
         
         imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.backgroundColor = .brown
         imageView.setImage(withUrl: notification.imageUrl)
@@ -48,11 +48,6 @@ public class RDNpsWithNumbersCollectionView: UIView {
         if let bodyColor = notification.messageBodyColor {
             messageLabel.textColor = bodyColor
         }
-        
-
-
-
-        translatesAutoresizingMaskIntoConstraints = false
         
         
         addSubview(titleLabel)
@@ -72,14 +67,14 @@ public class RDNpsWithNumbersCollectionView: UIView {
         imageView.allEdges(to: self, excluding: .bottom)
         //imageView.leading(to: self, offset: 0, relation: .equal, priority: .required)
         //imageView.trailing(to: self, offset: 0, relation: .equal, priority: .required)
-        titleLabel.topToBottom(of: imageView, offset: 10.0)
+        titleLabel.topToBottom(of: imageView, offset: 0.0)
         messageLabel.topToBottom(of: titleLabel, offset: 8.0)
         numberRating.topToBottom(of: messageLabel, offset: 10.0)
         numberRating.height(50.0)
         numberRating.leading(to: self, offset: 0)
         numberRating.trailing(to: self, offset: 0)
         numberRating.bottom(to: self, offset: -10.0)
-        numberRating.backgroundColor = .clear
+        numberRating.backgroundColor = .magenta
         titleLabel.centerX(to: self)
         messageLabel.centerX(to: self)
         numberRating.delegate = self
@@ -132,8 +127,6 @@ public class RDNpsWithNumbersCollectionView: UIView {
     internal var imageView: UIImageView!
     internal lazy var titleLabel = setTitleLabel()
     internal lazy var messageLabel = setMessageLabel()
-
-
     internal lazy var numberRating = setNumberRating()
 
     var colors: [[CGColor]] = []
@@ -216,13 +209,6 @@ extension RDNpsWithNumbersCollectionView: UITextFieldDelegate {
             }
         }
         return topView
-    }
-
-    func hideResultLabel() {
-        DispatchQueue.main.asyncAfter(deadline: .now()+3) {
-            self.setNeedsLayout()
-            self.setNeedsDisplay()
-        }
     }
 
 }
