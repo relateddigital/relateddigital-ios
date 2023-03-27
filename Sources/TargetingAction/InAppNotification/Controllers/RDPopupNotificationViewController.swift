@@ -567,11 +567,6 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         }
     }
     
-    public func tapButtonWithIndex(_ index: Int) {
-        let button = buttons[index]
-        button.buttonAction?()
-    }
-    
     // MARK: - StatusBar display related
     
     public override var prefersStatusBarHidden: Bool {

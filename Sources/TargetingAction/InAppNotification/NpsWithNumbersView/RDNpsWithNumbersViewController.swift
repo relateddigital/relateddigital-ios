@@ -11,15 +11,13 @@ import UIKit
 class RDNpsWithNumbersViewController: UIViewController {
     
     typealias RDNWNDVC = RDNpsWithNumbersDefaultViewController
-    typealias UITGR = UITapGestureRecognizer
     
     fileprivate var initialized = false
     weak var notification: RDInAppNotification?
     
     fileprivate var completion: (() -> Void)?
     
-    /// Returns the controllers view
-    internal var popupContainerView: RDNpsWithNumbersContainerView {
+    internal var npsContainerView: RDNpsWithNumbersContainerView {
         return view as! RDNpsWithNumbersContainerView  // swiftlint:disable:this force_cast
     }
     
@@ -27,22 +25,10 @@ class RDNpsWithNumbersViewController: UIViewController {
         return view as! RDNpsWithNumbersCollectionView  // swiftlint:disable:this force_cast
     }
     
-    /// The set of buttons
-    fileprivate var buttons = [RDPopupDialogButton]()
+    fileprivate var button: RDPopupDialogButton?
     
     public var viewController: RDNWNDVC
     
-    fileprivate func initForInAppNotification(_ viewController: RDNWNDVC) {
-        guard let notification = self.notification else { return }
-        let button = RDPopupDialogButton(
-            title: notification.buttonText!,
-            font: notification.buttonTextFont,
-            buttonTextColor: notification.buttonTextColor,
-            buttonColor: notification.buttonColor, action: commonButtonAction,
-            buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
-        button.isEnabled = false
-        addButton(button)
-    }
     
     func commonButtonAction() {
         guard let notification = self.notification else { return }
@@ -52,14 +38,11 @@ class RDNpsWithNumbersViewController: UIViewController {
         if let num = viewController.standardView.selectedNumber {
             additionalTrackingProperties["OM.s_point"] = "\(num)"
         }
-        
         additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
         additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
         
         // Check if second popup coming
         var callToActionURL: URL? = notification.callToActionUrl
-
-        
         /*
          self.delegate?.notificationShouldDismiss(controller: self,
          callToActionURL: callToActionURL,
@@ -79,46 +62,35 @@ class RDNpsWithNumbersViewController: UIViewController {
         }
     }
     
-    public convenience init(notification: RDInAppNotification? = nil) {
+    public init(notification: RDInAppNotification? = nil) {
         let viewController = RDNWNDVC(rdInAppNotification: notification)
+        self.notification = notification
+        self.viewController = viewController
+        super.init(nibName: nil, bundle: nil)
+        npsContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
+        if let backgroundColor = notification?.backGroundColor {
+            npsContainerView.container.backgroundColor = backgroundColor
+        }
+        modalPresentationStyle = .custom
+        modalPresentationCapturesStatusBarAppearance = true
+        addChild(viewController)
+        npsContainerView.stackView.insertArrangedSubview(viewController.view, at: 0)
+        npsContainerView.buttonStackView.axis = .vertical
+        viewController.didMove(toParent: self)
         
-        self.init(
-            notification: notification,
-            viewController: viewController,
-            hideStatusBar: false)
-        initForInAppNotification(viewController)
+        guard let notification = self.notification else { return }
+        button = RDPopupDialogButton(
+            title: notification.buttonText!,
+            font: notification.buttonTextFont,
+            buttonTextColor: notification.buttonTextColor,
+            buttonColor: notification.buttonColor, action: commonButtonAction,
+            buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
+        button!.isEnabled = false
+        
         viewController.standardView.npsDelegate = self
     }
     
-    public init(
-        notification: RDInAppNotification?,
-        viewController: UIViewController,
-        hideStatusBar: Bool = false,
-        completion: (() -> Void)? = nil
-    ) {
-        self.notification = notification
-        self.viewController = viewController as? RDNWNDVC ?? RDNWNDVC()
-        self.completion = completion
-        super.init(nibName: nil, bundle: nil)
-        // Init the presentation manager
-        popupContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
-        
-        if let backgroundColor = notification?.backGroundColor {
-            popupContainerView.container.backgroundColor = backgroundColor
-        }
-        
-        modalPresentationStyle = .custom
-        
-        // StatusBar setup
-        modalPresentationCapturesStatusBarAppearance = true
-        
-        // Add our custom view to the container
-        addChild(viewController)
-        popupContainerView.stackView.insertArrangedSubview(viewController.view, at: 0)
-        popupContainerView.buttonStackView.axis = .vertical
-        viewController.didMove(toParent: self)
-        
-    }
+
     
     // Init with coder not implemented
     public required init?(coder aDecoder: NSCoder) {
@@ -136,13 +108,10 @@ class RDNpsWithNumbersViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         addObservers()
-        //guard !initialized else { return }
-        appendButtons()
-        //if let not = notification, !not.buttonText.isNilOrWhiteSpace {
-        //    appendButtons()
-        //} else {
-        //    print(notification)
-        //}
+        guard !initialized else { return }
+        if let not = self.notification, !not.buttonText.isNilOrWhiteSpace {
+            appendButtons()
+        }
         initialized = true
     }
     
@@ -162,13 +131,7 @@ class RDNpsWithNumbersViewController: UIViewController {
     }
     
     // MARK: - Dismissal related
-    
-    @objc fileprivate func handleTap(_ sender: UITGR) {
-        let point = sender.location(in: popupContainerView.stackView)
-        guard !popupContainerView.stackView.point(inside: point, with: nil) else { return }
-        dismiss()
-    }
-    
+
     @objc public func dismiss(_ completion: (() -> Void)? = nil) {
         dismiss(animated: true) {
             completion?()
@@ -178,37 +141,24 @@ class RDNpsWithNumbersViewController: UIViewController {
     // MARK: - Button related
     
     fileprivate func appendButtons() {
-        let stackView = popupContainerView.stackView
-        let buttonStackView = popupContainerView.buttonStackView
+        let stackView = npsContainerView.stackView
+        let buttonStackView = npsContainerView.buttonStackView
         
-        let fakeSpace = 25.0
-        if buttons.isEmpty {
-            stackView.removeArrangedSubview(popupContainerView.buttonStackView)
+        if button == nil {
+            stackView.removeArrangedSubview(npsContainerView.buttonStackView)
         }
         
-        for (index, button) in buttons.enumerated() {
-            button.needsLeftSeparator = buttonStackView.axis == .horizontal && index > 0
-            buttonStackView.addArrangedSubview(button)
-            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-        }
+        button!.needsLeftSeparator = buttonStackView.axis == .horizontal
+        buttonStackView.addArrangedSubview(button!)
+        button!.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+        
     }
     
-    @objc public func addButton(_ button: RDPopupDialogButton) {
-        buttons.append(button)
-    }
-    
-    @objc public func addButtons(_ buttons: [RDPopupDialogButton]) {
-        self.buttons += buttons
-    }
-    
+
     @objc fileprivate func buttonTapped(_ button: RDPopupDialogButton) {
         button.buttonAction?()
     }
     
-    public func tapButtonWithIndex(_ index: Int) {
-        let button = buttons[index]
-        button.buttonAction?()
-    }
     
     // MARK: - StatusBar display related
     
@@ -226,11 +176,11 @@ extension RDNpsWithNumbersViewController {
     
     @objc public var buttonAlignment: NSLayoutConstraint.Axis {
         get {
-            return popupContainerView.buttonStackView.axis
+            return npsContainerView.buttonStackView.axis
         }
         set {
-            popupContainerView.buttonStackView.axis = newValue
-            popupContainerView.pv_layoutIfNeededAnimated()
+            npsContainerView.buttonStackView.axis = newValue
+            npsContainerView.pv_layoutIfNeededAnimated()
         }
     }
     
@@ -269,13 +219,15 @@ extension RDNpsWithNumbersViewController: ImageButtonImageDelegate {
 extension RDNpsWithNumbersViewController: NPSDelegate {
     
     func ratingSelected() {
-        guard let button = self.buttons.first else { return }
-        button.isEnabled = true
+        if let button = button {
+            button.isEnabled = true
+        }
     }
     
     func ratingUnselected() {
-        guard let button = self.buttons.first else { return }
-        button.isEnabled = false
+        if let button = button {
+            button.isEnabled = false
+        }
     }
     
 }

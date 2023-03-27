@@ -686,7 +686,6 @@ extension RDInstance {
         props[RDConstants.tokenIdKey] = rdUser.tokenId
         props[RDConstants.appidKey] = rdUser.appId
         props[RDConstants.apiverKey] = RDConstants.apiverValue
-        props[RDConstants.actionType] = RDConstants.appBanner
         props[RDConstants.channelKey] = rdProfile.channel
         
         props[RDConstants.nrvKey] = String(rdUser.nrv)
@@ -707,7 +706,7 @@ extension RDInstance {
                 var npsView: RDNpsWithNumbersContainerView? = nil
                 if let notif = notif {
                     var vc = RDNpsWithNumbersViewController(notification: notif)
-                    npsView = vc.popupContainerView
+                    npsView = vc.npsContainerView
                     
                     //npsView = RDNpsWithNumbersView(frame: UIScreen.main.bounds, rdInAppNotification: notif)
                     //npsView?.setupForNpsWithNumbers()
