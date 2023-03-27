@@ -13,10 +13,9 @@ final public class RDNpsWithNumbersContainerView: UIView {
     internal lazy var shadowContainer: UIView = {
         let shadowContainer = UIView(frame: .zero)
         shadowContainer.translatesAutoresizingMaskIntoConstraints = false
-        shadowContainer.backgroundColor = .clear
+        shadowContainer.backgroundColor = .yellow
         shadowContainer.layer.shadowColor = UIColor.black.cgColor
         shadowContainer.layer.shadowOffset = CGSize(width: 0, height: 0)
-        shadowContainer.layer.cornerRadius = 4
         shadowContainer.clipsToBounds = false
         return shadowContainer
     }()
@@ -40,7 +39,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
     }()
 
     // The preferred width for iPads
-    fileprivate let preferredWidth: CGFloat
+    fileprivate var preferredWidth: CGFloat = 0.0
 
     // MARK: - Constraints
 
@@ -49,8 +48,10 @@ final public class RDNpsWithNumbersContainerView: UIView {
 
     // MARK: - Initializers
 
-    internal init(frame: CGRect, preferredWidth: CGFloat) {
-        self.preferredWidth = preferredWidth
+    internal override init(frame: CGRect) {
+        self.preferredWidth = UIScreen.main.bounds.width
+        print(UIScreen.main.bounds.width)
+        print(UIScreen.main.bounds.height)
         super.init(frame: frame)
         self.backgroundColor = UIColor(white: 0.535, alpha: 0.5)
         setupViews()
@@ -79,9 +80,8 @@ final public class RDNpsWithNumbersContainerView: UIView {
             shadowContainer.trailing(to: self, offset: 0.0, relation: .equalOrLess, priority: .required)
         } else {
             shadowContainer.width(preferredWidth, relation: .equalOrGreater)
-            shadowContainer.width(preferredWidth, relation: .equalOrLess)
-            shadowContainer.leading(to: self, offset: 0, relation: .equalOrGreater)
-            shadowContainer.trailing(to: self, offset: 0, relation: .equalOrLess)
+            shadowContainer.leading(to: self, offset: 0, relation: .equal)
+            shadowContainer.trailing(to: self, offset: 0, relation: .equal)
         }
 
         constraints += [NSLayoutConstraint(item: shadowContainer,

@@ -49,7 +49,7 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
     }()
     
     var storyHomeView: RDStoryHomeView?
-    var npsContainerView: RDNpsWithNumbersContainerView?
+    var npsView: RDNpsWithNumbersContainerView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,7 +110,7 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func showStory(sender: UIButton) {
-        npsContainerView?.removeFromSuperview()
+        npsView?.removeFromSuperview()
         storyHomeView?.removeFromSuperview()
         storyHomeView = RelatedDigital.getStoryView(actionId: Int(self.actionIdTextField.text ?? ""), urlDelegate: self)
         self.view.addSubview(storyHomeView!)
@@ -123,7 +123,7 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
     @objc func showStoryAsync(sender: UIButton) {
         RelatedDigital.getStoryViewAsync(actionId: Int(self.actionIdTextField.text ?? "")){ storyHomeView in
             DispatchQueue.main.async {
-                self.npsContainerView?.removeFromSuperview()
+                self.npsView?.removeFromSuperview()
                 self.storyHomeView?.removeFromSuperview()
                 if let storyHomeView = storyHomeView {
                     self.storyHomeView = storyHomeView
@@ -147,14 +147,19 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
         
         RelatedDigital.getNpsWithNumbersView(properties: props){ npsView in
             DispatchQueue.main.async {
-                self.npsContainerView?.removeFromSuperview()
+                self.npsView?.removeFromSuperview()
                 self.storyHomeView?.removeFromSuperview()
                 if let npsView = npsView {
-                    self.npsContainerView = npsView
-                    self.view.addSubview(self.npsContainerView!)
-                    self.npsContainerView!.translatesAutoresizingMaskIntoConstraints = false
-                    self.npsWithNumbersButton.bottomAnchor.constraint(equalTo: self.npsContainerView!.topAnchor, constant: 20).isActive = true
-                    self.npsContainerView!.widthAnchor.constraint(equalTo: self.view.saferAreaLayoutGuide.widthAnchor).isActive = true
+                    self.npsView = npsView
+                    self.view.addSubview(self.npsView!)
+                    npsView.translatesAutoresizingMaskIntoConstraints = false
+                    npsView.bottomAnchor.constraint(equalTo: self.npsWithNumbersButton.topAnchor, constant: 20).isActive = true
+                    npsView.widthAnchor.constraint(equalTo: self.view.saferAreaLayoutGuide.widthAnchor).isActive = true
+                    //npsView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+                    
+                    
+                    
+
                      
                 } else {
                     print("There is no story action matching your criteria.")

@@ -22,7 +22,7 @@ class RDNpsWithNumbersViewController: UIViewController {
         return view as! RDNpsWithNumbersContainerView  // swiftlint:disable:this force_cast
     }
     
-    public var standardView: RDNpsWithNumbersCollectionView!
+    public var collectionView: RDNpsWithNumbersCollectionView!
     
     fileprivate var button: RDPopupDialogButton?
         
@@ -31,7 +31,7 @@ class RDNpsWithNumbersViewController: UIViewController {
         var returnCallback = true
         var additionalTrackingProperties = Properties()
         
-        if let num = standardView.selectedNumber {
+        if let num = collectionView.selectedNumber {
             additionalTrackingProperties["OM.s_point"] = "\(num)"
         }
         additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
@@ -60,15 +60,13 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     public init(notification: RDInAppNotification? = nil) {
         self.notification = notification
-        standardView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
+        //standardView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
         super.init(nibName: nil, bundle: nil)
         npsContainerView.buttonStackView.accessibilityIdentifier = "buttonStack"
         if let backgroundColor = notification?.backGroundColor {
             npsContainerView.shadowContainer.backgroundColor = backgroundColor
-        }
-        //modalPresentationStyle = .custom
-        
-        npsContainerView.stackView.insertArrangedSubview(standardView, at: 0)
+        }        
+        //npsContainerView.stackView.insertArrangedSubview(standardView, at: 0)
         npsContainerView.buttonStackView.axis = .vertical
         
                 
@@ -81,7 +79,7 @@ class RDNpsWithNumbersViewController: UIViewController {
             buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
         button!.isEnabled = false
         
-        standardView.npsDelegate = self
+        //standardView.npsDelegate = self
         
         
     }
@@ -97,23 +95,20 @@ class RDNpsWithNumbersViewController: UIViewController {
     
     /// Replaces controller view with popup view
     public override func loadView() {
-        view = RDNpsWithNumbersContainerView(
-            frame: UIScreen.main.bounds, preferredWidth: UIScreen.main.bounds.width)
-        standardView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
+        view = RDNpsWithNumbersContainerView(frame: UIScreen.main.bounds)
+        collectionView = RDNpsWithNumbersCollectionView(frame: .zero, rdInAppNotification: notification)
+        npsContainerView.stackView.insertArrangedSubview(collectionView, at: 0)
+        collectionView.npsDelegate = self
         
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //guard !initialized else { return }
-        //if let not = self.notification, !not.buttonText.isNilOrWhiteSpace {
-        //    appendButtons()
-        //}
         appendButtons()
     }
     
     public override func viewDidAppear(_ animated: Bool) {
-        player = standardView.imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
+        player = collectionView.imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
         super.viewDidAppear(animated)
         self.setNeedsStatusBarAppearanceUpdate()
     }
@@ -127,11 +122,13 @@ class RDNpsWithNumbersViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         if notification?.videourl?.count ?? 0 > 0 {
-            standardView.imageHeightConstraint?.constant = standardView.imageView.pv_heightForImageView(isVideoExist: true)
+            collectionView.imageHeightConstraint?.constant = collectionView.imageView.pv_heightForImageView(isVideoExist: true)
         } else {
-            let a = standardView.imageView.pv_heightForImageView(isVideoExist: false)
+            let a = collectionView.imageView.pv_heightForImageView(isVideoExist: false)
             print(a)
-            standardView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
+            collectionView.imageHeightConstraint?.constant = a // standardView.imageView.pv_heightForImageView(isVideoExist: false)
+            collectionView.imageHeightConstraint?.isActive = true
+            collectionView.imageView.height(a)
         }
                 
     }
@@ -170,26 +167,6 @@ class RDNpsWithNumbersViewController: UIViewController {
         button.buttonAction?()
     }
     
-    
-    // MARK: - StatusBar display related
-    
-    public override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .slide
-    }
-    
-}
-
-extension RDNpsWithNumbersViewController {
-    
-    @objc public var buttonAlignment: NSLayoutConstraint.Axis {
-        get {
-            return npsContainerView.buttonStackView.axis
-        }
-        set {
-            npsContainerView.buttonStackView.axis = newValue
-            npsContainerView.pv_layoutIfNeededAnimated()
-        }
-    }
     
 }
 

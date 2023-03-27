@@ -10,7 +10,6 @@ import UIKit
 
 public class RDNpsWithNumbersCollectionView: UIView {
 
-    
     typealias NSLC = NSLayoutConstraint
     
     private func setBorderColorOfCell() -> UIColor {
@@ -30,6 +29,14 @@ public class RDNpsWithNumbersCollectionView: UIView {
         if let bgColor = notification.backGroundColor {
             backgroundColor = bgColor
         }
+        
+        imageView = UIImageView(frame: .zero)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = .brown
+        imageView.setImage(withUrl: notification.imageUrl)
+        addSubview(imageView)
 
         titleLabel.text = notification.messageTitle?.removeEscapingCharacters()
         titleLabel.font = notification.messageTitleFont
@@ -46,7 +53,7 @@ public class RDNpsWithNumbersCollectionView: UIView {
 
 
         translatesAutoresizingMaskIntoConstraints = false
-        addSubview(imageView)
+        
         
         addSubview(titleLabel)
         addSubview(messageLabel)
@@ -63,6 +70,8 @@ public class RDNpsWithNumbersCollectionView: UIView {
         }
 
         imageView.allEdges(to: self, excluding: .bottom)
+        //imageView.leading(to: self, offset: 0, relation: .equal, priority: .required)
+        //imageView.trailing(to: self, offset: 0, relation: .equal, priority: .required)
         titleLabel.topToBottom(of: imageView, offset: 10.0)
         messageLabel.topToBottom(of: titleLabel, offset: 8.0)
         numberRating.topToBottom(of: messageLabel, offset: 10.0)
@@ -80,23 +89,14 @@ public class RDNpsWithNumbersCollectionView: UIView {
             imageHeightConstraint?.constant = imageView.pv_heightForImageView(isVideoExist: true)
         } else {
             imageHeightConstraint?.constant = imageView.pv_heightForImageView(isVideoExist: false)
-            imageView.setImage(withUrl: notification.imageUrl)
+            //imageView.setImage(withUrl: notification.imageUrl)
         }
         
         
         
     }
 
-    
-    
-    internal func setImageView() -> UIImageView {
-        let imageView = UIImageView(frame: .zero)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        return imageView
-    }
-    
+
     internal func setTitleLabel() -> UILabel {
         let titleLabel = UILabel(frame: .zero)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -129,7 +129,7 @@ public class RDNpsWithNumbersCollectionView: UIView {
 
     // MARK: - VARIABLES
 
-    internal lazy var imageView = setImageView()
+    internal var imageView: UIImageView!
     internal lazy var titleLabel = setTitleLabel()
     internal lazy var messageLabel = setMessageLabel()
 
@@ -172,21 +172,17 @@ public class RDNpsWithNumbersCollectionView: UIView {
 
         baseSetup(notification)
 
-        imageHeightConstraint = NSLC(item: imageView,
-            attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
+        //imageHeightConstraint = NSLC(item: imageView,
+        //    attribute: .height, relatedBy: .equal, toItem: imageView, attribute: .height, multiplier: 0, constant: 0)
 
-        if let imageHeightConstraint = imageHeightConstraint {
-            constraints.append(imageHeightConstraint)
-        }
+        //if let imageHeightConstraint = imageHeightConstraint {
+        //    constraints.append(imageHeightConstraint)
+        //}
 
 
         NSLC.activate(constraints)
     }
 
-    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
-       
-        
-    }
 }
 
 // MARK: - SliderStepDelegate
@@ -228,11 +224,6 @@ extension RDNpsWithNumbersCollectionView: UITextFieldDelegate {
             self.setNeedsDisplay()
         }
     }
-
-    @objc func dismissKeyboard() {
-        self.endEditing(true)
-    }
-
 
 }
 
