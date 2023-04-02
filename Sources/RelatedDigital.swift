@@ -346,8 +346,8 @@ public class RelatedDigital {
         }
     }
     
-    public static func getNpsWithNumbersView(properties: Properties, completion: @escaping (RDNpsWithNumbersContainerView?) -> Void) {
-        shared.rdInstance.getNpsWithNumbersView(properties: properties) { npsWithNumbersView in
+    public static func getNpsWithNumbersView(properties: Properties, delegate: RDNpsWithNumbersDelegate?, completion: @escaping (RDNpsWithNumbersContainerView?) -> Void) {
+        shared.rdInstance.getNpsWithNumbersView(properties: properties, delegate: delegate) { npsWithNumbersView in
             completion(npsWithNumbersView)
         }
     }

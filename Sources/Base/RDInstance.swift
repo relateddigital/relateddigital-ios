@@ -674,8 +674,10 @@ extension RDInstance {
         }
     }
     
-        
-    public func getNpsWithNumbersView(properties:Properties, completion: @escaping ((RDNpsWithNumbersContainerView?) -> Void)) {
+    
+    public func getNpsWithNumbersView(properties: Properties,
+                                      delegate: RDNpsWithNumbersDelegate?,
+                                      completion: @escaping ((RDNpsWithNumbersContainerView?) -> Void)) {
         let guid = UUID().uuidString
         
         var props = properties
@@ -701,18 +703,19 @@ extension RDInstance {
         
         self.rdTargetingActionInstance.getNpsWithNumbers(properties: props , rdUser: self.rdUser, guid: guid) { notif in
             
-            //DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             DispatchQueue.main.async {
                 var npsView: RDNpsWithNumbersContainerView? = nil
                 if let notif = notif {
-                    let vc = RDNpsWithNumbersContainerView(frame: .zero, notification: notif)
-                    npsView = vc
+                    npsView = RDNpsWithNumbersContainerView(frame: .zero, notification: notif, delegate: delegate)
+                    npsView?.layer.isOpaque = true
                 }
                 completion(npsView)
             }
             
         }
     }
+    
+    
 }
 
 // MARK: - RECOMMENDATION
@@ -784,7 +787,7 @@ extension RDInstance {
     public func requestLocationPermissions() {
         rdLocationManager.requestLocationPermissions()
     }
-        
+    
 }
 
 // MARK: - SUBSCRIPTION MAIL

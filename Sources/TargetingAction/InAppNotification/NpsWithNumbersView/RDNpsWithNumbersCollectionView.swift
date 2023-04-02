@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+
+import Foundation
+import UIKit
+
 public class RDNpsWithNumbersCollectionView: UIView {
 
     typealias NSLC = NSLayoutConstraint
@@ -36,6 +40,8 @@ public class RDNpsWithNumbersCollectionView: UIView {
         imageView.clipsToBounds = true
         imageView.backgroundColor = .brown
         imageView.setImage(withUrl: notification.imageUrl)
+        
+        
         addSubview(imageView)
 
         titleLabel.text = notification.messageTitle?.removeEscapingCharacters()
@@ -54,8 +60,8 @@ public class RDNpsWithNumbersCollectionView: UIView {
         addSubview(messageLabel)
         addSubview(numberRating)
         numberBorderColor = setBorderColorOfCell()
-        guard let numberColors = rdInAppNotification?.numberColors else { return }
-        guard let numberRange = rdInAppNotification?.numberRange else { return }
+        guard let numberColors = inAppNotification?.numberColors else { return }
+        guard let numberRange = inAppNotification?.numberRange else { return }
         if numberColors.count == 3 {
             colors = UIColor.getGradientColorArray(numberColors[0], numberColors[1], numberColors[2], numberRange)
         } else if numberColors.count == 2 {
@@ -72,7 +78,7 @@ public class RDNpsWithNumbersCollectionView: UIView {
         numberRating.leading(to: self, offset: 0)
         numberRating.trailing(to: self, offset: 0)
         numberRating.bottom(to: self, offset: -10.0)
-        numberRating.backgroundColor = .magenta
+        numberRating.backgroundColor = .clear
         titleLabel.centerX(to: self)
         messageLabel.centerX(to: self)
         numberRating.delegate = self
@@ -132,15 +138,15 @@ public class RDNpsWithNumbersCollectionView: UIView {
 
     internal var imageHeightConstraint: NSLC?
 
-    weak var rdInAppNotification: RDInAppNotification?
+    weak var inAppNotification: RDInAppNotification?
     var consentCheckboxAdded = false
     weak var delegate: RDNpsWithNumbersCollectionView?
     weak var npsDelegate: NPSDelegate?
     // MARK: - CONSTRUCTOR
-    init(frame: CGRect, rdInAppNotification: RDInAppNotification?) {
-        self.rdInAppNotification = rdInAppNotification
+    init(frame: CGRect, inAppNotification: RDInAppNotification?) {
+        self.inAppNotification = inAppNotification
         super.init(frame: frame)
-        if self.rdInAppNotification != nil {
+        if self.inAppNotification != nil {
             setupViews()
         }
     }
@@ -150,8 +156,7 @@ public class RDNpsWithNumbersCollectionView: UIView {
     }
 
     internal func setupViews() {
-
-        guard let notification = rdInAppNotification else {
+        guard let notification = inAppNotification else {
             return
         }
         
@@ -169,6 +174,10 @@ public class RDNpsWithNumbersCollectionView: UIView {
 
         NSLC.activate(constraints)
     }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+    }
 
 }
 
@@ -183,7 +192,7 @@ extension RDNpsWithNumbersCollectionView: SliderStepDelegate {
 
 extension RDNpsWithNumbersCollectionView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let numberRange = rdInAppNotification?.numberRange
+        let numberRange = inAppNotification?.numberRange
         var nWidth: CGFloat = 0.0
         if numberRange == "0-10" {
             nWidth = (numberRating.frame.width - 100) / 11
@@ -195,7 +204,7 @@ extension RDNpsWithNumbersCollectionView: UICollectionViewDelegate, UICollection
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let numberRange = rdInAppNotification?.numberRange
+        let numberRange = inAppNotification?.numberRange
         if numberRange == "0-10" {
             return 11
         } else {
@@ -207,7 +216,7 @@ extension RDNpsWithNumbersCollectionView: UICollectionViewDelegate, UICollection
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! RatingCollectionViewCell
 
-        let numberRange = rdInAppNotification?.numberRange
+        let numberRange = inAppNotification?.numberRange
         if numberRange == "0-10" {
             cell.rating = indexPath.row
         } else {
@@ -227,7 +236,7 @@ extension RDNpsWithNumbersCollectionView: UICollectionViewDelegate, UICollection
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? RatingCollectionViewCell else {
             return
         }
-        let numberRange = rdInAppNotification?.numberRange
+        let numberRange = inAppNotification?.numberRange
         if cell.isSelected {
             if numberRange == "0-10" {
                 selectedNumber = indexPath.row
@@ -247,7 +256,7 @@ extension RDNpsWithNumbersCollectionView: UICollectionViewDelegate, UICollection
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        let numberRange = rdInAppNotification?.numberRange
+        let numberRange = inAppNotification?.numberRange
         if numberRange == "0-10" {
             return 8
         } else {
@@ -256,3 +265,4 @@ extension RDNpsWithNumbersCollectionView: UICollectionViewDelegate, UICollection
 
     }
 }
+

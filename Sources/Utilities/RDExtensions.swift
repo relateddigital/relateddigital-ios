@@ -125,9 +125,6 @@ extension UIImageView {
                             let viewPop = self.superview as! RDNpsWithNumbersCollectionView
                             let height = viewPop.imageView.pv_heightForImageView(isVideoExist: false)
                             viewPop.imageHeightConstraint?.constant = height
-                            //viewPop.imageView.height(height)
-                            //viewPop.imageView.height(400, relation: .equalOrLess)
-                            //viewPop.imageView.width(UIScreen.main.bounds.width, relation: .equalOrLess)
                             self.layoutIfNeeded()
                         }
                         
