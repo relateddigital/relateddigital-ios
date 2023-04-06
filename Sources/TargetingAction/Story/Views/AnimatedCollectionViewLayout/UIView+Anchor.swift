@@ -34,6 +34,17 @@ extension UIView {
 
 extension UIButton {
     func setDashedBorder(width: CGFloat = 2, color: UIColor = .black) {
+        
+        let dashedBorderKey = "dashedBorder"
+        
+        if let subLayers = self.layer.sublayers {
+            for element in subLayers {
+                if element.name == dashedBorderKey {
+                    element.removeFromSuperlayer()
+                }
+            }
+        }
+        
         let shapeLayer: CAShapeLayer = CAShapeLayer()
         let frameSize = self.frame.size
         let shapeRect = CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height)
@@ -46,6 +57,7 @@ extension UIButton {
         shapeLayer.lineJoin = CAShapeLayerLineJoin.round
         shapeLayer.lineDashPattern = [4, 4]
         shapeLayer.path = UIBezierPath(roundedRect: shapeRect, cornerRadius: 5).cgPath
+        shapeLayer.name = dashedBorderKey
 
         self.layer.addSublayer(shapeLayer)
     }
