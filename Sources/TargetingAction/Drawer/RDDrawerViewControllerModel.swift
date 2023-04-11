@@ -58,6 +58,10 @@ class RDDrawerViewControllerModel {
         drawerModel.miniDrawerBackgroundImage = serviceModel?.contentMinimizedBackgroundImage ?? ""
         drawerModel.miniDrawerBackgroundColor = UIColor(hex: serviceModel?.contentMinimizedBackgroundColor)
 
+        if drawerModel.miniDrawerContentImage?.count != 0 { //contentImage remove
+            drawerModel.miniDrawerBackgroundImage = serviceModel?.contentMinimizedImage ?? ""
+        }
+        
         if serviceModel?.contentMinimizedArrowColor?.count == 0 {
             drawerModel.arrowColor = .clear
         } else {

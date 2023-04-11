@@ -86,7 +86,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     }
                 } else if model.targetingActionType == .drawer, let drawer = model as? DrawerServiceModel {
                     if self.showDrawer(model: drawer) {
-                        self.markTargetingActionShown(model: drawer)
+                        //self.markTargetingActionShown(model: drawer)
                     }
                 } else if model.targetingActionType == .downHsView, let downHsView = model as? downHsViewServiceModel {
                     if self.showDownhs(model: downHsView) {
@@ -99,6 +99,10 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                 } else if model.targetingActionType == .findToWin, let findToWin = model as? FindToWinViewModel {
                     if self.showFindToWin(findToWinModel: findToWin) {
                         self.markTargetingActionShown(model: findToWin)
+                    }
+                } else if model.targetingActionType == .giftBox, let giftBox = model as? GiftBoxModel {
+                    if self.showGiftBox(giftBoxModel: giftBox) {
+                        self.markTargetingActionShown(model: giftBox)
                     }
                 } else if model.targetingActionType == .shakeToWin, let shakeToWin = model as? ShakeToWinViewModel {
                     if self.showShakeToWin(model: shakeToWin) {
@@ -127,6 +131,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         let findToWinVC = FindToWinViewController(findToWinModel)
         findToWinVC.delegate = self
         findToWinVC.show(animated: true)
+        return true
+    }
+    
+    func showGiftBox(giftBoxModel: GiftBoxModel) -> Bool {
+        let giftBoxVC = GiftBoxViewController(giftBoxModel)
+        giftBoxVC.delegate = self
+        giftBoxVC.show(animated: true)
         return true
     }
 

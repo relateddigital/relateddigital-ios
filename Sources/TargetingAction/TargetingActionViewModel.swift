@@ -17,6 +17,8 @@ public enum TargetingActionType: String, Codable {
     case giftCatch = "giftrain"
     case findToWin = "findtowin"
     case shakeToWin = "ShakeToWin"
+    case giftBox = "giftBox"
+
 
 }
 

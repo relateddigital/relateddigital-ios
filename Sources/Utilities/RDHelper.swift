@@ -96,6 +96,7 @@ internal class RDHelper {
         RDBasePath.endpoints[.spinToWinJs] = RDConstants.spintoWinUrl
         RDBasePath.endpoints[.giftCatchJs] = RDConstants.giftCatchUrl
         RDBasePath.endpoints[.findToWinJs] = RDConstants.findToWinUrl
+        RDBasePath.endpoints[.giftBoxJs] = RDConstants.giftBoxUrl
 
        
     }

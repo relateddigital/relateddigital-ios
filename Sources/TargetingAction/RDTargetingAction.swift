@@ -95,7 +95,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -140,6 +140,15 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
+            }  else if targetingActionViewModel?.targetingActionType == .giftBox {
+                RDRequest.sendGiftBoxScriptRequest(completion: {(result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
             } else {
                 semaphore.signal()
             }
@@ -173,8 +182,8 @@ class RDTargetingAction {
             return parseShakeToWin(shakeToWn)
         } else if let findToWin = result[RDConstants.findToWin] as? [[String: Any?]], let findTown = findToWin.first {
             return parseFindToWin(findTown)
-        } else if let giftBox = result[RDConstants.findToWin] as? [[String: Any?]], let giftBox = giftBox.first {
-            return parseGiftBoxWin(giftBox)
+        } else if let giftBox = result[RDConstants.giftBox] as? [[String: Any?]], let giftBox = giftBox.first {
+            return parseGiftBox(giftBox)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
@@ -868,10 +877,10 @@ class RDTargetingAction {
         return findToWinModel
     }
 
-    private func parseGiftBoxWin(_ giftBox: [String: Any?]) -> GiftBoxModel? {
+    private func parseGiftBox(_ giftBox: [String: Any?]) -> GiftBoxModel? {
 
         guard let actionData = giftBox[RDConstants.actionData] as? [String: Any] else { return nil }
-        var giftBoxModel = GiftBoxModel(targetingActionType: .findToWin)
+        var giftBoxModel = GiftBoxModel(targetingActionType: .giftBox)
         giftBoxModel.actId = giftBox[RDConstants.actid] as? Int ?? 0
         giftBoxModel.title = giftBox[RDConstants.title] as? String ?? ""
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""

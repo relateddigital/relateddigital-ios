@@ -26,6 +26,8 @@ enum RDEndpoint {
     case spinToWinJs
     case giftCatchJs
     case findToWinJs
+    case giftBoxJs
+
 
 
 }

@@ -112,14 +112,14 @@ class GiftBoxViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("find_to_win.html")
-        let jsUrl = docUrl.appendingPathComponent("find_to_win.js")
+        let htmlUrl = docUrl.appendingPathComponent("giftBox.html")
+        let jsUrl = docUrl.appendingPathComponent("giftBox.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "find_to_win", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "giftBox", ofType: "html") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
 
@@ -226,7 +226,7 @@ extension GiftBoxViewController: WKScriptMessageHandler {
 
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
-                    if let json = try? JSONEncoder().encode(self.findToWin!), let jsonString = String(data: json, encoding: .utf8) {
+                    if let json = try? JSONEncoder().encode(self.giftBox!), let jsonString = String(data: json, encoding: .utf8) {
                         print(jsonString)
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {

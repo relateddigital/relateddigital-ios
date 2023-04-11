@@ -192,6 +192,7 @@ struct RDConstants {
     static let losebuttonTextSize = "losebutton_text_size"
     static let cardImages = "card_images"
     static let shakeToWin = "ShakeToWin"
+    static let giftBox = "GiftBox"
     static let giftBoxes = "gift_boxes"
 
     
@@ -473,6 +474,8 @@ struct RDConstants {
     static let giftCatchUrl = "https://mbls.visilabs.net/gift_catch.js"
     static let spintoWinUrl = "https://mbls.visilabs.net/spintowin.js"
     static let findToWinUrl = "https://mbls.visilabs.net/find_to_win.js"
+    static let giftBoxUrl = "https://mbls.visilabs.net/giftbox.js"
+
 
     //Location Status
     static let locationPermissionReqKey = "OM.locpermit"

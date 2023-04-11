@@ -77,6 +77,8 @@ class InAppViewController: FormViewController {
             .findToWin : [RDInAppNotificationType.findToWin.rawValue: 132],
             .bannerCarousel : [RDInAppNotificationType.bannerCarousel.rawValue: 155],
             .shakeToWin : [RDInAppNotificationType.shakeToWin.rawValue: 255],
+            .giftBox : [RDInAppNotificationType.giftBox.rawValue: 577],
+
             ]
     }
     
