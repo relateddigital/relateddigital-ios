@@ -11,7 +11,9 @@ import RelatedDigitalIOS
 import Eureka
 import SplitRow
 
-class InAppViewController: FormViewController {
+class InAppViewController: FormViewController, BannerDelegate {
+
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +110,7 @@ extension InAppViewController: RDInappButtonDelegate {
         
         RelatedDigital.getBannerView(properties: props) { banner in
             if let banner = banner {
+                banner.delegate = self
                 banner.translatesAutoresizingMaskIntoConstraints = false
                 bannerView.addSubview(banner)
                 
@@ -118,6 +121,10 @@ extension InAppViewController: RDInappButtonDelegate {
             }
 
         }
+    }
+    
+    func bannerItemClickListener(url: String) {
+        print(url)
     }
 
 }
