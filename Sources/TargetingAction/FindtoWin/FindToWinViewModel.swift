@@ -9,6 +9,7 @@ import Foundation
 
 public struct FindToWinViewModel: TargetingActionViewModel,Codable {
     
+    
     public var targetingActionType: TargetingActionType
     var actId: Int? = 0
     var auth = String()
@@ -50,6 +51,7 @@ public struct FindToWinViewModel: TargetingActionViewModel,Codable {
     
     var fontFiles: [String] = []
     public var jsContent: String?
+    public var jsonContent: String?
 }
 
 

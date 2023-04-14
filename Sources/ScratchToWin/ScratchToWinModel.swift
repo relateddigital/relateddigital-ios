@@ -54,6 +54,7 @@ public class ScratchToWinModel: TargetingActionViewModel {
     let copybuttonCustomFontFamilyIos : String?
     
     public var jsContent: String?
+    public var jsonContent: String?
 
     var imageUrl: URL?
 

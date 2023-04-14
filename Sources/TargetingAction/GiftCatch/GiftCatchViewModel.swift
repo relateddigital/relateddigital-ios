@@ -51,6 +51,8 @@ public struct GiftCatchViewModel: TargetingActionViewModel, Codable {
     var fontFiles: [String] = []
 
     public var jsContent: String?
+    public var jsonContent: String?
+
 
 }
 

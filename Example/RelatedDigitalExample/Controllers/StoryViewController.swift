@@ -160,7 +160,6 @@ extension StoryViewController: RDStoryURLDelegate {
 
 extension StoryViewController: RDNpsWithNumbersDelegate {
     func npsItemClicked(npsLink: String?) {
-        print(npsLink)
         self.npsView?.removeFromSuperview()
         
         let alertController = UIAlertController(title: "Nps Clicked", message: npsLink, preferredStyle: .alert)

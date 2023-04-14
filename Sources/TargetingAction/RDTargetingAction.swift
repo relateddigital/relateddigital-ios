@@ -989,7 +989,14 @@ class RDTargetingAction {
             giftBoxModel.gameResultElementsExtended?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
 
         }
-
+        
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: giftBox,
+            options: []) {
+            giftBoxModel.jsonContent = String(data: theJSONData, encoding: .utf8)
+        }
+        
+        
         return giftBoxModel
     }
 

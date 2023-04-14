@@ -25,4 +25,5 @@ public enum TargetingActionType: String, Codable {
 public protocol TargetingActionViewModel {
     var targetingActionType: TargetingActionType { get set }
     var jsContent: String? { get set }
+    var jsonContent: String? { get set }
 }

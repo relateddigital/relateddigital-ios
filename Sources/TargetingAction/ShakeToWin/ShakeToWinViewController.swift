@@ -19,6 +19,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
     var secondChecked = false
     var lastPageOpened = false
     var audioPlayer: AVPlayer?
+    var confirmedMail : String?
 
     var openedSecondPage = false {
         didSet {
@@ -118,6 +119,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
         dismiss(animated: true) {
             if let shakeToWin = self.shakeToWin {
                 if self.lastPageOpened {
+                    self.codeGotten()
                     let bannerVC = RDShakeToWinCodeBannerController(shakeToWin)
                     bannerVC.delegate = self.delegate
                     bannerVC.show(animated: true)
@@ -164,6 +166,16 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
         }
     }
 
+    
+    func codeGotten() {
+        let actionID = self.shakeToWin?.actId
+        var properties = Properties()
+        properties[RDConstants.promoActionID] = String(actionID ?? 0)
+        properties[RDConstants.promoEmailKey] = confirmedMail
+        properties[RDConstants.promoAction] = self.model?.thirdPage?.staticCode ?? ""
+        RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
     func prepareMailPage() -> UIView {
         let page: MailFormView = .fromNib()
 
@@ -269,6 +281,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
             }
 
             if firstChecked && secondChecked {
+                confirmedMail = mail
                 RelatedDigital.subscribeMail(click: self.model!.report?.click ?? "",
                                              actid: "\(self.model!.actId ?? 0)",
                                              auth: self.model!.auth ?? "",

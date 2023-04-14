@@ -57,6 +57,7 @@ enum subTitlePosition {
 }
 
 struct downHsViewServiceModel: TargetingActionViewModel {
+    
 
     var targetingActionType: TargetingActionType
     var actId: Int?
@@ -99,4 +100,6 @@ struct downHsViewServiceModel: TargetingActionViewModel {
     var backgroundColor: String?
 
     var jsContent: String?
+    var jsonContent: String?
+
 }

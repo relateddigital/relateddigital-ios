@@ -36,6 +36,8 @@ struct ShakeToWinViewModel: TargetingActionViewModel {
     var report: shakeToWinReport?
 
     var jsContent: String?
+    public var jsonContent: String?
+
 }
 
 struct ShakeToWinFirstPage {

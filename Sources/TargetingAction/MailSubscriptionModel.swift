@@ -84,6 +84,8 @@ public struct MailSubscriptionViewModel: TargetingActionViewModel {
     var report: TargetingActionReport
 
     public var jsContent: String?
+    public var jsonContent: String?
+
 }
 
 public struct TargetingActionReport {

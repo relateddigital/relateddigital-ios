@@ -226,8 +226,8 @@ extension GiftBoxViewController: WKScriptMessageHandler {
 
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
-                    if let json = try? JSONEncoder().encode(self.giftBox!), let jsonString = String(data: json, encoding: .utf8) {
-                        print(jsonString)
+                    
+                    if let jsonString = giftBox?.jsonContent {
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
@@ -266,10 +266,16 @@ extension GiftBoxViewController: WKScriptMessageHandler {
                     }
                 }
 
-                if method == "saveCodeGotten", let code = event["code"] as? String {
+                if method == "saveCodeGotten", let code = event["code"] as? String, let mail = event["email"] as? String {
                     codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setGiftBoxCode(code: code)
+                    let actionID = self.giftBox?.actId
+                    var properties = Properties()
+                    properties[RDConstants.promoActionID] = String(actionID ?? 0)
+                    properties[RDConstants.promoEmailKey] = mail
+                    properties[RDConstants.promoAction] = code
+                    RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
                 }
 
                 if method == "close" {
