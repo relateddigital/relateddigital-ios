@@ -9,8 +9,8 @@ import Foundation
 import RelatedDigitalIOS
 
 struct RelatedDigitalProfile: Codable {
-    var organizationId = urlConstant.shared.organizationId
-    var profileId = urlConstant.shared.profileId
+    var organizationId = UrlConstant.shared.organizationId
+    var profileId = UrlConstant.shared.profileId
     var dataSource = "visistore"
     var inAppNotificationsEnabled: Bool = true
     var channel = "IOS"
@@ -22,6 +22,6 @@ struct RelatedDigitalProfile: Codable {
     var userKey = "userKey"
     var userEmail = "user@mail.com"
     var isIDFAEnabled = true
-    var testUrlIsActive = urlConstant.shared.getTestWithLocalData()
+    var testUrlIsActive = UrlConstant.shared.getTestWithLocalData()
 
 }

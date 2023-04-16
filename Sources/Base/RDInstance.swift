@@ -936,8 +936,13 @@ extension RDInstance {
     public func getPushMessages(completion: @escaping GetPushMessagesCompletion) {
         RDPush.getPushMessages(completion: completion)
     }
-    func getPushMessagesWithID(completion: @escaping GetPushMessagesCompletion) {
+    
+    public func getPushMessagesWithID(completion: @escaping GetPushMessagesCompletion) {
         RDPush.getPushMessagesWithId(completion: completion)
+    }
+    
+    public func getToken(completion: @escaping ((_ token: String) -> Void)) {
+        RDPush.getToken(completion: completion)
     }
     
 }

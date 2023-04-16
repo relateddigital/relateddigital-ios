@@ -15,13 +15,17 @@ var relatedDigitalProfile = RelatedDigitalProfile()
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     var window: UIWindow?
     var isRelatedInit = false
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        if urlConstant.shared.getTestWithLocalData() {
-            urlConstant.shared.setTest()
+        if UrlConstant.shared.getTestWithLocalData() {
+            UrlConstant.shared.setTest()
         }
-        RelatedDigital.initialize(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource, launchOptions: launchOptions, askLocationPermmissionAtStart: true)
-        RelatedDigital.enablePushNotifications(appAlias: "RDIOSExample", launchOptions: launchOptions, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital", deliveredBadge: true)
+        RelatedDigital.initialize(
+            organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource,
+            launchOptions: launchOptions, askLocationPermmissionAtStart: false)
+        RelatedDigital.enablePushNotifications(
+            appAlias: "RDIOSExample", launchOptions: launchOptions, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital",
+            deliveredBadge: true)
         UNUserNotificationCenter.current().delegate = self
         RelatedDigital.loggingEnabled = true
         if #available(iOS 13, *) {
@@ -36,43 +40,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         self.window = window
         return true
     }
-
+    
     func getTabBarController() -> RelatedDigitalTabBarController {
         return RelatedDigitalTabBarController()
     }
-
+    
     func getPushViewController() -> PushViewController {
         return PushViewController()
     }
-
+    
     func getHomeViewController() -> HomeViewController {
         return HomeViewController()
     }
-
+    
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         RelatedDigital.registerToken(tokenData: deviceToken)
     }
-
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+    
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any]
+    ) {
         RelatedDigital.handlePush(pushDictionary: userInfo)
     }
-
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         RelatedDigital.handlePush(pushDictionary: userInfo)
     }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         completionHandler([.alert, .badge, .sound])
     }
-
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         RelatedDigital.handlePush(pushDictionary: response.notification.request.content.userInfo)
         completionHandler()
     }

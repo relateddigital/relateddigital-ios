@@ -1,2 +1,37 @@
+excluded:
+  - .build/
+  - build/
+  - Example
+  - Pods/Eureka
+  - Pods/SplitRow
+
 line_length: 200
-file_length: 500
+file_length: 1500
+type_body_length: 500
+function_parameter_count: 10
+
+variable_name:
+  max_length:
+    warning: 80
+    error: 100
+  min_length:
+    warning: 0
+
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - unused_private_declaration
+disabled_rules:
+  - cyclomatic_complexity
+  - large_tuple
+  - conditional_binding_cascade
+  - force_cast
+  - force_try
+  - function_body_length
+  - todo
+  - type_body_length
+  - variable_name
+  - trailing_whitespace
+  - unused_optional_binding
+  - identifier_name
+  

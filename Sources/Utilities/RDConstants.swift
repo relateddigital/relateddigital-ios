@@ -7,8 +7,8 @@
 
 import UIKit
 
-public class urlConstant {
-    public static var shared = urlConstant()
+public class UrlConstant {
+    public static var shared = UrlConstant()
     var urlPrefix = "s.visilabs.net"
     var securityTag = "https"
     public var organizationId = "676D325830564761676D453D"
@@ -35,10 +35,10 @@ public class urlConstant {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.15"
+    static let sdkVersion = "4.0.16"
     
     static let HTTP = "http"
-    static let HTTPS = urlConstant.shared.securityTag
+    static let HTTPS = UrlConstant.shared.securityTag
     
     static let queueSize = 5000
     static let geofenceHistoryMaxCount = 100
@@ -48,12 +48,12 @@ struct RDConstants {
     
     static var loggerEndPoint = "lgr.visilabs.net"
     static var realtimeEndPoint = "rt.visilabs.net"
-    static var recommendationEndPoint = "\(urlConstant.shared.urlPrefix)/json"
-    static var actionEndPoint = "\(urlConstant.shared.urlPrefix)/actjson"
-    static var geofenceEndPoint = "\(urlConstant.shared.urlPrefix)/geojson"
-    static var mobileEndPoint = "\(urlConstant.shared.urlPrefix)/mobile"
-    static var subsjsonEndpoint = "\(urlConstant.shared.urlPrefix)/subsjson"
-    static var promotionEndpoint = "\(urlConstant.shared.urlPrefix)/promotion"
+    static var recommendationEndPoint = "\(UrlConstant.shared.urlPrefix)/json"
+    static var actionEndPoint = "\(UrlConstant.shared.urlPrefix)/actjson"
+    static var geofenceEndPoint = "\(UrlConstant.shared.urlPrefix)/geojson"
+    static var mobileEndPoint = "\(UrlConstant.shared.urlPrefix)/mobile"
+    static var subsjsonEndpoint = "\(UrlConstant.shared.urlPrefix)/subsjson"
+    static var promotionEndpoint = "\(UrlConstant.shared.urlPrefix)/promotion"
     static var remoteConfigEndpoint = "mbls.visilabs.net/rc.json"
     
     // MARK: - UserDefaults Keys
@@ -194,7 +194,7 @@ struct RDConstants {
     static let shakeToWin = "ShakeToWin"
     static let giftBox = "GiftBox"
     static let giftBoxes = "gift_boxes"
-
+    
     
     static let appBanners = "app_banners"
     static let transitionAction = "transition_action"
@@ -204,15 +204,15 @@ struct RDConstants {
     
     
     
-
-    
-
-
     
     
     
     
-
+    
+    
+    
+    
+    
     
     static let actid = "actid"
     static let actionId = "action_id"
@@ -259,7 +259,7 @@ struct RDConstants {
     static let endDateTime = "endDateTime"
     static let endAction = "endAction"
     static let endAnimationImageUrl = "endAnimationImageUrl"
-
+    
     
     // Email form constants
     static let message = "message"
@@ -291,7 +291,7 @@ struct RDConstants {
     static let sliceDisplaynameFontFamily = "slice_displayname_font_family"
     
     static let succesText = "succes"
-
+    
     
     //Drawer
     static let shape = "shape"
@@ -314,7 +314,7 @@ struct RDConstants {
     
     //downHsView
     static let emailpermitText = "emailpermit_text"
-
+    
     static let language = "language"
     //extended Props
     static let imagePosition = "image_position"
@@ -334,7 +334,7 @@ struct RDConstants {
     static let copyButtonFunction = "copybutton_function"
     static let copyRedirect = "copy_redirect"
     static let redirect = "redirect"
-
+    
     
     
     // SpinToWin extended properties
@@ -475,8 +475,8 @@ struct RDConstants {
     static let spintoWinUrl = "https://mbls.visilabs.net/spintowin.js"
     static let findToWinUrl = "https://mbls.visilabs.net/find_to_win.js"
     static let giftBoxUrl = "https://mbls.visilabs.net/giftbox.js"
-
-
+    
+    
     //Location Status
     static let locationPermissionReqKey = "OM.locpermit"
     static let locationPermissionAlways = "always"
@@ -492,39 +492,39 @@ struct RDConstants {
     static func rdTargetParameters() -> [RDParameter] {
         if targetParameters.count == 0 {
             targetParameters.append(RDParameter(key: targetPrefVossKey, storeKey: targetPrefVossStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVcNameKey, storeKey: targetPrefVcnameStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVcmediumKey, storeKey: targetPrefVcmediumStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVcsourceKey, storeKey: targetPrefVcsourceStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVseg1Key, storeKey: targetPrefVseg1StoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVseg2Key, storeKey: targetPrefVseg2StoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVseg3Key, storeKey: targetPrefVseg3StoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVseg4Key, storeKey: targetPrefVseg4StoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVseg5Key, storeKey: targetPrefVseg5StoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefBDKey, storeKey: targetPrefBdStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefGNKey, storeKey: targetPrefGnStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefLOCKey, storeKey: targetPrefLocStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVPVKey, storeKey: targetPrefVPVStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefLPVSKey, storeKey: targetPrefLPVSStoreKey,
-                                                            count: 10, relatedKeys: nil))
+                                                count: 10, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefLPPKey, storeKey: targetPrefLPPStoreKey,
-                                                            count: 1, relatedKeys: [targetPrefPPRKey]))
+                                                count: 1, relatedKeys: [targetPrefPPRKey]))
             targetParameters.append(RDParameter(key: targetPrefVQKey, storeKey: targetPrefVQStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
             targetParameters.append(RDParameter(key: targetPrefVRDomainKey, storeKey: targetPrefVRStoreKey,
-                                                            count: 1, relatedKeys: nil))
+                                                count: 1, relatedKeys: nil))
         }
         return targetParameters
     }
