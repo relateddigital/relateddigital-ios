@@ -107,6 +107,7 @@ struct RDConstants {
     static let organizationIdKey = "OM.oid"
     static let profileIdKey = "OM.siteID"
     static let cookieIdKey = "OM.cookieID"
+    static let clickedUrlKey = "OM.OSB"
     static let exvisitorIdKey = "OM.exVisitorID"
     static let zoneIdKey = "OM.zid"
     static let bodyKey = "OM.body"

@@ -19,6 +19,7 @@ public class BannerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
     var timer = Timer()
     var currentPage = 1
     var model: AppBannerResponseModel!
+    var propertiesLocal : Properties?
     var viewDidLoad = true
     public var delegate:BannerDelegate?
 
@@ -134,6 +135,27 @@ public class BannerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
         self.pageControlView.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
         self.currentPageLabel.text = "\(Int(scrollView.contentOffset.x) / Int(scrollView.frame.width) + 1)/\(bannerViewModel?.pageCount ?? 10)"
     }
+    
+    func sendClickedUrl(clickedUrl:String) {
+        
+        let guid = UUID().uuidString
+        var properties = self.propertiesLocal
+        properties?[RDConstants.clickedUrlKey] = clickedUrl
+        
+        for (key, value) in RDPersistence.readTargetParameters() {
+            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && properties?[key] == nil {
+               properties?[key] = value
+           }
+        }
+        
+        RDRequest.sendMobileRequest(properties: properties ?? Properties(), headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
+            if error == nil {
+                print("Clicked Url sended")
+            } else {
+                print(error.debugDescription)
+            }
+        }, guid: guid)
+    }
 
     @objc func tap(sender: UITapGestureRecognizer) {
 
@@ -143,7 +165,9 @@ public class BannerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
                 UIApplication.shared.open(url)
             }
             delegate?.bannerItemClickListener(url: selectedUrl ?? "")
-
+            DispatchQueue.main.async {
+                self.sendClickedUrl(clickedUrl: selectedUrl ?? "")
+            }
             print("you can do something with the cell or index path here")
         } else {
             print("collection view was tapped")

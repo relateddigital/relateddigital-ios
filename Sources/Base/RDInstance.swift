@@ -667,6 +667,7 @@ extension RDInstance {
                 DispatchQueue.main.async {
                     let bannerView : BannerView = .fromNib()
                     bannerView.model = response
+                    bannerView.propertiesLocal = props
                     completion(bannerView)
                 }
             }
