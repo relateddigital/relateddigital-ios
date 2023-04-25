@@ -23,6 +23,13 @@ public struct RDPushMessage: PushCodable {
         return false
     }
     
+    public func isSilent() -> Bool {
+        if let silent = silent, silent.compare("true", options: .caseInsensitive) == .orderedSame {
+            return true
+        }
+        return false
+    }
+    
     public var formattedDateString: String?
     public let aps: Aps?
     public let altURL: String?
@@ -47,6 +54,7 @@ public struct RDPushMessage: PushCodable {
 
     
     public let deliver: String?
+    public let silent: String?
 
     // MARK: - Aps
     public struct Aps: Codable {

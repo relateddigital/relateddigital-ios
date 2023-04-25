@@ -335,6 +335,10 @@ public class RelatedDigital {
         shared.rdInstance.getPushMessagesWithID(completion: completion)
     }
     
+    public static func getToken(completion: @escaping ((_ token: String) -> Void)) {
+        shared.rdInstance.getToken(completion: completion)
+    }
+
     public static func setNotificationLoginID(notificationLoginID: String?) {
         setUserProperty(key: PushKey.notificationLoginIdKey, value: notificationLoginID)
         PushUserDefaultsUtils.saveUserDefaults(key: PushKey.notificationLoginIdKey, value: notificationLoginID as AnyObject)

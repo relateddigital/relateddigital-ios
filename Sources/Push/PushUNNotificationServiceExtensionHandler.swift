@@ -9,12 +9,25 @@ import Foundation
 import UIKit
 
 class PushUNNotificationServiceExtensionHandler {
-
+    
     public static func didReceive(_ bestAttemptContent: UNMutableNotificationContent?
                                   , withContentHandler contentHandler:  @escaping (UNNotificationContent) -> Void) {
         
         guard let userInfo = bestAttemptContent?.userInfo, let data = try? JSONSerialization.data(withJSONObject: userInfo, options: []) else { return }
         guard let pushDetail = try? JSONDecoder.init().decode(RDPushMessage.self, from: data) else { return }
+        
+        if #available(iOS 15.0, *) {
+            bestAttemptContent?.interruptionLevel = .timeSensitive
+        }
+        
+        PushUserDefaultsUtils.savePayload(payload: pushDetail)
+        
+        if let notifLoginId = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.notificationLoginIdKey) as? String,
+           !notifLoginId.isEmpty {
+            PushUserDefaultsUtils.savePayloadWithId(payload: pushDetail, notificationLoginID: notifLoginId)
+        } else {
+            PushUserDefaultsUtils.savePayload(payload: pushDetail)
+        }
         
         if pushDetail.sendDeliver() {
             if let shared = RDPush.shared {
@@ -24,22 +37,18 @@ class PushUNNotificationServiceExtensionHandler {
             }
         }
         
-        PushUserDefaultsUtils.savePayload(payload: pushDetail)
-        
-        if let notificationLoginId = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.notificationLoginIdKey) as? String,
-           !notificationLoginId.isEmpty {
-            PushUserDefaultsUtils.savePayloadWithId(payload: pushDetail, notificationLoginID: notificationLoginId)
-        } else {
-            PushUserDefaultsUtils.savePayload(payload: pushDetail)
+        if pushDetail.isSilent() {
+            contentHandler(UNNotificationContent())
+            return
         }
-
+        
         // Setup carousel buttons
         if pushDetail.aps?.category == "carousel" {
             UNUNC.current().setNotificationCategories(getCarouselActionCategorySet())
         } else if pushDetail.aps?.category == "action.button" {
             addActionButtons(pushDetail)
         }
-
+        
         // Setup notification for image/video
         guard let modifiedBestAttemptContent = bestAttemptContent else { return }
         
@@ -48,7 +57,7 @@ class PushUNNotificationServiceExtensionHandler {
         }
         
         if pushDetail.pushType == "Image" || pushDetail.pushType == "Video",
-            let attachmentMedia = pushDetail.mediaUrl, let mediaUrl = URL(string: attachmentMedia) {
+           let attachmentMedia = pushDetail.mediaUrl, let mediaUrl = URL(string: attachmentMedia) {
             loadAttachments(mediaUrl: mediaUrl, modifiedBestAttemptContent: modifiedBestAttemptContent, withContentHandler: contentHandler)
         } else if pushDetail.pushType == "Text" {
             contentHandler(modifiedBestAttemptContent)
@@ -66,14 +75,14 @@ class PushUNNotificationServiceExtensionHandler {
                                                           options: [.foreground]))
             }
             let actionCategory = UNNotificationCategory(identifier: categoryIdentifier,
-                                                          actions: actionButtons,
-                                                          intentIdentifiers: [], options: [])
-
+                                                        actions: actionButtons,
+                                                        intentIdentifiers: [], options: [])
+            
             UNUserNotificationCenter.current().setNotificationCategories([actionCategory])
-
+            
         }
     }
-
+    
     static func getCarouselActionCategorySet() -> Set<UNNotificationCategory>  {
         let categoryIdentifier = "carousel"
         let carouselNext = UNNotificationAction(identifier: "carousel.next", title: "▶", options: [])
@@ -81,7 +90,7 @@ class PushUNNotificationServiceExtensionHandler {
         let carouselCategory = UNNotificationCategory(identifier: categoryIdentifier, actions: [carouselNext, carouselPrevious], intentIdentifiers: [], options: [])
         return [carouselCategory]
     }
-
+    
     static func loadAttachments(mediaUrl: URL,
                                 modifiedBestAttemptContent: UNMutableNotificationContent,
                                 withContentHandler contentHandler:  @escaping (UNNotificationContent) -> Void) {
@@ -118,9 +127,9 @@ class PushUNNotificationServiceExtensionHandler {
                     contentHandler(modifiedBestAttemptContent)
                     return
                 }
-        }).resume()
+            }).resume()
     }
-
+    
     static func determineType(fileType: String) -> String {
         switch fileType {
         case "video/mp4":
@@ -135,5 +144,5 @@ class PushUNNotificationServiceExtensionHandler {
             return ".tmp"
         }
     }
-
+    
 }

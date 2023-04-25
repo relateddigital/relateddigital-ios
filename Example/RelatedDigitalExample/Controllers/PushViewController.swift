@@ -13,50 +13,51 @@ import UIKit
 
 class PushViewController: FormViewController {
     let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeForm()
     }
-
+    
     private func initializeForm() {
         let segmentedSection = Section("Change Page")
         let askPermissionSection = Section("Ask Permission")
         let switchPermissionSection = Section("Permissions")
         let setSection = Section("Set")
-
+        
         form +++ segmentedSection
-            <<< changePage()
-
+        <<< changePage()
+        
         form +++ askPermissionSection
-            <<< askForNotificationPermission()
-            <<< askForProvisionalNotificationPermission()
-
+        <<< askForNotificationPermission()
+        <<< askForProvisionalNotificationPermission()
+        
         form +++ switchPermissionSection
-            <<< pushPermission()
-            <<< gsmPermission()
-            <<< emailPermission()
-
+        <<< pushPermission()
+        <<< gsmPermission()
+        <<< emailPermission()
+        
         form +++ setSection
-            <<< setEmail()
-            <<< sendSubscription()
-            <<< userProperty()
-            <<< removeUserProperty()
-
+        <<< setEmail()
+        <<< sendSubscription()
+        <<< userProperty()
+        <<< removeUserProperty()
+        
         form +++ Section()
-            <<< getPushMessages()
-            <<< getPushMessagesWithID()
+        <<< getPushMessages()
+        <<< getPushMessagesWithID()
+        <<< getToken()
     }
-
+    
     fileprivate func changePage() -> SplitRow<ButtonRow, ButtonRow> {
         return SplitRow {
             $0.rowLeftPercentage = 0.5
-
+            
             $0.rowLeft = ButtonRow {
                 $0.title = "Push Module"
                 $0.disabled = true
             }
-
+            
             $0.rowRight = ButtonRow {
                 $0.title = "Analytics Module"
             }.onCellSelection({ _, _ in
@@ -65,11 +66,11 @@ class PushViewController: FormViewController {
                 } else {
                     self.goToTabBarController()
                 }
-
+                
             })
         }
     }
-
+    
     fileprivate func askForNotificationPermission() -> ButtonRow {
         return ButtonRow {
             $0.title = "Ask For Push Notification Permission"
@@ -79,7 +80,7 @@ class PushViewController: FormViewController {
             cell.textLabel?.font = UIFont.systemFont(ofSize: 14)
         }
     }
-
+    
     fileprivate func askForProvisionalNotificationPermission() -> ButtonRow {
         return ButtonRow {
             $0.title = "Ask For Push Notification Permission Provisional"
@@ -89,7 +90,7 @@ class PushViewController: FormViewController {
             cell.textLabel?.font = UIFont.systemFont(ofSize: 14)
         }
     }
-
+    
     fileprivate func pushPermission() -> SwitchRow {
         return SwitchRow("pushPermission") {
             $0.title = "Push Permission: null"
@@ -97,18 +98,18 @@ class PushViewController: FormViewController {
         }.onChange { SwitchRow in
             RelatedDigital.setPushNotification(permission: SwitchRow.value!)
             if SwitchRow.value == true {
-                #if targetEnvironment(simulator)
-                    RelatedDigital.registerToken(tokenData: Data(base64Encoded: "dG9rZW4="))
-                #else
-                    RelatedDigital.registerForPushNotifications()
-                #endif
+#if targetEnvironment(simulator)
+                RelatedDigital.registerToken(tokenData: Data(base64Encoded: "dG9rZW4="))
+#else
+                RelatedDigital.registerForPushNotifications()
+#endif
                 SwitchRow.title = "Push Permission: Y"
             } else {
                 SwitchRow.title = "Push Permission: N"
             }
         }
     }
-
+    
     fileprivate func gsmPermission() -> SwitchRow {
         return SwitchRow("gsmPermission") {
             $0.title = "GSM Permission: null"
@@ -117,7 +118,7 @@ class PushViewController: FormViewController {
             RelatedDigital.setPhoneNumber(permission: SwitchRow.value!)
         }
     }
-
+    
     fileprivate func emailPermission() -> SwitchRow {
         return SwitchRow("emailPermission") {
             $0.title = "Email Permission: null"
@@ -126,14 +127,14 @@ class PushViewController: FormViewController {
             RelatedDigital.setEmail(permission: SwitchRow.value!)
         }
     }
-
+    
     fileprivate func setEmail() -> TextRow {
         return TextRow("email") {
             $0.title = "Email"
             $0.placeholder = "Please enter your e-mail"
         }
     }
-
+    
     fileprivate func sendSubscription() -> ButtonRow {
         return ButtonRow {
             $0.title = "Set"
@@ -143,14 +144,14 @@ class PushViewController: FormViewController {
             RelatedDigital.sync()
         }
     }
-
+    
     fileprivate func userProperty() -> TextRow {
         return TextRow("property") {
             $0.title = "Remove User Property"
             $0.placeholder = "Please enter property"
         }
     }
-
+    
     fileprivate func removeUserProperty() -> ButtonRow {
         return ButtonRow {
             $0.title = "Remove"
@@ -160,7 +161,7 @@ class PushViewController: FormViewController {
             RelatedDigital.sync()
         }
     }
-
+    
     fileprivate func getPushMessages() -> ButtonRow {
         return ButtonRow {
             $0.title = "Get Push Messages"
@@ -169,7 +170,7 @@ class PushViewController: FormViewController {
                 if messages.isEmpty {
                     print("🚲 there is no recorded push message.")
                 }
-
+                
                 for message in messages {
                     print("🆔: \(message.pushId ?? "")")
                     print("📅: \(message.formattedDateString ?? "")")
@@ -187,7 +188,7 @@ class PushViewController: FormViewController {
                 if messages.isEmpty {
                     print("🚲 there is no recorded push message.")
                 }
-
+                
                 for message in messages {
                     print("🆔: \(message.pushId ?? "")")
                     print("📅: \(message.formattedDateString ?? "")")
@@ -196,11 +197,25 @@ class PushViewController: FormViewController {
             }
         }
     }
-
+    
+    fileprivate func getToken() -> ButtonRow {
+        return ButtonRow {
+            $0.title = "Get Token"
+        }.onCellSelection { _, _ in
+            RelatedDigital.getToken { token in
+                if token.isEmpty {
+                    print("🚲 token is empty.")
+                } else {
+                    print("🪙 token: \(token)")
+                }
+            }
+        }
+    }
+    
     func goToHomeViewController() {
         view.window?.rootViewController = appDelegate?.getHomeViewController()
     }
-
+    
     func goToTabBarController() {
         view.window?.rootViewController = appDelegate?.getTabBarController()
     }

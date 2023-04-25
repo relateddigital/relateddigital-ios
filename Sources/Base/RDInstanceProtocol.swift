@@ -82,6 +82,7 @@ protocol RDInstanceProtocol {
     func registerEmail(email: String, permission: Bool, isCommercial: Bool, customDelegate: RDPushDelegate?)
     func getPushMessages(completion: @escaping GetPushMessagesCompletion)
     func getPushMessagesWithID(completion: @escaping GetPushMessagesCompletion)
+    func getToken(completion: @escaping ((_ token: String) -> Void))
     
 }
 

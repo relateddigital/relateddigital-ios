@@ -17,7 +17,8 @@ class NotificationService: UNNotificationServiceExtension {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
         DispatchQueue.main.async {
-            RelatedDigital.initialize(organizationId: urlConstant.shared.organizationId, profileId: urlConstant.shared.profileId, dataSource: "visistore", launchOptions: nil)
+            RelatedDigital.initialize(organizationId: UrlConstant.shared.organizationId, profileId: UrlConstant.shared.profileId, dataSource: "visistore", launchOptions: nil, askLocationPermmissionAtStart: false)
+            RelatedDigital.loggingEnabled = true
             
             RelatedDigital.enablePushNotifications(appAlias: "RDIOSExample", launchOptions: nil, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital")
             RDPush.didReceive(self.bestAttemptContent, withContentHandler: contentHandler)

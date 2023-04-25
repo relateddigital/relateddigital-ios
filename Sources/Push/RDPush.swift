@@ -506,6 +506,13 @@ extension RDPush {
     public static func getPushMessagesWithId(completion: @escaping ((_ payloads: [RDPushMessage]) -> Void)) {
         completion(PushUserDefaultsUtils.getRecentPayloadsWithId())
     }
+    
+    public static func getToken(completion: @escaping ((_ token: String) -> Void)) {
+      let token = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.tokenKey) as? String
+        ?? (RDPush.sharedInstance?.subscription.token ?? "")
+      completion(token)
+    }
+
 }
 
 extension RDPush {

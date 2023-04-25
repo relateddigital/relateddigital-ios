@@ -58,9 +58,9 @@ class HomeViewController: FormViewController {
             let testUrlIsActive: SwitchRow? = self.form.rowBy(tag: "TestApp")
 
             if testUrlIsActive?.value == true {
-                urlConstant.shared.setTestWithLocalData(isActive: true)
+                UrlConstant.shared.setTestWithLocalData(isActive: true)
             } else {
-                urlConstant.shared.setTestWithLocalData(isActive: false)
+                UrlConstant.shared.setTestWithLocalData(isActive: false)
             }
             self.goToTabBarController()
         }
