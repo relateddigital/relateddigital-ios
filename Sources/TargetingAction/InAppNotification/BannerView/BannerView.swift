@@ -148,13 +148,7 @@ public class BannerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
            }
         }
         
-        RDRequest.sendMobileRequest(properties: properties ?? Properties(), headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
-            if error == nil {
-                print("Clicked Url sended")
-            } else {
-                print(error.debugDescription)
-            }
-        }, guid: guid)
+        RelatedDigital.customEvent("BannerClicked", properties: properties ?? Properties())
     }
 
     @objc func tap(sender: UITapGestureRecognizer) {

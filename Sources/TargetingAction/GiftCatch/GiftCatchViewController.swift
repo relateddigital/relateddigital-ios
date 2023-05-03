@@ -229,7 +229,6 @@ extension GiftCatchViewController: WKScriptMessageHandler {
                 if method == "initGiftCatch" {
                     RDLogger.info("initGiftCatch")
                     if let json = try? JSONEncoder().encode(self.gameficationModel), let jsonString = String(data: json, encoding: .utf8) {
-                        print(jsonString)
                         self.webView.evaluateJavaScript("window.initGiftCatch(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)

@@ -233,7 +233,6 @@ extension FindToWinViewController: WKScriptMessageHandler {
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
                     if let json = try? JSONEncoder().encode(self.findToWin!), let jsonString = String(data: json, encoding: .utf8) {
-                        print(jsonString)
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
