@@ -13,7 +13,8 @@ import SplitRow
 
 class InAppViewController: FormViewController, BannerDelegate {
 
-    
+    var propertiesUnitTest = [String: String]()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,10 +37,10 @@ class InAppViewController: FormViewController, BannerDelegate {
         return section
     }
     
-    private func inAppEvent(_ queryStringFilter: String) {
+    func inAppEvent(_ queryStringFilter: String) {
         
         if queryStringFilter == "banner_carousel" {
-            showBannerCarousel()
+           _ = showBannerCarousel()
         }
         else {
             var properties = [String: String]()
@@ -49,6 +50,7 @@ class InAppViewController: FormViewController, BannerDelegate {
             }
             RelatedDigital.customEvent("InAppTest", properties: properties)
             RelatedDigital.inappButtonDelegate = self
+            propertiesUnitTest = properties
         }
 
     }
@@ -94,7 +96,7 @@ extension InAppViewController: RDInappButtonDelegate {
         print(notification)
     }
     
-    func showBannerCarousel() {
+    func showBannerCarousel() -> UIView {
         let bannerView = UIView()
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(bannerView)
@@ -121,6 +123,8 @@ extension InAppViewController: RDInappButtonDelegate {
             }
 
         }
+        
+        return bannerView // For Unit Test Purpose
     }
     
     func bannerItemClickListener(url: String) {
