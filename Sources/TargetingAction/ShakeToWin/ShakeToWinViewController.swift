@@ -206,34 +206,34 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
         close.width(40)
         close.height(40)
 
-        page.titleLabel.text = model?.mailForm.title
+        page.titleLabel.text = model?.mailForm.title?.replacingOccurrences(of: "\\n", with: "\n")
         page.titleLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.titleFontFamily, fontSize: model?.mailExtendedProps.titleTextSize, style: .title2)
         page.titleLabel.textColor = UIColor(hex: model?.mailExtendedProps.titleTextColor)
 
-        page.subTİtleLabel.text = model?.mailForm.message
+        page.subTİtleLabel.text = model?.mailForm.message?.replacingOccurrences(of: "\\n", with: "\n")
         page.subTİtleLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.textFontFamily, fontSize: model?.mailExtendedProps.textSize, style: .title2)
         page.subTİtleLabel.textColor = UIColor(hex: model?.mailExtendedProps.textColor)
 
-        page.firsLineTickLabel.text = model?.mailForm.emailPermitText
+        page.firsLineTickLabel.text = model?.mailForm.emailPermitText?.replacingOccurrences(of: "\\n", with: "\n")
         page.firsLineTickLabel.font = RDHelper.getFont(fontFamily: "default", fontSize: model?.mailExtendedProps.emailPermitTextSize, style: .body)
         page.firsLineTickLabel.textColor = .black
 
-        page.secondLineTickLabel.text = model?.mailForm.consentText
+        page.secondLineTickLabel.text = model?.mailForm.consentText?.replacingOccurrences(of: "\\n", with: "\n")
         page.secondLineTickLabel.font = RDHelper.getFont(fontFamily: "default", fontSize: model?.mailExtendedProps.consentTextSize, style: .body)
         page.secondLineTickLabel.textColor = .black
 
-        page.firstLineWarningLabel.text = model?.mailForm.emailPermitText
-        page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage
+        page.firstLineWarningLabel.text = model?.mailForm.emailPermitText?.replacingOccurrences(of: "\\n", with: "\n")
+        page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage?.replacingOccurrences(of: "\\n", with: "\n")
 
         page.mailTextView.attributedPlaceholder = NSAttributedString(string: model?.mailForm.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray])
 
         page.continueButtonView.backgroundColor = UIColor(hex: model?.mailExtendedProps.buttonColor)
         page.continueButtonLabel.textColor = UIColor(hex: model?.mailExtendedProps.buttonTextColor)
-        page.continueButtonLabel.text = model?.mailForm.buttonTitle
+        page.continueButtonLabel.text = model?.mailForm.buttonTitle?.replacingOccurrences(of: "\\n", with: "\n")
         page.continueButtonLabel.font = RDHelper.getFont(fontFamily: model?.mailExtendedProps.buttonFontFamily, fontSize: model?.mailExtendedProps.buttonTextSize, style: .body)
 
-        page.mailInvalidLabel.text = model?.mailForm.invalidEmailMessage
-        page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage
+        page.mailInvalidLabel.text = model?.mailForm.invalidEmailMessage?.replacingOccurrences(of: "\\n", with: "\n")
+        page.secondLineWarningLabel.text = model?.mailForm.checkConsentMessage?.replacingOccurrences(of: "\\n", with: "\n")
 
         page.firsLineTickLabel.setOnClickedListener {
             if let url = URL(string: self.model?.mailExtendedProps.emailPermitTextUrl ?? "") {
@@ -321,7 +321,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
                 imageAdded = true
             }
             let title = UILabel(frame: .zero)
-            title.text = model?.firstPage?.title
+            title.text = model?.firstPage?.title?.replacingOccurrences(of: "\\n", with: "\n")
             title.textColor = model?.firstPage?.titleColor
             title.font = model?.firstPage?.titleFont
             title.numberOfLines = 0
@@ -335,7 +335,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
             }
 
             let message = UILabel(frame: .zero)
-            message.text = model?.firstPage?.message
+            message.text = model?.firstPage?.message?.replacingOccurrences(of: "\\n", with: "\n")
             message.textColor = model?.firstPage?.messageColor
             message.font = model?.firstPage?.messageFont
             message.textAlignment = .center
@@ -421,7 +421,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
             page.setBackGround(url: bgImg)
         }
 
-        page.coppyButtonLabel.text = model?.thirdPage?.buttonText
+        page.coppyButtonLabel.text = model?.thirdPage?.buttonText?.replacingOccurrences(of: "\\n", with: "\n")
         page.coppyButtonLabel.textColor = model?.thirdPage?.buttonTextColor
         page.coppyButtonLabel.font = model?.thirdPage?.buttonFont
         page.copyButtonView.backgroundColor = model?.thirdPage?.buttonBgColor
@@ -433,13 +433,15 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
             self.copyClicked()
         }
 
-        page.titleLabel.text = model?.thirdPage?.title
+        page.titleLabel.text = model?.thirdPage?.title?.replacingOccurrences(of: "\\n", with: "\n")
         page.titleLabel.textColor = model?.thirdPage?.titleColor
         page.titleLabel.font = model?.thirdPage?.titleFont
-        page.subTitleLabel.text = model?.thirdPage?.message
+        page.subTitleLabel.text = model?.thirdPage?.message?.replacingOccurrences(of: "\\n", with: "\n")
         page.subTitleLabel.textColor = model?.thirdPage?.messageColor
         page.subTitleLabel.font = model?.thirdPage?.messageFont
         page.backgroundColor = model?.thirdPage?.backgroundColor
+        
+        
         let close = getCloseButton()
         page.addSubview(close)
         close.top(to: page, offset: 50)
