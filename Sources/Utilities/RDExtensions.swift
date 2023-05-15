@@ -76,6 +76,34 @@ public let imageCache = NSCache<NSString, AnyObject>()
 extension UIImageView {
     
     
+    func setImageWithImageSize(withUrl urlString : String) {
+        if let url = URL(string: urlString) {
+            self.image = nil
+
+            // check cached image
+            if let cachedImage = imageCache.object(forKey: urlString as NSString) as? UIImage {
+                self.height(cachedImage.size.height)
+                self.image = cachedImage
+                return
+            }
+            // if not, download image from url
+            URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+                if error != nil {
+                    print(error!)
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    if let image = UIImage.gif(data: data!) {
+                        imageCache.setObject(image, forKey: urlString as NSString)
+                        self.height(image.size.height)
+                        self.image = image
+                    }
+                }
+
+            }).resume()
+        }
+    }
     
     func setImage(withUrl urlString : String) {
         if let url = URL(string: urlString) {

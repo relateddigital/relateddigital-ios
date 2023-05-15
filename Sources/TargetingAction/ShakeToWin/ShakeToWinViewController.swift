@@ -317,7 +317,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
 //                imageView.height(imageView.image?.size.height ?? 0.0)
                 imageView.width(self.view.width*0.9)
                 page.bringSubviewToFront(imageView)
-                imageView.setImage(withUrl: img)
+                imageView.setImageWithImageSize(withUrl: img)
                 imageAdded = true
             }
             let title = UILabel(frame: .zero)
@@ -344,7 +344,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
 
             message.centerX(to: page)
             message.topToBottom(of: title, offset: 5)
-            message.height(40.0)
+            message.height(0.0)
 
             let button = UIButton(frame: .zero)
             button.setTitle(model?.firstPage?.buttonText, for: .normal)
@@ -355,7 +355,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
 
             button.height(60.0)
             button.centerX(to: page)
-            button.topToBottom(of: message, offset: 10)
+            //button.topToBottom(of: message, offset: 10)
             button.bottom(to: page, offset: -20)
             button.width(120.0)
 
@@ -502,6 +502,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
         UIView.animate(withDuration: duration, animations: {
             self.window?.alpha = 0
             }, completion: { _ in
+                self.view.isHidden = true
                 self.window?.isHidden = true
                 self.window?.removeFromSuperview()
                 self.window = nil
