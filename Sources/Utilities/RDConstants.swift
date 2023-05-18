@@ -379,6 +379,12 @@ struct RDConstants {
     static let promocodes_soldout_message_text_size = "promocodes_soldout_message_text_size"
     static let promocodes_soldout_message_background_color = "promocodes_soldout_message_background_color"
     
+    
+    static let redirectbutton_label = "redirectbutton_label"
+    static let displayname_text_align = "displayname_text_align"
+    static let redirectbutton_color = "redirectbutton_color"
+    static let redirectbutton_text_color = "redirectbutton_text_color"
+    
     // SpinToWin slices
     static let displayName = "displayName"
     static let color = "color"

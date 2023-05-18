@@ -109,6 +109,13 @@ public struct SpinToWinViewModel: TargetingActionViewModel, Codable {
 
     public var jsContent: String?
     public var jsonContent: String?
+    
+    
+    var redirectbuttonLabel: String
+    var displaynameTextAlign: String
+    var redirectbuttonColor: String
+    var redirectbuttonTextColor: String
+
 
 
 }
