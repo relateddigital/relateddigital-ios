@@ -173,14 +173,14 @@ class RDSpinToWinViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("spintowin.html")
-        let jsUrl = docUrl.appendingPathComponent("spintowin.js")
+        let htmlUrl = docUrl.appendingPathComponent("spin_to_win.html")
+        let jsUrl = docUrl.appendingPathComponent("spin_to_win.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "spintowin", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "spin_to_win", ofType: "html") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
 

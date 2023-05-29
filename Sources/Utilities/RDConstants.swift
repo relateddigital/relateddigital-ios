@@ -391,6 +391,8 @@ struct RDConstants {
     static let code = "code"
     static let isAvailable = "is_available"
     static let iosLink = "ios_lnk"
+    static let infotext = "infotext"
+
     
     // SpinToWin information properties
     static let promoAction = "OM.promoaction"
@@ -479,7 +481,7 @@ struct RDConstants {
     
     //Gamification Urls
     static let giftCatchUrl = "https://mbls.visilabs.net/gift_catch.js"
-    static let spintoWinUrl = "https://mbls.visilabs.net/spintowin.js"
+    static let spintoWinUrl = "https://mbls.visilabs.net/spin_to_win.js"
     static let findToWinUrl = "https://mbls.visilabs.net/find_to_win.js"
     static let giftBoxUrl = "https://mbls.visilabs.net/giftbox.js"
     

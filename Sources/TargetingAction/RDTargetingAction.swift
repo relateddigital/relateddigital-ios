@@ -429,7 +429,8 @@ class RDTargetingAction {
             let type = slice[RDConstants.type] as? String ?? ""
             let isAvailable = slice[RDConstants.isAvailable] as? Bool ?? true
             let iosLink = slice[RDConstants.iosLink] as? String ?? ""
-            let spinToWinSliceViewModel = SpinToWinSliceViewModel(displayName: displayName, color: color, code: code, type: type, isAvailable: isAvailable, iosLink: iosLink)
+            let infotext = slice[RDConstants.infotext] as? String ?? ""
+            let spinToWinSliceViewModel = SpinToWinSliceViewModel(displayName: displayName, color: color, code: code, type: type, isAvailable: isAvailable, iosLink: iosLink, infotext: infotext)
             sliceArray.append(spinToWinSliceViewModel)
         }
 
