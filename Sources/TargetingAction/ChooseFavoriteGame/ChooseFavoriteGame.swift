@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-class PuzzleViewController: RDBaseNotificationViewController {
+class ChooseFavoriteGame: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
@@ -213,7 +213,7 @@ class PuzzleViewController: RDBaseNotificationViewController {
 
 }
 
-extension PuzzleViewController: WKScriptMessageHandler {
+extension ChooseFavoriteGame: WKScriptMessageHandler {
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 
@@ -268,7 +268,7 @@ extension PuzzleViewController: WKScriptMessageHandler {
                 if method == "saveCodeGotten", let code = event["code"] as? String, let mail = event["email"] as? String  {
                     codeGotten = true
                     UIPasteboard.general.string = code
-                    BannerCodeManager.shared.setPuzzleCode(code: code)
+                    BannerCodeManager.shared.setChooseFavoriteGameCode(code: code)
                     let actionID = self.giftBox?.actId
                     var properties = Properties()
                     properties[RDConstants.promoActionID] = String(actionID ?? 0)

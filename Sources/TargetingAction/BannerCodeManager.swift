@@ -15,7 +15,7 @@ public class BannerCodeManager {
     private let jackpotCode = "jackpotCode"
     private let shakeToWinCode = "shakeToWinCode"
     private let giftBoxCode = "giftBoxCode"
-    private let puzzleCode = "puzzleCode"
+    private let ChooseFavoriteGameCode = "ChooseFavoriteGameCode"
 
 
     func setGiftRainCode(code:String) {
@@ -81,15 +81,15 @@ public class BannerCodeManager {
         return string
     }
     
-    func setPuzzleCode(code:String) {
+    func setChooseFavoriteGameCode(code:String) {
         let defaults = UserDefaults.standard
-        defaults.set(code, forKey:puzzleCode)
+        defaults.set(code, forKey:ChooseFavoriteGameCode)
     }
     
-    func getPuzzleCode() -> String {
+    func getChooseFavoriteGameCode() -> String {
         let defaults = UserDefaults.standard
-        let string = defaults.string(forKey: puzzleCode) ?? ""
-        defaults.set("", forKey:puzzleCode)
+        let string = defaults.string(forKey: ChooseFavoriteGameCode) ?? ""
+        defaults.set("", forKey:ChooseFavoriteGameCode)
         return string
     }
     
