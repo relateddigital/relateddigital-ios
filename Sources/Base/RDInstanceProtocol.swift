@@ -57,6 +57,7 @@ protocol RDInstanceProtocol {
     func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView
     func getStoryViewAsync(actionId: Int?, urlDelegate: RDStoryURLDelegate?, completion: @escaping StoryCompletion)
     func getBannerView(properties: Properties, completion: @escaping ((BannerView?) -> Void))
+    func getButtonCarouselView(properties: Properties, completion: @escaping ((ButtonCarouselView?) -> Void))
     func getNpsWithNumbersView(properties: Properties, delegate: RDNpsWithNumbersDelegate?, completion: @escaping ((RDNpsWithNumbersContainerView?) -> Void))
     func recommend(zoneId: String, productCode: String?, filters: [RDRecommendationFilter], properties: Properties, completion: @escaping RecommendCompletion)
     func getFavoriteAttributeActions(actionId: Int?, completion: @escaping FavoriteAttributeActionCompletion)

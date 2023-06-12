@@ -350,6 +350,12 @@ public class RelatedDigital {
         }
     }
     
+    public static func getButtonCarouselView(properties: Properties,completion: @escaping (ButtonCarouselView?) -> Void) {
+        shared.rdInstance.getButtonCarouselView(properties: properties) { buttonCarouselView in
+            completion(buttonCarouselView)
+        }
+    }
+    
     public static func getNpsWithNumbersView(properties: Properties, delegate: RDNpsWithNumbersDelegate?, completion: @escaping (RDNpsWithNumbersContainerView?) -> Void) {
         shared.rdInstance.getNpsWithNumbersView(properties: properties, delegate: delegate) { npsWithNumbersView in
             completion(npsWithNumbersView)

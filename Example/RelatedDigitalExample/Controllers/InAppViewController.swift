@@ -21,6 +21,11 @@ class InAppViewController: FormViewController, BannerDelegate {
         form +++ InAppNotifications()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        //showButtonCarouselView()
+    }
+    
     private func  InAppNotifications() -> Section {
         let section = Section("Target Actions".uppercased(with: Locale(identifier: "en_US")))
         for (type, inAppDict)  in getInApps().sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
@@ -88,7 +93,7 @@ class InAppViewController: FormViewController, BannerDelegate {
     
 }
 
-extension InAppViewController: RDInappButtonDelegate {
+extension InAppViewController: RDInappButtonDelegate,ButtonCarouselViewDelegate {
 
     
     func didTapButton(_ notification: RDInAppNotification) {
@@ -127,8 +132,41 @@ extension InAppViewController: RDInappButtonDelegate {
         return bannerView // For Unit Test Purpose
     }
     
+    
     func bannerItemClickListener(url: String) {
         print(url)
     }
+    
+    
+    func showButtonCarouselView() {
+        let buttonCarouselView = UIView()
+        buttonCarouselView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(buttonCarouselView)
+        NSLayoutConstraint.activate([buttonCarouselView.topAnchor.constraint(equalTo: self.view.topAnchor,constant:  80),
+                                     buttonCarouselView.heightAnchor.constraint(equalToConstant: 80),
+                                     buttonCarouselView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                                     buttonCarouselView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
+        buttonCarouselView.backgroundColor = .black
+        
+        
+        var props = Properties()
+        props["OM.inapptype"] = "button_carousel"
+        
+        RelatedDigital.getButtonCarouselView(properties: props) { CarouselView in
+            if let carView = CarouselView {
+                carView.delegate = self
+                carView.translatesAutoresizingMaskIntoConstraints = false
+                buttonCarouselView.addSubview(carView)
+                
+                NSLayoutConstraint.activate([carView.topAnchor.constraint(equalTo: buttonCarouselView.topAnchor),
+                                             carView.bottomAnchor.constraint(equalTo: buttonCarouselView.bottomAnchor),
+                                             carView.leadingAnchor.constraint(equalTo: buttonCarouselView.leadingAnchor),
+                                             carView.trailingAnchor.constraint(equalTo: buttonCarouselView.trailingAnchor)])
+            }
+
+        }
+    }
+    
+
 
 }
