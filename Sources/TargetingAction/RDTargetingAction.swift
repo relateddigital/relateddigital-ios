@@ -1288,6 +1288,44 @@ class RDTargetingAction {
 
         return AppBannerResponseModel(app_banners: appBannerModelArray, error: errorResponse, transition: transition ?? "")
     }
+    
+    
+    
+    func getButtonCarouselView(properties: Properties, rdUser: RDUser, guid: String, completion: @escaping ((_ response: ButtonCarouselViewModel) -> Void)) {
+
+        RDRequest.sendMobileRequest(properties: properties, headers: Properties(), completion: {(result: [String: Any]?, error: RDError?, guid: String?) in
+            completion(self.parseButtonCarouselView(result, error, guid))
+        }, guid: guid)
+    }
+
+    private func parseButtonCarouselView(_ result: [String: Any]?, _ error: RDError?, _ guid: String?) -> ButtonCarouselViewModel {
+        var appBannerModelArray = [AppBannerModel]()
+        var errorResponse: RDError?
+        var transition: String?
+        if let error = error {
+            errorResponse = error
+        } else if let res = result {
+            if let bannerAction = res[RDConstants.appBanner] as? [[String: Any?]] {
+                for bannerAction in bannerAction {
+                    let actiondata = bannerAction[RDConstants.actionData] as? [String: Any?]
+                    let appData = actiondata?[RDConstants.appBanners] as? [[String: Any?]]
+                    transition = actiondata?[RDConstants.transitionAction] as? String
+                    for element in appData! {
+                        let appBannerModel = AppBannerModel(img: element[RDConstants.img] as? String, ios_lnk: element[RDConstants.iosLnk] as? String)
+                        appBannerModelArray.append(appBannerModel)
+                    }
+                }
+            } else {
+                errorResponse = RDError.noData
+            }
+        }
+
+        if appBannerModelArray.isEmpty {
+            errorResponse = RDError.noData
+        }
+
+        return ButtonCarouselViewModel()
+    }
 
     // MARK: - Story
 

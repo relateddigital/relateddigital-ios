@@ -676,6 +676,49 @@ extension RDInstance {
     }
     
     
+    
+    func getButtonCarouselView(properties:Properties, completion: @escaping ((ButtonCarouselView?) -> Void)) {
+        let guid = UUID().uuidString
+        
+        var props = properties
+        props[RDConstants.organizationIdKey] = rdProfile.organizationId
+        props[RDConstants.profileIdKey] = rdProfile.profileId
+        props[RDConstants.cookieIdKey] = rdUser.cookieId
+        props[RDConstants.exvisitorIdKey] = rdUser.exVisitorId
+        props[RDConstants.tokenIdKey] = rdUser.tokenId
+        props[RDConstants.appidKey] = rdUser.appId
+        props[RDConstants.apiverKey] = RDConstants.apiverValue
+        props[RDConstants.actionType] = RDConstants.buttonCarouselView
+        props[RDConstants.channelKey] = rdProfile.channel
+        
+        props[RDConstants.nrvKey] = String(rdUser.nrv)
+        props[RDConstants.pvivKey] = String(rdUser.pviv)
+        props[RDConstants.tvcKey] = String(rdUser.tvc)
+        props[RDConstants.lvtKey] = rdUser.lvt
+        
+        for (key, value) in RDPersistence.readTargetParameters() {
+            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
+                props[key] = value
+            }
+        }
+        
+        self.rdTargetingActionInstance.getButtonCarouselView(properties: props , rdUser: self.rdUser, guid: guid) { response in
+            
+            if false {
+                completion(nil)
+            } else {
+                DispatchQueue.main.async {
+                    let buttonCarouselView : ButtonCarouselView = .fromNib()
+                    buttonCarouselView.model = response
+                    buttonCarouselView.propertiesLocal = props
+                    completion(buttonCarouselView)
+                }
+            }
+            
+        }
+    }
+    
+    
     public func getNpsWithNumbersView(properties: Properties,
                                       delegate: RDNpsWithNumbersDelegate?,
                                       completion: @escaping ((RDNpsWithNumbersContainerView?) -> Void)) {

@@ -35,7 +35,7 @@ public class UrlConstant {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.18"
+    static let sdkVersion = "4.0.19"
     
     static let HTTP = "http"
     static let HTTPS = UrlConstant.shared.securityTag
@@ -152,6 +152,7 @@ struct RDConstants {
     static let favoriteAttributeAction = "FavoriteAttributeAction"
     static let story = "Story"
     static let appBanner = "AppBanner"
+    static let buttonCarouselView = "ButtonCarouselView"
     static let mailSubscriptionForm = "MailSubscriptionForm"
     static let spinToWin = "SpinToWin"
     static let scratchToWin = "ScratchToWin"
