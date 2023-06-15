@@ -361,4 +361,8 @@ public class RelatedDigital {
             completion(npsWithNumbersView)
         }
     }
+    
+    static func trackDrawerClick(drawerReport: DrawerReport) {
+        shared.rdInstance.trackDrawerClick(drawerReport: drawerReport)
+    }
 }

@@ -53,6 +53,7 @@ protocol RDInstanceProtocol {
     func trackGiftBoxClick(giftBoxReport: GiftBoxReport)
     func trackScratchToWinClick(scratchToWinReport: TargetingActionReport)
     func trackJackpotClick(jackpotReport: JackpotReport)
+    func trackDrawerClick(drawerReport: DrawerReport)
     func trackRecommendationClick(qs: String)
     func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView
     func getStoryViewAsync(actionId: Int?, urlDelegate: RDStoryURLDelegate?, completion: @escaping StoryCompletion)
