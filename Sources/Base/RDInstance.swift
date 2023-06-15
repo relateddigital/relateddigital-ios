@@ -536,6 +536,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties["OM.zpc"] = jackpotReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
+    
+    func trackDrawerClick(drawerReport: DrawerReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = drawerReport.click.parseClick().omZn
+        properties["OM.zpc"] = drawerReport.click.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
 }
 
 // MARK: - Story

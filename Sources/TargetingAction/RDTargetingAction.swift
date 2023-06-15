@@ -624,6 +624,14 @@ class RDTargetingAction {
         sideBarServiceModel.contentMaximizedBackgroundImage = extendedProps[RDConstants.contentMaximizedBackgroundImage] as? String ?? ""
         sideBarServiceModel.contentMaximizedBackgroundColor = extendedProps[RDConstants.contentMaximizedBackgroundColor] as? String ?? ""
 
+        
+        let report = actionData[RDConstants.report] as? [String: Any] ?? [String: Any]()
+        let impression = report[RDConstants.impression] as? String ?? ""
+        let click = report[RDConstants.click] as? String ?? ""
+        let drawerReport = DrawerReport(impression: impression, click: click)
+        
+        sideBarServiceModel.report = drawerReport
+        
         return sideBarServiceModel
     }
 

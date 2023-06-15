@@ -104,7 +104,13 @@ struct DrawerServiceModel: TargetingActionViewModel {
 
     public var jsContent: String?
     public var jsonContent: String?
+    
+    var report: DrawerReport?
+}
 
+public struct DrawerReport: Codable {
+    var impression: String
+    var click: String
 }
 
 struct DrawerViewModel {
