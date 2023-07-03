@@ -1,5 +1,5 @@
 //
-//  JackpotViewController.swift
+//  ChooseFavoriteGame.swift
 //  RelatedDigitalIOS
 //
 //  Created by Orhun Akmil on 29.06.2022.
@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-class ChooseFavoriteGame: RDBaseNotificationViewController {
+class ChooseFavoriteGameViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
@@ -20,9 +20,9 @@ class ChooseFavoriteGame: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
 
-    init(_ jackPot: JackpotModel) {
+    init(_ chooseFavoriteModel: ChooseFavoriteModel) {
         super.init(nibName: nil, bundle: nil)
-        self.jackpot = jackPot
+        self.chooseFavoriteModel = chooseFavoriteModel
     }
 
     required init?(coder: NSCoder) {
@@ -31,8 +31,8 @@ class ChooseFavoriteGame: RDBaseNotificationViewController {
 
     private func close() {
         dismiss(animated: true) {
-            if let jackPot = self.findToWin, !jackPot.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                let bannerVC = RDFindToWinCodeBannerController(jackPot)
+            if let chooseFavorite = self.chooseFavoriteModel, !chooseFavorite.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
+                let bannerVC = RDChooseFavoriteBannerController(chooseFavorite)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -123,7 +123,7 @@ class ChooseFavoriteGame: RDBaseNotificationViewController {
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
 
         RDHelper.registerFonts(fontNames: getCustomFontNames())
-        let fontUrls = jackpotFonts(fontNames: getCustomFontNames())
+        let fontUrls = gameFonts(fontNames: getCustomFontNames())
 
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
@@ -135,7 +135,7 @@ class ChooseFavoriteGame: RDBaseNotificationViewController {
 
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
 
-            if let jsContent = jackpot?.jsContent?.utf8 {
+            if let jsContent = chooseFavoriteModel?.jsContent?.utf8 {
                 guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
                     return nil
                 }
@@ -167,7 +167,7 @@ class ChooseFavoriteGame: RDBaseNotificationViewController {
         return htmlUrl
     }
 
-    private func jackpotFonts(fontNames: Set<String>) -> [String: URL] {
+    private func gameFonts(fontNames: Set<String>) -> [String: URL] {
         var fontUrls = [String: URL]()
         if let infos = Bundle.main.infoDictionary {
             if let uiAppFonts = infos["UIAppFonts"] as? [String] {
@@ -203,9 +203,9 @@ class ChooseFavoriteGame: RDBaseNotificationViewController {
 
     private func getCustomFontNames() -> Set<String> {
         var customFontNames = Set<String>()
-        if let jackpot = self.jackpot {
-            if !jackpot.custom_font_family_ios.isEmptyOrWhitespace {
-                customFontNames.insert(jackpot.custom_font_family_ios)
+        if let chooseFavorite = self.chooseFavoriteModel {
+            if !chooseFavorite.custom_font_family_ios.isEmptyOrWhitespace {
+                customFontNames.insert(chooseFavorite.custom_font_family_ios)
             }
         }
         return customFontNames
@@ -213,7 +213,7 @@ class ChooseFavoriteGame: RDBaseNotificationViewController {
 
 }
 
-extension ChooseFavoriteGame: WKScriptMessageHandler {
+extension ChooseFavoriteGameViewController: WKScriptMessageHandler {
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 
@@ -225,7 +225,7 @@ extension ChooseFavoriteGame: WKScriptMessageHandler {
 
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
-                    if let json = try? JSONEncoder().encode(self.jackpot!), let jsonString = String(data: json, encoding: .utf8) {
+                    if let json = try? JSONEncoder().encode(self.chooseFavoriteModel!), let jsonString = String(data: json, encoding: .utf8) {
                         print(jsonString)
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {
@@ -249,12 +249,12 @@ extension ChooseFavoriteGame: WKScriptMessageHandler {
                 }
 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeJackpotMail(actid: "\(self.jackpot!.actId ?? 0)", auth: self.jackpot!.auth, mail: email)
+                    RelatedDigital.subscribeChooseFavoriteMail(actid: "\(self.chooseFavoriteModel!.actId ?? 0)", auth: self.chooseFavoriteModel!.auth, mail: email)
                     subsEmail = email
                 }
 
                 if method == "sendReport" {
-                    RelatedDigital.trackJackpotClick(jackpotReport: (self.jackpot?.report)!)
+                    RelatedDigital.trackChooseFavoriteClick(chooseFavoriteReport: (self.chooseFavoriteModel?.report)!)
                 }
 
                 if method == "linkClicked", let urlLnk = event["url"] as? String {

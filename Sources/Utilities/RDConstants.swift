@@ -196,7 +196,8 @@ struct RDConstants {
     static let shakeToWin = "ShakeToWin"
     static let giftBox = "GiftBox"
     static let giftBoxes = "gift_boxes"
-    
+    static let chooseFavorite = "Choose_favorite"
+
     
     static let appBanners = "app_banners"
     static let transitionAction = "transition_action"
@@ -485,6 +486,8 @@ struct RDConstants {
     static let spintoWinUrl = "https://mbls.visilabs.net/spin_to_win.js"
     static let findToWinUrl = "https://mbls.visilabs.net/find_to_win.js"
     static let giftBoxUrl = "https://mbls.visilabs.net/giftbox.js"
+    static let chooseFavoriteUrl = "https://mbls.visilabs.net/giftbox.js"
+
     
     
     //Location Status

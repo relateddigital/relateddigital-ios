@@ -97,6 +97,8 @@ internal class RDHelper {
         RDBasePath.endpoints[.giftCatchJs] = RDConstants.giftCatchUrl
         RDBasePath.endpoints[.findToWinJs] = RDConstants.findToWinUrl
         RDBasePath.endpoints[.giftBoxJs] = RDConstants.giftBoxUrl
+        RDBasePath.endpoints[.chooseFavoriteJs] = RDConstants.chooseFavoriteUrl
+
 
        
     }

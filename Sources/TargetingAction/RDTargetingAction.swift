@@ -149,7 +149,16 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
-            } else {
+            }   else if targetingActionViewModel?.targetingActionType == .chooseFavorite {
+                RDRequest.sendChooseFavoriteScriptRequest(completion: {(result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
+            }  else {
                 semaphore.signal()
             }
         })
@@ -184,7 +193,9 @@ class RDTargetingAction {
             return parseFindToWin(findTown)
         } else if let giftBox = result[RDConstants.giftBox] as? [[String: Any?]], let giftBox = giftBox.first {
             return parseGiftBox(giftBox)
-        } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
+        } else if let chooseFavorite = result[RDConstants.chooseFavorite] as? [[String: Any?]], let chooseFavorite = chooseFavorite.first {
+            return parseChooseFavorite(chooseFavorite)
+        }  else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
                     return nil
@@ -892,6 +903,42 @@ class RDTargetingAction {
         return findToWinModel
     }
 
+    private func parseChooseFavorite(_ chooseFavorite: [String: Any?]) -> ChooseFavoriteModel? {
+        
+        guard let actionData = chooseFavorite[RDConstants.actionData] as? [String: Any] else { return nil }
+        var chooseFavoriteModel = ChooseFavoriteModel(targetingActionType: .chooseFavorite)
+        chooseFavoriteModel.actId = chooseFavorite[RDConstants.actid] as? Int ?? 0
+        chooseFavoriteModel.title = chooseFavorite[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        
+  
+        //prome banner params
+        chooseFavoriteModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        chooseFavoriteModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        chooseFavoriteModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        chooseFavoriteModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        chooseFavoriteModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        chooseFavoriteModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        chooseFavoriteModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        chooseFavoriteModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        chooseFavoriteModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        chooseFavoriteModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        //
+        
+        
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: chooseFavorite,
+            options: []) {
+            chooseFavoriteModel.jsonContent = String(data: theJSONData, encoding: .utf8)
+        }
+        
+        
+        return chooseFavoriteModel
+
+        
+    }
+    
     private func parseGiftBox(_ giftBox: [String: Any?]) -> GiftBoxModel? {
 
         guard let actionData = giftBox[RDConstants.actionData] as? [String: Any] else { return nil }
