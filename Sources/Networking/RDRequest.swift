@@ -243,6 +243,24 @@ class RDRequest {
         })
     }
     
+    
+    class func sendChooseFavoriteScriptRequest(completion: @escaping (String?, RDError?) -> Void) {
+        let responseParser: (Data) -> String? = { data in
+            return String(data: data, encoding: .utf8)
+        }
+        let resource = RDNetwork.buildResource(endPoint: .chooseFavoriteJs, method: .get, queryItems: [], headers: [:], parse: responseParser, guid: nil)
+        sendChooseFavoriteRequestHandler(resource: resource, completion: { result, error in completion(result, error)})
+    }
+    
+    private class func sendChooseFavoriteRequestHandler(resource: RDResource<String>, completion: @escaping (String?, RDError?) -> Void) {
+        RDNetwork.apiRequest(resource: resource, failure: { (error, _, _) in
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            completion(nil, error)
+        }, success: { (result, _) in
+            completion(result, nil)
+        })
+    }
+    
     private class func sendFindToWinScriptRequestHandler(resource: RDResource<String>, completion: @escaping (String?, RDError?) -> Void) {
         RDNetwork.apiRequest(resource: resource, failure: { (error, _, _) in
             RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")

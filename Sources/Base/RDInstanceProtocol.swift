@@ -46,6 +46,7 @@ protocol RDInstanceProtocol {
     func subscribeFindToWinMail(actid: String, auth: String, mail: String)
     func subscribeGiftBoxMail(actid: String, auth: String, mail: String)
     func subscribeJackpotMail(actid: String, auth: String, mail: String)
+    func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String)
     func subscribeMail(click: String, actid: String, auth: String, mail: String)
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport)
     func trackGamificationClick(gameficationReport: GameficationReport)
@@ -53,6 +54,7 @@ protocol RDInstanceProtocol {
     func trackGiftBoxClick(giftBoxReport: GiftBoxReport)
     func trackScratchToWinClick(scratchToWinReport: TargetingActionReport)
     func trackJackpotClick(jackpotReport: JackpotReport)
+    func trackChooseFavoriteClick(chooseFavoriteReport: ChooseFavoriteReport)
     func trackDrawerClick(drawerReport: DrawerReport)
     func trackRecommendationClick(qs: String)
     func getStoryView(actionId: Int?, urlDelegate: RDStoryURLDelegate?) -> RDStoryHomeView

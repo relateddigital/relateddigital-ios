@@ -216,6 +216,10 @@ public class RelatedDigital {
         shared.rdInstance.subscribeJackpotMail(actid: actid, auth: auth, mail: mail)
     }
     
+    static func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String) {
+        shared.rdInstance.subscribeChooseFavoriteMail(actid: actid, auth: auth, mail: mail)
+    }
+    
     static func subscribeMail(click: String, actid: String, auth: String, mail: String) {
         shared.rdInstance.subscribeMail(click: click, actid: actid, auth: auth, mail: mail)
     }
@@ -244,6 +248,9 @@ public class RelatedDigital {
         shared.rdInstance.trackJackpotClick(jackpotReport: jackpotReport)
     }
     
+    static func trackChooseFavoriteClick(chooseFavoriteReport: ChooseFavoriteReport) {
+        shared.rdInstance.trackChooseFavoriteClick(chooseFavoriteReport: chooseFavoriteReport)
+    }
     
     // MARK: - Push
     

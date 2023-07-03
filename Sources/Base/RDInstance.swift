@@ -488,6 +488,10 @@ extension RDInstance: RDInAppNotificationsDelegate {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "jackpot_email")
     }
     
+    func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String) {
+        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "chooseFavorite_email")
+    }
+    
     func trackSpinToWinClick(spinToWinReport: SpinToWinReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
@@ -534,6 +538,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = jackpotReport.click?.parseClick().omZn
         properties["OM.zpc"] = jackpotReport.click?.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
+    func trackChooseFavoriteClick(chooseFavoriteReport: ChooseFavoriteReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = chooseFavoriteReport.click?.parseClick().omZn
+        properties["OM.zpc"] = chooseFavoriteReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
     
