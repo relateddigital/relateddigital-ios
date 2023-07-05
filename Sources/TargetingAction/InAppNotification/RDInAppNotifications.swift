@@ -108,6 +108,10 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showShakeToWin(model: shakeToWin) {
                         self.markTargetingActionShown(model: shakeToWin)
                     }
+                } else if model.targetingActionType == .chooseFavorite, let chooseFavorite = model as? ChooseFavoriteModel {
+                    if self.showChooseFavorite(model: chooseFavorite) {
+                        self.markTargetingActionShown(model: chooseFavorite)
+                    }
                 }
             }
         }
@@ -138,6 +142,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         let giftBoxVC = GiftBoxViewController(giftBoxModel)
         giftBoxVC.delegate = self
         giftBoxVC.show(animated: true)
+        return true
+    }
+    
+    func showChooseFavorite(model: ChooseFavoriteModel) -> Bool {
+        let chooseFavoriteVC = ChooseFavoriteGameViewController(model)
+        chooseFavoriteVC.delegate = self
+        chooseFavoriteVC.show(animated: true)
         return true
     }
 
