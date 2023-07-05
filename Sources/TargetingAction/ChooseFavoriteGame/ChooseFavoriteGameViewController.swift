@@ -225,7 +225,8 @@ extension ChooseFavoriteGameViewController: WKScriptMessageHandler {
 
                 if method == "initFindGame" {
                     RDLogger.info("initFindGame")
-                    if let json = try? JSONEncoder().encode(self.chooseFavoriteModel!), let jsonString = String(data: json, encoding: .utf8) {
+                    print(self.chooseFavoriteModel?.jsonContent!)
+                    if let json = try? JSONEncoder().encode(self.chooseFavoriteModel?.jsonContent!), let jsonString = String(data: json, encoding: .utf8) {
                         print(jsonString)
                         self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {
