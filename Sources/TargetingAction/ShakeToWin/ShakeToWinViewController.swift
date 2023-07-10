@@ -124,10 +124,22 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
                     bannerVC.delegate = self.delegate
                     bannerVC.show(animated: true)
                 }
+                self.removeViewsForSomeUI()
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             } else {
+                self.removeViewsForSomeUI()
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             }
+        }
+    }
+    
+    func removeViewsForSomeUI() {
+        self.scrollView.isHidden = true
+        self.scrollView.removeFromSuperview()
+        let subViews = self.view.subviews
+        
+        for element in subViews {
+            element.removeFromSuperview()
         }
     }
 
