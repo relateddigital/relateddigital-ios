@@ -96,7 +96,7 @@ class ChooseFavoriteGameViewController: RDBaseNotificationViewController {
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createJackpotFiles() {
+        if let htmlUrl = createSwipingFiles() {
             webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
             webView.backgroundColor = .clear
             webView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,20 +105,20 @@ class ChooseFavoriteGameViewController: RDBaseNotificationViewController {
         return webView
     }
 
-    private func createJackpotFiles() -> URL? {
+    private func createSwipingFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("find_to_win.html")
-        let jsUrl = docUrl.appendingPathComponent("find_to_win.js")
+        let htmlUrl = docUrl.appendingPathComponent("swiping.html")
+        let jsUrl = docUrl.appendingPathComponent("swiping.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "find_to_win", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "swiping", ofType: "html") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
 
@@ -222,13 +222,12 @@ extension ChooseFavoriteGameViewController: WKScriptMessageHandler {
                 if method == "console.log", let message = event["message"] as? String {
                     RDLogger.info("console.log: \(message)")
                 }
-
-                if method == "initFindGame" {
-                    RDLogger.info("initFindGame")
-                    print(self.chooseFavoriteModel?.jsonContent!)
-                    if let json = try? JSONEncoder().encode(self.chooseFavoriteModel?.jsonContent!), let jsonString = String(data: json, encoding: .utf8) {
-                        print(jsonString)
-                        self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
+                
+                if method == "initSwiping" {
+                    RDLogger.info("initSwiping")
+                    
+                    if let jsonString = chooseFavoriteModel?.jsonContent {
+                        self.webView.evaluateJavaScript("window.initSwiping(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
@@ -238,15 +237,10 @@ extension ChooseFavoriteGameViewController: WKScriptMessageHandler {
                     }
                 }
 
-                if method == "copyToClipboard", let couponCode = event["couponCode"] as? String, let codeUrl = event["url"] as? String {
+                if method == "copyToClipboard", let couponCode = event["couponCode"] as? String {
                     UIPasteboard.general.string = couponCode
                     RDHelper.showCopiedClipboardMessage()
                     self.close()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                        if let url = URL(string: codeUrl) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
                 }
 
                 if method == "subscribeEmail", let email = event["email"] as? String {
