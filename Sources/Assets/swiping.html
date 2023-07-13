@@ -6,14 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SWIPING GAME</title>
-    
+
 </head>
 
 <body>
     <script src="swiping.js"></script>
 
-    <script type="text/javascript">
-        console.log("swiping");
+    <script>
         var config = {};
         var swiping = {};
         window.initSwiping = function(responseConfig) {
@@ -46,7 +45,19 @@
                 "custom_font_family_ios": "iOSFontFamily",
                 "custom_font_family_android": "AndroidFontFamily",
                 "close_button_color": "white",
-                "mail_subscription_form": {},
+                "mail_subscription_form": {
+                    "title_text_color": "#221f1f",
+                    "title_text_size": "2",
+                    "text_color": "#c76868",
+                    "text_size": "2",
+                    "button_color": "#9f8181",
+                    "button_text_color": "#a25555",
+                    "button_text_size": "2",
+                    "emailpermit_text_size": "2",
+                    "emailpermit_text_url": "",
+                    "consent_text_size": "2",
+                    "consent_text_url": "http://AndroidLink1"
+                },
                 "gamification_rules": {
                     "button_color": "#001dd0",
                     "button_text_color": "#c0c0c0",
@@ -79,34 +90,61 @@
             extendedPropsString = encodeURI(extendedPropsString);
             //console.log(extendedPropsString);
             config = {
-                "mail_subscription": false,
-                "mail_subscription_form": {},
-                "gamification_rules": {
-                    "background_image": "https://imgvisilabsnet.azureedge.net/choose_favorite/uploaded_images/debug/112_885_914_20230620095801329.png",
-                    "button_label": "ButtonLabel1"
-                },
-                "game_elements": {
-                    "favorite_images": [{
-                        "image": "https://imgvisilabsnet.azureedge.net/choose_favorite/uploaded_images/debug/112_885_914_20230620095833616.png",
-                        "staticcode": "ASFQW3FG1",
-                        "ios_lnk": "http://iOSLink1",
-                        "android_lnk": "http://AndroidLink1",
-                        "result_displaytext": "Result Display Text 1"
-                    }, {
-                        "image": "https://imgvisilabsnet.azureedge.net/choose_favorite/uploaded_images/debug/112_885_914_20230620100333154.png",
-                        "staticcode": "DFDHRHS2",
-                        "ios_lnk": "http://iOSLink2",
-                        "android_lnk": "http://AndroidLink2",
-                        "result_displaytext": "Result Display Text 2"
-                    }]
-                },
-                "game_result_elements": {
-                    "title": "Tebrikler \nKod Kazandınız",
-                    "message": "Aşağıdan kodu kopyalayarak \nalışverişinizde kullanabilirsiniz"
-                },
-                "copybutton_label": "Copy to clipboard",
-                "copybutton_function": "copy_redirect",
-                "ExtendedProps": extendedPropsString
+                "actid": "914",
+                "title": "Tayfun Testing VP-1625",
+                "actiontype": "ChooseFavorite",
+                "actiondata": {
+                    "mail_subscription": false,
+                    "mail_subscription_form": {
+                        "title": "xxx",
+                        "message": "deneme",
+                        "placeholder": "deneme",
+                        "button_label": "button",
+                        "consent_text": "xxx",
+                        "invalid_email_message": "invalid",
+                        "success_message": "success",
+                        "emailpermit_text": "deneme",
+                        "check_consent_message": "text"
+                    },
+                    "gamification_rules": {
+                        "background_image": "https://imgvisilabsnet.azureedge.net/choose_favorite/uploaded_images/debug/112_885_914_20230620095801329.png",
+                        "button_label": "ButtonLabel1"
+                    },
+                    "game_elements": {
+                        "favorite_images": [{
+                            "image": "https://imgvisilabsnet.azureedge.net/choose_favorite/uploaded_images/debug/112_885_914_20230620095833616.png",
+                            "staticcode": "ASFQW3FG1",
+                            "ios_lnk": "http://iOSLink1",
+                            "android_lnk": "http://AndroidLink1",
+                            "result_displaytext": "Result Display Text 1"
+                        }, {
+                            "image": "https://imgvisilabsnet.azureedge.net/choose_favorite/uploaded_images/debug/112_885_914_20230620100333154.png",
+                            "staticcode": "DFDHRHS2",
+                            "ios_lnk": "http://iOSLink2",
+                            "android_lnk": "http://AndroidLink2",
+                            "result_displaytext": "Result Display Text 2"
+                        }, {
+                            "image": "https://imgvisilabsnet.azureedge.net/choose_favorite/uploaded_images/test/112_885_914_20230629013124499.png",
+                            "staticcode": "DFDHRH",
+                            "ios_lnk": "http://iOSLink2",
+                            "android_lnk": "http://AndroidLink2",
+                            "result_displaytext": "Result Display Text 3"
+                        }]
+                    },
+                    "game_result_elements": {
+                        "title": "Tebrikler \nKod Kazandınız",
+                        "message": ""
+                    },
+                    "copybutton_label": "Copy to clipboard",
+                    "copybutton_function": "copy_redirect",
+                    "ExtendedProps": extendedPropsString,
+                    "report": {
+                        "impression": "",
+                        "click": "OM.zn=acttype-40&OM.zpc=act-914"
+                    },
+                    "auth": "***REMOVED***",
+                    "type": "subscription_email"
+                }
             }
             initSwiping(config);
         }
