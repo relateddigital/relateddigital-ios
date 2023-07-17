@@ -9,10 +9,10 @@ import UIKit
 
 public class UrlConstant {
     public static var shared = UrlConstant()
-    var urlPrefix = "tests.visilabs.net"
-    var securityTag = "http"
-    public var organizationId = "394A48556A2F76466136733D"
-    public var profileId = "75763259366A3345686E303D"
+    var urlPrefix = "s.visilabs.net"
+    var securityTag = "https"
+    public var organizationId = "676D325830564761676D453D"
+    public var profileId = "356467332F6533766975593D"
     
     public func setTest() {
         urlPrefix = "tests.visilabs.net"
