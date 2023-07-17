@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import UIKit
 class MailFormView: UIView {
 
     @IBOutlet weak var titleLabel: UILabel!

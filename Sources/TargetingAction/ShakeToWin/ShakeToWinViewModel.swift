@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UIKit
 
 struct ShakeToWinViewModel: TargetingActionViewModel {
 
