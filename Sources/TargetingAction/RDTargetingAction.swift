@@ -95,7 +95,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.jackpot)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -158,6 +158,15 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
+            }   else if targetingActionViewModel?.targetingActionType == .jackpot {
+                RDRequest.sendJackpotScriptRequest(completion: {(result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
             }  else {
                 semaphore.signal()
             }
@@ -195,7 +204,9 @@ class RDTargetingAction {
             return parseGiftBox(giftBox)
         } else if let chooseFavorite = result[RDConstants.chooseFavorite] as? [[String: Any?]], let chooseFavorite = chooseFavorite.first {
             return parseChooseFavorite(chooseFavorite)
-        }  else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
+        } else if let jackpot = result[RDConstants.jackpot] as? [[String: Any?]], let jackpot = jackpot.first {
+            return parseJackpot(jackpot)
+        } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
                     return nil
@@ -935,6 +946,43 @@ class RDTargetingAction {
         
         
         return chooseFavoriteModel
+
+        
+    }
+    
+    
+    private func parseJackpot(_ jackpot: [String: Any?]) -> JackpotModel? {
+        
+        guard let actionData = jackpot[RDConstants.actionData] as? [String: Any] else { return nil }
+        var jackpotModel = JackpotModel(targetingActionType: .jackpot)
+        jackpotModel.actId = jackpot[RDConstants.actid] as? Int ?? 0
+        jackpotModel.title = jackpot[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        
+  
+        //prome banner params
+        jackpotModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        jackpotModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        jackpotModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        jackpotModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        jackpotModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        jackpotModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        jackpotModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        jackpotModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        jackpotModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        jackpotModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        //
+        
+        
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: jackpot,
+            options: []) {
+            jackpotModel.jsonContent = String(data: theJSONData, encoding: .utf8)
+        }
+        
+        
+        return jackpotModel
 
         
     }

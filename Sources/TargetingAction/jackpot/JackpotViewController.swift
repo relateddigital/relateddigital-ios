@@ -1,9 +1,3 @@
-//
-//  JackpotViewController.swift
-//  RelatedDigitalIOS
-//
-//  Created by Orhun Akmil on 29.06.2022.
-//
 
 import UIKit
 import WebKit
@@ -20,9 +14,9 @@ class JackpotViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
 
-    init(_ jackPot: JackpotModel) {
+    init(_ jackpotModel: JackpotModel) {
         super.init(nibName: nil, bundle: nil)
-        self.jackpot = jackPot
+        self.jackpot = jackpotModel
     }
 
     required init?(coder: NSCoder) {
@@ -31,8 +25,8 @@ class JackpotViewController: RDBaseNotificationViewController {
 
     private func close() {
         dismiss(animated: true) {
-            if let jackPot = self.findToWin, !jackPot.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                let bannerVC = RDFindToWinCodeBannerController(jackPot)
+            if let jackpotModel = self.jackpot, !jackpotModel.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
+                let bannerVC = RDJackpotBannerController(jackpotModel)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -111,19 +105,19 @@ class JackpotViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("find_to_win.html")
-        let jsUrl = docUrl.appendingPathComponent("find_to_win.js")
+        let htmlUrl = docUrl.appendingPathComponent("jackpot.html")
+        let jsUrl = docUrl.appendingPathComponent("jackpot.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "find_to_win", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "jackpot", ofType: "html") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
 
         RDHelper.registerFonts(fontNames: getCustomFontNames())
-        let fontUrls = jackpotFonts(fontNames: getCustomFontNames())
+        let fontUrls = gameFonts(fontNames: getCustomFontNames())
 
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
@@ -167,7 +161,7 @@ class JackpotViewController: RDBaseNotificationViewController {
         return htmlUrl
     }
 
-    private func jackpotFonts(fontNames: Set<String>) -> [String: URL] {
+    private func gameFonts(fontNames: Set<String>) -> [String: URL] {
         var fontUrls = [String: URL]()
         if let infos = Bundle.main.infoDictionary {
             if let uiAppFonts = infos["UIAppFonts"] as? [String] {
@@ -222,12 +216,12 @@ extension JackpotViewController: WKScriptMessageHandler {
                 if method == "console.log", let message = event["message"] as? String {
                     RDLogger.info("console.log: \(message)")
                 }
-
-                if method == "initFindGame" {
-                    RDLogger.info("initFindGame")
-                    if let json = try? JSONEncoder().encode(self.jackpot!), let jsonString = String(data: json, encoding: .utf8) {
-                        print(jsonString)
-                        self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
+                
+                if method == "initJackpot" {
+                    RDLogger.info("initJackpot")
+                    
+                    if let jsonString = jackpot?.jsonContent {
+                        self.webView.evaluateJavaScript("window.initJackpot(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
@@ -237,15 +231,10 @@ extension JackpotViewController: WKScriptMessageHandler {
                     }
                 }
 
-                if method == "copyToClipboard", let couponCode = event["couponCode"] as? String, let codeUrl = event["url"] as? String {
+                if method == "copyToClipboard", let couponCode = event["couponCode"] as? String {
                     UIPasteboard.general.string = couponCode
                     RDHelper.showCopiedClipboardMessage()
                     self.close()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                        if let url = URL(string: codeUrl) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
                 }
 
                 if method == "subscribeEmail", let email = event["email"] as? String {
@@ -265,7 +254,7 @@ extension JackpotViewController: WKScriptMessageHandler {
                     }
                 }
 
-                if method == "saveCodeGotten", let code = event["code"] as? String, let mail = event["email"] as? String {
+                if method == "saveCodeGotten", let code = event["code"] as? String, let mail = event["email"] as? String  {
                     codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setJackpotCode(code: code)
@@ -276,6 +265,7 @@ extension JackpotViewController: WKScriptMessageHandler {
                     properties[RDConstants.promoAction] = code
                     RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
                 }
+                
 
                 if method == "close" {
                     self.close()

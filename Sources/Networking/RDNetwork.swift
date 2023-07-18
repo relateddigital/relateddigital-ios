@@ -28,6 +28,8 @@ enum RDEndpoint {
     case findToWinJs
     case giftBoxJs
     case chooseFavoriteJs
+    case jackpotJs
+
 }
 
 struct RDResource<A> {
