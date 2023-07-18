@@ -39,6 +39,8 @@ class RDBaseNotificationViewController: UIViewController, RDBaseViewControllerPr
     var shakeToWin: ShakeToWinViewModel?
     var jackpot: JackpotModel?
     var chooseFavoriteModel: ChooseFavoriteModel?
+    var customWebViewModel: CustomWebViewModel?
+
 
 
     weak var delegate: RDNotificationViewControllerDelegate?

@@ -16,7 +16,9 @@ public class BannerCodeManager {
     private let shakeToWinCode = "shakeToWinCode"
     private let giftBoxCode = "giftBoxCode"
     private let ChooseFavoriteGameCode = "ChooseFavoriteGameCode"
+    private let CustomWebViewCode = "CustomWebViewCode"
 
+    
 
     func setGiftRainCode(code:String) {
         let defaults = UserDefaults.standard
@@ -93,4 +95,16 @@ public class BannerCodeManager {
         return string
     }
     
+    
+    func setCustomWebViewCode(code:String) {
+        let defaults = UserDefaults.standard
+        defaults.set(code, forKey:CustomWebViewCode)
+    }
+    
+    func getCustomWebViewCode() -> String {
+        let defaults = UserDefaults.standard
+        let string = defaults.string(forKey: CustomWebViewCode) ?? ""
+        defaults.set("", forKey:CustomWebViewCode)
+        return string
+    }
 }
