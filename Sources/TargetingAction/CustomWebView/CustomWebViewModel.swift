@@ -1,13 +1,15 @@
 //
-//  FindToWinViewModel.swift
+//  ChooseFavoriteModel.swift
 //  RelatedDigitalIOS
 //
-//  Created by Orhun Akmil on 29.06.2022.
+//  Created by Orhun Akmil on 18.07.2023.
 //
 
+import UIKit
 
 
-struct JackpotModel: TargetingActionViewModel, Codable {
+
+struct CustomWebViewModel: TargetingActionViewModel, Codable {
     
     var targetingActionType: TargetingActionType
     var actId: Int? = 0
@@ -29,11 +31,14 @@ struct JackpotModel: TargetingActionViewModel, Codable {
     var close_button_color = String()
     var font_family = String()
     //
-    var report: JackpotReport? = JackpotReport()
+    
+    var report: CustomWebViewReport? = CustomWebViewReport()
 
+    
 }
 
-public struct JackpotReport: Codable {
+
+public struct CustomWebViewReport: Codable {
     var impression: String?
     var click: String?
 }
