@@ -39,6 +39,7 @@ public class RDPersistence {
             userDic[RDConstants.visitorData] = rdUser.visitorData
             userDic[RDConstants.mobileIdKey] = rdUser.identifierForAdvertising
             userDic[RDConstants.mobileSdkVersion] = rdUser.sdkVersion
+            userDic[RDConstants.mobileSdkType] = rdUser.sdkType
             userDic[RDConstants.mobileAppVersion] = rdUser.appVersion
             
             userDic[RDConstants.lastEventTimeKey] = rdUser.lastEventTime
@@ -113,6 +114,9 @@ public class RDPersistence {
             }
             if let sdkversion = props[RDConstants.mobileSdkVersion], !sdkversion.isNilOrWhiteSpace {
                 relatedDigitalUser.sdkVersion = sdkversion
+            }
+            if let sdktype = props[RDConstants.mobileSdkType], !sdktype!.isEmptyOrWhitespace {
+                relatedDigitalUser.sdkType = sdktype
             }
             if let appversion = props[RDConstants.mobileAppVersion], !appversion.isNilOrWhiteSpace {
                 relatedDigitalUser.appVersion = appversion

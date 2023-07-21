@@ -30,6 +30,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
     var appVersion: String?
     var advertisingIdentifier: String?
     var sdkVersion: String?
+    var sdkType: String?
     var carrier: String?
     var notificationLoginID: String?
 
@@ -50,6 +51,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
         case appVersion = "appVersion"
         case advertisingIdentifier = "advertisingIdentifier"
         case sdkVersion = "sdkVersion"
+        case sdkType = "sdkType"
         case carrier = "carrier"
         case notificationLoginID
     }
@@ -82,6 +84,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
         self.osName = device.systemName
         self.osVersion = device.systemVersion
         self.sdkVersion = RDConstants.sdkVersion
+        self.sdkType = RDConstants.sdkType
         self.deviceName = device.name
         self.deviceType = deviceType
 
@@ -113,6 +116,7 @@ struct PushSubscriptionRequest: PushRequestProtocol, Equatable {
         lhs.appVersion == rhs.appVersion &&
         lhs.advertisingIdentifier == rhs.advertisingIdentifier &&
         lhs.sdkVersion == rhs.sdkVersion &&
+        lhs.sdkType == rhs.sdkType &&
         lhs.carrier == rhs.carrier
     }
 

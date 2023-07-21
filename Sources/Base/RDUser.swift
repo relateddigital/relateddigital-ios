@@ -18,6 +18,7 @@ public struct RDUser: Codable {
     public var userAgent: String?
     public var identifierForAdvertising: String?
     public var sdkVersion: String?
+    public var sdkType: String? = "native"
     public var lastEventTime: String?
     public var nrv = 0
     public var pviv = 0
