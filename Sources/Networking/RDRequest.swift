@@ -416,6 +416,7 @@ class RDRequest {
         props[RDConstants.cookieIdKey] = user.cookieId
         props[RDConstants.exvisitorIdKey] = user.exVisitorId
         props[RDConstants.mobileSdkVersion] = user.sdkVersion
+        props[RDConstants.mobileSdkType] = user.sdkType
         props[RDConstants.mobileAppVersion] = user.appVersion
         props[RDConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
         props[RDConstants.nrvKey] = String(user.nrv)

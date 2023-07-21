@@ -22,6 +22,7 @@ public struct RDProfile: Codable {
     public var isPushNotificationEnabled: Bool = false
     public var appAlias: String?
     public var appGroupsKey: String?
+
     
     
     var requestTimeoutInterval: TimeInterval {

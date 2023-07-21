@@ -22,5 +22,6 @@ public struct PushConfiguration {
     public var appVersion: String?
     public var advertisingIdentifier: String?
     public var sdkVersion: String?
+    public var sdkType: String?
     public var carrier: String?
 }

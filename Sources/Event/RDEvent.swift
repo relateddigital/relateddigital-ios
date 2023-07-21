@@ -73,6 +73,7 @@ class RDEvent {
         props[RDConstants.mobileIdKey] = user.identifierForAdvertising ?? ""
         props[RDConstants.apiverKey] = RDConstants.ios
         props[RDConstants.mobileSdkVersion] = user.sdkVersion
+        props[RDConstants.mobileSdkType] = user.sdkType
         props[RDConstants.mobileAppVersion] = user.appVersion
         
         props[RDConstants.nrvKey] = String(user.nrv)
