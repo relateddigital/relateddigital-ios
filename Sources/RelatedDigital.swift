@@ -82,9 +82,13 @@ public class RelatedDigital {
         self.rdInstance = instance
     }
     
-    static var rdUser: RDUser { return shared.rdInstance.rdUser }
-    
-    static var rdProfile: RDProfile { return shared.rdInstance.rdProfile }
+    public static var rdUser: RDUser {
+        return shared.rdInstance.rdUser
+    }
+
+    public static var rdProfile: RDProfile {
+        return shared.rdInstance.rdProfile
+    }
     
     public static var exVisitorId: String? { return shared.rdInstance.exVisitorId }
     

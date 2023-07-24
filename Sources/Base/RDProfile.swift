@@ -7,21 +7,22 @@
 
 import Foundation
 
-struct RDProfile: Codable {
-    var organizationId: String
-    var profileId: String
-    var dataSource: String
-    var channel: String = "IOS"
-    var requestTimeoutInSeconds: Int = 30
-    var geofenceEnabled: Bool = false
-    var askLocationPermissionAtStart: Bool = true
-    var inAppNotificationsEnabled: Bool = false
-    var maxGeofenceCount: Int = 20
-    var isIDFAEnabled: Bool = false
-    var useInsecureProtocol = false
-    var isPushNotificationEnabled: Bool = false
-    var appAlias: String?
-    var appGroupsKey: String?
+public struct RDProfile: Codable {
+    public var organizationId: String
+    public var profileId: String
+    public var dataSource: String
+    public var channel: String = "IOS"
+    public var requestTimeoutInSeconds: Int = 30
+    public var geofenceEnabled: Bool = false
+    public var askLocationPermissionAtStart: Bool = true
+    public var inAppNotificationsEnabled: Bool = false
+    public var maxGeofenceCount: Int = 20
+    public var isIDFAEnabled: Bool = false
+    public var useInsecureProtocol = false
+    public var isPushNotificationEnabled: Bool = false
+    public var appAlias: String?
+    public var appGroupsKey: String?
+
     
     
     var requestTimeoutInterval: TimeInterval {

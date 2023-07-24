@@ -35,7 +35,8 @@ public class UrlConstant {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.23"
+    static let sdkVersion = "4.0.26"
+    static let sdkType = "native"
     
     static let HTTP = "http"
     static let HTTPS = UrlConstant.shared.securityTag
@@ -92,6 +93,7 @@ struct RDConstants {
     static let mobileIdKey = "OM.m_adid"
     static let mobileApplicationKey = "OM.mappl"
     static let mobileSdkVersion = "sdk_version"
+    static let mobileSdkType = "sdk_type"
     static let mobileAppVersion = "OM.appVersion"
     
     static let isTrue = "true"

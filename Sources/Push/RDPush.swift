@@ -492,6 +492,7 @@ extension RDPush {
                                  appVersion: registerRequest.appVersion,
                                  advertisingIdentifier: registerRequest.advertisingIdentifier,
                                  sdkVersion: registerRequest.sdkVersion,
+                                 sdkType: registerRequest.sdkType,
                                  carrier: registerRequest.carrier)
     }
 
@@ -589,6 +590,7 @@ extension RDPush {
         graylog.token = subscription.token
         graylog.appVersion = subscription.appVersion
         graylog.sdkVersion = subscription.sdkVersion
+        graylog.sdkType = subscription.sdkType
         graylog.osType = subscription.osName
         graylog.osVersion = subscription.osVersion
         graylog.deviceName = subscription.deviceName
