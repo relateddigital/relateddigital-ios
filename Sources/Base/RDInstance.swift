@@ -113,6 +113,7 @@ public class RDInstance: RDInstanceProtocol {
         
         rdUser = unarchive()
         rdUser.sdkVersion = RDHelper.getSdkVersion()
+        rdUser.sdkType = "native"
         
         if let appVersion = RDHelper.getAppVersion() {
             rdUser.appVersion = appVersion
