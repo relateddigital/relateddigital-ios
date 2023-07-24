@@ -332,6 +332,12 @@ class RDTargetingAction {
         shakeToWinModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
 
         shakeToWinModel.closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? "black"
+        
+        if shakeToWinModel.promocode_banner_button_label?.count ?? 0 > 0 && shakeToWinModel.promocode_banner_text?.count ?? 0 > 0 {
+            shakeToWinModel.bannercodeShouldShow = true
+        } else {
+            shakeToWinModel.bannercodeShouldShow = false
+        }
 
         return shakeToWinModel
     }
