@@ -31,7 +31,8 @@ struct ShakeToWinViewModel: TargetingActionViewModel {
     var promocode_banner_text_color: String?
     var promocode_banner_background_color: String?
     var promocode_banner_button_label: String?
-
+    
+    var bannercodeShouldShow : Bool?
     var closeButtonColor: String?
 
     var report: shakeToWinReport?
