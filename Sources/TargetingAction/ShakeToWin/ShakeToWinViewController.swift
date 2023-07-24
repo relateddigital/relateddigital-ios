@@ -120,10 +120,12 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
         dismiss(animated: true) {
             if let shakeToWin = self.shakeToWin {
                 if self.lastPageOpened {
-                    self.codeGotten()
-                    let bannerVC = RDShakeToWinCodeBannerController(shakeToWin)
-                    bannerVC.delegate = self.delegate
-                    bannerVC.show(animated: true)
+                    if shakeToWin.bannercodeShouldShow ?? false {
+                        self.codeGotten()
+                        let bannerVC = RDShakeToWinCodeBannerController(shakeToWin)
+                        bannerVC.delegate = self.delegate
+                        bannerVC.show(animated: true)
+                    }
                 }
                 self.removeViewsForSomeUI()
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
