@@ -52,6 +52,7 @@ public struct GiftCatchViewModel: TargetingActionViewModel, Codable {
 
     public var jsContent: String?
     public var jsonContent: String?
+    var bannercodeShouldShow : Bool?
 
 
 }

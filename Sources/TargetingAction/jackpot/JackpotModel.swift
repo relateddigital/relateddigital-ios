@@ -30,6 +30,7 @@ struct JackpotModel: TargetingActionViewModel, Codable {
     var font_family = String()
     //
     var report: JackpotReport? = JackpotReport()
+    var bannercodeShouldShow : Bool?
 
 }
 

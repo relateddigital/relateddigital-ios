@@ -783,6 +783,12 @@ class RDTargetingAction {
             gamificationModel.gameResultElementsExtended?.textSize = extendedProps[RDConstants.textSize] as? String ?? ""
         }
 
+        if gamificationModel.promocode_banner_button_label.count > 0 && gamificationModel.promocode_banner_text.count > 0 {
+            gamificationModel.bannercodeShouldShow = true
+        } else {
+            gamificationModel.bannercodeShouldShow = false
+        }
+        
         return gamificationModel
     }
 
@@ -917,6 +923,12 @@ class RDTargetingAction {
 
         }
 
+        if findToWinModel.promocode_banner_button_label.count > 0 && findToWinModel.promocode_banner_text.count > 0 {
+            findToWinModel.bannercodeShouldShow = true
+        } else {
+            findToWinModel.bannercodeShouldShow = false
+        }
+        
         return findToWinModel
     }
 
@@ -950,6 +962,11 @@ class RDTargetingAction {
             chooseFavoriteModel.jsonContent = String(data: theJSONData, encoding: .utf8)
         }
         
+        if chooseFavoriteModel.promocode_banner_button_label.count > 0 && chooseFavoriteModel.promocode_banner_text.count > 0 {
+            chooseFavoriteModel.bannercodeShouldShow = true
+        } else {
+            chooseFavoriteModel.bannercodeShouldShow = false
+        }
         
         return chooseFavoriteModel
 
@@ -987,6 +1004,12 @@ class RDTargetingAction {
             jackpotModel.jsonContent = String(data: theJSONData, encoding: .utf8)
         }
         
+        
+        if jackpotModel.promocode_banner_button_label.count > 0 && jackpotModel.promocode_banner_text.count > 0 {
+            jackpotModel.bannercodeShouldShow = true
+        } else {
+            jackpotModel.bannercodeShouldShow = false
+        }
         
         return jackpotModel
 
@@ -1112,6 +1135,11 @@ class RDTargetingAction {
             giftBoxModel.jsonContent = String(data: theJSONData, encoding: .utf8)
         }
         
+        if giftBoxModel.promocode_banner_button_label.count > 0 && giftBoxModel.promocode_banner_text.count > 0 {
+            giftBoxModel.bannercodeShouldShow = true
+        } else {
+            giftBoxModel.bannercodeShouldShow = false
+        }
         
         return giftBoxModel
     }

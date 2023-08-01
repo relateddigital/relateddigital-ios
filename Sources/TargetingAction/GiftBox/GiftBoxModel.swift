@@ -51,6 +51,7 @@ public struct GiftBoxModel: TargetingActionViewModel, Codable {
     var fontFiles: [String] = []
     public var jsContent: String?
     public var jsonContent: String?
+    var bannercodeShouldShow : Bool?
 
 }
 

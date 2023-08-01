@@ -32,9 +32,11 @@ class ChooseFavoriteGameViewController: RDBaseNotificationViewController {
     private func close() {
         dismiss(animated: true) {
             if let chooseFavorite = self.chooseFavoriteModel, !chooseFavorite.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                let bannerVC = RDChooseFavoriteBannerController(chooseFavorite)
-                bannerVC.delegate = self.delegate
-                bannerVC.show(animated: true)
+                if chooseFavorite.bannercodeShouldShow ?? false {
+                    let bannerVC = RDChooseFavoriteBannerController(chooseFavorite)
+                    bannerVC.delegate = self.delegate
+                    bannerVC.show(animated: true)
+                }
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             } else {
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
