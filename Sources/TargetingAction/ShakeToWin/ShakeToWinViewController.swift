@@ -411,13 +411,38 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
         close.height(40)
         close.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
 
+        
+        
         if let videoUrl = model?.secondPage?.videoURL {
-            let player = AVPlayer(url: videoUrl)
-            let playerLayer = AVPlayerLayer(player: player)
-            playerLayer.frame = page.bounds
-            page.layer.addSublayer(playerLayer)
-            self.player = player
+            
+            
+            if videoUrl.absoluteString.contains(".gif") {
+                
+                let gifImageview = UIImageView()
+                gifImageview.translatesAutoresizingMaskIntoConstraints = false
+                page.addSubview(gifImageview)
+                
+                NSLayoutConstraint.activate([gifImageview.centerXAnchor.constraint(equalTo: page.centerXAnchor),
+                                             gifImageview.centerYAnchor.constraint(equalTo: page.centerYAnchor),
+                                             gifImageview.leadingAnchor.constraint(equalTo: page.leadingAnchor, constant: 0.0),
+                                             gifImageview.trailingAnchor.constraint(equalTo: page.trailingAnchor, constant: 0.0)])
+                
+                gifImageview.setImageWithImageSize(withUrl: videoUrl.absoluteString)
+                
+                
+            } else {
+                let player = AVPlayer(url: videoUrl)
+                let playerLayer = AVPlayerLayer(player: player)
+                playerLayer.frame = page.bounds
+                page.layer.addSublayer(playerLayer)
+                self.player = player
+            }
+
         }
+        
+        
+        
+        
         return page
     }
 
