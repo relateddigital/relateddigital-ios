@@ -35,9 +35,11 @@ class GiftCatchViewController: RDBaseNotificationViewController {
         dismiss(animated: true) {
 
             if let gamefication = self.gameficationModel, !gamefication.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                let bannerVC = RDGamificationCodeBannerController(gamefication)
-                bannerVC.delegate = self.delegate
-                bannerVC.show(animated: true)
+                if gamefication.bannercodeShouldShow ?? false {
+                    let bannerVC = RDGamificationCodeBannerController(gamefication)
+                    bannerVC.delegate = self.delegate
+                    bannerVC.show(animated: true)
+                }
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             } else {
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)

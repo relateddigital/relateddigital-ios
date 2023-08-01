@@ -33,9 +33,11 @@ class FindToWinViewController: RDBaseNotificationViewController {
     private func close() {
         dismiss(animated: true) {
             if let findToWin = self.findToWin, !findToWin.promocode_banner_button_label.isEmptyOrWhitespace , self.codeGotten == true {
-                let bannerVC = RDFindToWinCodeBannerController(findToWin)
-                bannerVC.delegate = self.delegate
-                bannerVC.show(animated: true)
+                if findToWin.bannercodeShouldShow ?? false {
+                    let bannerVC = RDFindToWinCodeBannerController(findToWin)
+                    bannerVC.delegate = self.delegate
+                    bannerVC.show(animated: true)
+                }
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             } else {
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)

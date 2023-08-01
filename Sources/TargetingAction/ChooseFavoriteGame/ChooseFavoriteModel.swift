@@ -33,6 +33,7 @@ struct ChooseFavoriteModel: TargetingActionViewModel, Codable {
     //
     
     var report: ChooseFavoriteReport? = ChooseFavoriteReport()
+    var bannercodeShouldShow : Bool?
 
     
 }

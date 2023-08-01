@@ -33,9 +33,11 @@ class GiftBoxViewController: RDBaseNotificationViewController {
     private func close() {
         dismiss(animated: true) {
             if let giftBox = self.giftBox, !giftBox.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                let bannerVC = RDGiftBoxCodeBannerController(giftBox)
-                bannerVC.delegate = self.delegate
-                bannerVC.show(animated: true)
+                if giftBox.bannercodeShouldShow ?? false {
+                    let bannerVC = RDGiftBoxCodeBannerController(giftBox)
+                    bannerVC.delegate = self.delegate
+                    bannerVC.show(animated: true)
+                }
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             } else {
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
