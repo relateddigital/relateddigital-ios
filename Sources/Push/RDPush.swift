@@ -347,6 +347,7 @@ extension RDPush {
         if let jsonData = try? JSONSerialization.data(withJSONObject: pushDictionary, options: .prettyPrinted),
            let message = try? JSONDecoder().decode(RDPushMessage.self, from: jsonData) {
             shared.networkQueue.async {
+                PushUserDefaultsUtils.updatePayload(pushId: message.pushId)
                 RDPush.emReadHandler?.reportRead(message: message)
                 if let utm_source = message.utm_source {
                     properties["utm_source"] = utm_source

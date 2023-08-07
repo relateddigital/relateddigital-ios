@@ -78,6 +78,8 @@ class PushUserDefaultsUtils {
         if let pushId = payload.pushId, !notificationLoginID.isEmpty {
             payload.notificationLoginID = notificationLoginID
             payload.formattedDateString = PushTools.formatDate(Date())
+            payload.openedDate = ""
+            payload.status = "D"
             var recentPayloads = getRecentPayloads()
             payloadLock.write {
                 if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
@@ -156,26 +158,49 @@ class PushUserDefaultsUtils {
     private static let payloadLock = RDReadWriteLock(label: "PushPayloadLock")
     
     static func savePayload(payload: RDPushMessage) {
-        var payload = payload
-        if let pushId = payload.pushId {
-            payload.formattedDateString = PushTools.formatDate(Date())
-            var recentPayloads = getRecentPayloads()
-            payloadLock.write {
-                if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
-                    RDLogger.warn("Payload is not valid, there is already another payload with same pushId  New : \(payload.encoded) Existing: \(existingPayload.encoded)")
-                } else {
-                    recentPayloads.insert(payload, at: 0)
-                    if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
-                        saveUserDefaults(key: PushKey.euroPayloadsKey, value: recentPayloadsData as AnyObject)
+            var payload = payload
+            if let pushId = payload.pushId {
+                payload.formattedDateString = PushTools.formatDate(Date())
+                payload.openedDate = ""
+                payload.status = "D"
+                var recentPayloads = getRecentPayloads()
+                payloadLock.write {
+                    if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
+                        RDLogger.warn("Payload is not valid, there is already another payload with same pushId  New : \(payload.encoded) Existing: \(existingPayload.encoded)")
                     } else {
-                        RDLogger.warn("Can not encode recentPayloads : \(String(describing: recentPayloads))")
+                        recentPayloads.insert(payload, at: 0)
+                        if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
+                            saveUserDefaults(key: PushKey.euroPayloadsKey, value: recentPayloadsData as AnyObject)
+                        } else {
+                            RDLogger.warn("Can not encode recentPayloads : \(String(describing: recentPayloads))")
+                        }
                     }
                 }
+            } else {
+                RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
             }
-        } else {
-            RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
         }
-    }
+        
+        static func updatePayload(pushId: String?) {
+            var recentPayloads = getRecentPayloads()
+            payloadLock.write {
+                if let index = recentPayloads.firstIndex(where: { $0.pushId == pushId }) {
+                    var updatedPayload = recentPayloads[index]
+                    // Güncelleme işlemlerini yap
+                    updatedPayload.status = "O"
+                    updatedPayload.openedDate = PushTools.formatDate(Date())
+                    // Güncellenmiş payload'ı koleksiyona tekrar ekle
+                    recentPayloads[index] = updatedPayload
+                    if let updatedPayloadsData = try? JSONEncoder().encode(recentPayloads) {
+                        saveUserDefaults(key: PushKey.euroPayloadsKey, value: updatedPayloadsData as AnyObject)
+                    } else {
+                        RDLogger.warn("Can not encode updated payloads: \(String(describing: recentPayloads))")
+                    }
+                } else {
+                    RDLogger.warn("Payload with pushId \(pushId ?? "") not found in recent payloads.")
+                }
+            }
+        }
     
     static func getRecentPayloads() -> [RDPushMessage] {
         var finalPayloads = [RDPushMessage]()
