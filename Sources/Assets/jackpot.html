@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jackpot</title>
+</head>
+
+<body>
+    <script src="jackpot.js"></script>
+    <script>
+        var config = {};
+        var swiping = {};
+        window.initJackpot = function(responseConfig) {
+            config = responseConfig
+            swiping = new Jackpot(config);
+        }
+
+        if (window.Android) {
+            config = JSON.parse(Android.getResponse());
+            initJackpot(config);
+        } else if (window.webkit && window.webkit.messageHandlers.eventHandler) {
+            window.webkit.messageHandlers.eventHandler.postMessage({
+                method: "initJackpot"
+            });
+            window.console.log = function(message) {
+                var stringMessage = message;
+                if (typeof message !== "string") {
+                    stringMessage = JSON.stringify(message);
+                }
+                window.webkit.messageHandlers.eventHandler.postMessage({
+                    method: "console.log",
+                    message: stringMessage
+                });
+            };
+        } else {
+            const extendedProps = {
+                "background_image": "",
+                "background_color": "#b1b1b1",
+                "font_family": "default",
+                "custom_font_family_ios": "",
+                "custom_font_family_android": "",
+                "close_button_color": "black",
+                "mail_subscription_form": {
+                    "title_text_color": "#221f1f",
+                    "title_text_size": "5",
+                    "text_color": "#c76868",
+                    "text_size": "5",
+                    "button_color": "#9f8181",
+                    "button_text_color": "#a25555",
+                    "button_text_size": "5",
+                    "emailpermit_text_size": "5",
+                    "emailpermit_text_url": "",
+                    "consent_text_size": "5",
+                    "consent_text_url": "http://AndroidLink1"
+                },
+                "gamification_rules": {
+                    "button_color": "#864444",
+                    "button_text_color": "#060303",
+                    "button_text_size": "4"
+                },
+                "game_elements": {
+                    "spinbutton_color": "#03bfd3",
+                    "spinbutton_text_color": "#6d6d6d",
+                    "spinbutton_text_size": "3"
+                },
+                "game_result_elements": {
+                    "scoreboard_shape": "roundedcorners",
+                    "scoreboard_background_color": "#8f6cff",
+                    "title_text_color": "#000000",
+                    "title_text_size": "2",
+                    "text_color": "",
+                    "text_size": ""
+                },
+                "promocode_background_color": "#6f13e1",
+                "promocode_text_color": "#478a7f",
+                "copybutton_color": "#4c4040",
+                "copybutton_text_color": "#c40000",
+                "copybutton_text_size": "3",
+                "promocode_banner_text": "",
+                "promocode_banner_text_color": "",
+                "promocode_banner_background_color": "",
+                "promocode_banner_button_label": ""
+            };
+            let extendedPropsString = JSON.stringify(extendedProps);
+            //console.log(extendedPropsString);
+            extendedPropsString = encodeURI(extendedPropsString);
+            //console.log(extendedPropsString);
+            config = {
+                "actid": "914",
+                "title": "Tayfun Testing VP-1625",
+                "actiontype": "ChooseFavorite",
+                "actiondata": {
+                    "mail_subscription": true,
+                    "mail_subscription_form": {
+                        "title": "xxx",
+                        "message": "deneme",
+                        "placeholder": "deneme",
+                        "button_label": "button",
+                        "consent_text": "xxx",
+                        "invalid_email_message": "invalid",
+                        "success_message": "success",
+                        "emailpermit_text": "deneme",
+                        "check_consent_message": "text"
+                    },
+                    "gamification_rules": {
+                        "background_image": "https://imgvisilabsnet.azureedge.net/slot_machine/uploaded_images/debug/112_885_918_20230710123834571.jpg",
+                        "button_label": "rulesbtn1"
+                    },
+                    "game_elements": {
+                        "slot_images": [{
+                            "image": "https://imgvisilabsnet.azureedge.net/slot_machine/uploaded_images/debug/112_885_918_20230710123929224.jpg",
+                            "staticcode": "SDFGVWEEWF3232"
+                        }, {
+                            "image": "https://imgvisilabsnet.azureedge.net/slot_machine/uploaded_images/debug/112_885_918_20230710143135418.jpg",
+                            "staticcode": "FDGH5HW44Y354"
+                        }, {
+                            "image": "https://imgvisilabsnet.azureedge.net/slot_machine/uploaded_images/debug/112_885_918_20230710143808040.jpg",
+                            "staticcode": "DRH5563216TG"
+                        }],
+                        "slotmachine_image": "",
+                        "spinbutton_label": "Spin",
+                        "duration_of_game": 8,
+                        "sound_url": "www.rthserherhe.com/Sound.mp3"
+                    },
+                    "game_result_elements": {
+                        "title": "sdagsadfghdfsh seh",
+                        "message": ""
+                    },
+                    "copybutton_label": "Copy to clipboard",
+                    "copybutton_function": "copy_redirect",
+                    "ios_lnk": "http://iOSLink",
+                    "android_lnk": "http://AndroidLink",
+                    "ExtendedProps": extendedPropsString
+                }
+            }
+            initJackpot(config);
+        }
+    </script>
+</body>
+
+</html>

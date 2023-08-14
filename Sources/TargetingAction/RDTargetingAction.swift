@@ -95,7 +95,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.jackpot)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
            if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -158,7 +158,7 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
-            }   else if targetingActionViewModel?.targetingActionType == .jackpot {
+            }   else if targetingActionViewModel?.targetingActionType == .slotMachine {
                 RDRequest.sendJackpotScriptRequest(completion: {(result: String?, _: RDError?) in
                     if let result = result {
                         targetingActionViewModel?.jsContent = result
@@ -204,7 +204,7 @@ class RDTargetingAction {
             return parseGiftBox(giftBox)
         } else if let chooseFavorite = result[RDConstants.chooseFavorite] as? [[String: Any?]], let chooseFavorite = chooseFavorite.first {
             return parseChooseFavorite(chooseFavorite)
-        } else if let jackpot = result[RDConstants.jackpot] as? [[String: Any?]], let jackpot = jackpot.first {
+        } else if let jackpot = result[RDConstants.slotMachine] as? [[String: Any?]], let jackpot = jackpot.first {
             return parseJackpot(jackpot)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
@@ -977,7 +977,7 @@ class RDTargetingAction {
     private func parseJackpot(_ jackpot: [String: Any?]) -> JackpotModel? {
         
         guard let actionData = jackpot[RDConstants.actionData] as? [String: Any] else { return nil }
-        var jackpotModel = JackpotModel(targetingActionType: .jackpot)
+        var jackpotModel = JackpotModel(targetingActionType: .slotMachine)
         jackpotModel.actId = jackpot[RDConstants.actid] as? Int ?? 0
         jackpotModel.title = jackpot[RDConstants.title] as? String ?? ""
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""

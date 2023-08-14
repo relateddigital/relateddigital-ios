@@ -88,6 +88,7 @@ class InAppViewController: FormViewController, BannerDelegate {
             .shakeToWin : [RDInAppNotificationType.shakeToWin.rawValue: 255],
             .giftBox : [RDInAppNotificationType.giftBox.rawValue: 577],
             .choosefavorite : [RDInAppNotificationType.choosefavorite.rawValue: 1098],
+            .slotMachine : [RDInAppNotificationType.slotMachine.rawValue: 1099],
             ]
     }
     

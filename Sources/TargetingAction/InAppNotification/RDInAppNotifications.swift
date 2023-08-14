@@ -113,6 +113,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                         self.markTargetingActionShown(model: chooseFavorite)
                     }
                 }
+                else if model.targetingActionType == .slotMachine, let jackpot = model as? JackpotModel {
+                   if self.showJackpot(model: jackpot) {
+                       self.markTargetingActionShown(model: jackpot)
+                   }
+               }
             }
         }
     }
@@ -149,6 +154,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         let chooseFavoriteVC = ChooseFavoriteGameViewController(model)
         chooseFavoriteVC.delegate = self
         chooseFavoriteVC.show(animated: true)
+        return true
+    }
+    
+    func showJackpot(model: JackpotModel) -> Bool {
+        let jackpotVC = JackpotViewController(model)
+        jackpotVC.delegate = self
+        jackpotVC.show(animated: true)
         return true
     }
 
