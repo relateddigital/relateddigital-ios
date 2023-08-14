@@ -260,7 +260,7 @@ extension JackpotViewController: WKScriptMessageHandler {
                     codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setJackpotCode(code: code)
-                    let actionID = self.giftBox?.actId
+                    let actionID = self.jackpot?.actId
                     var properties = Properties()
                     properties[RDConstants.promoActionID] = String(actionID ?? 0)
                     properties[RDConstants.promoEmailKey] = mail

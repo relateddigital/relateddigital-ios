@@ -199,7 +199,7 @@ struct RDConstants {
     static let giftBox = "GiftBox"
     static let giftBoxes = "gift_boxes"
     static let chooseFavorite = "ChooseFavorite"
-    static let jackpot = "jackpot"
+    static let slotMachine = "SlotMachine"
 
     
     static let appBanners = "app_banners"
