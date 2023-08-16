@@ -25,4 +25,9 @@ public struct RDUser: Codable {
     public var tvc = 0
     public var lvt: String?
     public var appVersion: String?
+    public var utmCampaign: String?
+    public var utmMedium: String?
+    public var utmSource: String?
+    public var utmContent: String?
+    public var utmTerm: String?
 }
