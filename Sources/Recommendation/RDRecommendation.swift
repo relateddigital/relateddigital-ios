@@ -5,13 +5,10 @@
 // Created by Egemen Gülkılık on 29.01.2022.
 //
 
-
 import Foundation
 
 class RDRecommendation {
-
     func recommend(zoneId: String, productCode: String?, rdUser: RDUser, properties: Properties = [:], filters: [RDRecommendationFilter] = [], completion: @escaping ((_ response: RDRecommendationResponse) -> Void)) {
-
         var props = cleanProperties(properties)
 
         if filters.count > 0 {
@@ -26,6 +23,11 @@ class RDRecommendation {
         props[RDConstants.appidKey] = rdUser.appId
         props[RDConstants.apiverKey] = RDConstants.apiverValue
         props[RDConstants.channelKey] = RelatedDigital.rdProfile.channel
+        props[RDConstants.utmCampaignKey] = rdUser.utmCampaign
+        props[RDConstants.utmContentKey] = rdUser.utmContent
+        props[RDConstants.utmMediumKey] = rdUser.utmMedium
+        props[RDConstants.utmSourceKey] = rdUser.utmSource
+        props[RDConstants.utmTermKey] = rdUser.utmTerm
         props[RDConstants.nrvKey] = String(rdUser.nrv)
         props[RDConstants.pvivKey] = String(rdUser.pviv)
         props[RDConstants.tvcKey] = String(rdUser.tvc)
@@ -96,7 +98,12 @@ class RDRecommendation {
                 && !propKey.isEqual(RDConstants.tokenIdKey)
                 && !propKey.isEqual(RDConstants.appidKey)
                 && !propKey.isEqual(RDConstants.apiverKey)
-                && !propKey.isEqual(RDConstants.filterKey) {
+                && !propKey.isEqual(RDConstants.filterKey)
+                && !propKey.isEqual(RDConstants.utmCampaignKey)
+                && !propKey.isEqual(RDConstants.utmContentKey)
+                && !propKey.isEqual(RDConstants.utmMediumKey)
+                && !propKey.isEqual(RDConstants.utmSourceKey)
+                && !propKey.isEqual(RDConstants.utmTermKey) {
                 continue
             } else {
                 props.removeValue(forKey: propKey)
@@ -104,5 +111,4 @@ class RDRecommendation {
         }
         return props
     }
-
 }

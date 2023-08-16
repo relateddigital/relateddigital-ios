@@ -8,11 +8,10 @@
 import Foundation
 
 public class RDPersistence {
-    
     // MARK: - ARCHIVE
-    
+
     private static let archiveQueueUtility = DispatchQueue(label: "com.relateddigital.archiveQueue", qos: .utility)
-    
+
     private class func filePath(filename: String) -> String? {
         let manager = FileManager.default
         let url = manager.urls(for: .libraryDirectory, in: .userDomainMask).last
@@ -21,7 +20,7 @@ public class RDPersistence {
         }
         return urlUnwrapped
     }
-    
+
     class func archiveUser(_ rdUser: RDUser) {
         archiveQueueUtility.sync { [rdUser] in
             let propertiesFilePath = filePath(filename: RDConstants.userArchiveKey)
@@ -41,19 +40,24 @@ public class RDPersistence {
             userDic[RDConstants.mobileSdkVersion] = rdUser.sdkVersion
             userDic[RDConstants.mobileSdkType] = rdUser.sdkType
             userDic[RDConstants.mobileAppVersion] = rdUser.appVersion
-            
+            userDic[RDConstants.utmCampaignKey] = rdUser.utmCampaign
+            userDic[RDConstants.utmMediumKey] = rdUser.utmMedium
+            userDic[RDConstants.utmSourceKey] = rdUser.utmSource
+            userDic[RDConstants.utmContentKey] = rdUser.utmContent
+            userDic[RDConstants.utmTermKey] = rdUser.utmTerm
+
             userDic[RDConstants.lastEventTimeKey] = rdUser.lastEventTime
             userDic[RDConstants.nrvKey] = String(rdUser.nrv)
             userDic[RDConstants.pvivKey] = String(rdUser.pviv)
             userDic[RDConstants.tvcKey] = String(rdUser.tvc)
             userDic[RDConstants.lvtKey] = rdUser.lvt
-            
+
             if !NSKeyedArchiver.archiveRootObject(userDic, toFile: path) {
                 RDLogger.error("failed to archive user")
             }
         }
     }
-    
+
     // TO_DO: bunu ExceptionWrapper içine al
     // swiftlint:disable cyclomatic_complexity
     class func unarchiveUser() -> RDUser {
@@ -84,7 +88,7 @@ public class RDPersistence {
            let userAgent = NSKeyedUnarchiver.unarchiveObject(withFile: uafp) as? String {
             relatedDigitalUser.userAgent = userAgent
         }
-        
+
         if let propsfp = filePath(filename: RDConstants.userArchiveKey),
            let props = NSKeyedUnarchiver.unarchiveObject(withFile: propsfp) as? [String: String?] {
             if let cid = props[RDConstants.cookieIdKey], !cid.isNilOrWhiteSpace {
@@ -121,16 +125,31 @@ public class RDPersistence {
             if let appversion = props[RDConstants.mobileAppVersion], !appversion.isNilOrWhiteSpace {
                 relatedDigitalUser.appVersion = appversion
             }
+            if let campaign = props[RDConstants.utmCampaignKey], !campaign.isNilOrWhiteSpace {
+                relatedDigitalUser.utmCampaign = campaign
+            }
+            if let medium = props[RDConstants.utmMediumKey], !medium.isNilOrWhiteSpace {
+                relatedDigitalUser.utmMedium = medium
+            }
+            if let source = props[RDConstants.utmSourceKey], !source.isNilOrWhiteSpace {
+                relatedDigitalUser.utmSource = source
+            }
+            if let content = props[RDConstants.utmContentKey], !content.isNilOrWhiteSpace {
+                relatedDigitalUser.utmContent = content
+            }
+            if let term = props[RDConstants.utmTermKey], !term.isNilOrWhiteSpace {
+                relatedDigitalUser.utmTerm = term
+            }
             if let lastEventTime = props[RDConstants.lastEventTimeKey] as? String {
                 relatedDigitalUser.lastEventTime = lastEventTime
             }
-            if let nrvString = props[RDConstants.nrvKey] as? String, let nrv = Int(nrvString)  {
+            if let nrvString = props[RDConstants.nrvKey] as? String, let nrv = Int(nrvString) {
                 relatedDigitalUser.nrv = nrv
             }
-            if let pvivString = props[RDConstants.pvivKey] as? String, let pviv = Int(pvivString)  {
+            if let pvivString = props[RDConstants.pvivKey] as? String, let pviv = Int(pvivString) {
                 relatedDigitalUser.pviv = pviv
             }
-            if let tvcString = props[RDConstants.tvcKey] as? String, let tvc = Int(tvcString)  {
+            if let tvcString = props[RDConstants.tvcKey] as? String, let tvc = Int(tvcString) {
                 relatedDigitalUser.tvc = tvc
             }
             if let lvt = props[RDConstants.lvtKey] as? String {
@@ -141,12 +160,13 @@ public class RDPersistence {
         }
         return relatedDigitalUser
     }
-    
+
     static func getDateStr() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return dateFormatter.string(from: Date())
     }
+
     // TO_DO: burada date kısmı yanlış geliyor sanki
     // TO_DO: buradaki encode işlemleri doğru mu kontrol et;
     // archiveQueue.sync { yerine archiveQueue.sync {[parameters] in
@@ -154,7 +174,7 @@ public class RDPersistence {
         archiveQueueUtility.sync {
             let dateString = getDateStr()
             var targetParameters = readTargetParameters()
-            
+
             for rdParameter in RDConstants.rdTargetParameters() {
                 let key = rdParameter.key
                 let storeKey = rdParameter.storeKey
@@ -166,11 +186,11 @@ public class RDPersistence {
                             var parameterValueToStore = parameterValue.copy() as? String ?? ""
                             let relatedKey = relatedKeys![0]
                             if parameters[relatedKey] != nil {
-                                let relatedKeyValue = (parameters[relatedKey])?
+                                let relatedKeyValue = parameters[relatedKey]?
                                     .trimmingCharacters(in: CharacterSet.whitespaces)
-                                parameterValueToStore += ("|")
+                                parameterValueToStore += "|"
                                 parameterValueToStore += (relatedKeyValue ?? "")
-                            } else { parameterValueToStore += ("|0") }
+                            } else { parameterValueToStore += "|0" }
                             parameterValueToStore += "|" + dateString
                             targetParameters[storeKey] = parameterValueToStore
                         } else {
@@ -179,11 +199,11 @@ public class RDPersistence {
                     } else if count > 1 {
                         let previousParameterValue = targetParameters[storeKey]
                         let parameterValueToStore = (parameterValue.copy() as? String ?? "")
-                        var parameterValueToStoreWithDate = parameterValueToStore + ("|") + (dateString)
+                        var parameterValueToStoreWithDate = parameterValueToStore + "|" + dateString
                         if previousParameterValue != nil && previousParameterValue!.count > 0 {
                             let previousParameterValueParts = previousParameterValue!.components(separatedBy: "~")
                             var paramCounter = 1
-                            for counter in 0..<previousParameterValueParts.count {
+                            for counter in 0 ..< previousParameterValueParts.count {
                                 if paramCounter == 10 {
                                     break
                                 }
@@ -195,8 +215,8 @@ public class RDPersistence {
                                     if decodedPreviousParameterValuePartArray[0] == parameterValueToStore {
                                         continue
                                     }
-                                    parameterValueToStoreWithDate += ("~")
-                                    parameterValueToStoreWithDate += (decodedPreviousParameterValuePart)
+                                    parameterValueToStoreWithDate += "~"
+                                    parameterValueToStoreWithDate += decodedPreviousParameterValuePart
                                     paramCounter = paramCounter + 1
                                 }
                             }
@@ -205,59 +225,64 @@ public class RDPersistence {
                     }
                 }
             }
-            
+
             saveUserDefaults(RDConstants.userDefaultsTargetKey, withObject: targetParameters)
         }
     }
-    
+
     class func readTargetParameters() -> Properties {
         guard let targetParameters = readUserDefaults(RDConstants.userDefaultsTargetKey) as? Properties else {
             return Properties()
         }
         return targetParameters
     }
-    
+
     class func clearTargetParameters() {
         removeUserDefaults(RDConstants.userDefaultsTargetKey)
     }
-    
+
     // MARK: - USER DEFAULTS
-    
+
     static func saveUserDefaults(_ key: String, withObject value: Any?) {
         UserDefaults.standard.set(value, forKey: key)
         UserDefaults.standard.synchronize()
     }
-    
+
     static func readUserDefaults(_ key: String) -> Any? {
         return UserDefaults.standard.object(forKey: key)
     }
-    
+
     static func removeUserDefaults(_ key: String) {
         UserDefaults.standard.removeObject(forKey: key)
         UserDefaults.standard.synchronize()
     }
-    
+
     static func clearUserDefaults() {
         let ud = UserDefaults.standard
         ud.removeObject(forKey: RDConstants.cookieIdKey)
         ud.removeObject(forKey: RDConstants.exvisitorIdKey)
+        ud.removeObject(forKey: RDConstants.utmCampaignKey)
+        ud.removeObject(forKey: RDConstants.utmSourceKey)
+        ud.removeObject(forKey: RDConstants.utmMediumKey)
+        ud.removeObject(forKey: RDConstants.utmContentKey)
+        ud.removeObject(forKey: RDConstants.utmTermKey)
         ud.synchronize()
     }
-    
+
     static func saveBlock(_ block: Bool) {
         saveUserDefaults(RDConstants.userDefaultsBlockKey, withObject: block)
     }
-    
+
     static func isBlocked() -> Bool {
         return readUserDefaults(RDConstants.userDefaultsBlockKey) as? Bool ?? false
     }
-    
+
     static func saveRDProfile(_ rdProfile: RDProfile) {
         if let encodedRDProfile = try? JSONEncoder().encode(rdProfile) {
             saveUserDefaults(RDConstants.userDefaultsProfileKey, withObject: encodedRDProfile)
         }
     }
-    
+
     static func readRDProfile() -> RDProfile? {
         if let savedRDProfile = readUserDefaults(RDConstants.userDefaultsProfileKey) as? Data {
             if let loadedRDProfile = try? JSONDecoder().decode(RDProfile.self, from: savedRDProfile) {
@@ -266,13 +291,13 @@ public class RDPersistence {
         }
         return nil
     }
-    
+
     static func saveRDGeofenceHistory(_ rdGeofenceHistory: RDGeofenceHistory) {
         if let encodedRdGeofenceHistory = try? JSONEncoder().encode(rdGeofenceHistory) {
             saveUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey, withObject: encodedRdGeofenceHistory)
         }
     }
-    
+
     public static func readRDGeofenceHistory() -> RDGeofenceHistory {
         if let savedRDGeofenceHistory = readUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey) as? Data {
             if let loadedRDGeofenceHistory = try? JSONDecoder().decode(RDGeofenceHistory.self, from: savedRDGeofenceHistory) {
@@ -281,9 +306,8 @@ public class RDPersistence {
         }
         return RDGeofenceHistory()
     }
-    
+
     public static func clearRDGeofenceHistory() {
         removeUserDefaults(RDConstants.userDefaultsGeofenceHistoryKey)
     }
-    
 }
