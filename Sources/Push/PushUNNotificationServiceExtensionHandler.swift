@@ -45,7 +45,7 @@ class PushUNNotificationServiceExtensionHandler {
         // Setup carousel buttons
         if pushDetail.aps?.category == "carousel" {
             UNUNC.current().setNotificationCategories(getCarouselActionCategorySet())
-        } else if pushDetail.aps?.category == "action.button" {
+        } else if pushDetail.actions?.count ?? 0 > 0 {
             addActionButtons(pushDetail)
         }
         
@@ -67,11 +67,11 @@ class PushUNNotificationServiceExtensionHandler {
     @available(iOS 10.0, *)
     static func addActionButtons(_ detail: RDPushMessage) {
         let categoryIdentifier = "action.button"
-        if let buttons = detail.buttons {
+        if let buttons = detail.actions {
             var actionButtons: [UNNotificationAction] = []
             for button in buttons {
-                actionButtons.append(UNNotificationAction(identifier: button.identifier ?? "",
-                                                          title: button.title ?? "",
+                actionButtons.append(UNNotificationAction(identifier: button.Title ?? "",
+                                                          title: button.Title ?? "",
                                                           options: [.foreground]))
             }
             let actionCategory = UNNotificationCategory(identifier: categoryIdentifier,
@@ -79,7 +79,6 @@ class PushUNNotificationServiceExtensionHandler {
                                                         intentIdentifiers: [], options: [])
             
             UNUserNotificationCenter.current().setNotificationCategories([actionCategory])
-            
         }
     }
     
