@@ -103,6 +103,7 @@ class StoryViewController: UIViewController, UITextFieldDelegate {
                 self.storyHomeView?.removeFromSuperview()
                 if let storyHomeView = storyHomeView {
                     self.storyHomeView = storyHomeView
+                    storyHomeView.controller?.urlDelegate = self
                     self.view.addSubview(storyHomeView)
                     storyHomeView.translatesAutoresizingMaskIntoConstraints = false
                     storyHomeView.topAnchor.constraint(equalTo: self.npsWithNumbersButton.bottomAnchor, constant: 20).isActive = true

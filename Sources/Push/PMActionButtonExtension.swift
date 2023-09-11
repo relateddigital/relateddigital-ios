@@ -22,16 +22,16 @@ extension RDPush {
             print(">>>json parse error")
             return
         }
-        guard let buttons = message.buttons else {
+        guard let buttons = message.actions else {
             print(">>> no buttons exist")
             return
         }
         
-        for button in buttons where button.identifier == response.actionIdentifier {
+        for button in buttons where button.Title == response.actionIdentifier {
             print(">>> response.actionIdentifier ==> \(response.actionIdentifier)")
-            print(">>> button.identifier ==> \(button.identifier ?? "")")
-            print(">>> button.link ==> \(button.url ?? "")")
-            guard let link = URL(string: button.url ?? "") else { return }
+            print(">>> button.identifier ==> \(button.Title ?? "")")
+            print(">>> button.link ==> \(button.Url ?? "")")
+            guard let link = URL(string: button.Url ?? "") else { return }
             UIApplication.shared.open(link)
             //UIApplication.shared.openURL(link)
             

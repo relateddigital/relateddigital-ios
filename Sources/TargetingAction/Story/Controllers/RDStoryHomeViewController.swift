@@ -87,6 +87,7 @@ public class RDStoryHomeViewController: NSObject, UICollectionViewDataSource, UI
             let story = self.storyAction.stories[indexPath.row]
             if let storyLink = story.link, let storyUrl = URL(string: storyLink) {
                 RDLogger.info("opening CTA URL: \(storyUrl)")
+                urlDelegate?.urlClicked(storyUrl)
                 let app = RDInstance.sharedUIApplication()
                 app?.performSelector(onMainThread: NSSelectorFromString("openURL:"),
                                      with: storyUrl, waitUntilDone: true)

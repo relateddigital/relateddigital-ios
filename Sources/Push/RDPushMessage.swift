@@ -44,7 +44,6 @@ public struct RDPushMessage: PushCodable {
     public let pushId: String?
     public let emPushSp: String?
     public let elements: [Element]?
-    public let buttons: [ActionButtons]?
     public let utm_source: String?
     public let utm_campaign: String?
     public let utm_medium: String?
@@ -53,6 +52,8 @@ public struct RDPushMessage: PushCodable {
     public var notificationLoginID: String?
     public var status: String?
     public var openedDate: String?
+    public var actions: [ActionButtons]?
+
 
     
     public let deliver: String?
@@ -64,6 +65,14 @@ public struct RDPushMessage: PushCodable {
         public let category: String?
         public let sound: String?
         public let contentAvailable: Int?
+    }
+    
+    public struct ActionButtons: Codable {
+        public let Title: String?
+        public let Action: String?
+        public let Icon: String?
+        public let Url: String?
+        public let AlternateUrl: String?
     }
 
     // MARK: - Alert
@@ -86,9 +95,4 @@ public struct RDPushMessage: PushCodable {
         public let picture: String?
     }
 
-    public struct ActionButtons: Codable {
-    public let title: String?
-    public let identifier: String?
-    public let url: String?
-    }
 }
