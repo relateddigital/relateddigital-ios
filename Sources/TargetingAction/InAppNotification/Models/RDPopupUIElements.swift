@@ -335,7 +335,7 @@ extension RDPopupDialogDefaultView {
             copyCodeButtonWithText.height(50.0)
             copyCodeButtonWithText.trailing(to: self, offset: -10)
         } else if withFeedback == false {
-            messageLabel.bottom(to: self, offset: -10)
+            messageLabel.bottom(to: self, offset: 0)
         } else {
             addSubview(feedbackTF)
             feedbackTF.topToBottom(of: messageLabel, offset: 10)
