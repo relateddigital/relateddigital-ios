@@ -372,7 +372,8 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
             button.centerX(to: page)
             //button.topToBottom(of: message, offset: 10)
             button.bottom(to: page, offset: -20)
-            button.width(120.0)
+            button.width(120.0,relation: .equalOrGreater)
+            button.contentEdgeInsets = UIEdgeInsets(top: 1, left: 5, bottom: 1, right: 5)
 
             button.addTarget(self, action: #selector(goSecondPage), for: .touchUpInside)
         }
