@@ -57,6 +57,10 @@ extension RDPopupDialogDefaultView {
 
         return copyCodeText
     }
+    
+    internal func getPromoCodeFunction() -> String {
+        return rdInAppNotification?.promocodeCopybuttonFunction ?? ""
+    }
 
     internal func setCopyCodeImage() -> UIButton {
         let copyCodeImage = UIButton(frame: .zero)

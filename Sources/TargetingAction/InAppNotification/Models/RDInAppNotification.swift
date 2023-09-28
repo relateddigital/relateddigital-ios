@@ -65,6 +65,7 @@ public class RDInAppNotification {
         public static let promocodeCopybuttonText = "promocode_copybutton_text"
         public static let promocodeCopybuttonTextColor = "promocode_copybutton_text_color"
         public static let promocodeCopybuttonColor = "promocode_copybutton_color"
+        public static let promocodeCopybuttonFunction = "promocode_copybutton_function"
 
         public static let displayType = "display_type"
 
@@ -126,6 +127,7 @@ public class RDInAppNotification {
     let promocodeCopybuttonText: String?
     let promocodeCopybuttonTextColor: String?
     let promocodeCopybuttonColor: String?
+    let promocodeCopybuttonFunction: String?
     let buttonBorderRadius: String?
 
     var imageUrl: URL?
@@ -203,6 +205,7 @@ public class RDInAppNotification {
                 promocodeCopybuttonText: String?,
                 promocodeCopybuttonTextColor: String?,
                 promocodeCopybuttonColor: String?,
+                promocodeCopybuttonFunction: String?,
                 buttonBorderRadius: String?,
                 displayType: String? = "popup") {
         self.actId = actId
@@ -317,6 +320,7 @@ public class RDInAppNotification {
         self.promocodeCopybuttonText = promocodeCopybuttonText
         self.promocodeCopybuttonTextColor = promocodeCopybuttonTextColor
         self.promocodeCopybuttonColor = promocodeCopybuttonColor
+        self.promocodeCopybuttonFunction = promocodeCopybuttonFunction
         self.buttonBorderRadius = buttonBorderRadius
         self.displayType = displayType
 
@@ -379,6 +383,7 @@ public class RDInAppNotification {
         promocodeCopybuttonText = actionData[PayloadKey.promocodeCopybuttonText] as? String
         promocodeCopybuttonTextColor = actionData[PayloadKey.promocodeCopybuttonTextColor] as? String
         promocodeCopybuttonColor = actionData[PayloadKey.promocodeCopybuttonColor] as? String
+        promocodeCopybuttonFunction = actionData[PayloadKey.promocodeCopybuttonFunction] as? String
         buttonBorderRadius = actionData[PayloadKey.buttonBorderRadius] as? String
 
         displayType = actionData[PayloadKey.displayType] as? String
