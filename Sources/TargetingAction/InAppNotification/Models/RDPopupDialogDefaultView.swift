@@ -19,6 +19,7 @@ public class RDPopupDialogDefaultView: UIView {
     internal lazy var secondImageView = setSecondImageView()
     internal lazy var titleLabel = setTitleLabel()
     internal lazy var copyCodeTextButton = setCopyCodeText()
+    internal lazy var promoCodeFunction = getPromoCodeFunction()
     internal lazy var copyCodeImageButton = setCopyCodeImage()
     internal lazy var copyCodeButtonWithText = setCopyCodeButtonWithText()
     internal lazy var messageLabel = setMessageLabel()
@@ -56,7 +57,9 @@ public class RDPopupDialogDefaultView: UIView {
     var consentCheckboxAdded = false
     weak var imgButtonDelegate: ImageButtonImageDelegate?
     weak var delegate: RDPopupDialogDefaultViewDelegate?
+    weak var inappButtonDelegate: RDInappButtonDelegate?
     weak var npsDelegate: NPSDelegate?
+    weak var NVCdelegate: RDNotificationViewControllerDelegate?
     // MARK: - CONSTRUCTOR
     init(frame: CGRect, rdInAppNotification: RDInAppNotification?,
                         emailForm: MailSubscriptionViewModel? = nil,
@@ -336,6 +339,12 @@ extension RDPopupDialogDefaultView {
     @objc func copyCodeTextButtonTapped(_ sender: UIButton) {
         UIPasteboard.general.string = copyCodeTextButton.currentTitle
         RDHelper.showCopiedClipboardMessage()
+        if getPromoCodeFunction() == "copy_close" {
+            RDHelper.showCopiedClipboardMessage()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                self.delegate?.dismissPromo()
+            }
+        }
     }
 
     @objc func consentButtonTapped(_ sender: UIButton) {
@@ -478,6 +487,7 @@ extension RDPopupDialogDefaultView: ScratchUIViewDelegate {
 
 protocol RDPopupDialogDefaultViewDelegate: AnyObject {
     func dismissSctw()
+    func dismissPromo()
 }
 
 protocol ImageButtonImageDelegate: AnyObject {
