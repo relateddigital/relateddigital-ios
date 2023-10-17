@@ -53,6 +53,7 @@ public struct RDPushMessage: PushCodable {
     public var status: String?
     public var openedDate: String?
     public var actions: [ActionButtons]?
+    public var pushCategory: String?
 
 
     

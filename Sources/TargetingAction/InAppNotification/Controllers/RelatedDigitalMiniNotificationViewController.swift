@@ -13,6 +13,7 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
         return super.notification
     }
 
+    @IBOutlet weak var closeButton: UIImageView!
     @IBOutlet weak var circleLabel: UIView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -54,8 +55,19 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
 
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(gesture:)))
         window?.addGestureRecognizer(panGesture)
+        setListeners()
+        
     }
-
+    
+    func setListeners() {
+        closeButton.setOnClickedListener { [self] in
+            delegate?.notificationShouldDismiss(controller: self,
+                                                callToActionURL: nil,
+                                                shouldTrack: true,
+                                                additionalTrackingProperties: nil)
+        }
+    }
+    
     fileprivate func setWindowAndAddAnimation(_ animated: Bool) {
         if let window = window {
             window.windowLevel = UIWindow.Level.alert

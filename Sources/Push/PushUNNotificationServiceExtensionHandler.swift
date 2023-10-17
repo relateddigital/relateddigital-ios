@@ -15,7 +15,6 @@ class PushUNNotificationServiceExtensionHandler {
         
         guard let userInfo = bestAttemptContent?.userInfo, let data = try? JSONSerialization.data(withJSONObject: userInfo, options: []) else { return }
         guard let pushDetail = try? JSONDecoder.init().decode(RDPushMessage.self, from: data) else { return }
-        
         if #available(iOS 15.0, *) {
             bestAttemptContent?.interruptionLevel = .timeSensitive
         }
@@ -69,16 +68,34 @@ class PushUNNotificationServiceExtensionHandler {
         let categoryIdentifier = "action.button"
         if let buttons = detail.actions {
             var actionButtons: [UNNotificationAction] = []
+            var index = 0
             for button in buttons {
-                actionButtons.append(UNNotificationAction(identifier: button.Title ?? "",
+                actionButtons.append(UNNotificationAction(identifier: categoryIdentifier + String(index),
                                                           title: button.Title ?? "",
                                                           options: [.foreground]))
+                index+=1
             }
             let actionCategory = UNNotificationCategory(identifier: categoryIdentifier,
                                                         actions: actionButtons,
                                                         intentIdentifiers: [], options: [])
-            
+
             UNUserNotificationCenter.current().setNotificationCategories([actionCategory])
+        }
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.actionIdentifier == "action.button0" {
+            openLink()
+        } else if response.actionIdentifier == "action.button1" {
+            openLink()
+        }
+        
+        completionHandler()
+    }
+    
+    private func openLink() {
+        if let url = URL(string: "") {
+            UIApplication.shared.open(url)
         }
     }
     
