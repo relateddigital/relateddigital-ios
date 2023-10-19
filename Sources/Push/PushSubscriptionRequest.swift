@@ -143,6 +143,7 @@ public struct PushProperties: Codable, Equatable {
         case consentTime
         case recipientType
         case consentSource
+        case SetAnonymous
     }
 
     var keyID: String?
@@ -158,6 +159,7 @@ public struct PushProperties: Codable, Equatable {
     var recipientType: String?
     var consentSource: String? = "HS_MOBIL"
     var userAgent: String?
+    var SetAnonymous: String?
 
     public static func == (lhs: PushProperties, rhs: PushProperties) -> Bool {
         lhs.keyID == rhs.keyID &&
@@ -171,7 +173,8 @@ public struct PushProperties: Codable, Equatable {
         lhs.twitter == rhs.twitter &&
         lhs.consentTime == rhs.consentTime &&
         lhs.recipientType == rhs.recipientType &&
-        lhs.consentSource == rhs.consentSource
+        lhs.consentSource == rhs.consentSource &&
+        lhs.SetAnonymous == rhs.SetAnonymous
     }
 
 }
