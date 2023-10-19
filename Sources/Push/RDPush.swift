@@ -224,6 +224,15 @@ extension RDPush {
             setUserProperty(key: PushProperties.CodingKeys.keyID.rawValue, value: userKey)
         }
     }
+    
+    public static func setAnonymous(permission: Bool) {
+        if permission {
+            setUserProperty(key: PushProperties.CodingKeys.SetAnonymous.rawValue, value: "true")
+        } else {
+            setUserProperty(key: PushProperties.CodingKeys.SetAnonymous.rawValue, value: "false")
+        }
+        sync()
+    }
 
     public static func setAppVersion(appVersion: String?) {
         guard let shared = getShared() else { return }

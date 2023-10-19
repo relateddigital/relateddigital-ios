@@ -928,6 +928,10 @@ extension RDInstance {
     public func setEuroUserId(userKey: String?) {
         RDPush.setEuroUserId(userKey: userKey)
     }
+    
+    public func setAnonymous(permission: Bool) {
+        RDPush.setAnonymous(permission: permission)
+    }
 
     public func setAppVersion(appVersion: String?) {
         RDPush.setAppVersion(appVersion: appVersion)
