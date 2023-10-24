@@ -73,6 +73,7 @@ protocol RDInstanceProtocol {
     func setEmail(email: String?, permission: Bool)
     func setEmail(email: String?)
     func setEuroUserId(userKey: String?)
+    func setAnonymous(permission: Bool)
     func setAppVersion(appVersion: String?)
     func setTwitterId(twitterId: String?)
     func setAdvertisingIdentifier(adIdentifier: String?)

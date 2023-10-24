@@ -294,6 +294,10 @@ public class RelatedDigital {
         shared.rdInstance.setEuroUserId(userKey: userKey)
     }
     
+    public static func setAnonymous(permission: Bool) {
+        shared.rdInstance.setAnonymous(permission: permission)
+    }
+    
     public static func setAppVersion(appVersion: String?) {
         shared.rdInstance.setAppVersion(appVersion: appVersion)
     }
