@@ -61,6 +61,9 @@ public class RDInAppNotification {
         public static let secondButtonColor = "second_button_color"
         public static let secondButtonIosLnk = "second_button_ios_lnk"
         public static let buttonBorderRadius = "button_border_radius"
+        public static let duration = "duration"
+        public static let pos = "pos"
+
 
         public static let promocodeCopybuttonText = "promocode_copybutton_text"
         public static let promocodeCopybuttonTextColor = "promocode_copybutton_text_color"
@@ -150,7 +153,10 @@ public class RDInAppNotification {
                                               size: CGFloat(8))
 
     var displayType: String? = "popup"
-
+    
+    var duration:Int?
+    var pos : String?
+    
     public init(actId: Int,
                 type: RDInAppNotificationType,
                 messageTitle: String?,
@@ -207,7 +213,9 @@ public class RDInAppNotification {
                 promocodeCopybuttonColor: String?,
                 promocodeCopybuttonFunction: String?,
                 buttonBorderRadius: String?,
-                displayType: String? = "popup") {
+                displayType: String? = "popup",
+                duration:Int?,
+                pos:String?) {
         self.actId = actId
         messageType = type.rawValue
         self.type = type
@@ -234,6 +242,8 @@ public class RDInAppNotification {
         self.secondButtonTextColor = UIColor(hex: secondButtonTextColor)
         self.secondButtonColor = UIColor(hex: secondButtonColor)
         self.secondButtonIosLnk = secondButtonIosLnk
+        self.pos = pos
+        self.duration = duration
         backGroundColor = UIColor(hex: backGround)
         if let cBColor = closeButtonColor {
             if cBColor.lowercased() == "white" {
@@ -384,7 +394,9 @@ public class RDInAppNotification {
         promocodeCopybuttonTextColor = actionData[PayloadKey.promocodeCopybuttonTextColor] as? String
         promocodeCopybuttonColor = actionData[PayloadKey.promocodeCopybuttonColor] as? String
         promocodeCopybuttonFunction = actionData[PayloadKey.promocodeCopybuttonFunction] as? String
-        buttonBorderRadius = actionData[PayloadKey.buttonBorderRadius] as? String
+        buttonBorderRadius = actionData[PayloadKey.buttonBorderRadius] as? String        
+        duration = actionData[PayloadKey.duration] as? Int
+        pos = actionData[PayloadKey.pos] as? String
 
         displayType = actionData[PayloadKey.displayType] as? String
 
