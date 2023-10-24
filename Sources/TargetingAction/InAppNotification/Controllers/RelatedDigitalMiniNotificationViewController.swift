@@ -13,7 +13,7 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
         return super.notification
     }
 
-    @IBOutlet weak var closeButton: UIImageView!
+    @IBOutlet weak var closeButton: UILabel!
     @IBOutlet weak var circleLabel: UIView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -21,6 +21,7 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
     var isDismissing = false
     var canPan = true
     var position: CGPoint!
+    var isTop = false
 
     convenience init(notification: RDInAppNotification) {
         self.init(notification: notification,
@@ -30,14 +31,19 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if notification?.pos != "bottom" {
+            isTop = true
+        }
 
-        titleLabel.text = notification!.messageTitle
+        closeButton.textColor = notification?.closeButtonColor
+        titleLabel.text = notification!.messageTitle?.replacingOccurrences(of: "\\n", with: "\n")
+        titleLabel.textColor = notification?.messageTitleColor
         titleLabel.font = notification!.messageTitleFont
         if let url = notification!.imageUrl {
             imageView.setImage(withUrl: url)
         }
 
-        view.backgroundColor = UIColor(hex: "#000000", alpha: 0.8)
+        view.backgroundColor = notification?.backGroundColor
         titleLabel.textColor = UIColor.white
         imageView.tintColor = UIColor.white
 
@@ -83,8 +89,15 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
 
         let duration = animated ? 0.1 : 0
         UIView.animate(withDuration: duration, animations: {
-            self.window?.frame.origin.y -= (RDInAppNotificationsConstants.miniInAppHeight
-                                                + RDInAppNotificationsConstants.miniBottomPadding)
+            
+            if self.isTop {
+                self.window?.frame.origin.y += (RDInAppNotificationsConstants.miniInAppHeight
+                                                    + RDInAppNotificationsConstants.miniBottomPadding)
+            } else {
+                self.window?.frame.origin.y -= (RDInAppNotificationsConstants.miniInAppHeight
+                                                    + RDInAppNotificationsConstants.miniBottomPadding)
+            }
+
             self.canPan = true
         }, completion: { _ in
             self.position = self.window?.layer.position
@@ -110,10 +123,19 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
         let frame: CGRect
         if sharedUIApplication.statusBarOrientation.isPortrait
             && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.phone {
-            frame = CGRect(x: RDInAppNotificationsConstants.miniSidePadding,
-                           y: bounds.size.height,
-                           width: bounds.size.width - (RDInAppNotificationsConstants.miniSidePadding * 2),
-                           height: RDInAppNotificationsConstants.miniInAppHeight)
+            
+            if isTop == true {
+                frame = CGRect(x: RDInAppNotificationsConstants.miniSidePadding,
+                               y: -RDInAppNotificationsConstants.miniInAppHeight+35,
+                               width: bounds.size.width - (RDInAppNotificationsConstants.miniSidePadding * 2),
+                               height: RDInAppNotificationsConstants.miniInAppHeight)
+            } else {
+                frame = CGRect(x: RDInAppNotificationsConstants.miniSidePadding,
+                               y: bounds.size.height-15,
+                               width: bounds.size.width - (RDInAppNotificationsConstants.miniSidePadding * 2),
+                               height: RDInAppNotificationsConstants.miniInAppHeight)
+            }
+
         } else { // Is iPad or Landscape mode
             frame = CGRect(x: bounds.size.width / 4,
                            y: bounds.size.height,
@@ -142,8 +164,14 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
             isDismissing = true
             let duration = animated ? 0.5 : 0
             UIView.animate(withDuration: duration, animations: {
-                self.window?.frame.origin.y += (RDInAppNotificationsConstants.miniInAppHeight
-                                            + RDInAppNotificationsConstants.miniBottomPadding)
+                if self.isTop {
+                    self.window?.frame.origin.y -= (RDInAppNotificationsConstants.miniInAppHeight
+                                                + RDInAppNotificationsConstants.miniBottomPadding)
+                } else {
+                    self.window?.frame.origin.y += (RDInAppNotificationsConstants.miniInAppHeight
+                                                + RDInAppNotificationsConstants.miniBottomPadding)
+                }
+
                 }, completion: { _ in
                     self.window?.isHidden = true
                     self.window?.removeFromSuperview()

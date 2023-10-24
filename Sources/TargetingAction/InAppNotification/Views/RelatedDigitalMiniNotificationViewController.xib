@@ -10,7 +10,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RelatedDigitalMiniNotificationViewController" customModule="RelatedDigitalIOS" customModuleProvider="target">
             <connections>
                 <outlet property="circleLabel" destination="Raj-SW-uzw" id="HDu-y4-pME"/>
-                <outlet property="closeButton" destination="Mfa-ek-pis" id="fDH-I3-A3x"/>
+                <outlet property="closeButton" destination="OWe-f5-11G" id="Jln-j5-80E"/>
                 <outlet property="imageView" destination="j3M-ip-xjd" id="vFO-q1-v6X"/>
                 <outlet property="titleLabel" destination="LyM-hA-PHV" id="RSc-AM-OVP"/>
                 <outlet property="view" destination="Wch-Xc-Avw" id="Y9Z-im-LAf"/>
@@ -43,23 +43,26 @@
                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="VisilabsCloseButton.png" translatesAutoresizingMaskIntoConstraints="NO" id="Mfa-ek-pis">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OWe-f5-11G">
                     <rect key="frame" x="361" y="3" width="15" height="15"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="15" id="Bol-Bc-pUJ"/>
-                        <constraint firstAttribute="height" constant="15" id="klp-4t-cmt"/>
+                        <constraint firstAttribute="width" constant="15" id="gTw-YB-HvA"/>
+                        <constraint firstAttribute="height" constant="15" id="s2U-za-EqF"/>
                     </constraints>
-                </imageView>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.90099999999999991" colorSpace="calibratedRGB"/>
             <constraints>
                 <constraint firstItem="Raj-SW-uzw" firstAttribute="leading" secondItem="Wch-Xc-Avw" secondAttribute="leading" constant="7.5" id="1fk-XL-ZMs"/>
+                <constraint firstAttribute="trailing" secondItem="OWe-f5-11G" secondAttribute="trailing" constant="3" id="3ZF-Kb-f98"/>
                 <constraint firstItem="LyM-hA-PHV" firstAttribute="leading" secondItem="Raj-SW-uzw" secondAttribute="trailing" constant="7.5" id="EzN-Do-170"/>
                 <constraint firstItem="LyM-hA-PHV" firstAttribute="leading" secondItem="Wch-Xc-Avw" secondAttribute="leading" constant="75" id="NtW-qx-qOt"/>
-                <constraint firstItem="Mfa-ek-pis" firstAttribute="top" secondItem="Wch-Xc-Avw" secondAttribute="top" constant="3" id="ZfJ-PA-z41"/>
+                <constraint firstItem="OWe-f5-11G" firstAttribute="top" secondItem="Wch-Xc-Avw" secondAttribute="top" constant="3" id="V4w-Ch-Tmj"/>
                 <constraint firstItem="Raj-SW-uzw" firstAttribute="top" secondItem="Wch-Xc-Avw" secondAttribute="top" constant="7.5" id="dOb-EQ-1NG"/>
                 <constraint firstAttribute="trailing" secondItem="LyM-hA-PHV" secondAttribute="trailing" constant="12.5" id="eF7-ct-CP3"/>
-                <constraint firstAttribute="trailing" secondItem="Mfa-ek-pis" secondAttribute="trailing" constant="3" id="rXt-XD-kGD"/>
                 <constraint firstItem="Raj-SW-uzw" firstAttribute="centerY" secondItem="LyM-hA-PHV" secondAttribute="centerY" id="vY3-ig-MiZ"/>
                 <constraint firstItem="Raj-SW-uzw" firstAttribute="centerY" secondItem="Wch-Xc-Avw" secondAttribute="centerY" id="xcz-cv-shg"/>
             </constraints>
@@ -68,7 +71,4 @@
             <point key="canvasLocation" x="-498.47328244274809" y="-51.056338028169016"/>
         </view>
     </objects>
-    <resources>
-        <image name="VisilabsCloseButton.png" width="25" height="25"/>
-    </resources>
 </document>

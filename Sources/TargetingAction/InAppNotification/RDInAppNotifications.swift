@@ -196,7 +196,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         let miniNotificationVC = RelatedDigitalMiniNotificationViewController(notification: notification)
         miniNotificationVC.delegate = self
         miniNotificationVC.show(animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + miniNotificationPresentationTime) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(notification.duration ?? 6)) {
             self.notificationShouldDismiss(controller: miniNotificationVC, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
         }
         return true
