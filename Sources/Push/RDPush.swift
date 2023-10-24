@@ -334,6 +334,27 @@ extension RDPush {
         }
         RDPush.sync()
     }
+    
+    public static func handlePushWithActionButtons(response: UNNotificationResponse) {
+        
+        let pushDictionary = response.notification.request.content.userInfo
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: pushDictionary, options: .prettyPrinted),
+           let message = try? JSONDecoder().decode(RDPushMessage.self, from: jsonData) {
+            
+            if response.actionIdentifier == "action.button0" {
+                openLink(urlStr: message.actions?.first?.Url ?? "")
+            } else if response.actionIdentifier == "action.button1" {
+                openLink(urlStr: message.actions?.last?.Url ?? "")
+            }
+        }
+    }
+    
+    static func openLink(urlStr:String) {
+        if let url = URL(string: urlStr) {
+            UIApplication.shared.open(url)
+        }
+    }
 
     /// Report RelatedDigital services that a push notification successfully read
     /// - Parameter pushDictionary: push notification data that comes from APNS

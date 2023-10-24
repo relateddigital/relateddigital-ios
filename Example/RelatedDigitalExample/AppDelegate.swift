@@ -86,6 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         RelatedDigital.handlePush(pushDictionary: response.notification.request.content.userInfo)
+        RelatedDigital.handlePushWithActionButtons(response: response)
         completionHandler()
     }
 }
