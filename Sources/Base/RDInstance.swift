@@ -11,6 +11,7 @@ import UIKit
 import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
+    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
@@ -976,6 +977,10 @@ extension RDInstance {
 
     public func handlePush(pushDictionary: [AnyHashable: Any]) {
         RDPush.handlePush(pushDictionary: pushDictionary)
+    }
+    
+    func handlePushWithActionButtons(response: UNNotificationResponse) {
+        RDPush.handlePushWithActionButtons(response: response)
     }
 
     public func sync(notification: Notification? = nil) {
