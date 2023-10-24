@@ -82,6 +82,7 @@ protocol RDInstanceProtocol {
     func setBadge(count: Int)
     func registerToken(tokenData: Data?)
     func handlePush(pushDictionary: [AnyHashable: Any])
+    func handlePushWithActionButtons(response : UNNotificationResponse)
     func sync(notification: Notification?)
     func registerEmail(email: String, permission: Bool, isCommercial: Bool, customDelegate: RDPushDelegate?)
     func getPushMessages(completion: @escaping GetPushMessagesCompletion)
