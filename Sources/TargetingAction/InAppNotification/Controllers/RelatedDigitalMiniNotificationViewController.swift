@@ -39,13 +39,15 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
         titleLabel.text = notification!.messageTitle?.replacingOccurrences(of: "\\n", with: "\n")
         titleLabel.textColor = notification?.messageTitleColor
         titleLabel.font = notification!.messageTitleFont
+        titleLabel.tintColor = notification?.messageTitleColor
         if let url = notification!.imageUrl {
-            imageView.setImage(withUrl: url)
+            let stringUrl = url.absoluteString
+            let replaceString = stringUrl.replacingOccurrences(of: "@2x", with: "")
+            
+            imageView.setImage(withUrl: URL(string: replaceString))
         }
-
+        
         view.backgroundColor = notification?.backGroundColor
-        titleLabel.textColor = UIColor.white
-        imageView.tintColor = UIColor.white
 
         circleLabel.backgroundColor = UIColor(hex: "#000000", alpha: 0)
         circleLabel.layer.cornerRadius = self.circleLabel.frame.size.width / 2
@@ -97,6 +99,7 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
                 self.window?.frame.origin.y -= (RDInAppNotificationsConstants.miniInAppHeight
                                                     + RDInAppNotificationsConstants.miniBottomPadding)
             }
+            
 
             self.canPan = true
         }, completion: { _ in
@@ -124,7 +127,7 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
         if sharedUIApplication.statusBarOrientation.isPortrait
             && UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.phone {
             
-            if isTop == true {
+            if notification?.pos == "top" {
                 frame = CGRect(x: RDInAppNotificationsConstants.miniSidePadding,
                                y: -RDInAppNotificationsConstants.miniInAppHeight+35,
                                width: bounds.size.width - (RDInAppNotificationsConstants.miniSidePadding * 2),
