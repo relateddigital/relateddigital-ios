@@ -34,8 +34,13 @@ class RelatedDigitalMiniNotificationViewController: RDBaseNotificationViewContro
         if notification?.pos != "bottom" {
             isTop = true
         }
-
-        closeButton.textColor = notification?.closeButtonColor
+        
+        if notification?.closeButtonColor?.toHexString() != nil {
+            closeButton.textColor = notification?.closeButtonColor
+        } else {
+            closeButton.isHidden = true
+        }
+        
         titleLabel.text = notification!.messageTitle?.replacingOccurrences(of: "\\n", with: "\n")
         titleLabel.textColor = notification?.messageTitleColor
         titleLabel.font = notification!.messageTitleFont
