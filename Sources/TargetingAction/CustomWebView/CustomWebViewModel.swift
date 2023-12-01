@@ -18,6 +18,8 @@ struct CustomWebViewModel: TargetingActionViewModel, Codable {
     var fontFiles: [String] = []
     public var jsContent: String?
     public var jsonContent: String?
+    public var htmlContent: String? //html
+
     
     //prome banner params
     var custom_font_family_ios = String()
@@ -33,6 +35,7 @@ struct CustomWebViewModel: TargetingActionViewModel, Codable {
     //
     
     var report: CustomWebViewReport? = CustomWebViewReport()
+    var bannercodeShouldShow : Bool?
 
     
 }

@@ -161,6 +161,7 @@ struct RDConstants {
     static let scratchToWin = "ScratchToWin"
     static let productStatNotifier = "ProductStatNotifier"
     static let drawer = "Drawer"
+    static let mobileCustomActions = "MobileCustomActions"
     static let downHsView = "downHsView"
     
     //gamification
@@ -428,6 +429,9 @@ struct RDConstants {
     static let contentBodyCustomFontFamilyIos = "content_body_custom_font_family_ios"
     static let promocodeCustomFontFamilyIos = "promocode_custom_font_family_ios"
     
+    
+    //Custom Param
+    static let javascript = "javascript"
     
     //ShakeToWin
     static let videoUrl = "video_url"

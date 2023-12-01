@@ -112,6 +112,10 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showChooseFavorite(model: chooseFavorite) {
                         self.markTargetingActionShown(model: chooseFavorite)
                     }
+                } else if model.targetingActionType == .mobileCustomActions, let customWebview = model as? CustomWebViewModel {
+                    if self.showCustomWebview(model: customWebview) {
+                        self.markTargetingActionShown(model: customWebview)
+                    }
                 }
                 else if model.targetingActionType == .slotMachine, let jackpot = model as? JackpotModel {
                    if self.showJackpot(model: jackpot) {
@@ -154,6 +158,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         let chooseFavoriteVC = ChooseFavoriteGameViewController(model)
         chooseFavoriteVC.delegate = self
         chooseFavoriteVC.show(animated: true)
+        return true
+    }
+    
+    func showCustomWebview(model: CustomWebViewModel) -> Bool {
+        let customWebviewVC = CustomWebViewController(model)
+        customWebviewVC.delegate = self
+        customWebviewVC.show(animated: true)
         return true
     }
     

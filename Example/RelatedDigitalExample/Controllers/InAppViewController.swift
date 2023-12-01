@@ -89,6 +89,7 @@ class InAppViewController: FormViewController, BannerDelegate {
             .giftBox : [RDInAppNotificationType.giftBox.rawValue: 577],
             .choosefavorite : [RDInAppNotificationType.choosefavorite.rawValue: 1098],
             .slotMachine : [RDInAppNotificationType.slotMachine.rawValue: 1099],
+            .mobileCustomActions : [RDInAppNotificationType.mobileCustomActions.rawValue: 1100],
             ]
     }
     
