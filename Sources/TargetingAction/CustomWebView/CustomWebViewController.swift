@@ -117,8 +117,8 @@ class CustomWebViewController: RDBaseNotificationViewController {
             return nil
         }
 
-        let htmlUrl = docUrl.appendingPathComponent("giftbox.html")
-        let jsUrl = docUrl.appendingPathComponent("giftbox.js")
+        let htmlUrl = docUrl.appendingPathComponent("index.html")
+        let jsUrl = docUrl.appendingPathComponent("script.js")
 
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
@@ -205,11 +205,11 @@ extension CustomWebViewController: WKScriptMessageHandler {
                     RDLogger.info("console.log: \(message)")
                 }
                 
-                if method == "initFindGame" {
-                    RDLogger.info("initFindGame")
+                if method == "initCustomweb" {
+                    RDLogger.info("initCustomweb")
                     
                     if let jsonString = customWebViewModel?.jsonContent {
-                        self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
+                        self.webView.evaluateJavaScript("window.initCustomweb(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
