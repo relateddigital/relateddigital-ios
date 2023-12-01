@@ -32,9 +32,11 @@ class CustomWebViewController: RDBaseNotificationViewController {
     private func close() {
         dismiss(animated: true) {
             if let customWebView = self.customWebViewModel, !customWebView.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                let bannerVC = RDCustomWebViewBannerController(customWebView)
-                bannerVC.delegate = self.delegate
-                bannerVC.show(animated: true)
+                if customWebView.bannercodeShouldShow ?? false {
+                    let bannerVC = RDCustomWebViewBannerController(customWebView)
+                    bannerVC.delegate = self.delegate
+                    bannerVC.show(animated: true)
+                }
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             } else {
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -107,23 +109,16 @@ class CustomWebViewController: RDBaseNotificationViewController {
 
     private func createFiles() -> URL? {
         let manager = FileManager.default
+        
+        let htmlString = self.customWebViewModel?.htmlContent
+
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
-            RDLogger.error("Can not create documentDirectory")
+            RDLogger.error("DocumentDirectory oluşturulamadı")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("swiping.html")
-        let jsUrl = docUrl.appendingPathComponent("swiping.js")
-#if SWIFT_PACKAGE
-        let bundle = Bundle.module
-#else
-        let bundle = Bundle(for: type(of: self))
-#endif
-        let bundleHtmlPath = bundle.path(forResource: "swiping", ofType: "html") ?? ""
 
-        let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
-
-        RDHelper.registerFonts(fontNames: getCustomFontNames())
-        let fontUrls = gameFonts(fontNames: getCustomFontNames())
+        let htmlUrl = docUrl.appendingPathComponent("giftbox.html")
+        let jsUrl = docUrl.appendingPathComponent("giftbox.js")
 
         do {
             if manager.fileExists(atPath: htmlUrl.path) {
@@ -133,7 +128,7 @@ class CustomWebViewController: RDBaseNotificationViewController {
                 try manager.removeItem(atPath: jsUrl.path)
             }
 
-            try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
+            try htmlString?.write(to: htmlUrl, atomically: true, encoding: .utf8)
 
             if let jsContent = customWebViewModel?.jsContent?.utf8 {
                 guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
@@ -143,25 +138,12 @@ class CustomWebViewController: RDBaseNotificationViewController {
                 return nil
             }
 
+            // Geri kalan font işlemleri...
+
         } catch let error {
             RDLogger.error(error)
             RDLogger.error(error.localizedDescription)
             return nil
-        }
-
-        for fontUrlKeyValue in fontUrls {
-            do {
-                let fontUrl = docUrl.appendingPathComponent(fontUrlKeyValue.key)
-                if manager.fileExists(atPath: fontUrl.path) {
-                    try manager.removeItem(atPath: fontUrl.path)
-                }
-                try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
-                self.jackpot?.fontFiles.append(fontUrlKeyValue.key)
-            } catch let error {
-                RDLogger.error(error)
-                RDLogger.error(error.localizedDescription)
-                continue
-            }
         }
 
         return htmlUrl
@@ -223,11 +205,11 @@ extension CustomWebViewController: WKScriptMessageHandler {
                     RDLogger.info("console.log: \(message)")
                 }
                 
-                if method == "initSwiping" {
-                    RDLogger.info("initSwiping")
+                if method == "initFindGame" {
+                    RDLogger.info("initFindGame")
                     
                     if let jsonString = customWebViewModel?.jsonContent {
-                        self.webView.evaluateJavaScript("window.initSwiping(\(jsonString));") { (_, err) in
+                        self.webView.evaluateJavaScript("window.initFindGame(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
@@ -264,7 +246,7 @@ extension CustomWebViewController: WKScriptMessageHandler {
                     codeGotten = true
                     UIPasteboard.general.string = code
                     BannerCodeManager.shared.setCustomWebViewCode(code: code)
-                    let actionID = self.giftBox?.actId
+                    let actionID = self.customWebViewModel?.actId
                     var properties = Properties()
                     properties[RDConstants.promoActionID] = String(actionID ?? 0)
                     properties[RDConstants.promoEmailKey] = mail

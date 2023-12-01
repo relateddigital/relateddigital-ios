@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -204,6 +204,8 @@ class RDTargetingAction {
             return parseChooseFavorite(chooseFavorite)
         } else if let jackpot = result[RDConstants.slotMachine] as? [[String: Any?]], let jackpot = jackpot.first {
             return parseJackpot(jackpot)
+        } else if let customWeb = result[RDConstants.mobileCustomActions] as? [[String: Any?]], let customWeb = customWeb.first {
+            return parseCustomWebview(customWeb)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
                 if productStatNotifier.attributedString == nil {
@@ -942,6 +944,47 @@ class RDTargetingAction {
         }
 
         return chooseFavoriteModel
+    }
+    
+    
+    private func parseCustomWebview(_ customWebView: [String: Any?]) -> CustomWebViewModel? {
+        guard let actionData = customWebView[RDConstants.actionData] as? [String: Any] else { return nil }
+        var customWebviewModel = CustomWebViewModel(targetingActionType: .mobileCustomActions)
+        customWebviewModel.actId = customWebView[RDConstants.actid] as? Int ?? 0
+        customWebviewModel.title = customWebView[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        //guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+
+        customWebviewModel.htmlContent = actionData[RDConstants.content] as? String ?? ""
+        customWebviewModel.jsContent = actionData[RDConstants.javascript] as? String ?? ""
+
+        // prome banner params
+//        customWebviewModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+//        customWebviewModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+//        customWebviewModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+//        customWebviewModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+//        customWebviewModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+//        customWebviewModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+//        customWebviewModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+//        customWebviewModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+//        customWebviewModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+//        customWebviewModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        //
+
+        
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: customWebView,
+            options: []) {
+            customWebviewModel.jsonContent = String(data: theJSONData, encoding: .utf8)
+        }
+
+        if customWebviewModel.promocode_banner_button_label.count > 0 && customWebviewModel.promocode_banner_text.count > 0 {
+            customWebviewModel.bannercodeShouldShow = true
+        } else {
+            customWebviewModel.bannercodeShouldShow = false
+        }
+
+        return customWebviewModel
     }
 
     private func parseJackpot(_ jackpot: [String: Any?]) -> JackpotModel? {
