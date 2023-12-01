@@ -31,8 +31,8 @@ class CustomWebViewController: RDBaseNotificationViewController {
 
     private func close() {
         dismiss(animated: true) {
-            if let chooseFavorite = self.chooseFavoriteModel, !chooseFavorite.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                let bannerVC = RDChooseFavoriteBannerController(chooseFavorite)
+            if let customWebView = self.customWebViewModel, !customWebView.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
+                let bannerVC = RDCustomWebViewBannerController(customWebView)
                 bannerVC.delegate = self.delegate
                 bannerVC.show(animated: true)
                 self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
@@ -249,7 +249,7 @@ extension CustomWebViewController: WKScriptMessageHandler {
                 }
 
                 if method == "sendReport" {
-                    RelatedDigital.trackChooseFavoriteClick(chooseFavoriteReport: (self.chooseFavoriteModel?.report)!)
+                    RelatedDigital.trackCustomWebviewClick(customWebviewReport:(self.customWebViewModel?.report)!)
                 }
 
                 if method == "linkClicked", let urlLnk = event["url"] as? String {

@@ -543,6 +543,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties["OM.zpc"] = chooseFavoriteReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
+    
+    func trackCustomWebviewClick(customWebviewReport: CustomWebViewReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = customWebviewReport.click?.parseClick().omZn
+        properties["OM.zpc"] = customWebviewReport.click?.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
 
     func trackDrawerClick(drawerReport: DrawerReport) {
         var properties = Properties()

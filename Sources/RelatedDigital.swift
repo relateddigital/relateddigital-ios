@@ -256,6 +256,10 @@ public class RelatedDigital {
         shared.rdInstance.trackChooseFavoriteClick(chooseFavoriteReport: chooseFavoriteReport)
     }
     
+    static func trackCustomWebviewClick(customWebviewReport: CustomWebViewReport) {
+        shared.rdInstance.trackCustomWebviewClick(customWebviewReport: customWebviewReport)
+    }
+    
     // MARK: - Push
     
     public static func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil, appGroupsKey: String? = nil, deliveredBadge: Bool? = true) {
