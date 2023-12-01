@@ -12,12 +12,22 @@ class CustomWebViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
+    private let containerView = UIView()
+    private var position: ScreenPosition = .bottomRight
+    private var widthFraction: CGFloat = 1/3
+    private var heightFraction: CGFloat = 1/3
+    private var cornerRadius = 25.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         webView = configureWebView()
-        self.view.addSubview(webView)
-        webView.allEdges(to: self.view)
+        containerView.layer.masksToBounds = true
+        containerView.addSubview(webView)
+        webView.allEdges(to: containerView)
+        self.view.addSubview(containerView)
+        containerView.allEdges(to: self.view)
+        containerView.layer.cornerRadius = cornerRadius
+        
     }
 
     init(_ customWebViewModel: CustomWebViewModel) {
@@ -45,37 +55,76 @@ class CustomWebViewController: RDBaseNotificationViewController {
     }
 
     override func show(animated: Bool) {
-            guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
-                return
-            }
-            if #available(iOS 13.0, *) {
-                let windowScene = sharedUIApplication
-                    .connectedScenes
-                    .filter { $0.activationState == .foregroundActive }
-                    .first
-                if let windowScene = windowScene as? UIWindowScene {
-                    window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-                    window?.windowScene = windowScene
-                }
-            } else {
-                window = UIWindow(frame: CGRect(x: 0,
-                                                y: 0,
-                                                width: UIScreen.main.bounds.size.width,
-                                                height: UIScreen.main.bounds.size.height))
-            }
-            if let window = window {
-                window.alpha = 0
-                window.windowLevel = UIWindow.Level.alert
-                window.rootViewController = self
-                window.isHidden = false
-            }
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
+             return
+         }
 
-            let duration = animated ? 0.25 : 0
-            UIView.animate(withDuration: duration, animations: {
-                self.window?.alpha = 1
-            }, completion: { _ in
-            })
-        }
+         if #available(iOS 13.0, *) {
+             let windowScene = sharedUIApplication
+                 .connectedScenes
+                 .filter { $0.activationState == .foregroundActive }
+                 .first
+
+             if let windowScene = windowScene as? UIWindowScene {
+                 window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                 window?.windowScene = windowScene
+             }
+         } else {
+             window = UIWindow(frame: CGRect(x: 0,
+                                             y: 0,
+                                             width: UIScreen.main.bounds.size.width,
+                                             height: UIScreen.main.bounds.size.height))
+         }
+
+         if let window = window {
+             window.alpha = 0
+             window.windowLevel = UIWindow.Level.alert
+             window.rootViewController = self
+             window.isHidden = false
+         }
+
+         var x: CGFloat = 0
+         var y: CGFloat = 0
+
+         switch position {
+         case .topLeft:
+              x = 0
+              y = 0
+          case .topCenter:
+              x = ((window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)) / 2
+              y = 0
+          case .topRight:
+              x = (window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)
+              y = 0
+          case .centerLeft:
+              x = 0
+              y = ((window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)) / 2
+          case .center:
+              x = ((window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)) / 2
+              y = ((window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)) / 2
+          case .centerRight:
+              x = (window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)
+              y = ((window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)) / 2
+          case .bottomLeft:
+              x = 0
+              y = (window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)
+          case .bottomCenter:
+              x = ((window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)) / 2
+              y = (window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)
+          case .bottomRight:
+              x = (window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)
+              y = (window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)
+          }
+
+         let frame = CGRect(x: x, y: y, width: (window?.frame.width ?? 0) * widthFraction, height: (window?.frame.height ?? 0) * heightFraction)
+
+         let duration = animated ? 0.25 : 0
+         UIView.animate(withDuration: duration, animations: {
+             self.window?.alpha = 1
+             self.window?.frame = frame
+         }, completion: { _ in
+         })
+    }
 
         override func hide(animated: Bool, completion: @escaping () -> Void) {
             let duration = animated ? 0.25 : 0
@@ -263,4 +312,17 @@ extension CustomWebViewController: WKScriptMessageHandler {
 
     }
 
+}
+
+
+enum ScreenPosition {
+    case topLeft
+    case topCenter
+    case topRight
+    case centerLeft
+    case center
+    case centerRight
+    case bottomLeft
+    case bottomCenter
+    case bottomRight
 }
