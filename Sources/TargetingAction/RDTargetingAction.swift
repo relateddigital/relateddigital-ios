@@ -953,24 +953,30 @@ class RDTargetingAction {
         customWebviewModel.actId = customWebView[RDConstants.actid] as? Int ?? 0
         customWebviewModel.title = customWebView[RDConstants.title] as? String ?? ""
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
-        //guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
 
         customWebviewModel.htmlContent = actionData[RDConstants.content] as? String ?? ""
         customWebviewModel.jsContent = actionData[RDConstants.javascript] as? String ?? ""
 
-        // prome banner params
-//        customWebviewModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
-//        customWebviewModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
-//        customWebviewModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
-//        customWebviewModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
-//        customWebviewModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
-//        customWebviewModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
-//        customWebviewModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
-//        customWebviewModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
-//        customWebviewModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
-//        customWebviewModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+         //prome banner params
+        customWebviewModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        customWebviewModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        customWebviewModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        customWebviewModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        customWebviewModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        customWebviewModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        customWebviewModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        customWebviewModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        customWebviewModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        customWebviewModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         //
 
+        
+        customWebviewModel.position = extendedProps[RDConstants.positionCustom] as? String ?? ""
+        customWebviewModel.width = extendedProps[RDConstants.width] as? Float ?? 0.0
+        customWebviewModel.height = extendedProps[RDConstants.height] as? Float ?? 0.0
+        customWebviewModel.closeButtonColor = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        customWebviewModel.borderRadius = extendedProps[RDConstants.borderRadius] as? Float ?? 0.0
         
         if let theJSONData = try? JSONSerialization.data(
             withJSONObject: customWebView,

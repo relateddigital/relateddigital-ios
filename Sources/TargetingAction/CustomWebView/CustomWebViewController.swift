@@ -33,10 +33,31 @@ class CustomWebViewController: RDBaseNotificationViewController {
     init(_ customWebViewModel: CustomWebViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.customWebViewModel = customWebViewModel
+        self.position = getScreenPosition(from: customWebViewModel.position) ?? .bottomLeft
+        self.widthFraction = CGFloat(customWebViewModel.width / 100.0)
+        self.heightFraction = CGFloat(customWebViewModel.height / 100.0)
+        self.cornerRadius = Double(customWebViewModel.borderRadius)
+
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    func getScreenPosition(from string: String) -> ScreenPosition? {
+        switch string.lowercased() {
+        case "topleft": return .topLeft
+        case "topcenter": return .topCenter
+        case "topright": return .topRight
+        case "middleleft": return .middleLeft
+        case "middlecenter": return .middleCenter
+        case "middleright": return .middleRight
+        case "bottomleft": return .bottomLeft
+        case "bottomcenter": return .bottomCenter
+        case "bottomright": return .bottomRight
+        default: return nil
+        }
     }
 
     private func close() {
@@ -96,13 +117,13 @@ class CustomWebViewController: RDBaseNotificationViewController {
           case .topRight:
               x = (window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)
               y = 0
-          case .centerLeft:
+          case .middleLeft:
               x = 0
               y = ((window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)) / 2
-          case .center:
+          case .middleCenter:
               x = ((window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)) / 2
               y = ((window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)) / 2
-          case .centerRight:
+          case .middleRight:
               x = (window?.frame.width ?? 0) - ((window?.frame.width ?? 0) * widthFraction)
               y = ((window?.frame.height ?? 0) - ((window?.frame.height ?? 0) * heightFraction)) / 2
           case .bottomLeft:
@@ -319,9 +340,9 @@ enum ScreenPosition {
     case topLeft
     case topCenter
     case topRight
-    case centerLeft
-    case center
-    case centerRight
+    case middleLeft
+    case middleCenter
+    case middleRight
     case bottomLeft
     case bottomCenter
     case bottomRight

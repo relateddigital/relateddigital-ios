@@ -432,6 +432,11 @@ struct RDConstants {
     
     //Custom Param
     static let javascript = "javascript"
+    static let positionCustom = "position"
+    static let width = "width"
+    static let height = "height"
+    static let borderRadius = "border_radius"
+
     
     //ShakeToWin
     static let videoUrl = "video_url"
