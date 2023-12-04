@@ -34,6 +34,17 @@ struct CustomWebViewModel: TargetingActionViewModel, Codable {
     var font_family = String()
     //
     
+    
+    var position = String()
+    var width = Float()
+    var height = Float()
+    var closeButtonColor = String()
+    var borderRadius = Float()
+
+    
+    
+    
+    
     var report: CustomWebViewReport? = CustomWebViewReport()
     var bannercodeShouldShow : Bool?
 
