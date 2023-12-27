@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import StoreKit
 
 protocol RDInAppNotificationsDelegate: AnyObject {
     func notificationDidShow(_ notification: RDInAppNotification)
@@ -122,6 +123,9 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                        self.markTargetingActionShown(model: jackpot)
                    }
                }
+                else if model.targetingActionType == .inappRating {
+                    self.showInappRating()
+               }
             }
         }
     }
@@ -166,6 +170,14 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         customWebviewVC.delegate = self
         customWebviewVC.show(animated: true)
         return true
+    }
+    
+    func showInappRating() {
+        DispatchQueue.main.async  {
+            if #available(iOS 10.3, *) {
+                SKStoreReviewController.requestReview()
+            }
+        }
     }
     
     func showJackpot(model: JackpotModel) -> Bool {
