@@ -12,7 +12,9 @@ import UserNotifications
 var relatedDigitalProfile = RelatedDigitalProfile()
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate,PushAction {
+
+    
     var window: UIWindow?
     var isRelatedInit = false
     
@@ -86,7 +88,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         RelatedDigital.handlePush(pushDictionary: response.notification.request.content.userInfo)
-        RelatedDigital.handlePushWithActionButtons(response: response)
+        RelatedDigital.handlePushWithActionButtons(response: response,type:self)
         completionHandler()
+    }
+    
+    func actionButtonClicked(identifier: String, url: String) {
+        print(identifier,url)
     }
 }

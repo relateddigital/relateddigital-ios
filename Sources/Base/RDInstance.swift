@@ -987,8 +987,8 @@ extension RDInstance {
         RDPush.handlePush(pushDictionary: pushDictionary)
     }
     
-    func handlePushWithActionButtons(response: UNNotificationResponse) {
-        RDPush.handlePushWithActionButtons(response: response)
+    func handlePushWithActionButtons(response: UNNotificationResponse,type:Any) {
+        RDPush.handlePushWithActionButtons(response: response, type: type)
     }
 
     public func sync(notification: Notification? = nil) {
