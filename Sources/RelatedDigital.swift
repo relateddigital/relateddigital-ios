@@ -338,8 +338,8 @@ public class RelatedDigital {
         shared.rdInstance.handlePush(pushDictionary: pushDictionary)
     }
     
-    public static func handlePushWithActionButtons(response:UNNotificationResponse) {
-        shared.rdInstance.handlePushWithActionButtons(response: response)
+    public static func handlePushWithActionButtons(response:UNNotificationResponse,type:Any) {
+        shared.rdInstance.handlePushWithActionButtons(response: response,type:type)
     }
     
     public static func sync(notification: Notification? = nil) {

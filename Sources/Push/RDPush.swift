@@ -183,6 +183,10 @@ public class RDPush {
     }
 }
 
+public protocol PushAction {
+    func actionButtonClicked(identifier:String,url:String)
+}
+
 extension RDPush {
     // MARK: Request Builders
 
@@ -344,7 +348,10 @@ extension RDPush {
         RDPush.sync()
     }
     
-    public static func handlePushWithActionButtons(response: UNNotificationResponse) {
+    public static func handlePushWithActionButtons(response: UNNotificationResponse,type:Any) {
+        
+        var actionButtonDelegate : PushAction?
+        actionButtonDelegate = type as? PushAction
         
         let pushDictionary = response.notification.request.content.userInfo
         
@@ -352,9 +359,9 @@ extension RDPush {
            let message = try? JSONDecoder().decode(RDPushMessage.self, from: jsonData) {
             
             if response.actionIdentifier == "action_0" {
-                openLink(urlStr: message.actions?.first?.Url ?? "")
+                actionButtonDelegate?.actionButtonClicked(identifier: "action_0", url: message.actions?.first?.Url ?? "")
             } else if response.actionIdentifier == "action_1" {
-                openLink(urlStr: message.actions?.last?.Url ?? "")
+                actionButtonDelegate?.actionButtonClicked(identifier: "action_1", url: message.actions?.last?.Url ?? "")
             }
         }
     }
