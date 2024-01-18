@@ -8,22 +8,20 @@
 import Foundation
 
 class PushUserDefaultsUtils {
-    
     // MARK: - UserDefaults
-    
+
     static let userDefaults = UserDefaults(suiteName: PushKey.userDefaultSuiteKey)
-    static var appGroupUserDefaults : UserDefaults?
-    
+    static var appGroupUserDefaults: UserDefaults?
+
     static func setAppGroupsUserDefaults(appGroupName: String) {
         appGroupUserDefaults = UserDefaults(suiteName: appGroupName)
     }
-    
+
     static func retrieveUserDefaults(userKey: String) -> AnyObject? {
         var val: Any?
         if let value = appGroupUserDefaults?.object(forKey: userKey) {
             val = value
-        }
-        else if let value = userDefaults?.object(forKey: userKey) {
+        } else if let value = userDefaults?.object(forKey: userKey) {
             val = value
         }
         guard let value = val else {
@@ -31,7 +29,7 @@ class PushUserDefaultsUtils {
         }
         return value as AnyObject?
     }
-    
+
     static func removeUserDefaults(userKey: String) {
         if userDefaults?.object(forKey: userKey) != nil {
             userDefaults?.removeObject(forKey: userKey)
@@ -42,7 +40,7 @@ class PushUserDefaultsUtils {
             appGroupUserDefaults?.synchronize()
         }
     }
-    
+
     static func saveUserDefaults(key: String?, value: AnyObject?) {
         guard key != nil && value != nil else {
             return
@@ -52,11 +50,11 @@ class PushUserDefaultsUtils {
         appGroupUserDefaults?.set(value, forKey: key!)
         appGroupUserDefaults?.synchronize()
     }
-    
+
     // MARK: - Retention
-    
+
     private static let pushIdLock = RDReadWriteLock(label: "PushIdLock")
-    
+
     static func saveReadPushId(pushId: String) {
         var pushIdList = getReadPushIdList()
         pushIdLock.write {
@@ -72,7 +70,7 @@ class PushUserDefaultsUtils {
             }
         }
     }
-      
+
     static func savePayloadWithId(payload: RDPushMessage, notificationLoginID: String) {
         var payload = payload
         if let pushId = payload.pushId, !notificationLoginID.isEmpty {
@@ -97,16 +95,16 @@ class PushUserDefaultsUtils {
             RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
         }
     }
-    
+
     static func getRecentPayloadsWithId() -> [RDPushMessage] {
         var finalPayloads = [RDPushMessage]()
         payloadLock.read {
             guard let notificationLoginId = retrieveUserDefaults(userKey: PushKey.notificationLoginIdKey) as? String,
                   notificationLoginId.isEmpty else {
-                RDLogger.error("Push-getRecentPayloadsWithId() : login ID is empty!");
+                RDLogger.error("Push-getRecentPayloadsWithId() : login ID is empty!")
                 return
             }
-            
+
             if let payloadsJsonData = retrieveUserDefaults(userKey: PushKey.euroPayloadsWithIdKey) as? Data {
                 if let payloads = try? JSONDecoder().decode([RDPushMessage].self, from: payloadsJsonData) {
                     finalPayloads = payloads
@@ -114,11 +112,11 @@ class PushUserDefaultsUtils {
             }
             if let filterDate = Calendar.current.date(byAdding: .day, value: -PushKey.payloadDayThreshold, to: Date()) {
                 finalPayloads = finalPayloads.filter({ payload in
-                    
+
                     if payload.notificationLoginID != notificationLoginId {
                         return false
                     }
-                    
+
                     if let date = payload.getDate() {
                         return date > filterDate
                     } else {
@@ -127,7 +125,7 @@ class PushUserDefaultsUtils {
                 })
             }
         }
-        
+
         return finalPayloads.sorted(by: { payload1, payload2 in
             if let date1 = payload1.getDate(), let date2 = payload2.getDate() {
                 return date1 > date2
@@ -136,7 +134,7 @@ class PushUserDefaultsUtils {
             }
         })
     }
-    
+
     static func getReadPushIdList() -> [String] {
         var finalPushIdList = [String]()
         pushIdLock.read {
@@ -148,60 +146,63 @@ class PushUserDefaultsUtils {
         }
         return Array(finalPushIdList.suffix(50))
     }
-    
+
     static func pushIdListContains(pushId: String) -> Bool {
         return getReadPushIdList().contains(pushId)
     }
-    
+
     // MARK: - Deliver
-    
+
     private static let payloadLock = RDReadWriteLock(label: "PushPayloadLock")
-    
+
     static func savePayload(payload: RDPushMessage) {
-            var payload = payload
-            if let pushId = payload.pushId {
-                payload.formattedDateString = PushTools.formatDate(Date())
-                payload.openedDate = ""
-                payload.status = "D"
-                var recentPayloads = getRecentPayloads()
-                payloadLock.write {
-                    if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
-                        RDLogger.warn("Payload is not valid, there is already another payload with same pushId  New : \(payload.encoded) Existing: \(existingPayload.encoded)")
-                    } else {
-                        recentPayloads.insert(payload, at: 0)
-                        if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
-                            saveUserDefaults(key: PushKey.euroPayloadsKey, value: recentPayloadsData as AnyObject)
-                        } else {
-                            RDLogger.warn("Can not encode recentPayloads : \(String(describing: recentPayloads))")
-                        }
-                    }
-                }
-            } else {
-                RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
+        var payload = payload
+        if let pushId = payload.pushId {
+            payload.formattedDateString = PushTools.formatDate(Date())
+            payload.openedDate = ""
+            payload.status = "D"
+            if let userExVid = appGroupUserDefaults?.string(forKey: "userExVid") {
+                    payload.exVisitorID = userExVid
             }
-        }
-        
-        static func updatePayload(pushId: String?) {
             var recentPayloads = getRecentPayloads()
             payloadLock.write {
-                if let index = recentPayloads.firstIndex(where: { $0.pushId == pushId }) {
-                    var updatedPayload = recentPayloads[index]
-                    // Güncelleme işlemlerini yap
-                    updatedPayload.status = "O"
-                    updatedPayload.openedDate = PushTools.formatDate(Date())
-                    // Güncellenmiş payload'ı koleksiyona tekrar ekle
-                    recentPayloads[index] = updatedPayload
-                    if let updatedPayloadsData = try? JSONEncoder().encode(recentPayloads) {
-                        saveUserDefaults(key: PushKey.euroPayloadsKey, value: updatedPayloadsData as AnyObject)
-                    } else {
-                        RDLogger.warn("Can not encode updated payloads: \(String(describing: recentPayloads))")
-                    }
+                if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
+                    RDLogger.warn("Payload is not valid, there is already another payload with same pushId  New : \(payload.encoded) Existing: \(existingPayload.encoded)")
                 } else {
-                    RDLogger.warn("Payload with pushId \(pushId ?? "") not found in recent payloads.")
+                    recentPayloads.insert(payload, at: 0)
+                    if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
+                        saveUserDefaults(key: PushKey.euroPayloadsKey, value: recentPayloadsData as AnyObject)
+                    } else {
+                        RDLogger.warn("Can not encode recentPayloads : \(String(describing: recentPayloads))")
+                    }
                 }
             }
+        } else {
+            RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
         }
-    
+    }
+
+    static func updatePayload(pushId: String?) {
+        var recentPayloads = getRecentPayloads()
+        payloadLock.write {
+            if let index = recentPayloads.firstIndex(where: { $0.pushId == pushId }) {
+                var updatedPayload = recentPayloads[index]
+                // Güncelleme işlemlerini yap
+                updatedPayload.status = "O"
+                updatedPayload.openedDate = PushTools.formatDate(Date())
+                // Güncellenmiş payload'ı koleksiyona tekrar ekle
+                recentPayloads[index] = updatedPayload
+                if let updatedPayloadsData = try? JSONEncoder().encode(recentPayloads) {
+                    saveUserDefaults(key: PushKey.euroPayloadsKey, value: updatedPayloadsData as AnyObject)
+                } else {
+                    RDLogger.warn("Can not encode updated payloads: \(String(describing: recentPayloads))")
+                }
+            } else {
+                RDLogger.warn("Payload with pushId \(pushId ?? "") not found in recent payloads.")
+            }
+        }
+    }
+
     static func getRecentPayloads() -> [RDPushMessage] {
         var finalPayloads = [RDPushMessage]()
         payloadLock.read {
@@ -228,22 +229,22 @@ class PushUserDefaultsUtils {
             }
         })
     }
-    
+
     static func payloadContains(pushId: String) -> Bool {
         let payloads = getRecentPayloads()
         return payloads.first(where: { $0.pushId == pushId }) != nil
     }
-    
+
     // MARK: - Subscription
-    
+
     private static let subscriptionLock = RDReadWriteLock(label: "EMSubscriptionLock")
-    
+
     static func saveLastSuccessfulSubscriptionTime(time: Date) {
         subscriptionLock.write {
             saveUserDefaults(key: PushKey.euroLastSuccessfulSubscriptionDateKey, value: time as AnyObject)
         }
     }
-    
+
     static func getLastSuccessfulSubscriptionTime() -> Date {
         var lastSuccessfulSubscriptionTime = Date(timeIntervalSince1970: 0)
         subscriptionLock.read {
@@ -253,7 +254,7 @@ class PushUserDefaultsUtils {
         }
         return lastSuccessfulSubscriptionTime
     }
-    
+
     static func saveLastSuccessfulSubscription(subscription: PushSubscriptionRequest) {
         subscriptionLock.write {
             if let subscriptionData = try? JSONEncoder().encode(subscription) {
@@ -263,7 +264,7 @@ class PushUserDefaultsUtils {
             }
         }
     }
-    
+
     static func getLastSuccessfulSubscription() -> PushSubscriptionRequest? {
         var lastSuccessfulSubscription: PushSubscriptionRequest?
         subscriptionLock.read {
@@ -277,5 +278,4 @@ class PushUserDefaultsUtils {
         }
         return lastSuccessfulSubscription
     }
-    
 }

@@ -900,6 +900,8 @@ extension RDInstance {
         rdProfile.isPushNotificationEnabled = true
         rdProfile.appAlias = appAlias
         rdProfile.appGroupsKey = appGroupsKey
+        UserDefaults.standard.set(appGroupsKey, forKey: "appGroupsKey")
+        UserDefaults.standard.synchronize()
         if let launchOptions = launchOptions {
             self.launchOptions = launchOptions
         }
