@@ -15,6 +15,7 @@ class RDEvent {
         var chan = channel
         var clearUserParameters = false
         let actualTimeOfevent = Int(Date().timeIntervalSince1970)
+        let appGroupsKey = UserDefaults.standard.string(forKey: "appGroupsKey")
 
         if let cookieId = props[RDConstants.cookieIdKey] {
             if user.cookieId != cookieId {
@@ -146,7 +147,13 @@ class RDEvent {
         if eQueue.count > RDConstants.queueSize {
             eQueue.remove(at: 0)
         }
-
+        if let userExVid = user.exVisitorId {
+            if let defaults = UserDefaults(suiteName: appGroupsKey) {
+                defaults.set(userExVid, forKey: "userExVid")
+            }
+        }
+        
+        
         return (eQueue, user, clearUserParameters, chan)
     }
 
