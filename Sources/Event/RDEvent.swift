@@ -147,12 +147,6 @@ class RDEvent {
         if eQueue.count > RDConstants.queueSize {
             eQueue.remove(at: 0)
         }
-        if let userExVid = user.exVisitorId {
-            if let defaults = UserDefaults(suiteName: appGroupsKey) {
-                defaults.set(userExVid, forKey: "userExVid")
-            }
-        }
-        
         
         return (eQueue, user, clearUserParameters, chan)
     }

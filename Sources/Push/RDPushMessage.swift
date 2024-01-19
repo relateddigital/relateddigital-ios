@@ -54,7 +54,8 @@ public struct RDPushMessage: PushCodable {
     public var openedDate: String?
     public var actions: [ActionButtons]?
     public var pushCategory: String?
-    public var exVisitorID: String?
+    public var keyID: String?
+    public var email: String?
 
 
     
