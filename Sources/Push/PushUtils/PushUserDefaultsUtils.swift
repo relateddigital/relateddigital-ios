@@ -78,6 +78,14 @@ class PushUserDefaultsUtils {
             payload.formattedDateString = PushTools.formatDate(Date())
             payload.openedDate = ""
             payload.status = "D"
+            if let extra = RDPush.shared?.subscription.extra {
+                if extra["keyID"] != nil {
+                    payload.keyID = extra["keyID"]
+                }
+                if extra["email"] != nil {
+                    payload.email = extra["email"]
+                }
+            }
             var recentPayloads = getRecentPayloads()
             payloadLock.write {
                 if let existingPayload = recentPayloads.first(where: { $0.pushId == pushId }) {
@@ -161,8 +169,13 @@ class PushUserDefaultsUtils {
             payload.formattedDateString = PushTools.formatDate(Date())
             payload.openedDate = ""
             payload.status = "D"
-            if let userExVid = appGroupUserDefaults?.string(forKey: "userExVid") {
-                    payload.exVisitorID = userExVid
+            if let extra = RDPush.shared?.subscription.extra {
+                if extra["keyID"] != nil {
+                    payload.keyID = extra["keyID"]
+                }
+                if extra["email"] != nil {
+                    payload.email = extra["email"]
+                }
             }
             var recentPayloads = getRecentPayloads()
             payloadLock.write {
