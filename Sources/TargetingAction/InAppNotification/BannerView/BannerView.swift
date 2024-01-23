@@ -164,6 +164,11 @@ public class BannerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
             print("collection view was tapped")
         }
     }
+    
+    public func reloadBannerViewData() {
+        collectionView.reloadData()
+    }
+
 
 }
 
