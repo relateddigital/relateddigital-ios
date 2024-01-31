@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.inappRating)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -206,7 +206,7 @@ class RDTargetingAction {
             return parseJackpot(jackpot)
         } else if let customWeb = result[RDConstants.mobileCustomActions] as? [[String: Any?]], let customWeb = customWeb.first {
             return parseCustomWebview(customWeb)
-        } else if let inappRating = result[RDConstants.inappRating] as? [[String: Any?]], let inappRating = inappRating.first {
+        } else if let inappRating = result[RDConstants.apprating] as? [[String: Any?]], let inappRating = inappRating.first {
             return parseInappRating(inappRating)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
             if let productStatNotifier = parseProductStatNotifier(psn) {
@@ -951,7 +951,7 @@ class RDTargetingAction {
     
     private func parseInappRating(_ customWebView: [String: Any?]) -> InappReviewModel? {
         guard let actionData = customWebView[RDConstants.actionData] as? [String: Any] else { return nil }
-        var inappRating = InappReviewModel(targetingActionType: .inappRating)
+        var inappRating = InappReviewModel(targetingActionType: .apprating)
         inappRating.actId = customWebView[RDConstants.actid] as? Int ?? 0
         inappRating.title = customWebView[RDConstants.title] as? String ?? ""
 
