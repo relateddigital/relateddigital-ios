@@ -123,7 +123,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                        self.markTargetingActionShown(model: jackpot)
                    }
                }
-                else if model.targetingActionType == .inappRating {
+                else if model.targetingActionType == .apprating {
                     self.showInappRating()
                }
             }
