@@ -21,7 +21,7 @@ public enum TargetingActionType: String, Codable {
     case chooseFavorite = "Choosefavorite"
     case slotMachine = "slotMachine"
     case mobileCustomActions = "mobileCustomActions"
-    case inappRating = "inappRating"
+    case apprating = "apprating"
 
 
 
