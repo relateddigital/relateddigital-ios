@@ -369,6 +369,7 @@ public class RelatedDigital {
     
     public static func getBannerView(properties: Properties,completion: @escaping (BannerView?) -> Void) {
         shared.rdInstance.getBannerView(properties: properties) { bannerView in
+            bannerView?.reloadBannerViewData()
             completion(bannerView)
         }
     }
