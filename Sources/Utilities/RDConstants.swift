@@ -55,6 +55,7 @@ struct RDConstants {
     static var mobileEndPoint = "\(UrlConstant.shared.urlPrefix)/mobile"
     static var subsjsonEndpoint = "\(UrlConstant.shared.urlPrefix)/subsjson"
     static var promotionEndpoint = "\(UrlConstant.shared.urlPrefix)/promotion"
+    static var searchRecommendationEndPoint = "\(UrlConstant.shared.urlPrefix)/search"
     static var remoteConfigEndpoint = "mbls.visilabs.net/rc.json"
     
     // MARK: - UserDefaults Keys
@@ -137,6 +138,10 @@ struct RDConstants {
     static let pvivKey = "OM.pviv"
     static let tvcKey = "OM.tvc"
     static let lvtKey = "OM.lvt"
+    static let sdkTypeKey = "sdk_type"
+    static let keyword = "OM.se_word"
+    static let searchChannel = "OM.schannel"
+    static let webKey = "web"
     
     static let utmSourceKey = "utm_source"
     static let utmCampaignKey = "utm_campaign"
@@ -211,14 +216,73 @@ struct RDConstants {
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
+    static let Title = "Title"
+    static let IsActive = "IsActive"
+    static let PopularBrands = "PopularBrands"
+    static let Report = "report"
+
+    // PopularBrand
+    static let Name = "Name"
+    static let Url = "Url"
+
+    // Report
+    static let Impression = "impression"
+    static let Click = "click"
+
+    // CategoryContainer
+    static let PopularCategories = "PopularCategories"
+
+    // PopularCategory
+    static let Products = "Products"
+
+    // Product
+    static let ImageUrl = "ImageUrl"
+    static let BrandName = "BrandName"
+    static let Price = "Price"
+    static let DiscountPrice = "DiscountPrice"
+    static let Code = "Code"
+    static let Currency = "Currency"
+    static let DiscountCurrency = "DiscountCurrency"
+    // ProductAreaContainer
+    static let PreTitle = "PreTitle"
+    static let ChangeTitle = "ChangeTitle"
+    static let SearchResultMessage = "SearchResultMessage"
+
+    // SearchContainer
+    static let SearchUrlPrefix = "SearchUrlPrefix"
+    static let PopularSearches = "PopularSearches"
+
+    // SearchStyle
+    static let FontFamily = "FontFamily"
+    static let TextColor = "TextColor"
+    static let ThemeColor = "ThemeColor"
+    static let TitleColor = "TitleColor"
+    static let HoverColor = "HoverColor"
+    static let HoverTextColor = "HoverTextColor"
+    static let ColumnCount = "ColumnCount"
+    static let RowCount = "RowCount"
+    static let QuerySelectorCss = "QuerySelectorCss"
+    static let TitleBorderRadius = "TitleBorderRadius"
+    static let BackgroundColor = "BackgroundColor"
+
+    // SearchTemplate
+    static let MainLayout = "MainLayout"
+    static let PopularProducts = "PopularProducts"
+    static let SearchItemLayout = "SearchItemLayout"
+    static let ListItemLayout = "ListItemLayout"
+
+    // VisilabsSearchRecommendationResponse
+    static let Queryselector = "Queryselector"
+    static let CustomCss = "CustomCss"
+    static let CustomJs = "CustomJs"
+    static let HideSearchIfEmpty = "HideSearchIfEmpty"
+    static let ProductAreaContainer = "ProductAreaContainer"
+    static let CategoryContainer = "CategoryContainer"
+    static let BrandContainer = "BrandContainer"
+    static let SearchContainer = "SearchContainer"
+    static let SearchStyle = "SearchStyle"
+    static let SearchTemplate = "SearchTemplate"
+        
     
     
     static let actid = "actid"
