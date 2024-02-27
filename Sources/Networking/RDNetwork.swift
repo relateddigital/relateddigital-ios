@@ -22,6 +22,7 @@ enum RDEndpoint {
     case subsjson
     case promotion
     case remote
+    case search
     
     case spinToWinJs
     case giftCatchJs

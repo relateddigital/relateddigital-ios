@@ -386,6 +386,14 @@ public class RelatedDigital {
         }
     }
     
+    public static func trackSearchRecommendationClick(searchReport:Report) {
+        var properties = [String: String]()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = searchReport.click.parseClick().omZn
+        properties["OM.zpc"] = searchReport.click.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
     static func trackDrawerClick(drawerReport: DrawerReport) {
         shared.rdInstance.trackDrawerClick(drawerReport: drawerReport)
     }

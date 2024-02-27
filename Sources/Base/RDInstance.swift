@@ -20,6 +20,7 @@ public class RDInstance: RDInstanceProtocol {
     var trackingQueue: DispatchQueue!
     var targetingActionQueue: DispatchQueue!
     var recommendationQueue: DispatchQueue!
+    var searchRecommendationQueue: DispatchQueue!
     var networkQueue: DispatchQueue!
     let readWriteLock: RDReadWriteLock
     private var observers: [NSObjectProtocol]? = []
@@ -30,7 +31,7 @@ public class RDInstance: RDInstanceProtocol {
     let rdRecommendationInstance = RDRecommendation()
     let rdRemoteConfigInstance: RDRemoteConfig
     let rdLocationManager: RDLocationManager
-
+    let relatedDigitalSearchRecommendationInstance =  RelatedDigitalSearchRecommendation()
     var launchOptions: [UIA.LaunchOptionsKey: Any]?
 
     static var deliveredBadgeCount: Bool?
@@ -102,6 +103,7 @@ public class RDInstance: RDInstanceProtocol {
         let label = "com.relateddigital.\(rdProfile.profileId)"
         trackingQueue = DispatchQueue(label: "\(label).tracking)", qos: .utility)
         recommendationQueue = DispatchQueue(label: "\(label).recommendation)", qos: .utility)
+        searchRecommendationQueue = DispatchQueue(label: "\(label).searchRecommendation)", qos: .utility)
         targetingActionQueue = DispatchQueue(label: "\(label).targetingaction)", qos: .utility)
         networkQueue = DispatchQueue(label: "\(label).network)", qos: .utility)
         rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
@@ -788,6 +790,62 @@ extension RDInstance {
     
     
 }
+
+
+extension RDInstance {
+    
+    public func searcRecommendation(keyword:String,searchType:String,properties: [String: String] = [:],completion: @escaping ((_ response: RelatedDigitalSearchRecommendationResponse) -> Void)) {
+                
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
+        }
+        
+        searchRecommendationQueue.async { [weak self, keyword,searchType,properties, completion] in
+            self?.networkQueue.async { [weak self, keyword,searchType,properties, completion] in
+                guard let self = self else { return }
+                var vUser = RDUser()
+
+                self.readWriteLock.read {
+                    vUser = self.rdUser
+                }
+                
+                self.relatedDigitalSearchRecommendationInstance.searchRecommend(relatedUser: vUser,
+                                    properties: properties,
+                                    keyword: keyword,
+                                    searchType: searchType) { response in
+                    
+                    self.trackSearchRecommendationImpression(qs: response.productAreaContainer?.report.impression ?? "")
+
+                    completion(response)
+                }
+            }
+        }
+    }
+    
+    private func trackSearchRecommendationImpression(qs: String) {
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
+        }
+        
+        let qsArr = qs.components(separatedBy: "&")
+        var properties = [String: String]()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        if qsArr.count > 1 {
+            for queryItem in qsArr {
+                let arrComponents = queryItem.components(separatedBy: "=")
+                if arrComponents.count == 2 {
+                    properties[arrComponents[0]] = arrComponents[1]
+                }
+            }
+        } else {
+            RDLogger.info("qs length is less than 2")
+            return
+        }
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+
+}
+
 
 // MARK: - RECOMMENDATION
 

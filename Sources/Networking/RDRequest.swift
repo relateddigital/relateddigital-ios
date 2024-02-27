@@ -91,6 +91,53 @@ class RDRequest {
             completion(result, nil)
         })
     }
+    
+    
+    
+    // MARK: - SEARCHRECOMMENDATION
+    //sendSearchRecommendationRequest
+    //sendSearchRecommendationRequestHandler
+    
+    
+    class func sendSearchRecommendationRequest(properties: [String: String],
+                                            headers: [String: String],
+                                            completion: @escaping ([String: Any]?) -> Void) {
+        
+        var queryItems = [URLQueryItem]()
+        for property in properties {
+            queryItems.append(URLQueryItem(name: property.key, value: property.value))
+        }
+        
+        let responseParser: (Data) -> [String: Any]? = { data in
+            var response: Any?
+            do {
+                response = try JSONSerialization.jsonObject(with: data, options: [])
+            } catch {
+                RDLogger.error("exception decoding api data")
+            }
+            return response as? [String: Any]
+        }
+        
+        let resource = RDNetwork.buildResource(endPoint: .search,
+                                                     method: .get,
+                                                     requestBody: nil,
+                                                     queryItems: queryItems,
+                                                     headers: headers,
+                                                     parse: responseParser)
+        
+        sendSearchRecommendationRequestHandler(resource: resource, completion: { result in completion(result) })
+        
+    }
+    
+    private class func sendSearchRecommendationRequestHandler(resource: RDResource<[String: Any]>, completion: @escaping ([String: Any]?) -> Void) {
+        RDNetwork.apiRequest(resource: resource,
+                                   failure: { (error, _, _) in
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            completion(nil)
+        }, success: { (result, _) in
+            completion(result)
+        })
+    }
 
     // MARK: - TARGETING ACTIONS
 

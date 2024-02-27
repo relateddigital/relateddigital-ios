@@ -90,6 +90,7 @@ internal class RDHelper {
         RDBasePath.endpoints[.action] = "\(httpProtocol)://\(RDConstants.actionEndPoint)"
         RDBasePath.endpoints[.geofence] = "\(httpProtocol)://\(RDConstants.geofenceEndPoint)"
         RDBasePath.endpoints[.mobile] = "\(httpProtocol)://\(RDConstants.mobileEndPoint)"
+        RDBasePath.endpoints[.search] = "\(httpProtocol)://\(RDConstants.searchRecommendationEndPoint)"
         RDBasePath.endpoints[.subsjson] = "\(httpProtocol)://\(RDConstants.subsjsonEndpoint)"
         RDBasePath.endpoints[.promotion] = "\(httpProtocol)://\(RDConstants.promotionEndpoint)"
         RDBasePath.endpoints[.remote] = "https://\(RDConstants.remoteConfigEndpoint)"
