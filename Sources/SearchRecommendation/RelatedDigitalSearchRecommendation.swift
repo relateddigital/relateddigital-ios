@@ -10,22 +10,19 @@ import Foundation
 
 class RelatedDigitalSearchRecommendation {
         
-    let relatedProfile = RelatedDigital.rdProfile
-
-    
     
     func searchRecommend(relatedUser: RDUser,
                          properties: [String: String] = [:],
                          keyword: String = "",
                          searchType: String,
                          completion: @escaping ((_ response: RelatedDigitalSearchRecommendationResponse) -> Void)) {
-        
+        let relatedProfile = RelatedDigital.rdProfile
         
         var props = cleanProperties(properties)
 
 
-        props[RDConstants.organizationIdKey] = self.relatedProfile.organizationId
-        props[RDConstants.profileIdKey] = self.relatedProfile.profileId
+        props[RDConstants.organizationIdKey] = relatedProfile.organizationId
+        props[RDConstants.profileIdKey] = relatedProfile.profileId
         props[RDConstants.cookieIdKey] = relatedUser.cookieId
         props[RDConstants.exvisitorIdKey] = relatedUser.exVisitorId
         props[RDConstants.tokenIdKey] = relatedUser.tokenId

@@ -31,7 +31,7 @@ public class RDInstance: RDInstanceProtocol {
     let rdRecommendationInstance = RDRecommendation()
     let rdRemoteConfigInstance: RDRemoteConfig
     let rdLocationManager: RDLocationManager
-    let relatedDigitalSearchRecommendationInstance =  RelatedDigitalSearchRecommendation()
+    let relatedDigitalSearchRecommendationInstance : RelatedDigitalSearchRecommendation
     var launchOptions: [UIA.LaunchOptionsKey: Any]?
 
     static var deliveredBadgeCount: Bool?
@@ -109,6 +109,7 @@ public class RDInstance: RDInstanceProtocol {
         rdTargetingActionInstance = RDTargetingAction(lock: readWriteLock, rdProfile: rdProfile)
         rdRemoteConfigInstance = RDRemoteConfig(profileId: rdProfile.profileId)
         rdLocationManager = RDLocationManager()
+        relatedDigitalSearchRecommendationInstance = RelatedDigitalSearchRecommendation()
 
         RDHelper.setEndpoints(dataSource: rdProfile.dataSource)
 
