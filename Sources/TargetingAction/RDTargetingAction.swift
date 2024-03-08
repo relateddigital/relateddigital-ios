@@ -949,11 +949,11 @@ class RDTargetingAction {
     }
     
     
-    private func parseInappRating(_ customWebView: [String: Any?]) -> InappReviewModel? {
-        guard let actionData = customWebView[RDConstants.actionData] as? [String: Any] else { return nil }
+    private func parseInappRating(_ inappratingModel: [String: Any?]) -> InappReviewModel? {
+        guard let actionData = inappratingModel[RDConstants.actionData] as? [String: Any] else { return nil }
         var inappRating = InappReviewModel(targetingActionType: .apprating)
-        inappRating.actId = customWebView[RDConstants.actid] as? Int ?? 0
-        inappRating.title = customWebView[RDConstants.title] as? String ?? ""
+        inappRating.actId = inappratingModel[RDConstants.actid] as? Int ?? 0
+        inappRating.title = inappratingModel[RDConstants.title] as? String ?? ""
 
         return inappRating
     }
