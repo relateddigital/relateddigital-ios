@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import AVFoundation
+import WebKit
 
 final public class RDNpsWithNumbersContainerView: UIView {
     
@@ -18,6 +19,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
     
     fileprivate var button: RDPopupDialogButton?
     public var collectionView: RDNpsWithNumbersCollectionView!
+    var webPlayer : WKWebView?
     
     internal lazy var shadowContainer: UIView = {
         let shadowContainer = UIView(frame: .zero)
@@ -79,6 +81,8 @@ final public class RDNpsWithNumbersContainerView: UIView {
         
         appendButtons()
         player = collectionView.imageView.addVideoPlayer(urlString: notification.videourl ?? "")
+        webPlayer = collectionView.imageView.addYoutubeVideoPlayer(urlString: notification.videourl ?? "")
+
         
         setupViews()
         super.layoutIfNeeded()
@@ -130,6 +134,7 @@ final public class RDNpsWithNumbersContainerView: UIView {
     public override func removeFromSuperview() {
         super.removeFromSuperview()
         player?.pause()
+        webPlayer?.stopPlayer()
     }
     
     

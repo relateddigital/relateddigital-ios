@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import WebKit
 
 class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewController {
 
@@ -33,6 +34,8 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
 
     let pasteboard = UIPasteboard.general
     var player : AVPlayer?
+    var webPlayer : WKWebView?
+
 
     convenience init(notification: RDInAppNotification) {
         self.init(notification: notification,
@@ -142,11 +145,14 @@ class RelatedDigitalFullNotificationViewController: RDBaseNotificationViewContro
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         player = imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
+        webPlayer = imageView.addYoutubeVideoPlayer(urlString: notification?.videourl ?? "")
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         player?.pause()
+        webPlayer?.stopPlayer()
     }
     
 

@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import WebKit
 
 class RDHalfScreenViewController: RDBaseNotificationViewController {
     
@@ -15,6 +16,7 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
     }
     
     var player : AVPlayer?
+    var webPlayer : WKWebView?
     var relatedDigitalHalfScreenView: RDHalfScreenView!
     var halfScreenHeight = 0.0
     
@@ -46,11 +48,13 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         player = relatedDigitalHalfScreenView.imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
+        webPlayer = relatedDigitalHalfScreenView.imageView.addYoutubeVideoPlayer(urlString: notification?.videourl ?? "")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         player?.pause()
+        webPlayer?.stopPlayer()
     }
     
     @objc func didTap(gesture: UITapGestureRecognizer) {
