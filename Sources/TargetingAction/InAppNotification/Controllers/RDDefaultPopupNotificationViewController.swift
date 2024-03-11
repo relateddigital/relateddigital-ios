@@ -45,20 +45,20 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if !inAppCurrentState.shared.isFirstPageOpened {
-            webPlayer = standardView.imageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
             player = standardView.imageView.addVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
+            webPlayer = standardView.imageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
             if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 || rdInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 || rdInAppNotification?.secondPopupTitle?.count ?? 0 > 0 {
                 inAppCurrentState.shared.isFirstPageOpened = true
             }
         } else {
             if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 {
                 player = standardView.imageView.addVideoPlayer(urlString: rdInAppNotification?.secondPopupVideourl1 ?? "")
-                webPlayer = standardView.imageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
+                webPlayer = standardView.imageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.secondPopupVideourl1 ?? "")
             }
             
             if rdInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 {
                 player = standardView.secondImageView.addVideoPlayer(urlString: rdInAppNotification?.secondPopupVideourl2 ?? "")
-                webPlayer = standardView.secondImageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
+                webPlayer = standardView.secondImageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.secondPopupVideourl2 ?? "")
             }
             inAppCurrentState.shared.isFirstPageOpened = false
         }
