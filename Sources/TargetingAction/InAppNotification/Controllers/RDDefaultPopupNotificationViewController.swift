@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import WebKit
 // swiftlint:disable type_name
 public final class RDDefaultPopupNotificationViewController: UIViewController {
     
@@ -14,6 +15,7 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
     var mailForm: MailSubscriptionViewModel?
     var scratchToWin: ScratchToWinModel?
     var player : AVPlayer?
+    var webPlayer : WKWebView?
     
     convenience init(rdInAppNotification: RDInAppNotification? = nil,
                      emailForm: MailSubscriptionViewModel? = nil,
@@ -43,6 +45,7 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if !inAppCurrentState.shared.isFirstPageOpened {
+            webPlayer = standardView.imageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
             player = standardView.imageView.addVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
             if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 || rdInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 || rdInAppNotification?.secondPopupTitle?.count ?? 0 > 0 {
                 inAppCurrentState.shared.isFirstPageOpened = true
@@ -50,10 +53,12 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
         } else {
             if rdInAppNotification?.secondPopupVideourl1?.count ?? 0 > 0 {
                 player = standardView.imageView.addVideoPlayer(urlString: rdInAppNotification?.secondPopupVideourl1 ?? "")
+                webPlayer = standardView.imageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
             }
             
             if rdInAppNotification?.secondPopupVideourl2?.count ?? 0 > 0 {
                 player = standardView.secondImageView.addVideoPlayer(urlString: rdInAppNotification?.secondPopupVideourl2 ?? "")
+                webPlayer = standardView.secondImageView.addYoutubeVideoPlayer(urlString: rdInAppNotification?.videourl ?? "")
             }
             inAppCurrentState.shared.isFirstPageOpened = false
         }
@@ -62,6 +67,7 @@ public final class RDDefaultPopupNotificationViewController: UIViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         player?.pause()
+        webPlayer?.stopPlayer()
     }
 }
 
