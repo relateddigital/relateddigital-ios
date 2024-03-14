@@ -144,7 +144,9 @@ class RDLocationManager: NSObject {
 
             if RDGeofenceState.getGeofenceEnabled() {
                 self.locMan.allowsBackgroundLocationUpdates = self.options.locationBackgroundMode && self.getAuthorizationStatus() == .authorizedAlways
-                self.locMan.pausesLocationUpdatesAutomatically = false
+                if !RDHelper.isiOSAppExtension() {
+                    self.locMan.pausesLocationUpdatesAutomatically = false
+                }
 
                 self.lpLocMan.allowsBackgroundLocationUpdates = self.options.locationBackgroundMode
                 self.lpLocMan.pausesLocationUpdatesAutomatically = false
