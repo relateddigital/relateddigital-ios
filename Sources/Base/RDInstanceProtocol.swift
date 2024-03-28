@@ -67,6 +67,7 @@ protocol RDInstanceProtocol {
     func getFavoriteAttributeActions(actionId: Int?, completion: @escaping FavoriteAttributeActionCompletion)
     func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, appGroupsKey: String?, deliveredBadge: Bool?)
     func askForNotificationPermission(register: Bool)
+    func deleteNotifications()
     func askForNotificationPermissionProvisional(register: Bool)
     func registerForPushNotifications()
     func setPushNotification(permission: Bool)
