@@ -386,6 +386,10 @@ public class RelatedDigital {
         }
     }
     
+    public static func deleteNotifications() {
+        shared.rdInstance.deleteNotifications()
+    }
+    
     public static func trackSearchRecommendationClick(searchReport:Report) {
         var properties = [String: String]()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"

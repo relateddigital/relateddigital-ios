@@ -698,6 +698,12 @@ extension RDInstance {
             }
         }
     }
+    
+    func deleteNotifications() {
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
+        center.removeAllDeliveredNotifications()
+    }
 
     func getButtonCarouselView(properties: Properties, completion: @escaping ((ButtonCarouselView?) -> Void)) {
         let guid = UUID().uuidString
