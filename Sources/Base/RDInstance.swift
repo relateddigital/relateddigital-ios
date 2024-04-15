@@ -1075,6 +1075,9 @@ extension RDInstance {
     public func getToken(completion: @escaping ((_ token: String) -> Void)) {
         RDPush.getToken(completion: completion)
     }
+    public func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void)) {
+        RDPush.readAllPushMessages(completion: completion)
+    }
 }
 
 public protocol RDInappButtonDelegate: AnyObject {

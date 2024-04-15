@@ -551,6 +551,17 @@ extension RDPush {
         ?? (RDPush.sharedInstance?.subscription.token ?? "")
       completion(token)
     }
+    
+    public static func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void)) {
+        PushUserDefaultsUtils.readAllPushMessages { success in
+            if success {
+                completion(true)
+            } else {
+                completion(false)
+            }
+        }
+        
+    }
 
 }
 

@@ -358,6 +358,10 @@ public class RelatedDigital {
         shared.rdInstance.getPushMessagesWithID(completion: completion)
     }
     
+    public static func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void)) {
+        shared.rdInstance.readAllPushMessages(completion: completion)
+    }
+    
     public static func getToken(completion: @escaping ((_ token: String) -> Void)) {
         shared.rdInstance.getToken(completion: completion)
     }
