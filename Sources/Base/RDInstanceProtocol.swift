@@ -91,6 +91,6 @@ protocol RDInstanceProtocol {
     func getPushMessages(completion: @escaping GetPushMessagesCompletion)
     func getPushMessagesWithID(completion: @escaping GetPushMessagesCompletion)
     func getToken(completion: @escaping ((_ token: String) -> Void))
-    
+    func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void))
 }
 
