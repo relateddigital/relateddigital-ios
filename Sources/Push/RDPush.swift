@@ -552,15 +552,24 @@ extension RDPush {
       completion(token)
     }
     
-    public static func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void)) {
-        PushUserDefaultsUtils.readAllPushMessages { success in
-            if success {
-                completion(true)
-            } else {
-                completion(false)
+    public static func readAllPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
+        if let pushId = pushId {
+            PushUserDefaultsUtils.readAllPushMessages(pushId: pushId) { success in
+                if success {
+                    completion(true)
+                } else {
+                    completion(false)
+                }
+            }
+        } else {
+            PushUserDefaultsUtils.readAllPushMessages { success in
+                if success {
+                    completion(true)
+                } else {
+                    completion(false)
+                }
             }
         }
-        
     }
 
 }

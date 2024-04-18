@@ -216,15 +216,30 @@ class PushUserDefaultsUtils {
         }
     }
     
-    static func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void)){
+    static func readAllPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
         var recentPayloads = getRecentPayloads()
         payloadLock.write {
-            for index in 0..<recentPayloads.count {
-                var updatedPayload = recentPayloads[index]
-                updatedPayload.status = "O"
-                updatedPayload.openedDate = PushTools.formatDate(Date())
-                recentPayloads[index] = updatedPayload
+            if let pushId = pushId {
+                if let index = recentPayloads.firstIndex(where: { $0.pushId == pushId }) {
+                    var updatedPayload = recentPayloads[index]
+                    // Güncelleme işlemlerini yap
+                    updatedPayload.status = "O"
+                    updatedPayload.openedDate = PushTools.formatDate(Date())
+                    // Güncellenmiş payload'ı koleksiyona tekrar ekle
+                    recentPayloads[index] = updatedPayload
+                } else {
+                    RDLogger.warn("Payload with pushId \(pushId) not found in recent payloads.")
+                }
+            } else {
+                // pushId yoksa tüm payload'ları işle
+                for index in 0..<recentPayloads.count {
+                    var updatedPayload = recentPayloads[index]
+                    updatedPayload.status = "O"
+                    updatedPayload.openedDate = PushTools.formatDate(Date())
+                    recentPayloads[index] = updatedPayload
+                }
             }
+            
             if let updatedPayloadsData = try? JSONEncoder().encode(recentPayloads) {
                 saveUserDefaults(key: PushKey.euroPayloadsKey, value: updatedPayloadsData as AnyObject)
                 completion(true)
@@ -234,6 +249,7 @@ class PushUserDefaultsUtils {
             }
         }
     }
+
 
     static func getRecentPayloads() -> [RDPushMessage] {
         var finalPayloads = [RDPushMessage]()

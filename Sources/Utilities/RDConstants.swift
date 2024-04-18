@@ -35,7 +35,7 @@ public class UrlConstant {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.37"
+    static let sdkVersion = "4.0.38"
     static let sdkType = "native"
     
     static let HTTP = "http"
