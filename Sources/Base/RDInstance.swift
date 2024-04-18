@@ -1078,6 +1078,11 @@ extension RDInstance {
     public func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void)) {
         RDPush.readAllPushMessages(completion: completion)
     }
+    public func readAllPushMessagesWithId(pushId: String?, completion: @escaping ((Bool) -> Void)) {
+        if let pushId = pushId {
+            RDPush.readAllPushMessages(pushId: pushId, completion: completion)
+        }
+    }
 }
 
 public protocol RDInappButtonDelegate: AnyObject {
