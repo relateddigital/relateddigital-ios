@@ -43,6 +43,10 @@ extension String {
     func getUrlExtension() -> String {
         return URL(fileURLWithPath: self).pathExtension
     }
+    
+    func removeWhitespace() -> String {
+        return self.replacingOccurrences(of: " ", with: "")
+    }
 }
 
 extension Optional where Wrapped == String {
@@ -74,6 +78,20 @@ extension Int {
 public let imageCache = NSCache<NSString, AnyObject>()
 
 extension UIImageView {
+    
+    
+    func loadImage(from url: URL) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, let newImage = UIImage(data: data) else {
+                print("Failed to load image:", error?.localizedDescription ?? "Unknown error")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.image = newImage
+            }
+        }.resume()
+    }
     
     
     func setImageWithImageSize(withUrl urlString : String) {
