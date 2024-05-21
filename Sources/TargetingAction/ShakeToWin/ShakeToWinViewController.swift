@@ -329,7 +329,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
                 page.addSubview(imageView)
                 imageView.translatesAutoresizingMaskIntoConstraints = false
                 NSLayoutConstraint.activate([
-                    imageView.topAnchor.constraint(equalTo: page.topAnchor),
+                    imageView.topAnchor.constraint(equalTo: page.topAnchor,constant: 15),
                     imageView.bottomAnchor.constraint(equalTo: page.bottomAnchor),
                     imageView.centerXAnchor.constraint(equalTo: page.centerXAnchor),
                     imageView.leadingAnchor.constraint(equalTo: page.leadingAnchor),
@@ -337,6 +337,7 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
                 ])
                 page.bringSubviewToFront(imageView)
                 imageView.setImageWithImageSize(withUrl: img)
+                imageView.contentMode = .scaleAspectFit
                 imageAdded = true
             }
             let title = UILabel(frame: .zero)
