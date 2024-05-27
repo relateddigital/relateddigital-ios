@@ -398,8 +398,10 @@ public class RelatedDigital {
         shared.rdInstance.deleteNotifications()
     }
     
-    public static func removeNotification(withPushID pushID: String) {
-        shared.rdInstance.removeNotification(withPushID: pushID)
+    public static func removeNotification(withPushID pushID: String, completion: @escaping (Bool) -> Void) {
+        shared.rdInstance.removeNotification(withPushID: pushID, completion: { deleted in
+            completion(deleted)
+        })
     }
     
     public static func trackSearchRecommendationClick(searchReport:Report) {

@@ -68,7 +68,7 @@ protocol RDInstanceProtocol {
     func enablePushNotifications(appAlias: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, appGroupsKey: String?, deliveredBadge: Bool?)
     func askForNotificationPermission(register: Bool)
     func deleteNotifications()
-    func removeNotification(withPushID pushID: String)
+    func removeNotification(withPushID pushID: String, completion: @escaping (Bool) -> Void)
     func askForNotificationPermissionProvisional(register: Bool)
     func registerForPushNotifications()
     func setPushNotification(permission: Bool)
