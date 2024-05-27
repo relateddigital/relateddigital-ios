@@ -11,7 +11,7 @@ import UIKit
 import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
-    
+        
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
