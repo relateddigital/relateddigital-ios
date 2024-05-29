@@ -329,8 +329,8 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
                 page.addSubview(imageView)
                 imageView.translatesAutoresizingMaskIntoConstraints = false
                 NSLayoutConstraint.activate([
-                    imageView.topAnchor.constraint(equalTo: page.topAnchor,constant: 15),
-                    imageView.bottomAnchor.constraint(equalTo: page.bottomAnchor),
+                    
+                    imageView.centerYAnchor.constraint(equalTo: page.centerYAnchor),
                     imageView.centerXAnchor.constraint(equalTo: page.centerXAnchor),
                     imageView.leadingAnchor.constraint(equalTo: page.leadingAnchor),
                     imageView.trailingAnchor.constraint(equalTo: page.trailingAnchor)
