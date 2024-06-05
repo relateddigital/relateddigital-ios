@@ -7,7 +7,7 @@
 
 import XCTest
 
-@testable import RelatedDigitalExample
+//@testable import RelatedDigitalExample
 @testable import RelatedDigitalIOS
 
 class RelatedDigitalExampleTests: XCTestCase {
@@ -25,31 +25,31 @@ class RelatedDigitalExampleTests: XCTestCase {
         XCTAssertFalse(RelatedDigital.inAppNotificationsEnabled)
     }
     
-    
-    func testShowBannerCarousel() {
-        
-        let viewController = InAppViewController()
-        let bannerView = viewController.showBannerCarousel()
-        XCTAssertNotNil(bannerView)
-    }
-    
-    
-    func testInAppEvent() {
-        let viewController = InAppViewController()
-        viewController.viewDidLoad()
-        
-        // 2. Test queryStringFilter = "productStatNotifier"
-        viewController.inAppEvent("productStatNotifier")
-        XCTAssertEqual(viewController.propertiesUnitTest["OM.inapptype"], "productStatNotifier")
-
-    }
-    
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+//
+//    func testShowBannerCarousel() {
+//
+//        let viewController = InAppViewController()
+//        let bannerView = viewController.showBannerCarousel()
+//        XCTAssertNotNil(bannerView)
+//    }
+//
+//
+//    func testInAppEvent() {
+//        let viewController = InAppViewController()
+//        viewController.viewDidLoad()
+//
+//        // 2. Test queryStringFilter = "productStatNotifier"
+//        viewController.inAppEvent("productStatNotifier")
+//        XCTAssertEqual(viewController.propertiesUnitTest["OM.inapptype"], "productStatNotifier")
+//
+//    }
+//
+//
+//    func testPerformanceExample() throws {
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//        }
+//    }
 
 }

@@ -5,6 +5,8 @@ target 'RelatedDigitalExample' do
   pod 'RelatedDigitalIOS', :path => '../'
   pod 'CleanyModal'
   pod "SplitRow", :git => 'https://github.com/EurekaCommunity/SplitRow.git'
+  pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
 end
 
 target 'RelatedDigitalExampleTests' do

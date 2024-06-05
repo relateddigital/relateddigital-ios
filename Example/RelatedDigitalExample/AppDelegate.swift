@@ -8,6 +8,7 @@
 import RelatedDigitalIOS
 import UIKit
 import UserNotifications
+import Firebase
 
 var relatedDigitalProfile = RelatedDigitalProfile()
 
@@ -40,6 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         window.rootViewController = SelectViewController()
         window.makeKeyAndVisible()
         self.window = window
+    
+        FirebaseApp.configure()
         return true
     }
     
@@ -90,6 +93,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         RelatedDigital.handlePush(pushDictionary: response.notification.request.content.userInfo)
         RelatedDigital.handlePushWithActionButtons(response: response,type:self)
         completionHandler()
+    }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("Firebase registration token: \(String(describing: fcmToken))")
+        // Token'ı backend'e gönderin veya saklayın
     }
     
     func actionButtonClicked(identifier: String, url: String) {

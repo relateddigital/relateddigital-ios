@@ -24,6 +24,7 @@
 		2F51064527B3A8890008C996 /* FavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F51064427B3A8890008C996 /* FavoriteViewController.swift */; };
 		2F6C69A327BFBCFF002FEEDB /* PushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6C69A227BFBCFF002FEEDB /* PushViewController.swift */; };
 		4C0CB2C264445A8A014E5929 /* Pods_RelatedDigitalExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5A998483FFF01F94AF0313 /* Pods_RelatedDigitalExample.framework */; };
+		6125287C2C10802A004D3046 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6125287B2C10802A004D3046 /* GoogleService-Info.plist */; };
 		88146CD1269CF5AD00473051 /* RelatedDigitalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88146CD0269CF5AD00473051 /* RelatedDigitalTabBarController.swift */; };
 		88146CD3269CF8A400473051 /* AnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88146CD2269CF8A400473051 /* AnalyticsViewController.swift */; };
 		88146CD5269CF8E000473051 /* GeofenceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88146CD4269CF8E000473051 /* GeofenceViewController.swift */; };
@@ -107,6 +108,7 @@
 		2F6C69A227BFBCFF002FEEDB /* PushViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushViewController.swift; sourceTree = "<group>"; };
 		48969B1D02B45826FD4D0117 /* Pods-NotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.debug.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.debug.xcconfig"; sourceTree = "<group>"; };
 		4B5A998483FFF01F94AF0313 /* Pods_RelatedDigitalExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RelatedDigitalExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6125287B2C10802A004D3046 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6C2532F67A145754C5FB2598 /* Pods-RelatedDigitalExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RelatedDigitalExample.release.xcconfig"; path = "Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample.release.xcconfig"; sourceTree = "<group>"; };
 		831AA4B1CE4638333F4B136D /* Pods-NotificationService.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.release.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.release.xcconfig"; sourceTree = "<group>"; };
 		88146CD0269CF5AD00473051 /* RelatedDigitalTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelatedDigitalTabBarController.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 		88680B002694FC09004B8DE8 = {
 			isa = PBXGroup;
 			children = (
+				6125287B2C10802A004D3046 /* GoogleService-Info.plist */,
 				88680B0B2694FC09004B8DE8 /* RelatedDigitalExample */,
 				88680B222694FC0D004B8DE8 /* RelatedDigitalExampleTests */,
 				88680B2D2694FC0D004B8DE8 /* RelatedDigitalExampleUITests */,
@@ -496,6 +499,7 @@
 			files = (
 				88680B192694FC0C004B8DE8 /* LaunchScreen.storyboard in Resources */,
 				88A44ADB292A76B2002F90FA /* sydneysignature.ttf in Resources */,
+				6125287C2C10802A004D3046 /* GoogleService-Info.plist in Resources */,
 				88680B162694FC0C004B8DE8 /* Assets.xcassets in Resources */,
 				88A44ADA292A76B2002F90FA /* android101.otf in Resources */,
 			);
