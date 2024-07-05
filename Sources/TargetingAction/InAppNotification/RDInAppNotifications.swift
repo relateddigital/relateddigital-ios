@@ -138,9 +138,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showGiftCatch(giftCatchViewModel: GiftCatchViewModel) -> Bool {
-        let giftCatchVC = GiftCatchViewController(giftCatchViewModel)
-        giftCatchVC.delegate = self
-        giftCatchVC.show(animated: true)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(giftCatchViewModel.waitingTime), execute: {
+            let giftCatchVC = GiftCatchViewController(giftCatchViewModel)
+            giftCatchVC.delegate = self
+            giftCatchVC.show(animated: true)
+        })
+
         return true
     }
 
@@ -298,9 +302,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showSpinToWin(_ model: SpinToWinViewModel) -> Bool {
-        let spinToWinVC = RDSpinToWinViewController(model)
-        spinToWinVC.delegate = self
-        spinToWinVC.show(animated: true)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+            let spinToWinVC = RDSpinToWinViewController(model)
+            spinToWinVC.delegate = self
+            spinToWinVC.show(animated: true)
+        })
+        
         return true
     }
 

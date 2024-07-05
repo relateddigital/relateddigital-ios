@@ -13,7 +13,7 @@ class GiftCatchViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,6 +23,7 @@ class GiftCatchViewController: RDBaseNotificationViewController {
     }
 
     init(_ gamefication: GiftCatchViewModel) {
+
         super.init(nibName: nil, bundle: nil)
         self.gameficationModel = gamefication
     }

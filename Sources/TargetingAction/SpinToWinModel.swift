@@ -45,6 +45,7 @@ public struct SpinToWinViewModel: TargetingActionViewModel, Codable {
     var wheelSpinAction: String
     var promocodesSoldoutMessage: String
     var copyButtonFunction: String
+    var waitingTime : Int
 
     // ExtendedProps
     var displaynameTextColor: String
