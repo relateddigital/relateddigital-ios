@@ -546,6 +546,18 @@ extension RDPush {
         completion(PushUserDefaultsUtils.getRecentPayloadsWithId())
     }
     
+    public static func deletePayloadWithId(pushId: String,completion: @escaping ((_ completed: Bool) -> Void)) {
+        PushUserDefaultsUtils.deletePayloadWithId(pushId: pushId) { succes in
+            completion(succes)
+        }
+    }
+    
+    public static func deleteAllPayloads(completion: @escaping ((_ completed: Bool) -> Void)) {
+        PushUserDefaultsUtils.deleteAllPayloads { succes in
+            completion(succes)
+        }
+    }
+    
     public static func getToken(completion: @escaping ((_ token: String) -> Void)) {
       let token = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.tokenKey) as? String
         ?? (RDPush.sharedInstance?.subscription.token ?? "")
