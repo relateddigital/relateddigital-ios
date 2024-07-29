@@ -103,6 +103,39 @@ class PushUserDefaultsUtils {
             RDLogger.warn("Payload is not valid, pushId missing : \(payload.encoded)")
         }
     }
+    
+    static func deletePayloadWithId(pushId: String, completion: @escaping (Bool) -> Void) {
+        var recentPayloads = getRecentPayloads()
+        payloadLock.write {
+            if let index = recentPayloads.firstIndex(where: { $0.pushId == pushId }) {
+                recentPayloads.remove(at: index)
+                if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
+                    saveUserDefaults(key: PushKey.euroPayloadsWithIdKey, value: recentPayloadsData as AnyObject)
+                    completion(true)
+                } else {
+                    RDLogger.warn("Can not encode recentPayloads after deletion: \(String(describing: recentPayloads))")
+                    completion(false)
+                }
+            } else {
+                RDLogger.warn("Payload with pushId \(pushId) not found.")
+                completion(false)
+            }
+        }
+    }
+
+    static func deleteAllPayloads(completion: @escaping (Bool) -> Void) {
+        payloadLock.write {
+            let emptyPayloads: [RDPushMessage] = []
+            if let emptyPayloadsData = try? JSONEncoder().encode(emptyPayloads) {
+                saveUserDefaults(key: PushKey.euroPayloadsWithIdKey, value: emptyPayloadsData as AnyObject)
+                RDLogger.info("All payloads have been deleted successfully.")
+                completion(true)
+            } else {
+                RDLogger.warn("Can not encode empty payloads.")
+                completion(false)
+            }
+        }
+    }
 
     static func getRecentPayloadsWithId() -> [RDPushMessage] {
         var finalPayloads = [RDPushMessage]()

@@ -19,6 +19,7 @@ public struct GiftCatchViewModel: TargetingActionViewModel, Codable {
     var copybutton_label = String()
     var copybutton_function = String()
     var ios_lnk = String()
+    var waitingTime = Int()
 
     var mailSubscriptionForm = MailSubscriptionModelGamification()
     var gamificationRules: GamificationRules? = GamificationRules()
