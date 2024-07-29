@@ -332,12 +332,14 @@ class ShakeToWinViewController: RDBaseNotificationViewController {
                     
                     imageView.centerYAnchor.constraint(equalTo: page.centerYAnchor),
                     imageView.centerXAnchor.constraint(equalTo: page.centerXAnchor),
+                    imageView.topAnchor.constraint(equalTo: page.topAnchor),
+                    imageView.bottomAnchor.constraint(equalTo: page.bottomAnchor),
                     imageView.leadingAnchor.constraint(equalTo: page.leadingAnchor),
                     imageView.trailingAnchor.constraint(equalTo: page.trailingAnchor)
                 ])
                 page.bringSubviewToFront(imageView)
                 imageView.setImageWithImageSize(withUrl: img)
-                imageView.contentMode = .scaleAspectFit
+                imageView.contentMode = .scaleToFill
                 imageAdded = true
             }
             let title = UILabel(frame: .zero)
