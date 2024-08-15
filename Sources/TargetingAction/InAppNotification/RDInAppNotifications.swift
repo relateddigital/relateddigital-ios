@@ -117,10 +117,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showCustomWebview(model: customWebview) {
                         self.markTargetingActionShown(model: customWebview)
                     }
-                }
-                else if model.targetingActionType == .slotMachine, let jackpot = model as? JackpotModel {
+                } else if model.targetingActionType == .slotMachine, let jackpot = model as? JackpotModel {
                    if self.showJackpot(model: jackpot) {
                        self.markTargetingActionShown(model: jackpot)
+                   }
+               } else if model.targetingActionType == .clawMachine, let clawMachine = model as? ClawMachineModel {
+                   if self.showClawMachine(model: clawMachine) {
+                       self.markTargetingActionShown(model: clawMachine)
                    }
                }
                 else if model.targetingActionType == .apprating {
@@ -188,6 +191,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         let jackpotVC = JackpotViewController(model)
         jackpotVC.delegate = self
         jackpotVC.show(animated: true)
+        return true
+    }
+    
+    func showClawMachine(model: ClawMachineModel) -> Bool {
+        let clawMachineVC = ClawMachineViewController(model)
+        clawMachineVC.delegate = self
+        clawMachineVC.show(animated: true)
         return true
     }
 

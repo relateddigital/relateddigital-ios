@@ -13,7 +13,7 @@ public class BannerCodeManager {
     private let giftRainCode = "giftRainCode"
     private let findToWinCode = "findToWinCode"
     private let jackpotCode = "jackpotCode"
-    private let clawMachineCode = "clawMachineCode"
+    private let clawMachineCode = "ClawMachineCode"
     private let shakeToWinCode = "shakeToWinCode"
     private let giftBoxCode = "giftBoxCode"
     private let ChooseFavoriteGameCode = "ChooseFavoriteGameCode"
