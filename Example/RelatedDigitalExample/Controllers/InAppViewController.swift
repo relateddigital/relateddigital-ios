@@ -91,6 +91,7 @@ class InAppViewController: FormViewController, BannerDelegate {
             .slotMachine : [RDInAppNotificationType.slotMachine.rawValue: 1099],
             .mobileCustomActions : [RDInAppNotificationType.mobileCustomActions.rawValue: 1100],
             .apprating : [RDInAppNotificationType.apprating.rawValue: 1101],
+            .clawMachine : [RDInAppNotificationType.clawMachine.rawValue: 1111],
             ]
     }
     

@@ -38,6 +38,8 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case choosefavorite = "Choosefavorite"
     case slotMachine = "slotMachine"
     case apprating = "MobileAppRating"
+    case clawMachine = "ClawMachine"
+
 
 
 }
