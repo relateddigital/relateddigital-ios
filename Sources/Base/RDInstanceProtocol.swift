@@ -55,7 +55,7 @@ protocol RDInstanceProtocol {
     func trackGiftBoxClick(giftBoxReport: GiftBoxReport)
     func trackScratchToWinClick(scratchToWinReport: TargetingActionReport)
     func trackJackpotClick(jackpotReport: JackpotReport)
-    func trackClowMachineClick(ClowMachineReport: ClowMachineReport)
+    func trackClowMachineClick(clowMachineReport: ClawMachineReport)
     func trackChooseFavoriteClick(chooseFavoriteReport: ChooseFavoriteReport)
     func trackCustomWebviewClick(customWebviewReport: CustomWebViewReport)
     func trackDrawerClick(drawerReport: DrawerReport)

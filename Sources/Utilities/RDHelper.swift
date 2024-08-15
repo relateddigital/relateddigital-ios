@@ -100,9 +100,10 @@ internal class RDHelper {
         RDBasePath.endpoints[.giftBoxJs] = RDConstants.giftBoxUrl
         RDBasePath.endpoints[.chooseFavoriteJs] = RDConstants.chooseFavoriteUrl
         RDBasePath.endpoints[.jackpotJs] = RDConstants.jackpoteUrl
+        RDBasePath.endpoints[.clawMachineJs] = RDConstants.clawMachineUrl
 
 
-       
+        
     }
     
     static private let dateFormatter = DateFormatter()

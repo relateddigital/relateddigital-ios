@@ -314,6 +314,23 @@ class RDRequest {
             completion(result, nil)
         })
     }
+    
+    class func sendClawMachineScriptRequest(completion: @escaping (String?, RDError?) -> Void) {
+        let responseParser: (Data) -> String? = { data in
+            String(data: data, encoding: .utf8)
+        }
+        let resource = RDNetwork.buildResource(endPoint: .clawMachineJs, method: .get, queryItems: [], headers: [:], parse: responseParser, guid: nil)
+        sendClowMachineRequestHandler(resource: resource, completion: { result, error in completion(result, error) })
+    }
+
+    private class func sendClowMachineRequestHandler(resource: RDResource<String>, completion: @escaping (String?, RDError?) -> Void) {
+        RDNetwork.apiRequest(resource: resource, failure: { error, _, _ in
+            RDLogger.error("API request to \(resource.endPoint) has failed with error \(error)")
+            completion(nil, error)
+        }, success: { result, _ in
+            completion(result, nil)
+        })
+    }
 
     private class func sendFindToWinScriptRequestHandler(resource: RDResource<String>, completion: @escaping (String?, RDError?) -> Void) {
         RDNetwork.apiRequest(resource: resource, failure: { error, _, _ in

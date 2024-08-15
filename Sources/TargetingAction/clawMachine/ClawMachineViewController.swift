@@ -2,7 +2,7 @@
 import UIKit
 import WebKit
 
-class ClowMachineViewController: RDBaseNotificationViewController {
+class ClawMachineViewController: RDBaseNotificationViewController {
     weak var webView: WKWebView!
     var subsEmail = ""
     var codeGotten = false
@@ -14,9 +14,9 @@ class ClowMachineViewController: RDBaseNotificationViewController {
         webView.allEdges(to: self.view)
     }
 
-    init(_ ClowMachineModel: ClowMachineModel) {
+    init(_ ClawMachineModel: ClawMachineModel) {
         super.init(nibName: nil, bundle: nil)
-        self.ClowMachine = ClowMachineModel
+        self.ClawMachine = ClawMachineModel
     }
 
     required init?(coder: NSCoder) {
@@ -25,9 +25,9 @@ class ClowMachineViewController: RDBaseNotificationViewController {
 
     private func close() {
         dismiss(animated: true) {
-            if let clowMachineModel = self.ClowMachine, !clowMachineModel.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
-                if clowMachineModel.bannercodeShouldShow ?? false {
-                    let bannerVC = RDClowMachineBannerController(clowMachineModel)
+            if let clawMachineModel = self.ClawMachine, !clawMachineModel.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
+                if clawMachineModel.bannercodeShouldShow ?? false {
+                    let bannerVC = RDClawMachineBannerController(clawMachineModel)
                     bannerVC.delegate = self.delegate
                     bannerVC.show(animated: true)
                 }
@@ -92,7 +92,7 @@ class ClowMachineViewController: RDBaseNotificationViewController {
         configuration.mediaTypesRequiringUserActionForPlayback = []
         configuration.allowsInlineMediaPlayback = true
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        if let htmlUrl = createClowMachineFiles() {
+        if let htmlUrl = createClawMachineFiles() {
             webView.loadFileURL(htmlUrl, allowingReadAccessTo: htmlUrl.deletingLastPathComponent())
             webView.backgroundColor = .clear
             webView.translatesAutoresizingMaskIntoConstraints = false
@@ -101,20 +101,20 @@ class ClowMachineViewController: RDBaseNotificationViewController {
         return webView
     }
 
-    private func createClowMachineFiles() -> URL? {
+    private func createClawMachineFiles() -> URL? {
         let manager = FileManager.default
         guard let docUrl = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("clowMachine.html")
-        let jsUrl = docUrl.appendingPathComponent("clowMachine.js")
+        let htmlUrl = docUrl.appendingPathComponent("clawMachine.html")
+        let jsUrl = docUrl.appendingPathComponent("clawMachine.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "clowMachine", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "clawMachine", ofType: "html") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
 
@@ -131,7 +131,7 @@ class ClowMachineViewController: RDBaseNotificationViewController {
 
             try manager.copyItem(at: bundleHtmlUrl, to: htmlUrl)
 
-            if let jsContent = ClowMachine?.jsContent?.utf8 {
+            if let jsContent = ClawMachine?.jsContent?.utf8 {
                 guard manager.createFile(atPath: jsUrl.path, contents: Data(jsContent)) else {
                     return nil
                 }
@@ -152,7 +152,7 @@ class ClowMachineViewController: RDBaseNotificationViewController {
                     try manager.removeItem(atPath: fontUrl.path)
                 }
                 try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
-                self.ClowMachine?.fontFiles.append(fontUrlKeyValue.key)
+                self.ClawMachine?.fontFiles.append(fontUrlKeyValue.key)
             } catch let error {
                 RDLogger.error(error)
                 RDLogger.error(error.localizedDescription)
@@ -199,9 +199,9 @@ class ClowMachineViewController: RDBaseNotificationViewController {
 
     private func getCustomFontNames() -> Set<String> {
         var customFontNames = Set<String>()
-        if let clowMachine = self.ClowMachine {
-            if !clowMachine.custom_font_family_ios.isEmptyOrWhitespace {
-                customFontNames.insert(clowMachine.custom_font_family_ios)
+        if let clawMachine = self.ClawMachine {
+            if !clawMachine.custom_font_family_ios.isEmptyOrWhitespace {
+                customFontNames.insert(clawMachine.custom_font_family_ios)
             }
         }
         return customFontNames
@@ -209,7 +209,7 @@ class ClowMachineViewController: RDBaseNotificationViewController {
 
 }
 
-extension ClowMachineViewController: WKScriptMessageHandler {
+extension ClawMachineViewController: WKScriptMessageHandler {
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
 
@@ -219,11 +219,11 @@ extension ClowMachineViewController: WKScriptMessageHandler {
                     RDLogger.info("console.log: \(message)")
                 }
                 
-                if method == "initClowMachine" {
-                    RDLogger.info("initClowMachine")
+                if method == "initClawMachine" {
+                    RDLogger.info("initClawMachine")
                     
-                    if let jsonString = ClowMachine?.jsonContent {
-                        self.webView.evaluateJavaScript("window.initClowMachine(\(jsonString));") { (_, err) in
+                    if let jsonString = ClawMachine?.jsonContent {
+                        self.webView.evaluateJavaScript("window.initClawMachine(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
                                 RDLogger.error(error.localizedDescription)
@@ -240,12 +240,12 @@ extension ClowMachineViewController: WKScriptMessageHandler {
                 }
 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeClowMachineMail(actid: "\(self.ClowMachine!.actId ?? 0)", auth: self.ClowMachine!.auth, mail: email)
+                    RelatedDigital.subscribeClawMachineMail(actid: "\(self.ClawMachine!.actId ?? 0)", auth: self.ClawMachine!.auth, mail: email)
                     subsEmail = email
                 }
 
                 if method == "sendReport" {
-                    RelatedDigital.trackClowMachineClick(clowMachinetReport: (self.ClowMachine?.report)!)
+                    RelatedDigital.trackClawMachineClick(clawMachinetReport: (self.ClawMachine?.report)!)
                 }
 
                 if method == "linkClicked", let urlLnk = event["url"] as? String {
@@ -259,8 +259,8 @@ extension ClowMachineViewController: WKScriptMessageHandler {
                 if method == "saveCodeGotten", let code = event["code"] as? String, let mail = event["email"] as? String  {
                     codeGotten = true
                     UIPasteboard.general.string = code
-                    BannerCodeManager.shared.setClowMachineCode(code: code)
-                    let actionID = self.ClowMachine?.actId
+                    BannerCodeManager.shared.setClawMachineCode(code: code)
+                    let actionID = self.ClawMachine?.actId
                     var properties = Properties()
                     properties[RDConstants.promoActionID] = String(actionID ?? 0)
                     properties[RDConstants.promoEmailKey] = mail

@@ -7,26 +7,26 @@
 
 import UIKit
 
-class RDClowMachineBannerController: UIViewController {
+class RDClawMachineBannerController: RDBaseNotificationViewController {
     
-    var ClowMachineCodeBannerView: RDClowMachineCodeBannerView!
+    var ClawMachineCodeBannerView: RDClawMachineCodeBannerView!
     var halfScreenHeight = 0.0
     
     var isDismissing = false
     
-    init(_ clowMachineModel: ClowMachineModel) {
+    init(_ clawMachineModel: ClawMachineModel) {
         super.init(nibName: nil, bundle: nil)
-        self.ClowMachine = clowMachineModel
-        ClowMachineCodeBannerView = RDClowMachineCodeBannerView(frame: UIScreen.main.bounds, clowMachineModel:  self.ClowMachine!)
-        view = ClowMachineCodeBannerView
+        self.ClawMachine = clawMachineModel
+        ClawMachineCodeBannerView = RDClawMachineCodeBannerView(frame: UIScreen.main.bounds, clawMachineModel:  self.ClawMachine!)
+        view = ClawMachineCodeBannerView
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))
         tapGesture.numberOfTapsRequired = 1
-        ClowMachineCodeBannerView.addGestureRecognizer(tapGesture)
+        ClawMachineCodeBannerView.addGestureRecognizer(tapGesture)
         
         let closeTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeButtonTapped(tapGestureRecognizer:)))
-        ClowMachineCodeBannerView.closeButton.isUserInteractionEnabled = true
-        ClowMachineCodeBannerView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
+        ClawMachineCodeBannerView.closeButton.isUserInteractionEnabled = true
+        ClawMachineCodeBannerView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
     }
 
 
@@ -41,7 +41,7 @@ class RDClowMachineBannerController: UIViewController {
     
     @objc func didTap(gesture: UITapGestureRecognizer) {
         if !isDismissing && gesture.state == UIGestureRecognizer.State.ended {
-            UIPasteboard.general.string = ClowMachine?.promocode_banner_text.replacingOccurrences(of: "\'", with: "")
+            UIPasteboard.general.string = ClawMachine?.promocode_banner_text.replacingOccurrences(of: "\'", with: "")
             RDHelper.showCopiedClipboardMessage()
         }
     }
@@ -72,7 +72,7 @@ class RDClowMachineBannerController: UIViewController {
         }
         
         let topInset = Double(RDHelper.getSafeAreaInsets().top)
-        halfScreenHeight = Double(ClowMachineCodeBannerView.horizontalStackView.frame.height)
+        halfScreenHeight = Double(ClawMachineCodeBannerView.horizontalStackView.frame.height)
         
         let frameY = topInset
         

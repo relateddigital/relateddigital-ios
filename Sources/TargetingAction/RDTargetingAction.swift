@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -165,6 +165,15 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
+            } else if targetingActionViewModel?.targetingActionType == .clawMachine {
+                RDRequest.sendClawMachineScriptRequest(completion: { (result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
             } else {
                 semaphore.signal()
             }
@@ -204,6 +213,8 @@ class RDTargetingAction {
             return parseChooseFavorite(chooseFavorite)
         } else if let jackpot = result[RDConstants.slotMachine] as? [[String: Any?]], let jackpot = jackpot.first {
             return parseJackpot(jackpot)
+        } else if let clawMachine = result[RDConstants.clawMachine] as? [[String: Any?]], let clawMachine = clawMachine.first {
+            return parseClawMachine(clawMachine)
         } else if let customWeb = result[RDConstants.mobileCustomActions] as? [[String: Any?]], let customWeb = customWeb.first {
             return parseCustomWebview(customWeb)
         } else if let inappRating = result[RDConstants.apprating] as? [[String: Any?]], let inappRating = inappRating.first {
@@ -1043,6 +1054,45 @@ class RDTargetingAction {
 
         return jackpotModel
     }
+    
+    
+    private func parseClawMachine(_ clowMachine: [String: Any?]) -> ClawMachineModel? {
+        
+        guard let actionData = clowMachine[RDConstants.actionData] as? [String: Any] else { return nil }
+        var ClowMachineModel = ClawMachineModel(targetingActionType: .clawMachine)
+        ClowMachineModel.actId = clowMachine[RDConstants.actid] as? Int ?? 0
+        ClowMachineModel.title = clowMachine[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+
+        // prome banner params
+        ClowMachineModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        ClowMachineModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        ClowMachineModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        ClowMachineModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        ClowMachineModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        ClowMachineModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        ClowMachineModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        ClowMachineModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        ClowMachineModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        ClowMachineModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        //
+
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: clowMachine,
+            options: []) {
+            ClowMachineModel.jsonContent = String(data: theJSONData, encoding: .utf8)
+        }
+
+        if ClowMachineModel.promocode_banner_button_label.count > 0 && ClowMachineModel.promocode_banner_text.count > 0 {
+            ClowMachineModel.bannercodeShouldShow = true
+        } else {
+            ClowMachineModel.bannercodeShouldShow = false
+        }
+
+        return ClowMachineModel
+    }
+
 
     private func parseGiftBox(_ giftBox: [String: Any?]) -> GiftBoxModel? {
         guard let actionData = giftBox[RDConstants.actionData] as? [String: Any] else { return nil }
