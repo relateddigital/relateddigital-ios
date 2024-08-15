@@ -38,6 +38,7 @@ class RDBaseNotificationViewController: UIViewController, RDBaseViewControllerPr
     var giftBox: GiftBoxModel?
     var shakeToWin: ShakeToWinViewModel?
     var jackpot: JackpotModel?
+    var ClowMachine: ClowMachineModel?
     var chooseFavoriteModel: ChooseFavoriteModel?
     var customWebViewModel: CustomWebViewModel?
 

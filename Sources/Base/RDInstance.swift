@@ -486,7 +486,11 @@ extension RDInstance: RDInAppNotificationsDelegate {
     func subscribeJackpotMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "jackpot_email")
     }
-
+    
+    func subscribeClowMachineMail(actid: String, auth: String, mail: String) {
+        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "ClowMachine_email")
+    }
+    
     func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "chooseFavorite_email")
     }
@@ -536,6 +540,15 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = jackpotReport.click?.parseClick().omZn
         properties["OM.zpc"] = jackpotReport.click?.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+    
+    
+    func trackClowMachineClick(clowMachineReport: ClowMachineReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = clowMachineReport.click?.parseClick().omZn
+        properties["OM.zpc"] = clowMachineReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
 
