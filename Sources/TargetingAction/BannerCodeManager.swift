@@ -13,7 +13,7 @@ public class BannerCodeManager {
     private let giftRainCode = "giftRainCode"
     private let findToWinCode = "findToWinCode"
     private let jackpotCode = "jackpotCode"
-    private let clowMachineCode = "clowMachineCode"
+    private let clawMachineCode = "clawMachineCode"
     private let shakeToWinCode = "shakeToWinCode"
     private let giftBoxCode = "giftBoxCode"
     private let ChooseFavoriteGameCode = "ChooseFavoriteGameCode"
@@ -71,15 +71,15 @@ public class BannerCodeManager {
         return string
     }
         
-    func setClowMachineCode(code:String) {
+    func setClawMachineCode(code:String) {
         let defaults = UserDefaults.standard
-        defaults.set(code, forKey:clowMachineCode)
+        defaults.set(code, forKey:clawMachineCode)
     }
     
-    func getClowMachineCode() -> String {
+    func getClawMachineCode() -> String {
         let defaults = UserDefaults.standard
-        let string = defaults.string(forKey: clowMachineCode) ?? ""
-        defaults.set("", forKey:clowMachineCode)
+        let string = defaults.string(forKey: clawMachineCode) ?? ""
+        defaults.set("", forKey:clawMachineCode)
         return string
     }
     

@@ -488,7 +488,7 @@ extension RDInstance: RDInAppNotificationsDelegate {
     }
     
     func subscribeClowMachineMail(actid: String, auth: String, mail: String) {
-        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "ClowMachine_email")
+        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "ClawMachine_email")
     }
     
     func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String) {
@@ -544,7 +544,7 @@ extension RDInstance: RDInAppNotificationsDelegate {
     }
     
     
-    func trackClowMachineClick(clowMachineReport: ClowMachineReport) {
+    func trackClowMachineClick(clowMachineReport: ClawMachineReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = clowMachineReport.click?.parseClick().omZn

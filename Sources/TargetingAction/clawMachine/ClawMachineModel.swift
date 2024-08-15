@@ -5,7 +5,7 @@
 //  Created by Orhun Akmil on 15.08.2024.
 //
 
-struct ClowMachineModel: TargetingActionViewModel, Codable {
+struct ClawMachineModel: TargetingActionViewModel, Codable {
     
     var targetingActionType: TargetingActionType
     var actId: Int? = 0
@@ -27,12 +27,12 @@ struct ClowMachineModel: TargetingActionViewModel, Codable {
     var close_button_color = String()
     var font_family = String()
     //
-    var report: ClowMachineReport? = ClowMachineReport()
+    var report: ClawMachineReport? = ClawMachineReport()
     var bannercodeShouldShow : Bool?
 
 }
 
-public struct ClowMachineReport: Codable {
+public struct ClawMachineReport: Codable {
     var impression: String?
     var click: String?
 }

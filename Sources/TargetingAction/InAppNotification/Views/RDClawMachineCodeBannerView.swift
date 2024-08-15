@@ -7,9 +7,9 @@
 
 import UIKit
 
-class RDClowMachineCodeBannerView: UIView {
+class RDClawMachineCodeBannerView: UIView {
     
-    var clowMachineModel: ClowMachineModel
+    var clawMachineModel: ClawMachineModel
 
     var horizontalStackView: UIStackView!
     var verticalStackViewLeft: UIStackView!
@@ -19,8 +19,8 @@ class RDClowMachineCodeBannerView: UIView {
     var bannerCodeLabel: UILabel!
     var closeButton: UIButton!
 
-    init(frame: CGRect, clowMachineModel: ClowMachineModel) {
-        self.clowMachineModel = clowMachineModel
+    init(frame: CGRect, clawMachineModel: ClawMachineModel) {
+        self.clawMachineModel = clawMachineModel
         super.init(frame: frame)
         setupLabels()
         setFonts()
@@ -52,18 +52,18 @@ class RDClowMachineCodeBannerView: UIView {
         verticalStackViewRight.alignment = .center
 
         bannerTextLabel = UILabel()
-        bannerTextLabel.text = clowMachineModel.promocode_banner_text.removeEscapingCharacters()
+        bannerTextLabel.text = clawMachineModel.promocode_banner_text.removeEscapingCharacters()
         bannerTextLabel.numberOfLines = 0
         bannerTextLabel.textAlignment = .center
         bannerTextLabel.contentMode = .center
         bannerTextLabel.baselineAdjustment = .alignCenters
 
         bannerButtonLabel = UILabel()
-        bannerButtonLabel.text = clowMachineModel.promocode_banner_button_label
+        bannerButtonLabel.text = clawMachineModel.promocode_banner_button_label
         bannerButtonLabel.textAlignment = .center
 
         bannerCodeLabel = UILabel()
-        bannerCodeLabel.text = BannerCodeManager.shared.getClowMachineCode()
+        bannerCodeLabel.text = BannerCodeManager.shared.getClawMachineCode()
         bannerCodeLabel.textAlignment = .center
 
         verticalStackViewLeft.addArrangedSubview(bannerTextLabel)
@@ -86,7 +86,7 @@ class RDClowMachineCodeBannerView: UIView {
         closeButton.setTitle("×", for: .normal)
         closeButton.titleLabel?.font = .systemFont(ofSize: 35.0, weight: .regular)
         closeButton.contentEdgeInsets = UIEdgeInsets(top: 2.5, left: 2.5, bottom: 2.5, right: 2.5)
-        closeButton.setTitleColor(clowMachineModel.close_button_color.lowercased() == "white" ? .white : .black, for: .normal)
+        closeButton.setTitleColor(clawMachineModel.close_button_color.lowercased() == "white" ? .white : .black, for: .normal)
         addSubview(closeButton)
     }
 
@@ -107,24 +107,24 @@ class RDClowMachineCodeBannerView: UIView {
     }
 
     private func setFonts() {
-        let font = RDHelper.getFont(fontFamily: clowMachineModel.font_family,
-                                    fontSize: clowMachineModel.copybutton_text_size,
-                                    style: .title2, customFont: clowMachineModel.custom_font_family_ios)
+        let font = RDHelper.getFont(fontFamily: clawMachineModel.font_family,
+                                    fontSize: clawMachineModel.copybutton_text_size,
+                                    style: .title2, customFont: clawMachineModel.custom_font_family_ios)
         bannerTextLabel.font = font
         bannerButtonLabel.font = font
         bannerCodeLabel.font = font
     }
 
     private func setColors() {
-        self.backgroundColor = UIColor(hex: clowMachineModel.promocode_banner_background_color)
-        horizontalStackView.backgroundColor = UIColor(hex: clowMachineModel.promocode_banner_background_color)
-        bannerTextLabel.backgroundColor = UIColor(hex: clowMachineModel.promocode_banner_background_color)
-        bannerButtonLabel.backgroundColor = UIColor(hex: clowMachineModel.promocode_banner_background_color)
-        bannerCodeLabel.backgroundColor = UIColor(hex: clowMachineModel.promocode_banner_background_color)
+        self.backgroundColor = UIColor(hex: clawMachineModel.promocode_banner_background_color)
+        horizontalStackView.backgroundColor = UIColor(hex: clawMachineModel.promocode_banner_background_color)
+        bannerTextLabel.backgroundColor = UIColor(hex: clawMachineModel.promocode_banner_background_color)
+        bannerButtonLabel.backgroundColor = UIColor(hex: clawMachineModel.promocode_banner_background_color)
+        bannerCodeLabel.backgroundColor = UIColor(hex: clawMachineModel.promocode_banner_background_color)
 
-        bannerTextLabel.textColor = UIColor(hex: clowMachineModel.promocode_banner_text_color)
-        bannerButtonLabel.textColor = UIColor(hex: clowMachineModel.promocode_banner_text_color)
-        bannerCodeLabel.textColor = UIColor(hex: clowMachineModel.promocode_banner_text_color)
+        bannerTextLabel.textColor = UIColor(hex: clawMachineModel.promocode_banner_text_color)
+        bannerButtonLabel.textColor = UIColor(hex: clawMachineModel.promocode_banner_text_color)
+        bannerCodeLabel.textColor = UIColor(hex: clawMachineModel.promocode_banner_text_color)
     }
 
 }
