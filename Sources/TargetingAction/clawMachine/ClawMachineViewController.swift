@@ -107,14 +107,14 @@ class ClawMachineViewController: RDBaseNotificationViewController {
             RDLogger.error("Can not create documentDirectory")
             return nil
         }
-        let htmlUrl = docUrl.appendingPathComponent("clawMachine.html")
-        let jsUrl = docUrl.appendingPathComponent("clawMachine.js")
+        let htmlUrl = docUrl.appendingPathComponent("clawmachine.html")
+        let jsUrl = docUrl.appendingPathComponent("clawmachine.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
         let bundle = Bundle(for: type(of: self))
 #endif
-        let bundleHtmlPath = bundle.path(forResource: "clawMachine", ofType: "html") ?? ""
+        let bundleHtmlPath = bundle.path(forResource: "clawmachine", ofType: "html") ?? ""
 
         let bundleHtmlUrl = URL(fileURLWithPath: bundleHtmlPath)
 

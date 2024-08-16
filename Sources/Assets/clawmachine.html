@@ -6,11 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLAW MACHINE GAME</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js" integrity="sha512-tWHlutFnuG0C6nQRlpvrEhE4QpkG1nn2MOUMWmUeRePl4e3Aki0VB6W1v3oLjFtd0hVOtRQ9PHpSfN6u6/QXkQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+
 </head>
 
 <body>
-    <script src="ClawMachine.js"></script>
+    <script src="clawmachine.js"></script>
     <script type="text/javascript">
         var config = {};
         var clawMachine = {};
@@ -48,11 +49,23 @@
             const extendedProps = {
     "background_image": "",
     "background_color": "#d86dfb",
-    "font_family": "sansserif",
+    "font_family": "custom",
     "custom_font_family_ios": "",
     "custom_font_family_android": "",
     "close_button_color": "white",
-    "mail_subscription_form": {},
+    "mail_subscription_form": {
+        "title_text_color": "#000000",
+        "title_text_size": "2",
+        "text_color": "#000000",
+        "text_size": "2",
+        "button_color": "#e0c3fc",
+        "button_text_color": "#fff",
+        "button_text_size": "2",
+        "emailpermit_text_size": "2",
+        "emailpermit_text_url": "https://www.google.com",
+        "consent_text_size": "2",
+        "consent_text_url": "https://www.google.com"
+    },
     "gamification_rules": {
         "button_color": "#0014b2",
         "button_text_color": "#e8e7ff",
@@ -90,20 +103,20 @@
     "title": "Tayfun for RMC-449",
     "actiontype": "ClawMachine",
     "actiondata": {
-        "mail_subscription": false,
+        "mail_subscription": true,
         "mail_subscription_form": {
             "title": "Mail Title",
 "message": "Mail Text",
 "placeholder": "Email Adress",
 "button_label": "Kaydet",
-"consent_text": "Kullanım Koşulları",
+"consent_text": "Kullanım Koşulları. <LINK>Oku</LINK>",
 "invalid_email_message": "Geçersiz E-Posta Adresi",
 "success_message": "Başarılı",
-"emailpermit_text": "Email İzni",
-"check_consent_message": "Kullanım Koşullarını Kabul Edin"
+"emailpermit_text": "Email İzni. <LINK>Izin Metni</LINK>",
+"check_consent_message": "Kullanım Koşullarını Kabul Edin."
         },
         "gamification_rules": {
-            "background_image": "https://imgvisilabsnet.azureedge.net/claw_machine/uploaded_images/debug/112_885_1274_20240730123703789.png",
+            "background_image": "https://imgvisilabsnet.azureedge.net/shake_to_win/uploaded_images/163_1100_1664_20240603135037798.png",
             "button_label": "ileri"
         },
         "game_elements": {
