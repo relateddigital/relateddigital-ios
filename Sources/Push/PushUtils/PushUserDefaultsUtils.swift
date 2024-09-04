@@ -110,7 +110,7 @@ class PushUserDefaultsUtils {
             if let index = recentPayloads.firstIndex(where: { $0.pushId == pushId }) {
                 recentPayloads.remove(at: index)
                 if let recentPayloadsData = try? JSONEncoder().encode(recentPayloads) {
-                    saveUserDefaults(key: PushKey.euroPayloadsWithIdKey, value: recentPayloadsData as AnyObject)
+                    saveUserDefaults(key: PushKey.euroPayloadsKey, value: recentPayloadsData as AnyObject)
                     completion(true)
                 } else {
                     RDLogger.warn("Can not encode recentPayloads after deletion: \(String(describing: recentPayloads))")
@@ -127,7 +127,7 @@ class PushUserDefaultsUtils {
         payloadLock.write {
             let emptyPayloads: [RDPushMessage] = []
             if let emptyPayloadsData = try? JSONEncoder().encode(emptyPayloads) {
-                saveUserDefaults(key: PushKey.euroPayloadsWithIdKey, value: emptyPayloadsData as AnyObject)
+                saveUserDefaults(key: PushKey.euroPayloadsKey, value: emptyPayloadsData as AnyObject)
                 RDLogger.info("All payloads have been deleted successfully.")
                 completion(true)
             } else {

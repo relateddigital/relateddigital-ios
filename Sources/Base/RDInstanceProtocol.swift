@@ -96,5 +96,7 @@ protocol RDInstanceProtocol {
     func getToken(completion: @escaping ((_ token: String) -> Void))
     func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void))
     func readAllPushMessagesWithId(pushId: String?, completion: @escaping ((_ success: Bool) -> Void))
+    func deleteAllPayloads(completion: @escaping ((_ success: Bool) -> Void))
+    func deletePayloadWithId(pushId: String,completion: @escaping ((_ completed: Bool) -> Void))
 }
 
