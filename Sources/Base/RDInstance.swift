@@ -11,6 +11,7 @@ import UIKit
 import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
+    
         
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
@@ -1097,6 +1098,14 @@ extension RDInstance {
 
     public func registerEmail(email: String, permission: Bool, isCommercial: Bool = false, customDelegate: RDPushDelegate? = nil) {
         RDPush.registerEmail(email: email, permission: permission, isCommercial: isCommercial, customDelegate: customDelegate)
+    }
+    
+    public func deleteAllPayloads(completion: @escaping ((Bool) -> Void)) {
+        RDPush.deleteAllPayloads(completion: completion)
+    }
+    
+    public func deletePayloadWithId(pushId: String, completion: @escaping ((Bool) -> Void)) {
+        RDPush.deletePayloadWithId(pushId: pushId, completion: completion)
     }
 
     public func getPushMessages(completion: @escaping GetPushMessagesCompletion) {

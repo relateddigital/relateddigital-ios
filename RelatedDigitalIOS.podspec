@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'RelatedDigitalIOS'
   s.module_name      = 'RelatedDigitalIOS'
-  s.version          = '4.0.42'
+  s.version          = '4.0.43'
   s.summary          = 'RelatedDigitalIOS'
   s.description      = 'RelatedDigitalIOS'
   s.homepage         = 'https://www.relateddigital.com'

@@ -358,6 +358,14 @@ public class RelatedDigital {
         shared.rdInstance.registerEmail(email: email, permission: permission, isCommercial: isCommercial, customDelegate: customDelegate)
     }
     
+    public static func deleteAllPayloads(completion: @escaping ((_ success: Bool) -> Void)) {
+        shared.rdInstance.deleteAllPayloads(completion: completion)
+    }
+    
+    public static func deletePayloadWithId(pushId: String, completion: @escaping ((_ completed: Bool) -> Void)) {
+        shared.rdInstance.deletePayloadWithId(pushId: pushId, completion: completion)
+    }
+    
     public static func getPushMessages(completion: @escaping GetPushMessagesCompletion) {
         shared.rdInstance.getPushMessages(completion: completion)
     }
