@@ -51,6 +51,3 @@ class StarsViewController: UIViewController {
     }
 }
 
-// Kullanmak için AppDelegate veya SceneDelegate içinde çağırabilirsiniz
-let starsViewController = StarsViewController()
-// Örnek: window?.rootViewController = starsViewController
