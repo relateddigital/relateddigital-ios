@@ -129,7 +129,8 @@ struct RDConstants {
     static let geoIdKey = "OM.locationid"
     static let triggerEventKey = "OM.triggerevent"
     static let subscribedEmail = "OM.subsemail"
-    
+    static let InAppLink = "InAppLink"
+
     static let channelKey = "OM.vchannel"
     static let uriKey = "OM.uri"
     
