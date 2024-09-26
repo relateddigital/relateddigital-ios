@@ -20,6 +20,14 @@ class HomeViewController: FormViewController {
         initializeForm()
     }
     
+    func sliceListener() {
+        NotificationCenter.default.addObserver(forName: Notification.Name("InAppLink"), object: nil, queue: .main) { notification in
+            if let userInfo = notification.userInfo, let link = userInfo["link"] as? String {
+                print("Received InAppLink: \(link)")
+            }
+        }
+    }
+    
     fileprivate func changePage() -> SplitRow<ButtonRow, ButtonRow> {
         return SplitRow() {
             $0.rowLeftPercentage = 0.5
