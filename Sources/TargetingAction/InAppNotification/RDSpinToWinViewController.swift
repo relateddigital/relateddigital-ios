@@ -379,6 +379,8 @@ extension RDSpinToWinViewController: WKScriptMessageHandler {
                 if method == "copyToClipboard", let couponCode = event["couponCode"] as? String {
                     UIPasteboard.general.string = couponCode
                     RDHelper.showCopiedClipboardMessage()
+                    let sliceLink = event["sliceLink"]
+                    NotificationCenter.default.post(name: Notification.Name(RDConstants.InAppLink), object: nil, userInfo: ["link": sliceLink ?? ""])
                     self.close()
                 }
 
