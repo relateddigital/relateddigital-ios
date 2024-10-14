@@ -269,6 +269,8 @@ extension FindToWinViewController: WKScriptMessageHandler {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                         if let url = URL(string: urlLnk) {
                             UIApplication.shared.open(url)
+                        } else {
+                            NotificationCenter.default.post(name: Notification.Name(RDConstants.InAppLink), object: nil, userInfo: ["link": urlLnk ])
                         }
                     }
                 }
