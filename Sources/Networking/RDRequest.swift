@@ -477,6 +477,8 @@ class RDRequest {
         props[RDConstants.pvivKey] = String(user.pviv)
         props[RDConstants.tvcKey] = String(user.tvc)
         props[RDConstants.lvtKey] = user.lvt
+        props[RDConstants.isPushUser] = user.isPushUser
+        props[RDConstants.pushTime] = user.pushTime
         return props
     }
 }

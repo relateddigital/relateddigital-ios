@@ -30,4 +30,6 @@ public struct RDUser: Codable {
     public var utmSource: String?
     public var utmContent: String?
     public var utmTerm: String?
+    public var isPushUser: String?
+    public var pushTime: String?
 }
