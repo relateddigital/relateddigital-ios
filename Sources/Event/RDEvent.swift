@@ -88,6 +88,16 @@ class RDEvent {
             props.removeValue(forKey: RDConstants.utmTermKey)
         }
 
+        if props.keys.contains(RDConstants.isPushUser) {
+            user.isPushUser = props[RDConstants.isPushUser]
+            props.removeValue(forKey: RDConstants.isPushUser)
+        }
+
+        if props.keys.contains(RDConstants.pushTime) {
+            user.pushTime = props[RDConstants.pushTime]
+            props.removeValue(forKey: RDConstants.pushTime)
+        }
+
         props[RDConstants.organizationIdKey] = RelatedDigital.rdProfile.organizationId
         props[RDConstants.profileIdKey] = RelatedDigital.rdProfile.profileId
         props[RDConstants.cookieIdKey] = user.cookieId ?? ""
@@ -139,6 +149,28 @@ class RDEvent {
             props[RDConstants.utmTermKey] = user.utmTerm
         }
 
+        if !user.isPushUser.isNilOrWhiteSpace {
+            if !user.pushTime.isNilOrWhiteSpace {
+                let referenceDateString = user.pushTime!
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
+                if let referenceDate = dateFormatter.date(from: referenceDateString) {
+                    
+                    let currentDate = Date()
+
+                    if let date30MinutesLater = Calendar.current.date(byAdding: .minute, value: 30, to: referenceDate) {
+                        if currentDate >= date30MinutesLater {
+                            props[RDConstants.isPushUser] = nil
+                            props[RDConstants.pushTime] = nil
+                        } else {
+                            props[RDConstants.isPushUser] = user.isPushUser
+                            props[RDConstants.pushTime] = user.pushTime
+                        }
+                    }
+                }
+            }
+        }
+
         props[RDConstants.datKey] = String(actualTimeOfevent)
 
         var eQueue = eventsQueue
@@ -147,7 +179,7 @@ class RDEvent {
         if eQueue.count > RDConstants.queueSize {
             eQueue.remove(at: 0)
         }
-        
+
         return (eQueue, user, clearUserParameters, chan)
     }
 

@@ -30,7 +30,7 @@ public class RDPush {
     internal var graylog: PushGraylogRequest
     private static var previousSubscription: PushSubscriptionRequest?
     private var previousRegisterEmailSubscription: PushSubscriptionRequest?
-    internal var userAgent: String? = nil
+    internal var userAgent: String?
     static var deliveredBadgeCount: Bool?
 
     var networkQueue: DispatchQueue!
@@ -184,7 +184,7 @@ public class RDPush {
 }
 
 public protocol PushAction {
-    func actionButtonClicked(identifier:String,url:String)
+    func actionButtonClicked(identifier: String, url: String)
 }
 
 extension RDPush {
@@ -228,7 +228,7 @@ extension RDPush {
             setUserProperty(key: PushProperties.CodingKeys.keyID.rawValue, value: userKey)
         }
     }
-    
+
     public static func setAnonymous(permission: Bool) {
         if permission {
             setUserProperty(key: PushProperties.CodingKeys.SetAnonymous.rawValue, value: "true")
@@ -347,17 +347,15 @@ extension RDPush {
         }
         RDPush.sync()
     }
-    
-    public static func handlePushWithActionButtons(response: UNNotificationResponse,type:Any) {
-        
-        var actionButtonDelegate : PushAction?
+
+    public static func handlePushWithActionButtons(response: UNNotificationResponse, type: Any) {
+        var actionButtonDelegate: PushAction?
         actionButtonDelegate = type as? PushAction
-        
+
         let pushDictionary = response.notification.request.content.userInfo
-        
+
         if let jsonData = try? JSONSerialization.data(withJSONObject: pushDictionary, options: .prettyPrinted),
            let message = try? JSONDecoder().decode(RDPushMessage.self, from: jsonData) {
-            
             if response.actionIdentifier == "action_0" {
                 actionButtonDelegate?.actionButtonClicked(identifier: "action_0", url: message.actions?.first?.Url ?? "")
             } else if response.actionIdentifier == "action_1" {
@@ -365,8 +363,8 @@ extension RDPush {
             }
         }
     }
-    
-    static func openLink(urlStr:String) {
+
+    static func openLink(urlStr: String) {
         if let url = URL(string: urlStr) {
             UIApplication.shared.open(url)
         }
@@ -401,6 +399,14 @@ extension RDPush {
                 if let utm_term = message.utm_term {
                     properties["utm_term"] = utm_term
                 }
+                
+                let currentDate = Date()
+                let formatter = DateFormatter()
+                formatter.dateFormat = "dd-MM-yyyy HH:mm:ss"
+                let formattedDate = formatter.string(from: currentDate)
+                properties["isPushUser"] = "true"
+                properties["pushTime"] = formattedDate
+                
                 if !properties.isEmpty {
                     RelatedDigital.sendCampaignParameters(properties: properties)
                 }
@@ -447,7 +453,7 @@ extension RDPush {
         // Clear badge
         if !(subs.isBadgeCustom ?? false) {
             PushUserDefaultsUtils.removeUserDefaults(userKey: PushKey.badgeCount)
-            
+
             if !PushTools.isiOSAppExtension() {
                 if deliveredBadgeCount! {
                     UNUNC.current().getDeliveredNotifications(completionHandler: { notifications in
@@ -541,29 +547,29 @@ extension RDPush {
     public static func getPushMessages(completion: @escaping ((_ payloads: [RDPushMessage]) -> Void)) {
         completion(PushUserDefaultsUtils.getRecentPayloads())
     }
-    
+
     public static func getPushMessagesWithId(completion: @escaping ((_ payloads: [RDPushMessage]) -> Void)) {
         completion(PushUserDefaultsUtils.getRecentPayloadsWithId())
     }
-    
-    public static func deletePayloadWithId(pushId: String,completion: @escaping ((_ completed: Bool) -> Void)) {
+
+    public static func deletePayloadWithId(pushId: String, completion: @escaping ((_ completed: Bool) -> Void)) {
         PushUserDefaultsUtils.deletePayloadWithId(pushId: pushId) { succes in
             completion(succes)
         }
     }
-    
+
     public static func deleteAllPayloads(completion: @escaping ((_ completed: Bool) -> Void)) {
         PushUserDefaultsUtils.deleteAllPayloads { succes in
             completion(succes)
         }
     }
-    
+
     public static func getToken(completion: @escaping ((_ token: String) -> Void)) {
-      let token = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.tokenKey) as? String
-        ?? (RDPush.sharedInstance?.subscription.token ?? "")
-      completion(token)
+        let token = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.tokenKey) as? String
+            ?? (RDPush.sharedInstance?.subscription.token ?? "")
+        completion(token)
     }
-    
+
     public static func readAllPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
         if let pushId = pushId {
             PushUserDefaultsUtils.readAllPushMessages(pushId: pushId) { success in
@@ -583,7 +589,6 @@ extension RDPush {
             }
         }
     }
-
 }
 
 extension RDPush {

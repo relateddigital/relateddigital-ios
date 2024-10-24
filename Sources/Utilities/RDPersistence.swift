@@ -45,6 +45,8 @@ public class RDPersistence {
             userDic[RDConstants.utmSourceKey] = rdUser.utmSource
             userDic[RDConstants.utmContentKey] = rdUser.utmContent
             userDic[RDConstants.utmTermKey] = rdUser.utmTerm
+            userDic[RDConstants.isPushUser] = rdUser.isPushUser
+            userDic[RDConstants.pushTime] = rdUser.pushTime
 
             userDic[RDConstants.lastEventTimeKey] = rdUser.lastEventTime
             userDic[RDConstants.nrvKey] = String(rdUser.nrv)

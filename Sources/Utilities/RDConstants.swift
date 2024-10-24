@@ -150,6 +150,9 @@ struct RDConstants {
     static let utmContentKey = "utm_content"
     static let utmTermKey = "utm_term"
     
+    static let isPushUser = "isPushUser"
+    static let pushTime = "pushTime"
+    
     static let getList = "getlist"
     static let processV2 = "processV2"
     static let onEnter = "OnEnter"
