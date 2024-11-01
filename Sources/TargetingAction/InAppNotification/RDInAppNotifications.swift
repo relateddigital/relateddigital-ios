@@ -152,9 +152,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showFindToWin(findToWinModel: FindToWinViewModel) -> Bool {
-        let findToWinVC = FindToWinViewController(findToWinModel)
-        findToWinVC.delegate = self
-        findToWinVC.show(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(findToWinModel.waitingTime), execute: {
+            
+            let findToWinVC = FindToWinViewController(findToWinModel)
+            findToWinVC.delegate = self
+            findToWinVC.show(animated: true)
+        })
+
         return true
     }
     

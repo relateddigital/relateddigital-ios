@@ -807,6 +807,7 @@ class RDTargetingAction {
         findToWinModel.copybutton_label = actionData[RDConstants.copybuttonLabel] as? String ?? ""
         findToWinModel.copybutton_function = actionData[RDConstants.copybuttonFunction] as? String ?? ""
         findToWinModel.ios_lnk = actionData[RDConstants.iosLnk] as? String ?? ""
+        findToWinModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
 
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
             findToWinModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""
