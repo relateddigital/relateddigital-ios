@@ -31,7 +31,8 @@ struct ChooseFavoriteModel: TargetingActionViewModel, Codable {
     var close_button_color = String()
     var font_family = String()
     //
-    
+    var waitingTime: Int = 0
+
     var report: ChooseFavoriteReport? = ChooseFavoriteReport()
     var bannercodeShouldShow : Bool?
 

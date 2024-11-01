@@ -29,6 +29,7 @@ struct ClawMachineModel: TargetingActionViewModel, Codable {
     //
     var report: ClawMachineReport? = ClawMachineReport()
     var bannercodeShouldShow : Bool?
+    var waitingTime: Int = 0
 
 }
 
