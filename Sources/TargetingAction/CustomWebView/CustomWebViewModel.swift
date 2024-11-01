@@ -40,6 +40,7 @@ struct CustomWebViewModel: TargetingActionViewModel, Codable {
     var height = Float()
     var closeButtonColor = String()
     var borderRadius = Float()
+    var waitingTime: Int = 0
 
     
     

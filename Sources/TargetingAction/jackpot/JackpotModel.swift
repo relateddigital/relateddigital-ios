@@ -31,6 +31,7 @@ struct JackpotModel: TargetingActionViewModel, Codable {
     //
     var report: JackpotReport? = JackpotReport()
     var bannercodeShouldShow : Bool?
+    var waitingTime: Int = 0
 
 }
 

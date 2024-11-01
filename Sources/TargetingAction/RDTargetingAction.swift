@@ -948,6 +948,7 @@ class RDTargetingAction {
         chooseFavoriteModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
         chooseFavoriteModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         //
+        chooseFavoriteModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
 
         if let theJSONData = try? JSONSerialization.data(
             withJSONObject: chooseFavorite,
@@ -998,7 +999,7 @@ class RDTargetingAction {
         customWebviewModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         //
 
-        
+        customWebviewModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
         customWebviewModel.position = extendedProps[RDConstants.positionCustom] as? String ?? ""
         customWebviewModel.width = extendedProps[RDConstants.width] as? Float ?? 0.0
         customWebviewModel.height = extendedProps[RDConstants.height] as? Float ?? 0.0
@@ -1040,6 +1041,7 @@ class RDTargetingAction {
         jackpotModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
         jackpotModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         //
+        jackpotModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
 
         if let theJSONData = try? JSONSerialization.data(
             withJSONObject: jackpot,
@@ -1078,6 +1080,7 @@ class RDTargetingAction {
         ClowMachineModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
         ClowMachineModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
         //
+        ClowMachineModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
 
         if let theJSONData = try? JSONSerialization.data(
             withJSONObject: clowMachine,
@@ -1107,6 +1110,7 @@ class RDTargetingAction {
         giftBoxModel.copybutton_label = actionData[RDConstants.copybuttonLabel] as? String ?? ""
         giftBoxModel.copybutton_function = actionData[RDConstants.copybuttonFunction] as? String ?? ""
         giftBoxModel.ios_lnk = actionData[RDConstants.iosLnk] as? String ?? ""
+        giftBoxModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
 
         if let mailForm = actionData[RDConstants.gMailSubscriptionForm] as? [String: Any] {
             giftBoxModel.mailSubscriptionForm.placeholder = mailForm[RDConstants.placeholder] as? String ?? ""

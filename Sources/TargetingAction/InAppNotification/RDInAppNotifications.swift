@@ -163,23 +163,36 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showGiftBox(giftBoxModel: GiftBoxModel) -> Bool {
-        let giftBoxVC = GiftBoxViewController(giftBoxModel)
-        giftBoxVC.delegate = self
-        giftBoxVC.show(animated: true)
+    
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(giftBoxModel.waitingTime), execute: {
+            
+            let giftBoxVC = GiftBoxViewController(giftBoxModel)
+            giftBoxVC.delegate = self
+            giftBoxVC.show(animated: true)
+        })
+
         return true
     }
     
     func showChooseFavorite(model: ChooseFavoriteModel) -> Bool {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+
         let chooseFavoriteVC = ChooseFavoriteGameViewController(model)
         chooseFavoriteVC.delegate = self
         chooseFavoriteVC.show(animated: true)
+        })
         return true
     }
     
     func showCustomWebview(model: CustomWebViewModel) -> Bool {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+
         let customWebviewVC = CustomWebViewController(model)
         customWebviewVC.delegate = self
         customWebviewVC.show(animated: true)
+        
+        })
         return true
     }
     
@@ -192,16 +205,22 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showJackpot(model: JackpotModel) -> Bool {
-        let jackpotVC = JackpotViewController(model)
-        jackpotVC.delegate = self
-        jackpotVC.show(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+            let jackpotVC = JackpotViewController(model)
+            jackpotVC.delegate = self
+            jackpotVC.show(animated: true)
+        })
+
         return true
     }
     
     func showClawMachine(model: ClawMachineModel) -> Bool {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+
         let clawMachineVC = ClawMachineViewController(model)
         clawMachineVC.delegate = self
         clawMachineVC.show(animated: true)
+        })
         return true
     }
 
