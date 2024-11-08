@@ -54,40 +54,51 @@ public class RDPersistence {
             userDic[RDConstants.tvcKey] = String(rdUser.tvc)
             userDic[RDConstants.lvtKey] = rdUser.lvt
 
-            if !NSKeyedArchiver.archiveRootObject(userDic, toFile: path) {
-                RDLogger.error("failed to archive user")
+            do {
+                let data = try NSKeyedArchiver.archivedData(withRootObject: userDic, requiringSecureCoding: false)
+                try data.write(to: URL(fileURLWithPath: path), options: .atomic)
+                print("Kullanıcı arşivlendi")
+            } catch {
+                RDLogger.error("failed to archive user: \(error.localizedDescription)")
             }
         }
     }
+    
+    class func unarchiveString(from filename: String) -> String? {
+        if let filePath = RDPersistence.filePath(filename: filename),
+           let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) {
+            return try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSString.self, from: data) as? String
+            
+        }
+        return nil
+    }
+    
 
     // TO_DO: bunu ExceptionWrapper içine al
     // swiftlint:disable cyclomatic_complexity
     class func unarchiveUser() -> RDUser {
+        
         var relatedDigitalUser = RDUser()
         // Before Visilabs.identity is used as archive key, to retrieve Visilabs.cookieID set by objective-c library
         // we added this control.
-        if let cidfp = filePath(filename: RDConstants.identityArchiveKey),
-           let cid = NSKeyedUnarchiver.unarchiveObject(withFile: cidfp) as? String {
+        
+        
+        if let cid = unarchiveString(from: RDConstants.identityArchiveKey) {
             relatedDigitalUser.cookieId = cid
         }
-        if let cidfp = filePath(filename: RDConstants.cookieidArchiveKey),
-           let cid = NSKeyedUnarchiver.unarchiveObject(withFile: cidfp) as? String {
+        if let cid = unarchiveString(from: RDConstants.cookieidArchiveKey) {
             relatedDigitalUser.cookieId = cid
         }
-        if let exvidfp = filePath(filename: RDConstants.exvisitorIdArchiveKey),
-           let exvid = NSKeyedUnarchiver.unarchiveObject(withFile: exvidfp) as? String {
+        if let exvid = unarchiveString(from: RDConstants.exvisitorIdArchiveKey) {
             relatedDigitalUser.exVisitorId = exvid
         }
-        if let appidfp = filePath(filename: RDConstants.appidArchiveKey),
-           let aid = NSKeyedUnarchiver.unarchiveObject(withFile: appidfp) as? String {
+        if let aid = unarchiveString(from: RDConstants.appidArchiveKey) {
             relatedDigitalUser.appId = aid
         }
-        if let tidfp = filePath(filename: RDConstants.tokenidArchiveKey),
-           let tid = NSKeyedUnarchiver.unarchiveObject(withFile: tidfp) as? String {
+        if let tid = unarchiveString(from: RDConstants.tokenidArchiveKey) {
             relatedDigitalUser.tokenId = tid
         }
-        if let uafp = filePath(filename: RDConstants.useragentArchiveKey),
-           let userAgent = NSKeyedUnarchiver.unarchiveObject(withFile: uafp) as? String {
+        if let userAgent = unarchiveString(from: RDConstants.useragentArchiveKey) {
             relatedDigitalUser.userAgent = userAgent
         }
 
