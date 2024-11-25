@@ -358,12 +358,28 @@ public class RelatedDigital {
         shared.rdInstance.registerEmail(email: email, permission: permission, isCommercial: isCommercial, customDelegate: customDelegate)
     }
     
-    public static func deleteAllPayloads(completion: @escaping ((_ success: Bool) -> Void)) {
-        shared.rdInstance.deleteAllPayloads(completion: completion)
-    }
+    public static func deletePayload(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
+        if let pushId = pushId {
+            shared.rdInstance.deletePayload(pushId: pushId) { success in
+                    completion(success)
+                }
+            } else {
+                shared.rdInstance.deletePayload { success in
+                    completion(success)
+                }
+            }
+        }
     
-    public static func deletePayloadWithId(pushId: String, completion: @escaping ((_ completed: Bool) -> Void)) {
-        shared.rdInstance.deletePayloadWithId(pushId: pushId, completion: completion)
+    public static func deletePayloadWithId(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
+        if let pushId = pushId {
+            shared.rdInstance.deletePayloadWithId(pushId: pushId) { success in
+                    completion(success)
+                }
+            } else {
+                shared.rdInstance.deletePayloadWithId { success in
+                    completion(success)
+                }
+            }
     }
     
     public static func getPushMessages(completion: @escaping GetPushMessagesCompletion) {
@@ -374,11 +390,19 @@ public class RelatedDigital {
         shared.rdInstance.getPushMessagesWithID(completion: completion)
     }
     
-    public static func readAllPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
+    public static func readPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
         if let pushId = pushId {
-            shared.rdInstance.readAllPushMessagesWithId(pushId: pushId, completion: completion)
+            shared.rdInstance.readPushMessages(pushId: pushId, completion: completion)
         } else {
-            shared.rdInstance.readAllPushMessages(completion: completion)
+            shared.rdInstance.readPushMessages(completion: completion)
+        }
+    }
+    
+    public static func readPushMessagesWithId(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
+        if let pushId = pushId {
+            shared.rdInstance.readPushMessagesWithId(pushId: pushId, completion: completion)
+        } else {
+            shared.rdInstance.readPushMessagesWithId(completion: completion)
         }
     }
     

@@ -12,7 +12,9 @@ import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
     
-        
+    
+    
+    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
@@ -1100,13 +1102,42 @@ extension RDInstance {
         RDPush.registerEmail(email: email, permission: permission, isCommercial: isCommercial, customDelegate: customDelegate)
     }
     
-    public func deleteAllPayloads(completion: @escaping ((Bool) -> Void)) {
-        RDPush.deleteAllPayloads(completion: completion)
+    func deletePayloadWithId(completion: @escaping ((Bool) -> Void)) {
+        RDPush.deletePayloadWithId { success in
+            completion(success)
+        }
     }
     
-    public func deletePayloadWithId(pushId: String, completion: @escaping ((Bool) -> Void)) {
-        RDPush.deletePayloadWithId(pushId: pushId, completion: completion)
+    func deletePayload(completion: @escaping ((Bool) -> Void)) {
+        RDPush.deletePayload { success in
+            completion(success)
+        }
     }
+    
+    public func deletePayloadWithId(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
+            if let pushId = pushId {
+                RDPush.deletePayloadWithId(pushId: pushId) { success in
+                    completion(success)
+                }
+            } else {
+                deletePayloadWithId { success in
+                    completion(success)
+                }
+            }
+            
+        }
+        
+    public func deletePayload(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
+        if let pushId = pushId {
+            RDPush.deletePayload(pushId: pushId) { success in
+                    completion(success)
+                }
+            } else {
+                deletePayload { success in
+                    completion(success)
+                }
+            }
+        }
 
     public func getPushMessages(completion: @escaping GetPushMessagesCompletion) {
         RDPush.getPushMessages(completion: completion)
@@ -1119,12 +1150,40 @@ extension RDInstance {
     public func getToken(completion: @escaping ((_ token: String) -> Void)) {
         RDPush.getToken(completion: completion)
     }
-    public func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void)) {
-        RDPush.readAllPushMessages(completion: completion)
+    
+    func readPushMessages(completion: @escaping ((Bool) -> Void)) {
+        RDPush.readPushMessages { success in
+            completion(success)
+        }
     }
-    public func readAllPushMessagesWithId(pushId: String?, completion: @escaping ((Bool) -> Void)) {
+    
+    func readPushMessagesWithId(completion: @escaping ((Bool) -> Void)) {
+        RDPush.readPushMessagesWithId { success in
+            completion(success)
+        }
+    }
+    
+    public func readPushMessagesWithId(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
         if let pushId = pushId {
-            RDPush.readAllPushMessages(pushId: pushId, completion: completion)
+            RDPush.readPushMessagesWithId(pushId: pushId) { success in
+                completion(success)
+            }
+        } else {
+            readPushMessagesWithId { success in
+                completion(success)
+            }
+        }
+    }
+    
+    public func readPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
+        if let pushId = pushId {
+            RDPush.readPushMessages(pushId: pushId) { success in
+                completion(success)
+            }
+        } else {
+            readPushMessages { success in
+                completion(success)
+            }
         }
     }
 }
