@@ -61,7 +61,7 @@ class PushReadHandler {
             inProgressPushId = pushID
             inProgressEmPushSp = emPushSp
             pushMessage = message
-            RDLogger.info("reportRead: \(message.encoded)")
+            RDLogger.info("reportRead: \(message)")
             request = PushRetentionRequest(key: appKey, token: token, status: PushKey.euroReadStatus, pushId: pushID, emPushSp: emPushSp)
         }
         
