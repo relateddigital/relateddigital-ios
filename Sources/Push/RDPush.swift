@@ -383,6 +383,7 @@ extension RDPush {
            let message = try? JSONDecoder().decode(RDPushMessage.self, from: jsonData) {
             shared.networkQueue.async {
                 PushUserDefaultsUtils.updatePayload(pushId: message.pushId)
+                RDLogger.info("handlePush message: \(message.encode ?? "")")
                 RDPush.emReadHandler?.reportRead(message: message)
                 if let utm_source = message.utm_source {
                     properties["utm_source"] = utm_source
@@ -552,17 +553,30 @@ extension RDPush {
         completion(PushUserDefaultsUtils.getRecentPayloadsWithId())
     }
 
-    public static func deletePayloadWithId(pushId: String, completion: @escaping ((_ completed: Bool) -> Void)) {
-        PushUserDefaultsUtils.deletePayloadWithId(pushId: pushId) { succes in
-            completion(succes)
+    public static func deletePayloadWithId(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
+            if let pushId = pushId {
+                PushUserDefaultsUtils.deletePayloadWithId(pushId: pushId) { success in
+                    completion(success)
+                }
+            } else {
+                PushUserDefaultsUtils.deletePayloadWithId { success in
+                    completion(success)
+                }
+            }
+            
         }
-    }
-
-    public static func deleteAllPayloads(completion: @escaping ((_ completed: Bool) -> Void)) {
-        PushUserDefaultsUtils.deleteAllPayloads { succes in
-            completion(succes)
+        
+    public static func deletePayload(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
+        if let pushId = pushId {
+            PushUserDefaultsUtils.deletePayload(pushId: pushId) { success in
+                    completion(success)
+                }
+            } else {
+                PushUserDefaultsUtils.deletePayload { success in
+                    completion(success)
+                }
+            }
         }
-    }
 
     public static func getToken(completion: @escaping ((_ token: String) -> Void)) {
         let token = PushUserDefaultsUtils.retrieveUserDefaults(userKey: PushKey.tokenKey) as? String
@@ -570,22 +584,26 @@ extension RDPush {
         completion(token)
     }
 
-    public static func readAllPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
+    public static func readPushMessagesWithId(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
         if let pushId = pushId {
-            PushUserDefaultsUtils.readAllPushMessages(pushId: pushId) { success in
-                if success {
-                    completion(true)
-                } else {
-                    completion(false)
-                }
+            PushUserDefaultsUtils.readPushMessagesWithId(pushId: pushId) { success in
+                completion(success)
             }
         } else {
-            PushUserDefaultsUtils.readAllPushMessages { success in
-                if success {
-                    completion(true)
-                } else {
-                    completion(false)
-                }
+            PushUserDefaultsUtils.readPushMessagesWithId { success in
+                completion(success)
+            }
+        }
+    }
+    
+    public static func readPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
+        if let pushId = pushId {
+            PushUserDefaultsUtils.readPushMessages(pushId: pushId) { success in
+                completion(success)
+            }
+        } else {
+            PushUserDefaultsUtils.readPushMessages { success in
+                completion(success)
             }
         }
     }
