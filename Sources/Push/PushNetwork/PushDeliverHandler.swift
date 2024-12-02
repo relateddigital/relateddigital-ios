@@ -58,7 +58,7 @@ class PushDeliverHandler {
             inProgressPushId = pushID
             inProgressEmPushSp = emPushSp
             pushMessage = message
-            RDLogger.info("reportDeliver: \(message.encoded)")
+            RDLogger.info("reportDeliver: \(message.encode ?? "")")
             request = PushRetentionRequest(key: appKey, token: token, status: PushKey.euroReceivedStatus, pushId: pushID, emPushSp: emPushSp)
         }
         

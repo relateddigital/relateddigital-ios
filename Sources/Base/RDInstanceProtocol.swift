@@ -94,9 +94,13 @@ protocol RDInstanceProtocol {
     func getPushMessages(completion: @escaping GetPushMessagesCompletion)
     func getPushMessagesWithID(completion: @escaping GetPushMessagesCompletion)
     func getToken(completion: @escaping ((_ token: String) -> Void))
-    func readAllPushMessages(completion: @escaping ((_ success: Bool) -> Void))
-    func readAllPushMessagesWithId(pushId: String?, completion: @escaping ((_ success: Bool) -> Void))
-    func deleteAllPayloads(completion: @escaping ((_ success: Bool) -> Void))
-    func deletePayloadWithId(pushId: String,completion: @escaping ((_ completed: Bool) -> Void))
+    func readPushMessages(pushId: String?, completion: @escaping ((_ success: Bool) -> Void))
+    func readPushMessages(completion: @escaping ((_ success: Bool) -> Void))
+    func readPushMessagesWithId(pushId: String?, completion: @escaping ((_ success: Bool) -> Void))
+    func readPushMessagesWithId( completion: @escaping ((_ success: Bool) -> Void))
+    func deletePayloadWithId(pushId: String?, completion: @escaping ((_ completed: Bool) -> Void))
+    func deletePayloadWithId(completion: @escaping ((_ completed: Bool) -> Void))
+    func deletePayload(pushId: String?, completion: @escaping ((_ completed: Bool) -> Void))
+    func deletePayload(completion: @escaping ((_ completed: Bool) -> Void))
 }
 
