@@ -113,7 +113,7 @@ extension InAppViewController: RDInappButtonDelegate,ButtonCarouselViewDelegate 
                                      bannerView.heightAnchor.constraint(equalToConstant: 80),
                                      bannerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
                                      bannerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)])
-        bannerView.backgroundColor = .black
+        bannerView.backgroundColor = .clear
         
         
         var props = Properties()
