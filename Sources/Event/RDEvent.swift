@@ -16,6 +16,11 @@ class RDEvent {
         var clearUserParameters = false
         let actualTimeOfevent = Int(Date().timeIntervalSince1970)
         let appGroupsKey = UserDefaults.standard.string(forKey: "appGroupsKey")
+        let deviceLanguage = Locale.preferredLanguages.first?.components(separatedBy: "-").first
+        let regionCode = Locale.current.regionCode
+        let system = UIDevice.current
+        let screenSize = UIScreen.main.bounds.size
+        let processUptime = ProcessInfo.processInfo.systemUptime
 
         if let cookieId = props[RDConstants.cookieIdKey] {
             if user.cookieId != cookieId {
@@ -117,6 +122,29 @@ class RDEvent {
         props[RDConstants.tvcKey] = String(user.tvc)
         props[RDConstants.lvtKey] = user.lvt
 
+        
+        if !deviceLanguage.isNilOrWhiteSpace {
+            props[RDConstants.deviceLanguage] = deviceLanguage
+        }
+        
+        if !regionCode.isNilOrWhiteSpace && !deviceLanguage.isNilOrWhiteSpace {
+            props[RDConstants.deviceRegion] = "\(deviceLanguage!)_\(regionCode!)"
+        }
+        
+        if !system.systemVersion.isEmptyOrWhitespace {
+            props[RDConstants.systemVersion] = system.systemVersion
+        }
+        
+        if !system.systemName.isEmptyOrWhitespace {
+            props[RDConstants.systemName] = system.systemName
+        }
+        
+        if !screenSize.equalTo(CGSize.zero) {
+            let screenWidth = Int(screenSize.width)
+            let screenHeight = Int(screenSize.height)
+            props[RDConstants.screenSize] = "\(screenWidth)x\(screenHeight)"
+        }
+
         if !user.exVisitorId.isNilOrWhiteSpace {
             props[RDConstants.exvisitorIdKey] = user.exVisitorId
         }
@@ -172,6 +200,7 @@ class RDEvent {
         }
 
         props[RDConstants.datKey] = String(actualTimeOfevent)
+        
 
         var eQueue = eventsQueue
 
@@ -194,6 +223,11 @@ class RDEvent {
                     user.lastEventTime = dateNowString
                     user.lvt = dateNowString
                 }
+                user.utmCampaign = nil
+                user.utmContent = nil
+                user.utmMedium = nil
+                user.utmSource = nil
+                user.utmTerm = nil
             } else {
                 if pageName != RDConstants.omEvtGif {
                     user.pviv = user.pviv + 1

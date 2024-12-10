@@ -150,8 +150,14 @@ struct RDConstants {
     static let utmContentKey = "utm_content"
     static let utmTermKey = "utm_term"
     
-    static let isPushUser = "isPushUser"
-    static let pushTime = "pushTime"
+    static let deviceLanguage = "OM.deviceLanguage"
+    static let deviceRegion = "OM.deviceRegion"
+    static let systemVersion = "OM.OSVersion"
+    static let systemName = "OM.OSName"
+    static let screenSize = "OM.screenSize"
+    
+    static let isPushUser = "OM.isPushUser"
+    static let pushTime = "OM.pushTime"
     
     static let getList = "getlist"
     static let processV2 = "processV2"
