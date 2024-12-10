@@ -174,7 +174,7 @@ class PushViewController: FormViewController {
                 for message in messages {
                     print("🆔: \(message.pushId ?? "")")
                     print("📅: \(message.formattedDateString ?? "")")
-                    print(message.encoded)
+                    print(message.encode)
                 }
             }
         }
@@ -192,7 +192,7 @@ class PushViewController: FormViewController {
                 for message in messages {
                     print("🆔: \(message.pushId ?? "")")
                     print("📅: \(message.formattedDateString ?? "")")
-                    print(message.encoded)
+                    print(message.encode)
                 }
             }
         }
