@@ -55,9 +55,9 @@ class PushDeliverHandler {
         }
         
         self.readWriteLock.write {
-            inProgressPushId = pushID
-            inProgressEmPushSp = emPushSp
-            pushMessage = message
+            self.inProgressPushId = pushID
+            self.inProgressEmPushSp = emPushSp
+            self.pushMessage = message
             RDLogger.info("reportDeliver: \(message.encode ?? "")")
             request = PushRetentionRequest(key: appKey, token: token, status: PushKey.euroReceivedStatus, pushId: pushID, emPushSp: emPushSp)
         }
@@ -76,9 +76,9 @@ class PushDeliverHandler {
                 PushUserDefaultsUtils.saveUserDefaults(key: PushKey.euroLastMessageKey, value: pushMessageData as AnyObject)
             }
             self.readWriteLock.write {
-                inProgressPushId = nil
-                inProgressEmPushSp = nil
-                pushMessage = nil
+                self.inProgressPushId = nil
+                self.inProgressEmPushSp = nil
+                self.pushMessage = nil
             }
         }
     }

@@ -53,7 +53,7 @@ class PushSubscriptionHandler {
         }
         
         self.readWriteLock.write {
-            inProgressSubscriptionRequest = subscriptionRequest
+            self.inProgressSubscriptionRequest = subscriptionRequest
             RDLogger.info("EMSubscriptionHandler reportSubscription: \(subscriptionRequest.encoded)")
         }
         
@@ -76,7 +76,7 @@ class PushSubscriptionHandler {
             push.delegate?.didFailRegister(error: error)
         }
         self.readWriteLock.write {
-            inProgressSubscriptionRequest = nil
+            self.inProgressSubscriptionRequest = nil
         }
         semaphore.signal()
     }

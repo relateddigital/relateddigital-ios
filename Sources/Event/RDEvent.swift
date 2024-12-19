@@ -20,7 +20,7 @@ class RDEvent {
         let regionCode = Locale.current.regionCode
         let system = UIDevice.current
         let screenSize = UIScreen.main.bounds.size
-        let processUptime = ProcessInfo.processInfo.systemUptime
+        
 
         if let cookieId = props[RDConstants.cookieIdKey] {
             if user.cookieId != cookieId {

@@ -8,20 +8,23 @@
 import Foundation
 
 class RDReadWriteLock {
-    let concurentQueue: DispatchQueue
+    private let concurrentQueue: DispatchQueue
 
     init(label: String) {
-        self.concurentQueue = DispatchQueue(label: label, attributes: .concurrent)
+        self.concurrentQueue = DispatchQueue(label: label, attributes: .concurrent)
     }
 
-    func read(closure: () -> Void) {
-        self.concurentQueue.sync {
-            closure()
+    /// Güvenli okuma işlemleri için
+    func read<T>(closure: () -> T) -> T {
+        return self.concurrentQueue.sync {
+            return closure()
         }
     }
-    func write(closure: () -> Void) {
-        self.concurentQueue.sync(flags: .barrier, execute: {
+
+    /// Güvenli yazma işlemleri için
+    func write(closure: @escaping () -> Void) {
+        self.concurrentQueue.async(flags: .barrier) {
             closure()
-        })
+        }
     }
 }
