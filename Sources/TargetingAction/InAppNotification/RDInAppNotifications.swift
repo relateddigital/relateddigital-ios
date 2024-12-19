@@ -363,7 +363,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     func markNotificationShown(notification: RDInAppNotification) {
         lock.write {
             RDLogger.info("marking notification as seen: \(notification.actId)")
-            currentlyShowingNotification = notification
+            self.currentlyShowingNotification = notification
             // TO_DO: burada customEvent request'i atılmalı
         }
     }

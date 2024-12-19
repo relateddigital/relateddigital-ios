@@ -11,10 +11,6 @@ import UIKit
 import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
-    
-    
-    
-    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
@@ -34,7 +30,7 @@ public class RDInstance: RDInstanceProtocol {
     let rdRecommendationInstance = RDRecommendation()
     let rdRemoteConfigInstance: RDRemoteConfig
     let rdLocationManager: RDLocationManager
-    let relatedDigitalSearchRecommendationInstance : RelatedDigitalSearchRecommendation
+    let relatedDigitalSearchRecommendationInstance: RelatedDigitalSearchRecommendation
     var launchOptions: [UIA.LaunchOptionsKey: Any]?
 
     static var deliveredBadgeCount: Bool?
@@ -204,14 +200,10 @@ extension RDInstance {
             switch permission.authorizationStatus {
             case .authorized:
                 RDConstants.pushPermitStatus = "granted"
-            case .denied:
-                RDConstants.pushPermitStatus = "denied"
-            case .notDetermined:
+            case .denied, .notDetermined, .ephemeral:
                 RDConstants.pushPermitStatus = "denied"
             case .provisional:
                 RDConstants.pushPermitStatus = "default"
-            case .ephemeral:
-                RDConstants.pushPermitStatus = "denied"
             @unknown default:
                 RDConstants.pushPermitStatus = "denied"
             }
@@ -221,44 +213,100 @@ extension RDInstance {
     public func customEvent(_ pageName: String, properties: Properties) {
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
+
             return
         }
 
-        if pageName.isEmptyOrWhitespace {
-            RDLogger.error("customEvent can not be called with empty page name.")
-            return
-        }
+        trackingQueue.async { [weak self, properties] in
 
-        checkPushPermission()
+            guard let strongSelf = self else { return }
 
-        trackingQueue.async { [weak self, pageName, properties] in
-            guard let self = self else { return }
             var eQueue = Queue()
+
             var user = RDUser()
+
             var chan = ""
-            self.readWriteLock.read {
-                (eQueue, user, chan) = (self.eventsQueue, self.rdUser, self.rdProfile.channel)
-            }
-            let result = self.rdEventInstance.customEvent(pageName: pageName, properties: properties, eventsQueue: eQueue, rdUser: user, channel: chan)
-            self.readWriteLock.write {
-                self.eventsQueue = result.eventsQueque
-                self.rdUser = result.rdUser
-                self.rdProfile.channel = result.channel
-            }
-            self.readWriteLock.read {
-                RDPersistence.archiveUser(self.rdUser)
-                if result.clearUserParameters {
-                    RDPersistence.clearTargetParameters()
+
+            strongSelf.readWriteLock.read {
+                do {
+                    
+                    (eQueue, user, chan) = try (strongSelf.eventsQueue, strongSelf.rdUser, strongSelf.rdProfile.channel)
+
+                } catch {
+                    print("Error reading data: \(error)")
+
+                    return
                 }
             }
-            if let event = self.eventsQueue.last {
-                RDPersistence.saveTargetParameters(event)
-                if RDBasePath.endpoints[.action] != nil, self.rdProfile.inAppNotificationsEnabled, pageName != RDConstants.omEvtGif {
-                    self.checkInAppNotification(properties: event)
-                    self.checkTargetingActions(properties: event)
+
+            let result: (eventsQueque: Queue, rdUser: RDUser, channel: String, clearUserParameters: Bool)
+
+            do {
+                result = try strongSelf.rdEventInstance.customEvent(
+                    properties: properties,
+
+                    eventsQueue: eQueue,
+
+                    rdUser: user,
+
+                    channel: chan
+                )
+
+            } catch {
+                print("Error in customEvent: \(error)")
+
+                return
+            }
+
+            strongSelf.readWriteLock.write {
+                do {
+                    strongSelf.eventsQueue = try result.eventsQueque
+
+                    strongSelf.rdUser = try result.rdUser
+
+                    strongSelf.rdProfile.channel = try result.channel
+
+                } catch {
+                    print("Error writing data: \(error)")
+
+                    return
                 }
             }
-            self.send()
+
+            strongSelf.readWriteLock.read {
+                do {
+                    try RDPersistence.archiveUser(strongSelf.rdUser)
+
+                    if result.clearUserParameters {
+                        try RDPersistence.clearTargetParameters()
+                    }
+
+                } catch {
+                    print("Error in persistence operations: \(error)")
+                }
+            }
+
+            if let event = strongSelf.eventsQueue.last {
+                do {
+                    try RDPersistence.saveTargetParameters(event)
+
+                    if RDBasePath.endpoints[.action] != nil, strongSelf.rdProfile.inAppNotificationsEnabled {
+                        try strongSelf.checkInAppNotification(properties: event)
+
+                        try strongSelf.checkTargetingActions(properties: event)
+                    }
+
+                } catch {
+                    print("Error in event handling or notifications: \(error)")
+                }
+            }
+
+            do {
+                try strongSelf.send()
+
+            } catch {
+                print("Error in sending data: \(error)")
+            }
         }
     }
 
@@ -489,11 +537,11 @@ extension RDInstance: RDInAppNotificationsDelegate {
     func subscribeJackpotMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "jackpot_email")
     }
-    
+
     func subscribeClowMachineMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "ClawMachine_email")
     }
-    
+
     func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "chooseFavorite_email")
     }
@@ -545,8 +593,7 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties["OM.zpc"] = jackpotReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
-    
-    
+
     func trackClowMachineClick(clowMachineReport: ClawMachineReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
@@ -562,7 +609,7 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties["OM.zpc"] = chooseFavoriteReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
-    
+
     func trackCustomWebviewClick(customWebviewReport: CustomWebViewReport) {
         var properties = Properties()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
@@ -714,17 +761,16 @@ extension RDInstance {
             }
         }
     }
-    
+
     func deleteNotifications() {
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
         center.removeAllDeliveredNotifications()
     }
-    
-    
+
     func removeNotification(withPushID pushID: String, completion: @escaping (Bool) -> Void) {
         let center = UNUserNotificationCenter.current()
-        
+
         center.getDeliveredNotifications { notifications in
             for notification in notifications {
                 if let userInfo = notification.request.content.userInfo as? [String: Any] {
@@ -742,7 +788,7 @@ extension RDInstance {
             completion(false)
         }
     }
-    
+
     func getButtonCarouselView(properties: Properties, completion: @escaping ((ButtonCarouselView?) -> Void)) {
         let guid = UUID().uuidString
 
@@ -812,53 +858,47 @@ extension RDInstance {
         props[RDConstants.pvivKey] = String(rdUser.pviv)
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
-        
+
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
                 props[key] = value
             }
         }
-        
-        self.rdTargetingActionInstance.getNpsWithNumbers(properties: props , rdUser: self.rdUser, guid: guid) { notif in
-            
+
+        self.rdTargetingActionInstance.getNpsWithNumbers(properties: props, rdUser: self.rdUser, guid: guid) { notif in
+
             DispatchQueue.main.async {
-                var npsView: RDNpsWithNumbersContainerView? = nil
+                var npsView: RDNpsWithNumbersContainerView?
                 if let notif = notif {
                     npsView = RDNpsWithNumbersContainerView(frame: .zero, notification: notif, delegate: delegate)
                     npsView?.layer.isOpaque = true
                 }
                 completion(npsView)
             }
-            
         }
     }
-    
-    
 }
 
-
 extension RDInstance {
-    
-    public func searcRecommendation(keyword:String,searchType:String,properties: [String: String] = [:],completion: @escaping ((_ response: RelatedDigitalSearchRecommendationResponse) -> Void)) {
-                
+    public func searcRecommendation(keyword: String, searchType: String, properties: [String: String] = [:], completion: @escaping ((_ response: RelatedDigitalSearchRecommendationResponse) -> Void)) {
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
         }
-        
-        searchRecommendationQueue.async { [weak self, keyword,searchType,properties, completion] in
-            self?.networkQueue.async { [weak self, keyword,searchType,properties, completion] in
+
+        searchRecommendationQueue.async { [weak self, keyword, searchType, properties, completion] in
+            self?.networkQueue.async { [weak self, keyword, searchType, properties, completion] in
                 guard let self = self else { return }
                 var vUser = RDUser()
 
                 self.readWriteLock.read {
                     vUser = self.rdUser
                 }
-                
+
                 self.relatedDigitalSearchRecommendationInstance.searchRecommend(relatedUser: vUser,
-                                    properties: properties,
-                                    keyword: keyword,
-                                    searchType: searchType) { response in
-                    
+                                                                                properties: properties,
+                                                                                keyword: keyword,
+                                                                                searchType: searchType) { response in
+
                     self.trackSearchRecommendationImpression(qs: response.productAreaContainer?.report.impression ?? "")
 
                     completion(response)
@@ -866,12 +906,12 @@ extension RDInstance {
             }
         }
     }
-    
+
     private func trackSearchRecommendationImpression(qs: String) {
         if RDPersistence.isBlocked() {
             RDLogger.warn("Too much server load, ignoring the request!")
         }
-        
+
         let qsArr = qs.components(separatedBy: "&")
         var properties = [String: String]()
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
@@ -888,9 +928,7 @@ extension RDInstance {
         }
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
-
 }
-
 
 // MARK: - RECOMMENDATION
 
@@ -1040,7 +1078,7 @@ extension RDInstance {
     public func setEuroUserId(userKey: String?) {
         RDPush.setEuroUserId(userKey: userKey)
     }
-    
+
     public func setAnonymous(permission: Bool) {
         RDPush.setAnonymous(permission: permission)
     }
@@ -1089,8 +1127,8 @@ extension RDInstance {
     public func handlePush(pushDictionary: [AnyHashable: Any]) {
         RDPush.handlePush(pushDictionary: pushDictionary)
     }
-    
-    func handlePushWithActionButtons(response: UNNotificationResponse,type:Any) {
+
+    func handlePushWithActionButtons(response: UNNotificationResponse, type: Any) {
         RDPush.handlePushWithActionButtons(response: response, type: type)
     }
 
@@ -1101,43 +1139,42 @@ extension RDInstance {
     public func registerEmail(email: String, permission: Bool, isCommercial: Bool = false, customDelegate: RDPushDelegate? = nil) {
         RDPush.registerEmail(email: email, permission: permission, isCommercial: isCommercial, customDelegate: customDelegate)
     }
-    
+
     func deletePayloadWithId(completion: @escaping ((Bool) -> Void)) {
         RDPush.deletePayloadWithId { success in
             completion(success)
         }
     }
-    
+
     func deletePayload(completion: @escaping ((Bool) -> Void)) {
         RDPush.deletePayload { success in
             completion(success)
         }
     }
-    
+
     public func deletePayloadWithId(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
-            if let pushId = pushId {
-                RDPush.deletePayloadWithId(pushId: pushId) { success in
-                    completion(success)
-                }
-            } else {
-                deletePayloadWithId { success in
-                    completion(success)
-                }
+        if let pushId = pushId {
+            RDPush.deletePayloadWithId(pushId: pushId) { success in
+                completion(success)
             }
-            
+        } else {
+            deletePayloadWithId { success in
+                completion(success)
+            }
         }
-        
+    }
+
     public func deletePayload(pushId: String? = nil, completion: @escaping ((_ completed: Bool) -> Void)) {
         if let pushId = pushId {
             RDPush.deletePayload(pushId: pushId) { success in
-                    completion(success)
-                }
-            } else {
-                deletePayload { success in
-                    completion(success)
-                }
+                completion(success)
+            }
+        } else {
+            deletePayload { success in
+                completion(success)
             }
         }
+    }
 
     public func getPushMessages(completion: @escaping GetPushMessagesCompletion) {
         RDPush.getPushMessages(completion: completion)
@@ -1150,19 +1187,19 @@ extension RDInstance {
     public func getToken(completion: @escaping ((_ token: String) -> Void)) {
         RDPush.getToken(completion: completion)
     }
-    
+
     func readPushMessages(completion: @escaping ((Bool) -> Void)) {
         RDPush.readPushMessages { success in
             completion(success)
         }
     }
-    
+
     func readPushMessagesWithId(completion: @escaping ((Bool) -> Void)) {
         RDPush.readPushMessagesWithId { success in
             completion(success)
         }
     }
-    
+
     public func readPushMessagesWithId(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
         if let pushId = pushId {
             RDPush.readPushMessagesWithId(pushId: pushId) { success in
@@ -1174,7 +1211,7 @@ extension RDInstance {
             }
         }
     }
-    
+
     public func readPushMessages(pushId: String? = nil, completion: @escaping ((_ success: Bool) -> Void)) {
         if let pushId = pushId {
             RDPush.readPushMessages(pushId: pushId) { success in

@@ -58,9 +58,9 @@ class PushReadHandler {
         }
         
         self.readWriteLock.write {
-            inProgressPushId = pushID
-            inProgressEmPushSp = emPushSp
-            pushMessage = message
+            self.inProgressPushId = pushID
+            self.inProgressEmPushSp = emPushSp
+            self.pushMessage = message
             RDLogger.info("reportRead: \(message)")
             request = PushRetentionRequest(key: appKey, token: token, status: PushKey.euroReadStatus, pushId: pushID, emPushSp: emPushSp)
         }
@@ -82,9 +82,9 @@ class PushReadHandler {
                 PushUserDefaultsUtils.saveUserDefaults(key: PushKey.euroLastMessageKey, value: pushMessageData as AnyObject)
             }
             self.readWriteLock.write {
-                inProgressPushId = nil
-                inProgressEmPushSp = nil
-                pushMessage = nil
+                self.inProgressPushId = nil
+                self.inProgressEmPushSp = nil
+                self.pushMessage = nil
             }
         }
     }
