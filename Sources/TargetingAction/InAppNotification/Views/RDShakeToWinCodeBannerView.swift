@@ -32,25 +32,39 @@ class RDShakeToWinCodeBannerView: UIView {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     private func setupLabels() {
         horizontalStackView = UIStackView()
         horizontalStackView.axis = .horizontal
-        horizontalStackView.distribution = .fillEqually
-        horizontalStackView.layoutMargins = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
+        horizontalStackView.distribution = .fillProportionally
+        horizontalStackView.layoutMargins = UIEdgeInsets(top: 20, left: 8, bottom: 20, right: 0)
 
         verticalStackViewLeft = UIStackView()
         verticalStackViewLeft.axis = .vertical
         verticalStackViewLeft.distribution = .equalSpacing
-        verticalStackViewLeft.spacing = 10.0
+        verticalStackViewLeft.spacing = 5.0
         verticalStackViewLeft.alignment = .center
 
         verticalStackViewRight = UIStackView()
         verticalStackViewRight.axis = .vertical
         verticalStackViewRight.distribution = .equalSpacing
-        verticalStackViewRight.spacing = 10.0
+        verticalStackViewRight.spacing = 0.0
         verticalStackViewRight.alignment = .center
+        
+        let invisibleViewTop = UIView()
+        invisibleViewTop.backgroundColor = .clear // Transparan görünüm
+        invisibleViewTop.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            invisibleViewTop.heightAnchor.constraint(equalToConstant: 5)
+         ])
 
+        let invisibleViewBottom = UIView()
+        invisibleViewBottom.backgroundColor = .clear // Transparan görünüm
+        invisibleViewBottom.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            invisibleViewBottom.heightAnchor.constraint(equalToConstant: 5)
+         ])
+        
         bannerTextLabel = UILabel()
         bannerTextLabel.text = shakeToWinModel.promocode_banner_text?.removeEscapingCharacters()
         bannerTextLabel.numberOfLines = 0
@@ -61,6 +75,7 @@ class RDShakeToWinCodeBannerView: UIView {
         bannerButtonLabel = UILabel()
         bannerButtonLabel.text = shakeToWinModel.promocode_banner_button_label
         bannerButtonLabel.textAlignment = .center
+        bannerButtonLabel.isHidden = true
 
         bannerCodeLabel = UILabel()
         bannerCodeLabel.text = BannerCodeManager.shared.getShakeToWinCode()
@@ -68,11 +83,13 @@ class RDShakeToWinCodeBannerView: UIView {
 
         verticalStackViewLeft.addArrangedSubview(bannerTextLabel)
 
+        verticalStackViewRight.addArrangedSubview(invisibleViewTop)
         verticalStackViewRight.addArrangedSubview(bannerButtonLabel)
         verticalStackViewRight.addArrangedSubview(bannerCodeLabel)
+        verticalStackViewRight.addArrangedSubview(invisibleViewBottom)
 
-        horizontalStackView.addArrangedSubview(verticalStackViewLeft)
         horizontalStackView.addArrangedSubview(verticalStackViewRight)
+        horizontalStackView.addArrangedSubview(verticalStackViewLeft)
 
         addSubview(horizontalStackView)
     }
@@ -104,6 +121,7 @@ class RDShakeToWinCodeBannerView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        verticalStackViewRight.setDashedBorderView()
     }
 
     private func setFonts() {
