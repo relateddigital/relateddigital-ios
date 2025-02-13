@@ -52,7 +52,7 @@ public class ScratchToWinModel: TargetingActionViewModel {
     let buttonCustomFontFamilyIos : String?
     let promocodeCustomFontFamilyIos : String?
     let copybuttonCustomFontFamilyIos : String?
-    
+    let iosLink : String?
     public var jsContent: String?
     public var jsonContent: String?
 
@@ -112,7 +112,8 @@ public class ScratchToWinModel: TargetingActionViewModel {
                 contentBodyCustomFontFamilyIos:String?,
                 buttonCustomFontFamilyIos : String?,
                 promocodeCustomFontFamilyIos : String?,
-                copybuttonCustomFontFamilyIos : String?) {
+                copybuttonCustomFontFamilyIos : String?,
+                iosLink : String?) {
 
         if let cBColor = closeButtonColor {
             if cBColor.lowercased() == "white" {
@@ -151,6 +152,7 @@ public class ScratchToWinModel: TargetingActionViewModel {
         self.backgroundColor = UIColor(hex: backgroundColor)
         self.consentUrl = URL(string: consentUrl ?? "")
         self.permitUrl = URL(string: emailPermitUrl ?? "")
+        self.iosLink = iosLink
         if !self.imageUrlString.isNilOrWhiteSpace {
             self.imageUrl = ScratchToWinModel.getImageUrl(self.imageUrlString!, type: .full)
         }

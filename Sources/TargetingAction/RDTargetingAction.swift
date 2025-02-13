@@ -1255,6 +1255,8 @@ class RDTargetingAction {
             checkConsentMsg = mailForm[RDConstants.checkConsentMessage] as? String
         }
 
+        let iosLink = actionData[RDConstants.iosLnk] as? String ?? ""
+
         // extended props
         let titleTextColor = extendedProps[RDConstants.contentTitleTextColor] as? String
         let titleFontFamily = extendedProps[RDConstants.contentTitleFontFamily] as? String
@@ -1341,7 +1343,8 @@ class RDTargetingAction {
                                  contentBodyCustomFontFamilyIos: contentBodyCustomFontFamilyIos,
                                  buttonCustomFontFamilyIos: buttonCustomFontFamilyIos,
                                  promocodeCustomFontFamilyIos: promocodeCustomFontFamilyIos,
-                                 copybuttonCustomFontFamilyIos: copybuttonCustomFontFamilyIos)
+                                 copybuttonCustomFontFamilyIos: copybuttonCustomFontFamilyIos,
+                                 iosLink: iosLink)
     }
 
     private func convertJsonToEmailViewModel(emailForm: MailSubscriptionModel) -> MailSubscriptionViewModel {

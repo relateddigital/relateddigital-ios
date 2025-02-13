@@ -472,6 +472,11 @@ extension RDPopupDialogDefaultView: UITextFieldDelegate {
     @objc func copyCodeAndDismiss() {
         UIPasteboard.general.string = scratchToWin?.promocode
         RDHelper.showCopiedClipboardMessage()
+        DispatchQueue.main.async {
+            if let url = URL(string: self.scratchToWin?.iosLink ?? "") {
+                UIApplication.shared.open(url)
+            }
+        }
         self.delegate?.dismissSctw()
     }
 }
