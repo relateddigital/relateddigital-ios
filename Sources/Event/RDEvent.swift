@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class RDEvent {
     // swiftlint:disable large_tuple function_body_length cyclomatic_complexity
