@@ -31,7 +31,7 @@ class PushSubscriptionHandler {
         
         crashCapturer()
         
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.global(qos: .background).async { [self] in
             var isRequestSame = false
             var isRequestSameAsLastSuccessfulSubscriptionRequest = false
             self.readWriteLock.read {
