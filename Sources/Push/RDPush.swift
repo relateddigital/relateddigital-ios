@@ -423,92 +423,104 @@ extension RDPush {
     // MARK: Sync
 
     /// Synchronize user data with RelatedDigital servers
-    /// - Parameter notification: no need for direct call
+    /// - Parameter notification: no need for direct call    
+    
     public static func sync(notification: Notification? = nil) {
-        guard let shared = getShared() else { return }
-        if !shared.pushPermitDidCall {
-            let center = UNUNC.current()
-            center.getNotificationSettings { settings in
-                if settings.authorizationStatus == .denied {
-                    setUserProperty(key: PushProperties.CodingKeys.pushPermit.rawValue, value: PushProperties.PermissionKeys.not.rawValue)
-                    var subs: PushSubscriptionRequest!
-                    shared.readWriteLock.read {
-                        subs = shared.subscription
-                    }
-                    shared.networkQueue.async {
-                        RDPush.emSubscriptionHandler?.reportSubscription(subscriptionRequest: subs)
-                    }
-                } else {
-                    setUserProperty(key: PushProperties.CodingKeys.pushPermit.rawValue, value: PushProperties.PermissionKeys.yes.rawValue)
-                }
-            }
-        }
+        do {
+            guard let shared = getShared() else { return }
 
-        var subs: PushSubscriptionRequest!
-        var previousSubs: PushSubscriptionRequest?
-
-        shared.readWriteLock.read {
-            subs = shared.subscription
-        }
-
-        // Clear badge
-        if !(subs.isBadgeCustom ?? false) {
-            PushUserDefaultsUtils.removeUserDefaults(userKey: PushKey.badgeCount)
-
-            if !PushTools.isiOSAppExtension() {
-                if deliveredBadgeCount! {
-                    UNUNC.current().getDeliveredNotifications(completionHandler: { notifications in
-                        DispatchQueue.main.async {
-                            UIA.shared.applicationIconBadgeNumber = notifications.count
+            if !shared.pushPermitDidCall {
+                let center = UNUNC.current()
+                center.getNotificationSettings { settings in
+                    do {
+                        if settings.authorizationStatus == .denied {
+                            setUserProperty(key: PushProperties.CodingKeys.pushPermit.rawValue, value: PushProperties.PermissionKeys.not.rawValue)
+                            var subs: PushSubscriptionRequest!
+                            shared.readWriteLock.read {
+                                subs = shared.subscription
+                            }
+                            shared.networkQueue.async {
+                                RDPush.emSubscriptionHandler?.reportSubscription(subscriptionRequest: subs)
+                            }
+                        } else {
+                            setUserProperty(key: PushProperties.CodingKeys.pushPermit.rawValue, value: PushProperties.PermissionKeys.yes.rawValue)
                         }
-                    })
-                }
-            }
-        }
-        // check whether the user have an unreported message
-        shared.networkQueue.async {
-            RDPush.emReadHandler?.checkUserUnreportedMessages()
-        }
-
-        shared.readWriteLock.read {
-            subs = shared.subscription
-            previousSubs = RDPush.previousSubscription
-        }
-
-        var shouldSendSubscription = false
-
-        if subs.isValid() {
-            shared.readWriteLock.write {
-                if previousSubs == nil || subs != previousSubs {
-                    RDPush.previousSubscription = subs
-                    shouldSendSubscription = true
+                    }
                 }
             }
 
-            if !shouldSendSubscription {
-                RDLogger.warn("Subscription request not ready : \(String(describing: subs))")
-                return
-            }
+            var subs: PushSubscriptionRequest!
+            var previousSubs: PushSubscriptionRequest?
 
-            saveSubscription()
             shared.readWriteLock.read {
                 subs = shared.subscription
             }
-            PushUserDefaultsUtils.saveUserDefaults(key: PushKey.tokenKey, value: subs.token as AnyObject)
-            RDLogger.info("Current subscription \(subs.encoded)")
-        } else {
-            RDLogger.warn("Subscription request is not valid : \(String(describing: subs))")
-            return
-        }
 
-        shared.readWriteLock.read {
-            subs = shared.subscription
-        }
+            // Clear badge
+            if !(subs.isBadgeCustom ?? false) {
+                PushUserDefaultsUtils.removeUserDefaults(userKey: PushKey.badgeCount)
 
-        shared.networkQueue.async {
-            emSubscriptionHandler?.reportSubscription(subscriptionRequest: subs)
+                if !PushTools.isiOSAppExtension() {
+                    if let deliveredBadgeCount = deliveredBadgeCount {
+                        UNUNC.current().getDeliveredNotifications(completionHandler: { notifications in
+                            DispatchQueue.main.async {
+                                do {
+                                    UIA.shared.applicationIconBadgeNumber = notifications.count
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+
+            // Check unreported messages
+            shared.networkQueue.async {
+                RDPush.emReadHandler?.checkUserUnreportedMessages()
+            }
+
+            shared.readWriteLock.read {
+                subs = shared.subscription
+                previousSubs = RDPush.previousSubscription
+            }
+
+            var shouldSendSubscription = false
+
+            if subs.isValid() {
+                shared.readWriteLock.write {
+                    if previousSubs == nil || subs != previousSubs {
+                        RDPush.previousSubscription = subs
+                        shouldSendSubscription = true
+                    }
+                }
+
+                if !shouldSendSubscription {
+                    RDLogger.warn("Subscription request not ready : \(String(describing: subs))")
+                    return
+                }
+
+                saveSubscription()
+                shared.readWriteLock.read {
+                    subs = shared.subscription
+                }
+                PushUserDefaultsUtils.saveUserDefaults(key: PushKey.tokenKey, value: subs.token as AnyObject)
+                RDLogger.info("Current subscription \(subs.encoded)")
+            } else {
+                RDLogger.warn("Subscription request is not valid : \(String(describing: subs))")
+                return
+            }
+
+            shared.readWriteLock.read {
+                subs = shared.subscription
+            }
+
+            shared.networkQueue.async {
+                emSubscriptionHandler?.reportSubscription(subscriptionRequest: subs)
+            }
+        } catch {
+            RDLogger.error("Exception caught in sync function: \(error.localizedDescription)")
         }
     }
+
 
     /// Returns all the information that set before
     public static func checkConfiguration() -> PushConfiguration {
