@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -139,6 +139,10 @@
 		FD2832752460EA9318E3D35D /* Pods_NotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2F6B765E2DA6C863001AC395 /* RelatedDigitalTest */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = RelatedDigitalTest; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		2F05B63227C62B36009D7ECB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -236,6 +240,7 @@
 				88680B2D2694FC0D004B8DE8 /* RelatedDigitalExampleUITests */,
 				2F05B63627C62B36009D7ECB /* NotificationService */,
 				2F05B64B27C62B64009D7ECB /* NotificationContent */,
+				2F6B765E2DA6C863001AC395 /* RelatedDigitalTest */,
 				88680B0A2694FC09004B8DE8 /* Products */,
 				79DC8014EF3BC9EA592B2AAE /* Pods */,
 				EF4A6A6D971EC68E2157BE79 /* Frameworks */,
@@ -433,7 +438,7 @@
 		88680B012694FC09004B8DE8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1320;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					2F05B63427C62B36009D7ECB = {
@@ -573,9 +578,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExampleTests/Pods-RelatedDigitalExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExampleTests/Pods-RelatedDigitalExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -634,9 +643,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -979,7 +992,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RelatedDigitalExample/RelatedDigitalExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = 5M383PCDJZ;
 				INFOPLIST_FILE = RelatedDigitalExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -1004,7 +1017,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RelatedDigitalExample/RelatedDigitalExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_TEAM = 5M383PCDJZ;
 				INFOPLIST_FILE = RelatedDigitalExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;

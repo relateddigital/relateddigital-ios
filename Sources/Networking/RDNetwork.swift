@@ -23,6 +23,7 @@ enum RDEndpoint {
     case promotion
     case remote
     case search
+    case logConfig
     
     case spinToWinJs
     case giftCatchJs
@@ -99,21 +100,23 @@ public enum RDError: Codable {
 
 struct RDBasePath {
     static var endpoints = [RDEndpoint: String]()
-    
-    // TO_DO: path parametresini kaldır
-    static func buildURL(rdEndpoint: RDEndpoint, queryItems: [URLQueryItem]?) -> URL? {
-        guard let endpoint = endpoints[rdEndpoint], let url = URL(string: endpoint) else {
-            return nil
+
+        static func buildURL(rdEndpoint: RDEndpoint, queryItems: [URLQueryItem]?) -> URL? {
+             guard let endpoint = endpoints[rdEndpoint] else {
+                 RDLogger.error("Endpoint not defined for \(rdEndpoint)")
+                 return nil
+             }
+             guard var urlComponents = URLComponents(string: endpoint) else {
+                  RDLogger.error("Invalid base URL for endpoint \(rdEndpoint)")
+                  return nil
+             }
+            urlComponents.queryItems = queryItems
+            return urlComponents.url
         }
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        components?.queryItems = queryItems
-        return components?.url
-        
-    }
-    
-    static func getEndpoint(rdEndpoint: RDEndpoint) -> String {
-        return endpoints[rdEndpoint] ?? ""
-    }
+
+        static func getEndpoint(rdEndpoint: RDEndpoint) -> String {
+            return endpoints[rdEndpoint] ?? ""
+        }
 }
 
 class RDNetwork {

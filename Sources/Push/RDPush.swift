@@ -703,23 +703,63 @@ extension RDPush {
         graylog.identifierForVendor = subscription.identifierForVendor
         graylog.extra = subscription.extra
     }
+    
+    private static func shouldSendLog(dataSource: String, completion: @escaping (Bool) -> Void) {
+        RDRequest.fetchLogConfig { logConfig in
+            // Ana thread'e dönerek state güncellemelerini güvenli yapalım
+            DispatchQueue.main.async {
+                guard let config = logConfig else {
+                    // Konfigürasyon alınamazsa ne yapılmalı? Varsayılan olarak log atılsın mı?
+                    // Şimdilik hata durumunda loglamaya izin verelim.
+                    RDLogger.warn("Could not fetch log configuration. Proceeding with logging.")
+                    completion(true)
+                    return
+                }
+                
+                if !config.isLoggingEnabled {
+                    RDLogger.info("Logging is disabled via remote config.")
+                    completion(false)
+                    return
+                }
+                
+                if config.excludedCustomerIds.contains(dataSource) {
+                    RDLogger.info("Logging disabled for this dataSource (\(dataSource)) via remote config exclusion.")
+                    completion(false)
+                    return
+                }
+                
+                // Loglama aktif ve dataSource hariç tutulmamışsa log gönderilebilir.
+                RDLogger.info("Logging is enabled for this dataSource (\(dataSource)).")
+                completion(true)
+            }
+        }
+    }
 
     public static func sendGraylogMessage(logLevel: String, logMessage: String, _ path: String = #file, _ function: String = #function, _ line: Int = #line) {
+        
         guard let shared = getShared() else { return }
-        var emGraylogRequest: PushGraylogRequest!
-        shared.readWriteLock.read {
-            emGraylogRequest = shared.graylog
+        let currentDataSource = RelatedDigital.rdProfile.dataSource
+        shouldSendLog(dataSource: currentDataSource) { shouldLog in
+            // shouldSendLog asenkron olduğu için completion handler içinde devam ediyoruz
+            if !shouldLog {
+                RDLogger.info("Skipping Graylog message due to remote configuration: \(logMessage)")
+                return // Log gönderme işlemini atla
+            }
+            var emGraylogRequest: PushGraylogRequest!
+            shared.readWriteLock.read {
+                emGraylogRequest = shared.graylog
+            }
+            emGraylogRequest.logLevel = logLevel
+            emGraylogRequest.logMessage = logMessage
+            
+            if let file = path.components(separatedBy: "/").last {
+                emGraylogRequest.logPlace = "\(file)/\(function)/\(line)"
+            } else {
+                emGraylogRequest.logPlace = "\(path)/\(function)/\(line)"
+            }
+            
+            shared.pushAPI?.request(requestModel: emGraylogRequest, retry: 3, completion: shared.sendGraylogMessageHandler)
         }
-        emGraylogRequest.logLevel = logLevel
-        emGraylogRequest.logMessage = logMessage
-
-        if let file = path.components(separatedBy: "/").last {
-            emGraylogRequest.logPlace = "\(file)/\(function)/\(line)"
-        } else {
-            emGraylogRequest.logPlace = "\(path)/\(function)/\(line)"
-        }
-
-        shared.pushAPI?.request(requestModel: emGraylogRequest, retry: 3, completion: shared.sendGraylogMessageHandler)
     }
 
     private func sendGraylogMessageHandler(result: Result<PushResponse?, PushAPIError>) {

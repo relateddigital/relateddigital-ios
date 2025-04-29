@@ -423,6 +423,53 @@ class RDRequest {
             print("Successfully sent!")
         })
     }
+    
+    class func fetchLogConfig(completion: @escaping (LogConfig?) -> Void) {
+            // Endpoint URL'sini alırken hata kontrolü yapalım
+        let urlString = RDBasePath.getEndpoint(rdEndpoint: .logConfig)
+        
+        guard !urlString.isEmpty, let url = URL(string: urlString) else {
+                RDLogger.error("Invalid or undefined log config endpoint URL.")
+                completion(nil)
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            // Gerekirse timeout gibi diğer ayarları ekleyebilirsiniz.
+            // request.timeoutInterval = RelatedDigital.rdProfile.requestTimeoutInterval // Eğer varsa
+
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    RDLogger.error("Log config fetch error: \(error.localizedDescription)")
+                    completion(nil) // Hata durumunda varsayılan davranış (loglama yapılabilir veya yapılmayabilir)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    RDLogger.error("Invalid HTTP response for log config: \(String(describing: response))")
+                    completion(nil)
+                    return
+                }
+
+                guard let data = data else {
+                    RDLogger.error("No data received for log config.")
+                    completion(nil)
+                    return
+                }
+
+                do {
+                    let logConfig = try JSONDecoder().decode(LogConfig.self, from: data)
+                     RDLogger.info("Log config fetched successfully: \(logConfig)")
+                    completion(logConfig)
+                } catch {
+                    RDLogger.error("Failed to decode log config: \(error.localizedDescription)")
+                    completion(nil)
+                }
+            }.resume()
+        }
+    
+    
 
     class func sendRemoteConfigRequest(completion: @escaping ([String]?, RDError?) -> Void) {
         let responseParser: (Data) -> [String]? = { data in

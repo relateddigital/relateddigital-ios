@@ -33,6 +33,11 @@ public class UrlConstant {
     }
 }
 
+struct LogConfig: Codable {
+    let isLoggingEnabled: Bool
+    let excludedCustomerIds: [String]
+}
+
 struct RDConstants {
     
     static let sdkVersion = "4.0.64"
@@ -57,6 +62,7 @@ struct RDConstants {
     static var promotionEndpoint = "\(UrlConstant.shared.urlPrefix)/promotion"
     static var searchRecommendationEndPoint = "\(UrlConstant.shared.urlPrefix)/search"
     static var remoteConfigEndpoint = "mbls.visilabs.net/rc.json"
+    static var logConfigEndpoint = "mbls.visilabs.net/log_rc.json"
     
     // MARK: - UserDefaults Keys
     
