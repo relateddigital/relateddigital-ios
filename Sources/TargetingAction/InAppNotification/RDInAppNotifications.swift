@@ -327,10 +327,13 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showScratchToWin(_ model: ScratchToWinModel) -> Bool {
-        let popUpVC = RDPopupNotificationViewController(scratchToWin: model)
-        popUpVC.delegate = self
-        popUpVC.inappButtonDelegate = inappButtonDelegate
-        popUpVC.show(animated: false)
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute:{
+            let popUpVC = RDPopupNotificationViewController(scratchToWin: model)
+            popUpVC.delegate = self
+            popUpVC.inappButtonDelegate = self.inappButtonDelegate
+            popUpVC.show(animated: false)
+
+        })
         return true
     }
 
