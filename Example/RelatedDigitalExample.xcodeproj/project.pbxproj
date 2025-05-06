@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -140,7 +140,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2F6B765E2DA6C863001AC395 /* RelatedDigitalTest */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = RelatedDigitalTest; sourceTree = "<group>"; };
+		2F6B765E2DA6C863001AC395 /* RelatedDigitalTest */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			path = RelatedDigitalTest;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -462,7 +468,6 @@
 				};
 			};
 			buildConfigurationList = 88680B042694FC09004B8DE8 /* Build configuration list for PBXProject "RelatedDigitalExample" */;
-			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -470,6 +475,7 @@
 				Base,
 			);
 			mainGroup = 88680B002694FC09004B8DE8;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 88680B0A2694FC09004B8DE8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -578,13 +584,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExampleTests/Pods-RelatedDigitalExampleTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExampleTests/Pods-RelatedDigitalExampleTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -643,13 +645,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

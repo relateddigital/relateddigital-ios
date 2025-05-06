@@ -407,8 +407,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                         completionBlock()
                     }
                 } else {
-                    let app = RDInstance.sharedUIApplication()
-                    app?.performSelector(onMainThread: NSSelectorFromString("openURL:"), with: callToActionURL, waitUntilDone: true)
+                    UIApplication.shared.open(callToActionURL as URL, options: [:], completionHandler: nil)
                     completionBlock()
                 }
             }
