@@ -10,7 +10,7 @@ import Foundation
 struct PushGraylogRequest: PushCodable, PushRequestProtocol {
     internal var path = "log/mobileSdk"
     internal var method = "POST"
-    internal var subdomain = "rd-gateway"
+    internal var subdomain = "rd-gateway-log"
     internal var prodBaseUrl = ".relateddigital.com"
 
     var logLevel: String?
