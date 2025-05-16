@@ -69,6 +69,7 @@ class InAppViewController: FormViewController, BannerDelegate {
             .imageTextButton: [RDInAppNotificationType.imageTextButton.rawValue: 490],
             .fullImage: [RDInAppNotificationType.fullImage.rawValue: 495],
             .nps: [RDInAppNotificationType.nps.rawValue: 492],
+            .npsWithNumbers: [RDInAppNotificationType.npsWithNumbers.rawValue: 493],
             .imageButton: [RDInAppNotificationType.imageButton.rawValue: 489],
             .smileRating: [RDInAppNotificationType.smileRating.rawValue: 494],
             .emailForm: [RDInAppNotificationType.emailForm.rawValue: 417],

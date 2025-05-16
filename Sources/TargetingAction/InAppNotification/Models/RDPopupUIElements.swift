@@ -589,25 +589,6 @@ extension RDPopupDialogDefaultView: UICollectionViewDelegate, UICollectionViewDa
         return cell
     }
 
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? RatingCollectionViewCell else {
-            return
-        }
-        let numberRange = rdInAppNotification?.numberRange
-        if cell.isSelected {
-            if numberRange == "0-10" {
-                selectedNumber = indexPath.row
-            } else {
-                selectedNumber = indexPath.row + 1
-            }
-
-            npsDelegate?.ratingSelected()
-        } else {
-            selectedNumber = 10
-            npsDelegate?.ratingUnselected()
-        }
-    }
-
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0)
     }
