@@ -738,7 +738,7 @@ extension RDPush {
     public static func sendGraylogMessage(logLevel: String, logMessage: String, _ path: String = #file, _ function: String = #function, _ line: Int = #line) {
         
         guard let shared = getShared() else { return }
-        let currentDataSource = RelatedDigital.rdProfile.dataSource
+        let currentDataSource = RelatedDigital.rdProfile.appAlias ?? ""
         shouldSendLog(dataSource: currentDataSource) { shouldLog in
             // shouldSendLog asenkron olduğu için completion handler içinde devam ediyoruz
             if !shouldLog {
