@@ -20,6 +20,7 @@ class RDDrawerViewController: RDBaseNotificationViewController {
         globDrawerView = drawerView
         addTapGestureToDrawerMiniView()
         addTapGestureToImageOfGranDrawer()
+        addTapGestureToCloseButton()
         if self.model.isCircle {
             self.globDrawerView!.isHidden = true
             self.model.miniDrawerWidth = self.model.miniDrawerWidthForCircle / 2
@@ -70,6 +71,22 @@ class RDDrawerViewController: RDBaseNotificationViewController {
         globDrawerView?.drawerGrandContentImageView.setImage(withUrl: model.drawerContentImage ?? "")
         
     }
+    
+    @objc func closeClicked(_ sender: UITapGestureRecognizer? = nil) {
+            
+            
+            self.window?.isHidden = true
+            self.window?.removeFromSuperview()
+            self.window = nil
+        }
+    
+    func addTapGestureToCloseButton() {
+            
+        globDrawerView?.closeButton.isUserInteractionEnabled = true
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.closeClicked(_:)))
+        globDrawerView?.closeButton.addGestureRecognizer(tap)
+            
+        }
     
     func createDummyModel() -> DrawerViewModel {
         var model = DrawerViewModel()

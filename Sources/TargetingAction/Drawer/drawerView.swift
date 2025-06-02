@@ -45,6 +45,8 @@ class drawerView: UIView {
     @IBOutlet weak var rightDrawerTrailingConstraint: NSLayoutConstraint!
     @IBOutlet weak var rightDrawerTitleLabelCenterXConstraint: NSLayoutConstraint!
     @IBOutlet weak var rightDrawerContentImageCenterXConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var closeButton: UIImageView!
 
     var drawerModel: DrawerViewModel?
 
