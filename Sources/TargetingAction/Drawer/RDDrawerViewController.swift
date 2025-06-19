@@ -211,6 +211,13 @@ class RDDrawerViewController: RDBaseNotificationViewController {
             RelatedDigital.trackDrawerClick(drawerReport: report)
         }
         
+        if model.staticcode?.count ?? 0 > 0 {
+            UIPasteboard.general.string = model.staticcode
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                RDHelper.showCopiedClipboardMessage()
+            }
+        }
+        
         if let url = URL(string: self.model.linkToGo ?? "") {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {

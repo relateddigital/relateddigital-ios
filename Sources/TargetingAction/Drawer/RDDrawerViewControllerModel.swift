@@ -16,6 +16,8 @@ class RDDrawerViewControllerModel {
 
         drawerModel.actId = serviceModel?.actId
         drawerModel.title = serviceModel?.title
+        
+        drawerModel.staticcode = serviceModel?.staticcode
 
         if serviceModel?.shape?.lowercased() == "circle" {
             drawerModel.isCircle = true
@@ -89,6 +91,7 @@ struct DrawerServiceModel: TargetingActionViewModel {
     var contentMaximizedImage: String?
     var waitingTime: Int?
     var iosLnk: String?
+    var staticcode: String?
 
     // extended Props
     var contentMinimizedTextSize: String?
@@ -137,6 +140,7 @@ struct DrawerViewModel {
     var drawerContentImage: String?
     var waitTime: Int?
     var linkToGo: String?
+    var staticcode: String?
 
     // extended Props
 

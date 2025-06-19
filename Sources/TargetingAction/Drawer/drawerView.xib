@@ -123,7 +123,7 @@
                         <constraint firstAttribute="bottom" secondItem="Szh-wH-ZNq" secondAttribute="bottom" id="nDS-id-eFN"/>
                     </constraints>
                 </view>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="closeButtonDD.png" translatesAutoresizingMaskIntoConstraints="NO" id="qYA-un-OND">
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="closeButtonDD 2.png" translatesAutoresizingMaskIntoConstraints="NO" id="qYA-un-OND">
                     <rect key="frame" x="303" y="405" width="20" height="20"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
@@ -154,6 +154,9 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="closeButton" destination="qYA-un-OND" id="mHB-3J-JSW"/>
+                <outlet property="drawerGrandContentImageView" destination="fwP-4H-Nil" id="gqD-Mm-reY"/>
+                <outlet property="drawerGrandImageView" destination="6Nc-GW-iml" id="GPN-Zr-gtK"/>
+                <outlet property="drawerGrandView" destination="Xfn-En-lFJ" id="p7Z-cp-NMs"/>
                 <outlet property="leftDrawerContentImageCenterXConstraint" destination="DZl-mD-sBH" id="uSq-VD-SIF"/>
                 <outlet property="leftDrawerMiniArrow" destination="169-03-SeD" id="xeq-We-MNQ"/>
                 <outlet property="leftDrawerMiniContentImageBottomConstraint" destination="QCc-yF-Bzh" id="igV-Ul-0MI"/>
@@ -183,14 +186,11 @@
                 <outlet property="rightDrawerTrailingConstraint" destination="DKs-eJ-yI2" id="bHp-97-fqL"/>
                 <outlet property="rightDrawerWidthConstraint" destination="KrX-uL-cQP" id="qCQ-aF-xlr"/>
                 <outlet property="rightTitleLabel" destination="cM9-um-2x3" id="L7s-ag-y8g"/>
-                <outlet property="drawerGrandContentImageView" destination="fwP-4H-Nil" id="gqD-Mm-reY"/>
-                <outlet property="drawerGrandImageView" destination="6Nc-GW-iml" id="GPN-Zr-gtK"/>
-                <outlet property="drawerGrandView" destination="Xfn-En-lFJ" id="p7Z-cp-NMs"/>
             </connections>
             <point key="canvasLocation" x="108.69565217391305" y="127.90178571428571"/>
         </view>
     </objects>
     <resources>
-        <image name="closeButtonDD.png" width="225" height="225"/>
+        <image name="closeButtonDD 2.png" width="225" height="225"/>
     </resources>
 </document>

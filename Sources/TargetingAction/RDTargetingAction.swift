@@ -648,6 +648,7 @@ class RDTargetingAction {
         sideBarServiceModel.contentMaximizedImage = actionData[RDConstants.contentMaximizedImage] as? String ?? ""
         sideBarServiceModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
         sideBarServiceModel.iosLnk = actionData[RDConstants.iosLnk] as? String ?? ""
+        sideBarServiceModel.staticcode = actionData[RDConstants.staticcode] as? String ?? ""
 
         // extended Props
         sideBarServiceModel.contentMinimizedTextSize = extendedProps[RDConstants.contentMinimizedTextSize] as? String ?? ""
