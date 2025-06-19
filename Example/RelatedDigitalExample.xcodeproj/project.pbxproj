@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -139,16 +139,6 @@
 		FD2832752460EA9318E3D35D /* Pods_NotificationService.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationService.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		2F6B765E2DA6C863001AC395 /* RelatedDigitalTest */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = RelatedDigitalTest;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		2F05B63227C62B36009D7ECB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -246,7 +236,6 @@
 				88680B2D2694FC0D004B8DE8 /* RelatedDigitalExampleUITests */,
 				2F05B63627C62B36009D7ECB /* NotificationService */,
 				2F05B64B27C62B64009D7ECB /* NotificationContent */,
-				2F6B765E2DA6C863001AC395 /* RelatedDigitalTest */,
 				88680B0A2694FC09004B8DE8 /* Products */,
 				79DC8014EF3BC9EA592B2AAE /* Pods */,
 				EF4A6A6D971EC68E2157BE79 /* Frameworks */,
@@ -475,7 +464,6 @@
 				Base,
 			);
 			mainGroup = 88680B002694FC09004B8DE8;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 88680B0A2694FC09004B8DE8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
