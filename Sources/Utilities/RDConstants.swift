@@ -223,6 +223,7 @@ struct RDConstants {
     static let giftBoxes = "gift_boxes"
     static let chooseFavorite = "ChooseFavorite"
     static let slotMachine = "SlotMachine"
+    static let survey = "Survey"
     static let clawMachine = "ClawMachine"
     static let apprating = "MobileAppRating"
     static let appBanners = "app_banners"
@@ -581,6 +582,7 @@ struct RDConstants {
     static let giftBoxUrl = "https://mbls.visilabs.net/giftbox.js"
     static let chooseFavoriteUrl = "https://mbls.visilabs.net/swiping.js"
     static let jackpoteUrl = "https://mbls.visilabs.net/jackpot.js"
+    static let pollUrl = "https://mbls.visilabs.net/survey.js"
     static let clawMachineUrl = "https://mbls.visilabs.net/clawmachine.js"
 
 

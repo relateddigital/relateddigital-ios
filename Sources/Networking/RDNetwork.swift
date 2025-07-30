@@ -31,6 +31,7 @@ enum RDEndpoint {
     case giftBoxJs
     case chooseFavoriteJs
     case jackpotJs
+    case pollJs
     case clawMachineJs
 
 

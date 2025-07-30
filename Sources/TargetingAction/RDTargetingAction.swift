@@ -165,6 +165,15 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
+            }  else if targetingActionViewModel?.targetingActionType == .survey {
+                RDRequest.sendPollScriptRequest(completion: { (result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
             } else if targetingActionViewModel?.targetingActionType == .clawMachine {
                 RDRequest.sendClawMachineScriptRequest(completion: { (result: String?, _: RDError?) in
                     if let result = result {
@@ -213,6 +222,8 @@ class RDTargetingAction {
             return parseChooseFavorite(chooseFavorite)
         } else if let jackpot = result[RDConstants.slotMachine] as? [[String: Any?]], let jackpot = jackpot.first {
             return parseJackpot(jackpot)
+        } else if let survey = result[RDConstants.survey] as? [[String: Any?]], let survey = survey.first {
+            return parsePoll(survey)
         } else if let clawMachine = result[RDConstants.clawMachine] as? [[String: Any?]], let clawMachine = clawMachine.first {
             return parseClawMachine(clawMachine)
         } else if let customWeb = result[RDConstants.mobileCustomActions] as? [[String: Any?]], let customWeb = customWeb.first {
@@ -1057,6 +1068,44 @@ class RDTargetingAction {
         }
 
         return jackpotModel
+    }
+    
+    
+    private func parsePoll(_ poll: [String: Any?]) -> PollModel? {
+        guard let actionData = poll[RDConstants.actionData] as? [String: Any] else { return nil }
+        var pollModel = PollModel(targetingActionType: .survey)
+        pollModel.actId = poll[RDConstants.actid] as? Int ?? 0
+        pollModel.title = poll[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+
+        // prome banner params
+        pollModel.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        pollModel.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        pollModel.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        pollModel.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        pollModel.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        pollModel.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        pollModel.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        pollModel.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        pollModel.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        pollModel.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+        //
+        pollModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
+
+        if let theJSONData = try? JSONSerialization.data(
+            withJSONObject: poll,
+            options: []) {
+            pollModel.jsonContent = String(data: theJSONData, encoding: .utf8)
+        }
+
+        if pollModel.promocode_banner_button_label.count > 0 && pollModel.promocode_banner_text.count > 0 {
+            pollModel.bannercodeShouldShow = true
+        } else {
+            pollModel.bannercodeShouldShow = false
+        }
+
+        return pollModel
     }
     
     
