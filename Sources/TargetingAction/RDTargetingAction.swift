@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.survey)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
