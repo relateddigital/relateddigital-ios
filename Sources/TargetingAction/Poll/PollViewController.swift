@@ -116,7 +116,7 @@ class PollViewController: RDBaseNotificationViewController {
             return nil
         }
         let htmlUrl = docUrl.appendingPathComponent("poll.html")
-        let jsUrl = docUrl.appendingPathComponent("poll.js")
+        let jsUrl = docUrl.appendingPathComponent("survey.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else
@@ -253,7 +253,37 @@ extension PollViewController: WKScriptMessageHandler {
                 }
 
                 if method == "sendReport" {
+
                     RelatedDigital.trackPollClick(pollReport: (self.poll?.report)!)
+
+                    if let payloadString = event["payload"] as? String {
+
+                        guard let payloadData = payloadString.data(using: .utf8) else {
+                            print("Hata: Payload string'i Data'ya çevrilemedi.")
+                            return
+                        }
+
+                        do {
+
+                            let result = try JSONDecoder().decode(SurveyResult.self, from: payloadData)
+
+                            if !result.questions.isEmpty {
+                                for qa in result.questions {
+                                    
+                                    var parameters: [String: String] = [:]
+
+                                    parameters["OM.s_group"] = result.title
+                                    parameters["OM.s_cat"] = qa.question
+                                    parameters["OM.s_page"] = qa.answer
+                                    RelatedDigital.customEvent("survey-report", properties: parameters)
+                                    
+                                    print("Custom Event Gönderildi: Soru='\(qa.question)', Cevap='\(qa.answer)'")
+                                }
+                            }
+                        } catch {
+                            print("JSON parse hatası: \(error)")
+                        }
+                    }
                 }
 
                 if method == "linkClicked", let urlLnk = event["url"] as? String {
@@ -287,4 +317,15 @@ extension PollViewController: WKScriptMessageHandler {
 
     }
 
+}
+
+
+struct SurveyResult: Codable {
+    let title: String
+    let questions: [QuestionAnswer]
+}
+
+struct QuestionAnswer: Codable {
+    let question: String
+    let answer: String
 }
