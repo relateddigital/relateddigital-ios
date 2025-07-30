@@ -269,8 +269,8 @@ extension PollViewController: WKScriptMessageHandler {
                 if method == "saveCodeGotten", let code = event["code"] as? String, let mail = event["email"] as? String  {
                     codeGotten = true
                     UIPasteboard.general.string = code
-                    BannerCodeManager.shared.setJackpotCode(code: code)
-                    let actionID = self.jackpot?.actId
+                    BannerCodeManager.shared.setpollCode(code: code)
+                    let actionID = self.poll?.actId
                     var properties = Properties()
                     properties[RDConstants.promoActionID] = String(actionID ?? 0)
                     properties[RDConstants.promoEmailKey] = mail
