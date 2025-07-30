@@ -220,6 +220,10 @@ public class RelatedDigital {
         shared.rdInstance.subscribeJackpotMail(actid: actid, auth: auth, mail: mail)
     }
     
+    static func subscribePollMail(actid: String, auth: String, mail: String) {
+        shared.rdInstance.subscribePollMail(actid: actid, auth: auth, mail: mail)
+    }
+    
     static func subscribeClawMachineMail(actid: String, auth: String, mail: String) {
         shared.rdInstance.subscribeClowMachineMail(actid: actid, auth: auth, mail: mail)
     }
@@ -254,6 +258,10 @@ public class RelatedDigital {
     
     static func trackJackpotClick(jackpotReport: JackpotReport) {
         shared.rdInstance.trackJackpotClick(jackpotReport: jackpotReport)
+    }
+    
+    static func trackPollClick(pollReport: PollReport) {
+        shared.rdInstance.trackPollClick(pollReport: pollReport)
     }
     
     static func trackClawMachineClick(clawMachinetReport: ClawMachineReport) {

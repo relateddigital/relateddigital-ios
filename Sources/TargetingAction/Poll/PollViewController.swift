@@ -35,7 +35,7 @@ class PollViewController: RDBaseNotificationViewController {
         dismiss(animated: true) {
             if let pollModel = self.poll, !pollModel.promocode_banner_button_label.isEmptyOrWhitespace, self.codeGotten == true {
                 if pollModel.bannercodeShouldShow ?? false {
-                    let bannerVC = RDJackpotBannerController(pollModel)
+                    let bannerVC = RDPollBannerController(pollModel)
                     bannerVC.delegate = self.delegate
                     bannerVC.show(animated: true)
                 }
@@ -160,7 +160,7 @@ class PollViewController: RDBaseNotificationViewController {
                     try manager.removeItem(atPath: fontUrl.path)
                 }
                 try manager.copyItem(at: fontUrlKeyValue.value, to: fontUrl)
-                self.jackpot?.fontFiles.append(fontUrlKeyValue.key)
+                self.poll?.fontFiles.append(fontUrlKeyValue.key)
             } catch let error {
                 RDLogger.error(error)
                 RDLogger.error(error.localizedDescription)
@@ -230,7 +230,7 @@ extension PollViewController: WKScriptMessageHandler {
                 if method == "initSurvey" {
                     RDLogger.info("initSurvey")
                     
-                    if let jsonString = jackpot?.jsonContent {
+                    if let jsonString = poll?.jsonContent {
                         self.webView.evaluateJavaScript("window.initSurvey(\(jsonString));") { (_, err) in
                             if let error = err {
                                 RDLogger.error(error)
@@ -248,12 +248,12 @@ extension PollViewController: WKScriptMessageHandler {
                 }
 
                 if method == "subscribeEmail", let email = event["email"] as? String {
-                    RelatedDigital.subscribeJackpotMail(actid: "\(self.jackpot!.actId ?? 0)", auth: self.jackpot!.auth, mail: email)
+                    RelatedDigital.subscribePollMail(actid: "\(self.poll!.actId ?? 0)", auth: self.poll!.auth, mail: email)
                     subsEmail = email
                 }
 
                 if method == "sendReport" {
-                    RelatedDigital.trackJackpotClick(jackpotReport: (self.jackpot?.report)!)
+                    RelatedDigital.trackPollClick(pollReport: (self.poll?.report)!)
                 }
 
                 if method == "linkClicked", let urlLnk = event["url"] as? String {
