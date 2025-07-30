@@ -121,7 +121,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                    if self.showJackpot(model: jackpot) {
                        self.markTargetingActionShown(model: jackpot)
                    }
-               } else if model.targetingActionType == .clawMachine, let clawMachine = model as? ClawMachineModel {
+               }  else if model.targetingActionType == .MultipleChoiceSurvey, let survey = model as? PollModel {
+                   if self.showPoll(model: survey) {
+                       self.markTargetingActionShown(model: survey)
+                   }
+               }else if model.targetingActionType == .clawMachine, let clawMachine = model as? ClawMachineModel {
                    if self.showClawMachine(model: clawMachine) {
                        self.markTargetingActionShown(model: clawMachine)
                    }
@@ -209,6 +213,16 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             let jackpotVC = JackpotViewController(model)
             jackpotVC.delegate = self
             jackpotVC.show(animated: true)
+        })
+
+        return true
+    }
+    
+    func showPoll(model: PollModel) -> Bool {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+            let pollVC = PollViewController(model)
+            pollVC.delegate = self
+            pollVC.show(animated: true)
         })
 
         return true

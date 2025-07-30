@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.survey)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.MultipleChoiceSurvey)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -165,7 +165,7 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
-            }  else if targetingActionViewModel?.targetingActionType == .survey {
+            }  else if targetingActionViewModel?.targetingActionType == .MultipleChoiceSurvey {
                 RDRequest.sendPollScriptRequest(completion: { (result: String?, _: RDError?) in
                     if let result = result {
                         targetingActionViewModel?.jsContent = result
@@ -222,7 +222,7 @@ class RDTargetingAction {
             return parseChooseFavorite(chooseFavorite)
         } else if let jackpot = result[RDConstants.slotMachine] as? [[String: Any?]], let jackpot = jackpot.first {
             return parseJackpot(jackpot)
-        } else if let survey = result[RDConstants.survey] as? [[String: Any?]], let survey = survey.first {
+        } else if let survey = result[RDConstants.MultipleChoiceSurvey] as? [[String: Any?]], let survey = survey.first {
             return parsePoll(survey)
         } else if let clawMachine = result[RDConstants.clawMachine] as? [[String: Any?]], let clawMachine = clawMachine.first {
             return parseClawMachine(clawMachine)
@@ -1073,7 +1073,7 @@ class RDTargetingAction {
     
     private func parsePoll(_ poll: [String: Any?]) -> PollModel? {
         guard let actionData = poll[RDConstants.actionData] as? [String: Any] else { return nil }
-        var pollModel = PollModel(targetingActionType: .survey)
+        var pollModel = PollModel(targetingActionType: .MultipleChoiceSurvey)
         pollModel.actId = poll[RDConstants.actid] as? Int ?? 0
         pollModel.title = poll[RDConstants.title] as? String ?? ""
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""

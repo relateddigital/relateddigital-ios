@@ -93,7 +93,7 @@ class InAppViewController: FormViewController, BannerDelegate {
             .mobileCustomActions : [RDInAppNotificationType.mobileCustomActions.rawValue: 1100],
             .apprating : [RDInAppNotificationType.apprating.rawValue: 1101],
             .clawMachine : [RDInAppNotificationType.clawMachine.rawValue: 1111],
-            .survey : [RDInAppNotificationType.survey.rawValue: 1111],
+            .MultipleChoiceSurvey : [RDInAppNotificationType.MultipleChoiceSurvey.rawValue: 3111],
             ]
     }
     
