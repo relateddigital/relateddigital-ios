@@ -211,48 +211,114 @@ extension RDInstance {
     }
 
     public func customEvent(_ pageName: String, properties: Properties) {
-            if RDPersistence.isBlocked() {
-                RDLogger.warn("Too much server load, ignoring the request!")
+        if RDPersistence.isBlocked() {
+            RDLogger.warn("Too much server load, ignoring the request!")
+
+            return
+        }
+        
+        if pageName.isEmptyOrWhitespace {
+            RDLogger.error("customEvent can not be called with empty page name.")
+            return
+        }
+        
+        checkPushPermission()
+
+        trackingQueue.async { [weak self, properties] in
+
+            guard let strongSelf = self else { return }
+
+            var eQueue = Queue()
+
+            var user = RDUser()
+
+            var chan = ""
+
+            strongSelf.readWriteLock.read {
+                do {
+                    
+                    (eQueue, user, chan) = try (strongSelf.eventsQueue, strongSelf.rdUser, strongSelf.rdProfile.channel)
+
+                } catch {
+                    print("Error reading data: \(error)")
+
+                    return
+                }
+            }
+
+            let result: (eventsQueque: Queue, rdUser: RDUser, channel: String, clearUserParameters: Bool)
+
+            do {
+                result = try strongSelf.rdEventInstance.customEvent(
+                    pageName: pageName,
+                    
+                    properties: properties,
+
+                    eventsQueue: eQueue,
+
+                    rdUser: user,
+
+                    channel: chan
+                )
+
+            } catch {
+                print("Error in customEvent: \(error)")
+
                 return
             }
 
-            if pageName.isEmptyOrWhitespace {
-                RDLogger.error("customEvent can not be called with empty page name.")
-                return
+            strongSelf.readWriteLock.write {
+                do {
+                    strongSelf.eventsQueue = try result.eventsQueque
+
+                    strongSelf.rdUser = try result.rdUser
+
+                    strongSelf.rdProfile.channel = try result.channel
+
+                } catch {
+                    print("Error writing data: \(error)")
+
+                    return
+                }
             }
 
-            checkPushPermission()
+            strongSelf.readWriteLock.read {
+                do {
+                    try RDPersistence.archiveUser(strongSelf.rdUser)
 
-            trackingQueue.async { [weak self, pageName, properties] in
-                guard let self = self else { return }
-                var eQueue = Queue()
-                var user = RDUser()
-                var chan = ""
-                self.readWriteLock.read {
-                    (eQueue, user, chan) = (self.eventsQueue, self.rdUser, self.rdProfile.channel)
-                }
-                let result = self.rdEventInstance.customEvent(pageName: pageName, properties: properties, eventsQueue: eQueue, rdUser: user, channel: chan)
-                self.readWriteLock.write {
-                    self.eventsQueue = result.eventsQueque
-                    self.rdUser = result.rdUser
-                    self.rdProfile.channel = result.channel
-                }
-                self.readWriteLock.read {
-                    RDPersistence.archiveUser(self.rdUser)
                     if result.clearUserParameters {
-                        RDPersistence.clearTargetParameters()
+                        try RDPersistence.clearTargetParameters()
                     }
+
+                } catch {
+                    print("Error in persistence operations: \(error)")
                 }
-                if let event = self.eventsQueue.last {
-                    RDPersistence.saveTargetParameters(event)
-                    if RDBasePath.endpoints[.action] != nil, self.rdProfile.inAppNotificationsEnabled, pageName != RDConstants.omEvtGif {
-                        self.checkInAppNotification(properties: event)
-                        self.checkTargetingActions(properties: event)
+            }
+
+            if let event = strongSelf.eventsQueue.last {
+                do {
+                    try RDPersistence.saveTargetParameters(event)
+                    
+                    if RDBasePath.endpoints[.action] != nil, strongSelf.rdProfile.inAppNotificationsEnabled {
+                        try strongSelf.checkInAppNotification(properties: event)
+
+                        try strongSelf.checkTargetingActions(properties: event)
                     }
+
+                } catch {
+                    print("Error in event handling or notifications: \(error)")
                 }
-                self.send()
+            }
+
+            do {
+                
+                try strongSelf.send()
+
+            } catch {
+                print("Error in sending data: \(error)")
             }
         }
+    }
 
     public func sendCampaignParameters(properties: Properties) {
         if RDPersistence.isBlocked() {
