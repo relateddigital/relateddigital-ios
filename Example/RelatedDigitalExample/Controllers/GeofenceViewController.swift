@@ -112,41 +112,46 @@ class GeofenceViewController: FormViewController {
     }
 
     private func refreshData(firstTime: Bool = false) {
-        relatedDigitalGeofenceHistory = RDPersistence.readRDGeofenceHistory()
-        locationServicesEnabledForDeviceRow.value = RelatedDigital.locationServicesEnabledForDevice ? "YES" : "NO"
-        let state = RelatedDigital.locationServiceStateStatusForApplication
-        locationServiceStatusForAppRow.value = String(describing: state)
-        let time = relatedDigitalGeofenceHistory.lastFetchTime
-        lastFetchTimeRow.value = dateFormatter.string(from: time ?? Date(timeIntervalSince1970: 0))
-        lastKnownLatitudeRow.value = String(format: "%.013f", relatedDigitalGeofenceHistory.lastKnownLatitude ?? 0.0)
-        lastKnownLongitudeRow.value = String(format: "%.013f", relatedDigitalGeofenceHistory.lastKnownLongitude ?? 0.0)
-        refreshSection.reload()
-        for date in relatedDigitalGeofenceHistory.fetchHistory.keys.sorted(by: >) {
-            let tag = String(Int64((date.timeIntervalSince1970 * 1000.0).rounded()))
-            if currentHistoryRowTags[tag] != nil {
-                return
+        
+        DispatchQueue.main.async(execute: { [self] in
+            
+            relatedDigitalGeofenceHistory = RDPersistence.readRDGeofenceHistory()
+            locationServicesEnabledForDeviceRow.value = RelatedDigital.locationServicesEnabledForDevice ? "YES" : "NO"
+            let state = RelatedDigital.locationServiceStateStatusForApplication
+            locationServiceStatusForAppRow.value = String(describing: state)
+            let time = relatedDigitalGeofenceHistory.lastFetchTime
+            lastFetchTimeRow.value = dateFormatter.string(from: time ?? Date(timeIntervalSince1970: 0))
+            lastKnownLatitudeRow.value = String(format: "%.013f", relatedDigitalGeofenceHistory.lastKnownLatitude ?? 0.0)
+            lastKnownLongitudeRow.value = String(format: "%.013f", relatedDigitalGeofenceHistory.lastKnownLongitude ?? 0.0)
+            refreshSection.reload()
+            for date in relatedDigitalGeofenceHistory.fetchHistory.keys.sorted(by: >) {
+                let tag = String(Int64((date.timeIntervalSince1970 * 1000.0).rounded()))
+                if currentHistoryRowTags[tag] != nil {
+                    return
+                }
+                if firstTime {
+                    historySection.append(getHistoryRow(tag: tag, date: date))
+                } else {
+                    historySection.insert(getHistoryRow(tag: tag, date: date), at: 0)
+                }
+                currentHistoryRowTags[tag] = true
             }
-            if firstTime {
-                historySection.append(getHistoryRow(tag: tag, date: date))
-            } else {
-                historySection.insert(getHistoryRow(tag: tag, date: date), at: 0)
+            for date in relatedDigitalGeofenceHistory.errorHistory.keys.sorted(by: >) {
+                let tag = String(Int64((date.timeIntervalSince1970 * 1000.0).rounded()))
+                if currentErrorRowTags[tag] != nil {
+                    return
+                }
+                if firstTime {
+                    errorSection.append(getErrorRow(tag: tag, date: date))
+                } else {
+                    errorSection.insert(getErrorRow(tag: tag, date: date), at: 0)
+                }
+                currentHistoryRowTags[tag] = true
             }
-            currentHistoryRowTags[tag] = true
-        }
-        for date in relatedDigitalGeofenceHistory.errorHistory.keys.sorted(by: >) {
-            let tag = String(Int64((date.timeIntervalSince1970 * 1000.0).rounded()))
-            if currentErrorRowTags[tag] != nil {
-                return
-            }
-            if firstTime {
-                errorSection.append(getErrorRow(tag: tag, date: date))
-            } else {
-                errorSection.insert(getErrorRow(tag: tag, date: date), at: 0)
-            }
-            currentHistoryRowTags[tag] = true
-        }
-        historySection.reload()
-        errorSection.reload()
+            historySection.reload()
+            errorSection.reload()
+        })
+
     }
 
     private func clearHistory() {
