@@ -287,7 +287,6 @@ public class RDPopupDialogDefaultView: UIView {
             setupForNpsWithNumbers()
         case .secondNps:
             setupForNps()
-            closeButton.isHidden = true
         case .feedbackForm:
             setupForImageTextButton(true)
         case .imageButtonImage:
