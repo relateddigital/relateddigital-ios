@@ -183,6 +183,7 @@ struct RDConstants {
     static let productStatNotifier = "ProductStatNotifier"
     static let drawer = "Drawer"
     static let mobileCustomActions = "MobileCustomActions"
+    static let NotificationBell = "NotificationBell"
     static let downHsView = "downHsView"
     
     //gamification
@@ -382,6 +383,17 @@ struct RDConstants {
     static let succesText = "succes"
     
     
+    //NotifBell
+    static let notification_texts = "notification_texts"
+    static let bell_animation = "bell_animation"
+    static let background_color = "background_color"
+    static let font_family = "font_family"
+    static let title_text_color = "title_text_color"
+    static let title_text_size = "title_text_size"
+    static let text_text_color = "text_text_color"
+    static let text_text_size = "text_text_size"
+    static let bell_icon = "bell_icon"
+
     //Drawer
     static let shape = "shape"
     static let position = "pos"
@@ -389,6 +401,8 @@ struct RDConstants {
     static let contentMinimizedText = "content_minimized_text"
     static let contentMaximizedImage = "content_maximized_image"
     static let iosLnk = "ios_lnk"
+    static let text = "text"
+
     // extended properties
     static let contentMinimizedTextSize = "content_minimized_text_size"
     static let contentMinimizedTextColor = "content_minimized_text_color"

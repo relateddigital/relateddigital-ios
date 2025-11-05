@@ -94,6 +94,7 @@ class InAppViewController: FormViewController, BannerDelegate {
             .apprating : [RDInAppNotificationType.apprating.rawValue: 1101],
             .clawMachine : [RDInAppNotificationType.clawMachine.rawValue: 1111],
             .MultipleChoiceSurvey : [RDInAppNotificationType.MultipleChoiceSurvey.rawValue: 3111],
+            .notificationBell : [RDInAppNotificationType.notificationBell.rawValue: 4321],
             ]
     }
     

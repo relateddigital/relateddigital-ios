@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.MultipleChoiceSurvey)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.MultipleChoiceSurvey)~\(RDConstants.NotificationBell)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -228,6 +228,8 @@ class RDTargetingAction {
             return parseClawMachine(clawMachine)
         } else if let customWeb = result[RDConstants.mobileCustomActions] as? [[String: Any?]], let customWeb = customWeb.first {
             return parseCustomWebview(customWeb)
+        } else if let notBell = result[RDConstants.NotificationBell] as? [[String: Any?]], let notifBell = notBell.first {
+            return parseNotificationBell(notifBell)
         } else if let inappRating = result[RDConstants.apprating] as? [[String: Any?]], let inappRating = inappRating.first {
             return parseInappRating(inappRating)
         } else if let psnArr = result[RDConstants.productStatNotifier] as? [[String: Any?]], let psn = psnArr.first {
@@ -681,6 +683,49 @@ class RDTargetingAction {
         sideBarServiceModel.report = drawerReport
 
         return sideBarServiceModel
+    }
+    
+    
+    private func parseNotificationBell(_ notificationBell: [String: Any?]) -> NotificationBellModel? {
+        guard let actionData = notificationBell[RDConstants.actionData] as? [String: Any] else { return nil }
+        var notificationBellModel = NotificationBellModel(targetingActionType: .notificationBell)
+        notificationBellModel.actId = notificationBell[RDConstants.actid] as? Int ?? 0
+        notificationBellModel.title = notificationBell[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        
+        
+        if let texts = actionData[RDConstants.notification_texts] as? [[String: Any]] {
+            
+            for elem in texts {
+                if let text = elem[RDConstants.text] as? String,
+                   let iosLink = elem[RDConstants.iosLnk] as? String {
+                    
+                    var ballElem = bellElement()
+                    ballElem.ios_lnk = iosLink
+                    ballElem.text = text
+                    notificationBellModel.bellElems?.append(ballElem)
+
+                }
+            }
+            
+        }
+        
+        notificationBellModel.notifTitle = actionData[RDConstants.title] as? String ?? ""
+        
+        
+        notificationBellModel.bellIcon = actionData[RDConstants.bell_icon] as? String ?? ""
+        
+        notificationBellModel.bellAnimation = actionData[RDConstants.bell_animation] as? String ?? ""
+        //extended Props
+        notificationBellModel.background_color = extendedProps[RDConstants.background_color] as? String ?? ""
+        notificationBellModel.font_family = extendedProps[RDConstants.font_family] as? String ?? ""
+        notificationBellModel.title_text_color = extendedProps[RDConstants.title_text_color] as? String ?? ""
+        notificationBellModel.title_text_size = extendedProps[RDConstants.title_text_size] as? String ?? "15"
+        notificationBellModel.text_text_color = extendedProps[RDConstants.text_text_color] as? String ?? ""
+        notificationBellModel.text_text_size = extendedProps[RDConstants.text_text_size] as? String ?? "15"
+        
+        return notificationBellModel
     }
 
     private func parseGiftCatch(_ gamification: [String: Any?]) -> GiftCatchViewModel? {

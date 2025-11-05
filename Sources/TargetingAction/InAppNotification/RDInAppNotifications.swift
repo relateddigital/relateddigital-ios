@@ -89,7 +89,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showDrawer(model: drawer) {
                         //self.markTargetingActionShown(model: drawer)
                     }
-                } else if model.targetingActionType == .downHsView, let downHsView = model as? downHsViewServiceModel {
+                } else if model.targetingActionType == .notificationBell, let notifBell = model as? NotificationBellModel {
+                    if self.showNotificationBell(model: notifBell) {
+                        //self.markTargetingActionShown(model: drawer)
+                    }
+                }  else if model.targetingActionType == .downHsView, let downHsView = model as? downHsViewServiceModel {
                     if self.showDownhs(model: downHsView) {
                         self.markTargetingActionShown(model: downHsView)
                     }
@@ -245,6 +249,18 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         return true
     }
 
+    func showNotificationBell(model: NotificationBellModel) -> Bool {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+
+            let notifBell = NotificationBellViewController(model: model)
+            notifBell.delegate = self
+            notifBell.show(animated: true)
+        
+        })
+        return true
+    }
+    
     public func showDownhs(model: downHsViewServiceModel) -> Bool {
         let downhsViewController = downHsViewController(model: model)
         downhsViewController.delegate = self
