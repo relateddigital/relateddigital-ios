@@ -31,7 +31,7 @@ struct CountdownTimerBannerModel: TargetingActionViewModel {
     var counter_Time: String?
     
     
-    // Extended Props decoded (opsiyonel)
+    // Extended Props
     var background_color: String?
     var counter_color: String?
     var close_button_color: String?
