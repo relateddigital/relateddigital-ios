@@ -25,6 +25,7 @@ public enum TargetingActionType: String, Codable {
     case mobileCustomActions = "mobileCustomActions"
     case apprating = "MobileAppRating"
     case notificationBell = "NotificationBell"
+    case CountdownTimerBanner = "CountdownTimerBanner"
 
 
 }

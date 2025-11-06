@@ -41,6 +41,7 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case clawMachine = "ClawMachine"
     case MultipleChoiceSurvey = "MultipleChoiceSurvey"
     case notificationBell = "NotificationBell"
+    case CountdownTimerBanner = "CountdownTimerBanner"
 
 
 

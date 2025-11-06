@@ -93,7 +93,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showNotificationBell(model: notifBell) {
                         //self.markTargetingActionShown(model: drawer)
                     }
-                }  else if model.targetingActionType == .downHsView, let downHsView = model as? downHsViewServiceModel {
+                }  else if model.targetingActionType == .CountdownTimerBanner, let timerBanner = model as? CountdownTimerBannerModel {
+                    if self.showTimerBanner(model: timerBanner) {
+                        self.markTargetingActionShown(model: timerBanner)
+                    }
+                } else if model.targetingActionType == .downHsView, let downHsView = model as? downHsViewServiceModel {
                     if self.showDownhs(model: downHsView) {
                         self.markTargetingActionShown(model: downHsView)
                     }
@@ -219,6 +223,17 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             jackpotVC.show(animated: true)
         })
 
+        return true
+    }
+    
+    func showTimerBanner(model: CountdownTimerBannerModel) -> Bool {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+
+            let tBannerVC = CountdownTimerBannerViewController(model: model)
+            tBannerVC.delegate = self
+            tBannerVC.show(animated: true)
+        
+        })
         return true
     }
     

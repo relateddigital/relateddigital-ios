@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.MultipleChoiceSurvey)~\(RDConstants.NotificationBell)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.MultipleChoiceSurvey)~\(RDConstants.NotificationBell)~\(RDConstants.CountdownTimerBanner)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -208,7 +208,9 @@ class RDTargetingAction {
             return parseScratchToWin(sctw)
         } else if let drawerArr = result[RDConstants.drawer] as? [[String: Any?]], let drw = drawerArr.first {
             return parseDrawer(drw)
-        } else if let downHsViewArr = result[RDConstants.downHsView] as? [[String: Any?]], let downHs = downHsViewArr.first {
+        } else if let timerBanner = result[RDConstants.CountdownTimerBanner] as? [[String: Any?]], let tmrbnnr = timerBanner.first {
+            return parseTimerBanner(tmrbnnr)
+        }else if let downHsViewArr = result[RDConstants.downHsView] as? [[String: Any?]], let downHs = downHsViewArr.first {
             return parseDownHsView(downHs)
         } else if let gamification = result[RDConstants.gamification] as? [[String: Any?]], let gamifi = gamification.first {
             return parseGiftCatch(gamifi)
@@ -685,6 +687,47 @@ class RDTargetingAction {
         return sideBarServiceModel
     }
     
+    
+    private func parseTimerBanner(_ drawer: [String: Any?]) -> CountdownTimerBannerModel? {
+        
+        guard let actionData = drawer[RDConstants.actionData] as? [String: Any] else { return nil }
+        var timerBannerModel = CountdownTimerBannerModel(targetingActionType: .CountdownTimerBanner)
+        timerBannerModel.actId = drawer[RDConstants.actid] as? Int ?? 0
+        timerBannerModel.title = drawer[RDConstants.title] as? String ?? ""
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+        
+        
+        //actionData
+        timerBannerModel.scratch_color = actionData[RDConstants.scratch_color] as? String ?? ""
+        timerBannerModel.ios_lnk = actionData[RDConstants.ios_lnk] as? String ?? ""
+        timerBannerModel.img  = actionData[RDConstants.img] as? String ?? ""
+        timerBannerModel.content_body = actionData[RDConstants.content_body] as? String ?? ""
+        timerBannerModel.counter_Date = actionData[RDConstants.counter_Date] as? String ?? ""
+        timerBannerModel.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
+        timerBannerModel.counter_Time = actionData[RDConstants.counter_Time] as? String ?? ""
+
+        //extended Props
+        timerBannerModel.background_color = extendedProps[RDConstants.background_color] as? String ?? ""
+        timerBannerModel.counter_color = extendedProps[RDConstants.counter_color] as? String ?? ""
+        timerBannerModel.close_button_color = extendedProps[RDConstants.close_button_color] as? String ?? ""
+        timerBannerModel.content_body_text_color = extendedProps[RDConstants.content_body_text_color] as? String ?? ""
+        timerBannerModel.position_on_page = extendedProps[RDConstants.position_on_page] as? String ?? ""
+        timerBannerModel.content_body_font_family = extendedProps[RDConstants.content_body_font_family] as? String ?? ""
+        timerBannerModel.txtStartDate = extendedProps[RDConstants.txtStartDate] as? String ?? ""
+
+        
+        
+        let report = actionData[RDConstants.report] as? [String: Any] ?? [String: Any]()
+        let impression = report[RDConstants.impression] as? String ?? ""
+        let click = report[RDConstants.click] as? String ?? ""
+        let drawerReport = CountdownTimerReport(impression: impression, click: click)
+        
+        timerBannerModel.report = drawerReport
+        
+        
+        return timerBannerModel
+    }
     
     private func parseNotificationBell(_ notificationBell: [String: Any?]) -> NotificationBellModel? {
         guard let actionData = notificationBell[RDConstants.actionData] as? [String: Any] else { return nil }

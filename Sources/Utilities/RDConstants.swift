@@ -185,7 +185,8 @@ struct RDConstants {
     static let mobileCustomActions = "MobileCustomActions"
     static let NotificationBell = "NotificationBell"
     static let downHsView = "downHsView"
-    
+    static let CountdownTimerBanner = "CountdownTimerBanner"
+
     //gamification
     static let gamification = "GiftRain"
     static let copybuttonFunction = "copybutton_function"
@@ -439,6 +440,19 @@ struct RDConstants {
     static let redirect = "redirect"
     
     
+    
+    //timer banner
+    static let scratch_color = "scratch_color"
+    static let ios_lnk = "ios_lnk"
+    static let content_body = "content_body"
+    static let counter_Date = "counter_Date"
+    static let counter_Time = "counter_Time"
+    static let position_on_page = "position_on_page"
+    static let close_button_color = "close_button_color"
+    static let counter_color = "counter_color"
+    static let content_body_font_family = "content_body_font_family"
+    static let txtStartDate = "txtStartDate"
+    static let content_body_text_color = "content_body_text_color"
     
     // SpinToWin extended properties
     static let displaynameTextColor = "displayname_text_color"
