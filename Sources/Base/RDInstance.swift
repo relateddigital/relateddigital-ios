@@ -667,7 +667,7 @@ extension RDInstance {
         rdTargetingActionInstance.rdStoryHomeViews[guid] = storyHomeView
         storyHomeView.setDelegates()
         storyHomeViewController.collectionView = storyHomeView.collectionView
-
+                
         trackingQueue.async { [weak self, actionId, guid] in
             guard let self = self else { return }
             self.networkQueue.async { [weak self, actionId, guid] in
@@ -690,7 +690,8 @@ extension RDInstance {
                 })
             }
         }
-
+        
+        storyHomeView.updateCollectionHeight()
         return storyHomeView
     }
 
@@ -728,6 +729,7 @@ extension RDInstance {
                                 storyHomeView.collectionView.reloadData()
                                 storyHomeView.setDelegates()
                                 storyHomeViewController.collectionView = storyHomeView.collectionView
+                                storyHomeView.updateCollectionHeight()
                                 completion(storyHomeView)
                             }
                         } else {

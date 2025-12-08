@@ -14,6 +14,7 @@ class RDStoryAction {
     let clickQueryItems: Properties
     let impressionQueryItems: Properties
     let extendedProperties: RDStoryActionExtendedProperties
+    var shape : String = ""
 
     init(actionId: Int,
          storyTemplate: RDStoryTemplate,
@@ -46,5 +47,6 @@ class RDStoryActionExtendedProperties {
     var storyzLabelColor: String = ""
     var fontFamily: String = ""
     var customFontFamilyIos: String = ""
+    var shape : String = ""
 
 }

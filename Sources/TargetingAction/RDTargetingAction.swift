@@ -1888,7 +1888,10 @@ class RDTargetingAction {
             let customFontFamilyIos = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
             props.customFontFamilyIos = customFontFamilyIos
             storyCustomVariables.shared.customFontFamilyIos = customFontFamilyIos
-
+            let shape = extendedProps[RDConstants.shape] as? String ?? ""
+            
+            props.shape = shape
+            
             if let imageBorderColorString = extendedProps[RDConstants.storylbImgBorderColor] as? String
                 ?? extendedProps[RDConstants.storyzimgBorderColor] as? String {
                 if imageBorderColorString.starts(with: "rgba") {
@@ -1923,6 +1926,9 @@ class RDTargetingAction {
                 props.moveShownToEnd = true
             }
         }
+        
+        StoryProps.shared.properties = props
+
         return props
     }
 

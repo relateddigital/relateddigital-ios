@@ -124,11 +124,22 @@ class RDStoryHomeViewCell: UICollectionViewCell {
         addSubview(profileNameLabel)
     }
     private func installLayoutConstraints() {
-        NSLayoutConstraint.activate([
-            profileImageView.widthAnchor.constraint(equalToConstant: 68),
-            profileImageView.heightAnchor.constraint(equalToConstant: 68),
-            profileImageView.igTopAnchor.constraint(equalTo: self.igTopAnchor, constant: 8),
-            profileImageView.igCenterXAnchor.constraint(equalTo: self.igCenterXAnchor)])
+        if StoryProps.shared.properties.shape == "Rectangle" {
+            NSLayoutConstraint.activate([
+                profileImageView.widthAnchor.constraint(equalToConstant: 120),
+                profileImageView.heightAnchor.constraint(equalToConstant: 170),
+                profileImageView.igTopAnchor.constraint(equalTo: self.igTopAnchor, constant: 8),
+                profileImageView.igCenterXAnchor.constraint(equalTo: self.igCenterXAnchor),
+                profileImageView.imageView.widthAnchor.constraint(equalToConstant: 90),
+                profileImageView.imageView.heightAnchor.constraint(equalToConstant: 135),])
+        }
+        else {
+            NSLayoutConstraint.activate([
+                profileImageView.widthAnchor.constraint(equalToConstant: 68),
+                profileImageView.heightAnchor.constraint(equalToConstant: 68),
+                profileImageView.igTopAnchor.constraint(equalTo: self.igTopAnchor, constant: 8),
+                profileImageView.igCenterXAnchor.constraint(equalTo: self.igCenterXAnchor)])
+        }
 
         NSLayoutConstraint.activate([
             profileNameLabel.igLeftAnchor.constraint(equalTo: self.igLeftAnchor),
@@ -138,5 +149,17 @@ class RDStoryHomeViewCell: UICollectionViewCell {
             self.igBottomAnchor.constraint(equalTo: profileNameLabel.igBottomAnchor, constant: 8)])
 
         layoutIfNeeded()
+    }
+}
+
+
+class StoryProps {
+
+    static let shared = StoryProps()
+
+    var properties: RDStoryActionExtendedProperties
+
+    private init() {
+        self.properties = RDStoryActionExtendedProperties()
     }
 }
