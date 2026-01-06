@@ -6,28 +6,44 @@
 //
 
 import Foundation
-import UIKit
 
-public struct CountdownTimerBannerModel: TargetingActionViewModel {
+struct CountdownTimerBannerModel: TargetingActionViewModel {
+
     public var targetingActionType: TargetingActionType
-    public var jsContent: String?
-    public var jsonContent: String?
     
-    public var actId: Int?
-    public var title: String?
-    public var waitingTime: Int = 0
-    public var scratch_color: String?
-    public var ios_lnk: String?
-    public var img: String?
-    public var content_body: String?
-    public var counter_Date: String?
-    public var counter_Time: String?
+    var actId: Int?
+    var title: String?
+    var jsContent: String?
+    var jsonContent: String?
     
-    public var background_color: String?
-    public var counter_color: String?
-    public var close_button_color: String?
-    public var content_body_text_color: String?
-    public var position_on_page: String?
-    public var content_body_font_family: String?
-    public var txtStartDate: String?
+    var report: CountdownTimerReport?
+    
+    var waitingTime: Int = 0
+    
+    // Action data
+    var scratch_color: String?
+    
+    var ios_lnk: String?
+    var android_lnk: String?
+    var img: String?
+    
+    var content_body: String?
+    var counter_Date: String?
+    var counter_Time: String?
+    
+    
+    // Extended Props
+    var background_color: String?
+    var counter_color: String?
+    var close_button_color: String?
+    var content_body_text_color: String?
+    var position_on_page: String?
+    var content_body_font_family : String?
+    var txtStartDate: String?
+    
+}
+
+public struct CountdownTimerReport: Codable {
+    var impression: String?
+    var click: String?
 }

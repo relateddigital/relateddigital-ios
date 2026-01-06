@@ -131,7 +131,7 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
     @objc private func didTapView(_ g: UITapGestureRecognizer) {
         guard let s = self.model.ios_lnk,
               let url = URL(string: s),
-              !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+              !s.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).isEmpty else { return }
         trackClick()
         RDLogger.info("opening CTA URL: \(url)")
         urlDelegate?.urlClicked(url)
