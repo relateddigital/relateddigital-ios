@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CountdownTimerBannerModel: TargetingActionViewModel {
+struct RDCountdownTimerBannerModel: TargetingActionViewModel {
 
     public var targetingActionType: TargetingActionType
     

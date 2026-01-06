@@ -10,7 +10,7 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
         }
     }
 
-    private let model: CountdownTimerBannerModel
+    private let model: RDCountdownTimerBannerModel
     private let bannerView = CountdownTimerBannerView()
     private var topC: NSLayoutConstraint!
     private var bottomC: NSLayoutConstraint!
@@ -18,7 +18,7 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
     private var targetDate: Date?
     weak var urlDelegate: RDStoryURLDelegate?
 
-    init(model: CountdownTimerBannerModel) {
+    init(model: RDCountdownTimerBannerModel) {
         self.model = model
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .overFullScreen

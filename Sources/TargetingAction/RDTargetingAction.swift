@@ -690,10 +690,10 @@ class RDTargetingAction {
     }
     
     
-    private func parseTimerBanner(_ drawer: [String: Any?]) -> CountdownTimerBannerModel? {
+    private func parseTimerBanner(_ drawer: [String: Any?]) -> RDCountdownTimerBannerModel? {
         
         guard let actionData = drawer[RDConstants.actionData] as? [String: Any] else { return nil }
-        var timerBannerModel = CountdownTimerBannerModel(targetingActionType: .CountdownTimerBanner)
+        var timerBannerModel = RDCountdownTimerBannerModel(targetingActionType: .CountdownTimerBanner)
         timerBannerModel.actId = drawer[RDConstants.actid] as? Int ?? 0
         timerBannerModel.title = drawer[RDConstants.title] as? String ?? ""
         let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
@@ -1969,9 +1969,9 @@ class RDTargetingAction {
             completion(notif)
         })
     }
-    func parseCountdownTimerBanner(_ banner: [String: Any?]) -> CountdownTimerBannerModel? {
+    func parseCountdownTimerBanner(_ banner: [String: Any?]) -> RDCountdownTimerBannerModel? {
         guard let actionData = banner[RDConstants.actionData] as? [String: Any] else { return nil }
-        var model = CountdownTimerBannerModel(targetingActionType: .CountdownTimerBanner)
+        var model = RDCountdownTimerBannerModel(targetingActionType: .CountdownTimerBanner)
         
         model.actId = banner[RDConstants.actid] as? Int
         model.title = banner[RDConstants.title] as? String

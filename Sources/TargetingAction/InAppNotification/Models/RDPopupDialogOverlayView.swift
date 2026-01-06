@@ -79,7 +79,7 @@ class RDBlurView: UIView {
         self.addSubview(colorView)
     }
 
-    @available (iOS, unavailable)
+    @available(iOS, unavailable)
     required init?(coder aDecoder: NSCoder) { fatalError() }
 
     override func layoutSubviews() {

@@ -144,7 +144,7 @@ public class BannerView: UIView, UICollectionViewDelegate, UICollectionViewDataS
     
     func sendClickedUrl(clickedUrl:String) {
         
-        let guid = UUID().uuidString
+        
         var properties = self.propertiesLocal
         properties?[RDConstants.clickedUrlKey] = clickedUrl
         

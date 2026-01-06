@@ -94,7 +94,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     if self.showNotificationBell(model: notifBell) {
                         //self.markTargetingActionShown(model: drawer)
                     }
-                }  else if model.targetingActionType == .CountdownTimerBanner, let timerBanner = model as? CountdownTimerBannerModel {
+                }  else if model.targetingActionType == .CountdownTimerBanner, let timerBanner = model as? RDCountdownTimerBannerModel {
                     if self.showTimerBanner(model: timerBanner) {
                         self.markTargetingActionShown(model: timerBanner)
                     }
@@ -227,7 +227,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         return true
     }
     
-    func showTimerBanner(model: CountdownTimerBannerModel) -> Bool {
+    func showTimerBanner(model: RDCountdownTimerBannerModel) -> Bool {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
 
             let tBannerVC = CountdownTimerBannerViewController(model: model)
