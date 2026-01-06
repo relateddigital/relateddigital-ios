@@ -109,6 +109,15 @@ public class RelatedDigital {
         }
     }
     
+    public static var countdownUrlDelegate: RDStoryURLDelegate? {
+        get {
+            return shared.rdInstance.countdownUrlDelegate
+        }
+        set {
+            shared.rdInstance.countdownUrlDelegate = newValue
+        }
+    }
+    
     public static var loggingEnabled: Bool {
         get {
             return shared.rdInstance.loggingEnabled

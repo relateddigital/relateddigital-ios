@@ -245,6 +245,8 @@ class RDTargetingAction {
                 }
                 return productStatNotifier
             }
+        } else if let countdown = result[RDConstants.CountdownTimerBanner] as? [[String: Any?]], let banner = countdown.first {
+            return parseCountdownTimerBanner(banner)
         }
         return nil
     }
@@ -709,7 +711,11 @@ class RDTargetingAction {
 
         //extended Props
         timerBannerModel.background_color = extendedProps[RDConstants.background_color] as? String ?? ""
-        timerBannerModel.counter_color = extendedProps[RDConstants.counter_color] as? String ?? ""
+        if let cColor = extendedProps[RDConstants.counter_color] as? String, !cColor.isEmpty {
+            timerBannerModel.counter_color = cColor
+        } else {
+            timerBannerModel.counter_color = extendedProps[RDConstants.button_color] as? String ?? ""
+        }
         timerBannerModel.close_button_color = extendedProps[RDConstants.close_button_color] as? String ?? ""
         timerBannerModel.content_body_text_color = extendedProps[RDConstants.content_body_text_color] as? String ?? ""
         timerBannerModel.position_on_page = extendedProps[RDConstants.position_on_page] as? String ?? ""
@@ -1425,6 +1431,11 @@ class RDTargetingAction {
         let buttonCustomFontFamilyIos = extendedProps[RDConstants.buttonCustomFontFamilyIos] as? String ?? ""
         let promocodeCustomFontFamilyIos = extendedProps[RDConstants.promocodeCustomFontFamilyIos] as? String ?? ""
         let copybuttonCustomFontFamilyIos = extendedProps[RDConstants.copybuttonCustomFontFamilyIos] as? String
+        
+        let downContentBody = actionData[RDConstants.downContentBody] as? String
+        let downContentBodyTextColor = extendedProps[RDConstants.downContentBodyTextColor] as? String
+        let downContentBodyFontFamily = extendedProps[RDConstants.downContentBodyFontFamily] as? String
+        let downContentBodyTextSize = extendedProps[RDConstants.downContentBodyTextSize] as? String
 
         var click = ""
         var impression = ""
@@ -1482,7 +1493,11 @@ class RDTargetingAction {
                                  buttonCustomFontFamilyIos: buttonCustomFontFamilyIos,
                                  promocodeCustomFontFamilyIos: promocodeCustomFontFamilyIos,
                                  copybuttonCustomFontFamilyIos: copybuttonCustomFontFamilyIos,
-                                 iosLink: iosLink)
+                                 iosLink: iosLink,
+                                 downContentBody: downContentBody,
+                                 downContentBodyTextColor: downContentBodyTextColor,
+                                 downContentBodyFontFamily: downContentBodyFontFamily,
+                                 downContentBodyTextSize: downContentBodyTextSize)
     }
 
     private func convertJsonToEmailViewModel(emailForm: MailSubscriptionModel) -> MailSubscriptionViewModel {
@@ -1953,5 +1968,34 @@ class RDTargetingAction {
             }
             completion(notif)
         })
+    }
+    func parseCountdownTimerBanner(_ banner: [String: Any?]) -> CountdownTimerBannerModel? {
+        guard let actionData = banner[RDConstants.actionData] as? [String: Any] else { return nil }
+        var model = CountdownTimerBannerModel(targetingActionType: .CountdownTimerBanner)
+        
+        model.actId = banner[RDConstants.actid] as? Int
+        model.title = banner[RDConstants.title] as? String
+        
+        model.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
+        model.scratch_color = actionData[RDConstants.scratch_color] as? String
+        model.ios_lnk = actionData[RDConstants.ios_lnk] as? String
+        model.img = actionData[RDConstants.img] as? String
+        model.content_body = actionData[RDConstants.content_body] as? String
+        model.counter_Date = actionData[RDConstants.counter_Date] as? String
+        model.counter_Time = actionData[RDConstants.counter_Time] as? String
+        
+        // extendedProps
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        if let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() {
+            model.background_color = extendedProps[RDConstants.background_color] as? String
+            model.counter_color = extendedProps[RDConstants.counter_color] as? String
+            model.close_button_color = extendedProps[RDConstants.close_button_color] as? String
+            model.content_body_text_color = extendedProps[RDConstants.content_body_text_color] as? String
+            model.position_on_page = extendedProps[RDConstants.position_on_page] as? String
+            model.content_body_font_family = extendedProps[RDConstants.content_body_font_family] as? String
+            model.txtStartDate = extendedProps[RDConstants.txtStartDate] as? String
+        }
+        
+        return model
     }
 }

@@ -7,11 +7,6 @@ target 'RelatedDigitalExample' do
   pod "SplitRow", :git => 'https://github.com/EurekaCommunity/SplitRow.git'
 end
 
-target 'RelatedDigitalExampleTests' do
-  use_frameworks!
-  pod 'RelatedDigitalIOS', :path => '../'
-end
-
 target 'NotificationService' do
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'

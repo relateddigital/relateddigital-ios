@@ -40,7 +40,7 @@ struct LogConfig: Codable {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.76thr"
+    static let sdkVersion = "4.0.77"
     static let sdkType = "native"
     
     static let HTTP = "http"
@@ -537,6 +537,12 @@ struct RDConstants {
     static let contentTitleCustomFontFamilyIos = "content_title_custom_font_family_ios"
     static let contentBodyCustomFontFamilyIos = "content_body_custom_font_family_ios"
     static let promocodeCustomFontFamilyIos = "promocode_custom_font_family_ios"
+    
+    // NEW ScratchToWin Constants
+    static let downContentBody = "down_content_body"
+    static let downContentBodyTextColor = "down_content_body_text_color"
+    static let downContentBodyFontFamily = "down_content_body_font_family"
+    static let downContentBodyTextSize = "down_content_body_text_size"
     
     
     //Custom Param

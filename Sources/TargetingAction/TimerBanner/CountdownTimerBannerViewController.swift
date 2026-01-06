@@ -16,6 +16,7 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
     private var bottomC: NSLayoutConstraint!
     private var timer: Timer?
     private var targetDate: Date?
+    weak var urlDelegate: RDStoryURLDelegate?
 
     init(model: CountdownTimerBannerModel) {
         self.model = model
@@ -38,6 +39,7 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
     // MARK: - Window show/hide
     override func show(animated: Bool) {
         makeWindow()
+        trackImpression()
         let delay = TimeInterval(model.waitingTime)
         let work = { [weak self] in
             self?.animateIn(animated: animated)
@@ -130,7 +132,14 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
         guard let s = self.model.ios_lnk,
               let url = URL(string: s),
               !s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        UIApplication.shared.open(url)
+        trackClick()
+        RDLogger.info("opening CTA URL: \(url)")
+        urlDelegate?.urlClicked(url)
+        if #available(iOS 10.0, *) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            UIApplication.shared.openURL(url)
+        }
     }
 
     private func applyModel() {
@@ -143,8 +152,8 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
         
         bannerView.setCounterColors(
             bg: UIColor(hex: model.counter_color)?.withAlphaComponent(0.25) ?? UIColor.black.withAlphaComponent(0.25),
-            tile: UIColor(hex: model.counter_color) ?? UIColor.black,
-            text: .white)
+            tile: UIColor(hex: model.scratch_color) ?? UIColor.black,
+            text: UIColor(hex: model.counter_color) ?? .white)
         
         if model.close_button_color == "black" {
             bannerView.setCloseColor(UIColor.black)
@@ -170,7 +179,7 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
 
     // MARK: - Countdown
     private func startTimer() {
-        guard let target = targetDate else { bannerView.updateSegments(days: 0, hours: 0, minutes: 0, seconds: 0); return }
+        guard let target = targetDate else { bannerView.updateSegments(days: 0, hours: 0, minutes: 0); return }
         tick(to: target)
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [weak self] _ in
@@ -182,15 +191,41 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
     private func tick(to target: Date) {
         let remain = max(0, Int(target.timeIntervalSinceNow))
         if remain <= 0 {
-            bannerView.updateSegments(days: 0, hours: 0, minutes: 0, seconds: 0)
+            bannerView.updateSegments(days: 0, hours: 0, minutes: 0)
             self.delegate?.notificationShouldDismiss(controller: self, callToActionURL: nil, shouldTrack: false, additionalTrackingProperties: nil)
             return
         }
         let d = remain / 86_400
         let h = (remain % 86_400) / 3_600
         let m = (remain % 3_600) / 60
-        let s = remain % 60
-        bannerView.updateSegments(days: d, hours: h, minutes: m, seconds: s)
+        bannerView.updateSegments(days: d, hours: h, minutes: m)
+    }
+
+
+
+    // MARK: - Tracking
+    private func trackImpression() {
+        guard let impression = model.report?.impression, !impression.isEmpty else { return }
+        let properties = parseQueryString(impression)
+        RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+
+    private func trackClick() {
+        guard let click = model.report?.click, !click.isEmpty else { return }
+        let properties = parseQueryString(click)
+        RelatedDigital.customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+
+    private func parseQueryString(_ query: String) -> [String: String] {
+        var dict = [String: String]()
+        let pairs = query.components(separatedBy: "&")
+        for pair in pairs {
+            let elements = pair.components(separatedBy: "=")
+            if elements.count == 2 {
+                dict[elements[0]] = elements[1]
+            }
+        }
+        return dict
     }
 
     private static func parseDate(_ raw: String) -> Date? {

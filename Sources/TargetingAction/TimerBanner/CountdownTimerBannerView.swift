@@ -7,7 +7,6 @@ final class CounterTileView: UIView {
     init() {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
-        layer.cornerRadius = 6
 
         valueLabel.font = .monospacedDigitSystemFont(ofSize: 16, weight: .bold)
         valueLabel.textAlignment = .center
@@ -23,7 +22,7 @@ final class CounterTileView: UIView {
         addSubview(stack)
 
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
             stack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 6),
             stack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -6),
             stack.topAnchor.constraint(equalTo: topAnchor, constant: 6),
@@ -37,7 +36,7 @@ final class CounterTileView: UIView {
         unitLabel.text  = unit
     }
     func setColors(bg: UIColor, text: UIColor) {
-        backgroundColor = bg
+        backgroundColor = .clear
         valueLabel.textColor = text
         unitLabel.textColor  = text.withAlphaComponent(0.95)
     }
@@ -48,7 +47,6 @@ final class CounterBadgeView: UIView {
     let day = CounterTileView()
     let hour = CounterTileView()
     let min = CounterTileView()
-    let sec = CounterTileView()
 
     private var tileBG = UIColor.white
     private var textColor = UIColor.white
@@ -57,50 +55,50 @@ final class CounterBadgeView: UIView {
         super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 10
+        layer.borderWidth = 2
+        layer.borderColor = UIColor.white.cgColor
         clipsToBounds = true
 
         container.axis = .horizontal
-        container.spacing = 6
+        container.spacing = 0
         container.alignment = .center
         container.distribution = .fillEqually
         container.translatesAutoresizingMaskIntoConstraints = false
 
-        [day, hour, min, sec].forEach { container.addArrangedSubview($0) }
+        [day, hour, min].forEach { container.addArrangedSubview($0) }
         addSubview(container)
 
         NSLayoutConstraint.activate([
             container.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
             container.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            container.topAnchor.constraint(equalTo: topAnchor, constant: 6),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6),
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
-            widthAnchor.constraint(greaterThanOrEqualToConstant: 160)
+            container.topAnchor.constraint(equalTo: topAnchor, constant: 4),
+            container.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 42),
+            widthAnchor.constraint(greaterThanOrEqualToConstant: 120)
         ])
 
         day.configure(value: "00", unit: "Gün")
         hour.configure(value: "00", unit: "Saat")
         min.configure(value: "00", unit: "Dk")
-        sec.configure(value: "00", unit: "Sn")
         applyTileColors()
     }
     required init?(coder: NSCoder) { fatalError() }
 
     private func applyTileColors() {
-        [day, hour, min, sec].forEach { $0.setColors(bg: tileBG, text: textColor) }
+        [day, hour, min].forEach { $0.setColors(bg: tileBG, text: textColor) }
     }
 
     func setColors(background: UIColor, tile: UIColor, text: UIColor) {
-        self.backgroundColor = background
+        self.backgroundColor = tile
         self.tileBG = tile
         self.textColor = text
         applyTileColors()
     }
 
-    func setValues(days: Int, hours: Int, minutes: Int, seconds: Int) {
+    func setValues(days: Int, hours: Int, minutes: Int) {
         day.configure(value: String(format: "%02d", days), unit: "Gün")
         hour.configure(value: String(format: "%02d", hours), unit: "Saat")
         min.configure(value: String(format: "%02d", minutes), unit: "Dk")
-        sec.configure(value: String(format: "%02d", seconds), unit: "Sn")
     }
 }
 
@@ -201,7 +199,7 @@ final class CountdownTimerBannerView: UIControl {
             textLabel.topAnchor.constraint(equalTo: pill.topAnchor, constant: 10),
             textLabel.bottomAnchor.constraint(equalTo: pill.bottomAnchor, constant: -10),
 
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 56)
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 70)
         ])
 
         addTarget(self, action: #selector(bannerTapped), for: .touchUpInside)
@@ -215,8 +213,8 @@ final class CountdownTimerBannerView: UIControl {
     func setPillColor(_ c: UIColor) { pill.backgroundColor = c }
     func setCounterColors(bg: UIColor, tile: UIColor, text: UIColor) { counter.setColors(background: bg, tile: tile, text: text) }
 
-    func updateSegments(days: Int, hours: Int, minutes: Int, seconds: Int) {
-        counter.setValues(days: days, hours: hours, minutes: minutes, seconds: seconds)
+    func updateSegments(days: Int, hours: Int, minutes: Int) {
+        counter.setValues(days: days, hours: hours, minutes: minutes)
     }
 
     // Actions

@@ -53,6 +53,11 @@ public class ScratchToWinModel: TargetingActionViewModel {
     let promocodeCustomFontFamilyIos : String?
     let copybuttonCustomFontFamilyIos : String?
     let iosLink : String?
+    
+    // NEW PROPERTIES
+    let downContentBody: String?
+    let downContentBodyTextColor: UIColor?
+    let downContentBodyFont: UIFont?
     public var jsContent: String?
     public var jsonContent: String?
 
@@ -113,7 +118,13 @@ public class ScratchToWinModel: TargetingActionViewModel {
                 buttonCustomFontFamilyIos : String?,
                 promocodeCustomFontFamilyIos : String?,
                 copybuttonCustomFontFamilyIos : String?,
-                iosLink : String?) {
+                iosLink : String?,
+                
+                // New Arguments with default nil
+                downContentBody: String? = nil,
+                downContentBodyTextColor: String? = nil,
+                downContentBodyFontFamily: String? = nil,
+                downContentBodyTextSize: String? = nil) {
 
         if let cBColor = closeButtonColor {
             if cBColor.lowercased() == "white" {
@@ -153,6 +164,13 @@ public class ScratchToWinModel: TargetingActionViewModel {
         self.consentUrl = URL(string: consentUrl ?? "")
         self.permitUrl = URL(string: emailPermitUrl ?? "")
         self.iosLink = iosLink
+        
+        // Initialize New Properties
+        self.downContentBody = downContentBody
+        self.downContentBodyTextColor = UIColor(hex: downContentBodyTextColor)
+        self.downContentBodyFont = RDHelper.getFont(fontFamily: downContentBodyFontFamily,
+                                                        fontSize: downContentBodyTextSize,
+                                                        style: .body, customFont: nil)
         if !self.imageUrlString.isNilOrWhiteSpace {
             self.imageUrl = ScratchToWinModel.getImageUrl(self.imageUrlString!, type: .full)
         }

@@ -21,6 +21,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     var currentlyShowingTargetingAction: TargetingActionViewModel?
     weak var delegate: RDInAppNotificationsDelegate?
     weak var inappButtonDelegate: RDInappButtonDelegate?
+    weak var countdownUrlDelegate: RDStoryURLDelegate?
     weak var currentViewController: UIViewController?
 
     init(lock: RDReadWriteLock) {
@@ -231,6 +232,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
 
             let tBannerVC = CountdownTimerBannerViewController(model: model)
             tBannerVC.delegate = self
+            tBannerVC.urlDelegate = self.countdownUrlDelegate
             tBannerVC.show(animated: true)
         
         })

@@ -11,7 +11,7 @@ import RelatedDigitalIOS
 import Eureka
 import SplitRow
 
-class InAppViewController: FormViewController, BannerDelegate {
+class InAppViewController: FormViewController, BannerDelegate, RDStoryURLDelegate {
 
     var propertiesUnitTest = [String: String]()
 
@@ -19,7 +19,12 @@ class InAppViewController: FormViewController, BannerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         form +++ InAppNotifications()
+        RelatedDigital.countdownUrlDelegate = self
     }
+    
+    @objc func urlClicked(_ url: URL) {
+            print("Countdown Banner clicked: \(url)")
+        }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

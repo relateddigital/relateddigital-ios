@@ -28,6 +28,7 @@ protocol RDInstanceProtocol {
     var locationServicesEnabledForDevice: Bool { get }
     var locationServiceStateStatusForApplication: RDCLAuthorizationStatus { get }
     var inappButtonDelegate: RDInappButtonDelegate? { get set }
+    var countdownUrlDelegate: RDStoryURLDelegate? { get set }
     var loggingEnabled: Bool { get set }
     var inAppNotificationsEnabled: Bool { get set }
     var geofenceEnabled: Bool { get set }

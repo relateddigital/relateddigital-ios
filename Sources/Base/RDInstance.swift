@@ -87,6 +87,12 @@ public class RDInstance: RDInstanceProtocol {
     }
 
     public weak var inappButtonDelegate: RDInappButtonDelegate?
+    
+    public weak var countdownUrlDelegate: RDStoryURLDelegate? {
+        didSet {
+            rdTargetingActionInstance.notificationsInstance.countdownUrlDelegate = countdownUrlDelegate
+        }
+    }
 
     // swiftlint:disable function_body_length
     init(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIA.LaunchOptionsKey: Any]? = nil, askLocationPermissionAtStart: Bool = true) {
