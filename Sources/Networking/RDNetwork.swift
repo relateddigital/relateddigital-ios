@@ -132,6 +132,10 @@ class RDNetwork {
             guard let httpResponse = response as? HTTPURLResponse else {
                 
                 if let hasError = error {
+                    // Start Offline Logic
+                    RDOfflineRequestManager.shared.queue(request: request, error: hasError)
+                    // End Offline Logic
+                    
                     failure(.other(errorDescription: hasError.localizedDescription), data, response)
                 } else {
                     failure(.noData, data, response)
@@ -141,6 +145,11 @@ class RDNetwork {
             
             // TO_DO: buraya 201'i de ekleyebiliriz, visilabs sunucuları 201(created) de dönebiliyor. 304(Not modified)
             guard httpResponse.statusCode == 200/*OK*/ else {
+                // Server Error (5xx) might also benefit from retry?
+                if (500...599).contains(httpResponse.statusCode) {
+                     RDOfflineRequestManager.shared.queue(request: request, error: RDConfigError.initializationFailed(reason: "Server Error"))
+                }
+                
                 failure(.notOKStatusCode(statusCode: httpResponse.statusCode), data, response)
                 return
             }

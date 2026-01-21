@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>OrganizationId</key>
+	<string>676D325830564761676D453D</string>
+	<key>ProfileId</key>
+	<string>356467332F6533766975593D</string>
+	<key>DataSource</key>
+	<string>visistore</string>
+	<key>AppAlias</key>
+	<string>RDIOSExample</string>
+	<key>EnablePushNotifications</key>
+	<true/>
+    <key>LogEnabled</key>
+    <true/>
+</dict>
+</plist>

@@ -12,7 +12,7 @@ import UserNotifications
 var relatedDigitalProfile = RelatedDigitalProfile()
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate,PushAction {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     
     var window: UIWindow?
@@ -22,19 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         if UrlConstant.shared.getTestWithLocalData() {
             UrlConstant.shared.setTest()
         }
-        RelatedDigital.initialize(
-            organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource,
-            launchOptions: launchOptions, askLocationPermmissionAtStart: false)
-        RelatedDigital.enablePushNotifications(
-            appAlias: "RDIOSExample", launchOptions: launchOptions, appGroupsKey: "group.com.relateddigital.RelatedDigitalExample.relateddigital",
-            deliveredBadge: true)
-        UNUserNotificationCenter.current().delegate = self
+        RelatedDigital.start(launchOptions: nil)
         RelatedDigital.loggingEnabled = true
-        if #available(iOS 13, *) {
-            // handle push for iOS 13 and later in sceneDelegate
-        } else if let userInfo = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] as? [String: Any] {
-            RelatedDigital.handlePush(pushDictionary: userInfo)
-        }
+        
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
         window.rootViewController = SelectViewController()
@@ -53,46 +43,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     func getHomeViewController() -> HomeViewController {
         return HomeViewController()
-    }
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        RelatedDigital.registerToken(tokenData: deviceToken)
-    }
-    
-    func application(
-        _ application: UIApplication,
-        didReceiveRemoteNotification userInfo: [AnyHashable: Any]
-    ) {
-        RelatedDigital.handlePush(pushDictionary: userInfo)
-    }
-    
-    func application(
-        _ application: UIApplication,
-        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        RelatedDigital.handlePush(pushDictionary: userInfo)
-    }
-    
-    func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        completionHandler([.alert, .badge, .sound])
-    }
-    
-    func userNotificationCenter(
-        _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-        RelatedDigital.handlePush(pushDictionary: response.notification.request.content.userInfo)
-        RelatedDigital.handlePushWithActionButtons(response: response,type:self)
-        completionHandler()
-    }
-    
-    func actionButtonClicked(identifier: String, url: String) {
-        print(identifier,url)
     }
 }

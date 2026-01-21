@@ -22,6 +22,7 @@
 		2F51063F27B3A7380008C996 /* RecommendationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F51063E27B3A7380008C996 /* RecommendationViewController.swift */; };
 		2F51064527B3A8890008C996 /* FavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F51064427B3A8890008C996 /* FavoriteViewController.swift */; };
 		2F6C69A327BFBCFF002FEEDB /* PushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6C69A227BFBCFF002FEEDB /* PushViewController.swift */; };
+		2FFA32D32F17A5EC00CE5219 /* RelatedDigital-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2FFA32D22F17A5EC00CE5219 /* RelatedDigital-Info.plist */; };
 		4C0CB2C264445A8A014E5929 /* Pods_RelatedDigitalExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5A998483FFF01F94AF0313 /* Pods_RelatedDigitalExample.framework */; };
 		6198C6AB2C8F40D60032143D /* StarsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6198C6AA2C8F40D60032143D /* StarsViewController.swift */; };
 		88146CD1269CF5AD00473051 /* RelatedDigitalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88146CD0269CF5AD00473051 /* RelatedDigitalTabBarController.swift */; };
@@ -89,6 +90,7 @@
 		2F51063E27B3A7380008C996 /* RecommendationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationViewController.swift; sourceTree = "<group>"; };
 		2F51064427B3A8890008C996 /* FavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewController.swift; sourceTree = "<group>"; };
 		2F6C69A227BFBCFF002FEEDB /* PushViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushViewController.swift; sourceTree = "<group>"; };
+		2FFA32D22F17A5EC00CE5219 /* RelatedDigital-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RelatedDigital-Info.plist"; sourceTree = "<group>"; };
 		48969B1D02B45826FD4D0117 /* Pods-NotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.debug.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.debug.xcconfig"; sourceTree = "<group>"; };
 		4B5A998483FFF01F94AF0313 /* Pods_RelatedDigitalExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RelatedDigitalExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6198C6AA2C8F40D60032143D /* StarsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarsViewController.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 		88680B0B2694FC09004B8DE8 /* RelatedDigitalExample */ = {
 			isa = PBXGroup;
 			children = (
+				2FFA32D22F17A5EC00CE5219 /* RelatedDigital-Info.plist */,
 				2F325DEE27BFBB5A00817023 /* RelatedDigitalExample.entitlements */,
 				88A44AD7292A76B2002F90FA /* Fonts */,
 				2F4250CD27B2678F00D53F97 /* Helpers */,
@@ -390,6 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88680B192694FC0C004B8DE8 /* LaunchScreen.storyboard in Resources */,
+				2FFA32D32F17A5EC00CE5219 /* RelatedDigital-Info.plist in Resources */,
 				88A44ADB292A76B2002F90FA /* sydneysignature.ttf in Resources */,
 				88680B162694FC0C004B8DE8 /* Assets.xcassets in Resources */,
 				88A44ADA292A76B2002F90FA /* android101.otf in Resources */,

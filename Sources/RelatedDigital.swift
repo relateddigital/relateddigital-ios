@@ -78,6 +78,59 @@ public class RelatedDigital {
         }
     }
     
+    // MARK: - Easy Integration
+    
+    /// Starts RelatedDigital with the provided configuration.
+    /// - Parameters:
+    ///   - config: Configuration object containing all necessary settings.
+    ///   - launchOptions: Launch options from `application:didFinishLaunchingWithOptions:`.
+    public class func start(with config: RDConfig, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+        guard Thread.isMainThread else {
+            fatalError("start must be called on the main thread.")
+        }
+        
+        // 1. Initialize
+        initialize(organizationId: config.organizationId,
+                   profileId: config.profileId,
+                   dataSource: config.dataSource,
+                   launchOptions: launchOptions,
+                   askLocationPermmissionAtStart: config.askLocationPermissionAtStart)
+        
+        // 2. Configure Logging
+        loggingEnabled = config.logEnabled
+        
+        // 3. Configure Other Identifiers
+        if let twitterId = config.twitterId {
+            setTwitterId(twitterId: twitterId)
+        }
+        if let facebookId = config.facebookId {
+            setFacebook(facebookId: facebookId)
+        }
+        
+        // 4. Enable Push
+        if config.enablePushNotifications {
+            enablePushNotifications(appAlias: config.appAlias, launchOptions: launchOptions)
+        }
+        
+        // 5. Auto Integrate
+        if config.autoIntegrate {
+            RDAutoIntegrator.integrate()
+        }
+        
+        // 6. Start Offline Manager (Process pending queue)
+        _ = RDOfflineRequestManager.shared
+    }
+    
+    /// Starts RelatedDigital by reading configuration from `RelatedDigital-Info.plist`.
+    /// - Parameter launchOptions: Launch options from `application:didFinishLaunchingWithOptions:`.
+    public class func start(launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+        guard let config = RDConfig(fileName: "RelatedDigital-Info") else {
+            RDLogger.error(RDConfigError.missingPlist.localizedDescription)
+            return
+        }
+        start(with: config, launchOptions: launchOptions)
+    }
+    
     init(instance: RDInstanceProtocol) {
         self.rdInstance = instance
     }
