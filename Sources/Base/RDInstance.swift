@@ -11,6 +11,8 @@ import UIKit
 import UserNotifications
 
 public class RDInstance: RDInstanceProtocol {
+    
+    
     var exVisitorId: String? { return rdUser.exVisitorId }
     var rdUser = RDUser()
     var rdProfile: RDProfile
@@ -87,6 +89,12 @@ public class RDInstance: RDInstanceProtocol {
     }
 
     public weak var inappButtonDelegate: RDInappButtonDelegate?
+    
+    public weak var notificationBellUrlDelegate: RDNotificationBellDelegate? {
+        didSet {
+            rdTargetingActionInstance.notificationsInstance.notificationBellUrlDelegate = notificationBellUrlDelegate
+        }
+    }
     
     public weak var countdownUrlDelegate: RDStoryURLDelegate? {
         didSet {

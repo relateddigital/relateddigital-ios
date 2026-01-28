@@ -22,6 +22,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     weak var delegate: RDInAppNotificationsDelegate?
     weak var inappButtonDelegate: RDInappButtonDelegate?
     weak var countdownUrlDelegate: RDStoryURLDelegate?
+    weak var notificationBellUrlDelegate: RDNotificationBellDelegate?
     weak var currentViewController: UIViewController?
 
     init(lock: RDReadWriteLock) {
@@ -272,6 +273,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
 
             let notifBell = NotificationBellViewController(model: model)
             notifBell.delegate = self
+            notifBell.urlDelegate = self.notificationBellUrlDelegate
             notifBell.show(animated: true)
         
         })

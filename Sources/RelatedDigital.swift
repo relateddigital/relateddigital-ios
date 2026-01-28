@@ -118,6 +118,15 @@ public class RelatedDigital {
         }
     }
     
+    public static var notificationBellUrlDelegate: RDNotificationBellDelegate? {
+        get {
+            return shared.rdInstance.notificationBellUrlDelegate
+        }
+        set {
+            shared.rdInstance.notificationBellUrlDelegate = newValue
+        }
+    }
+    
     public static var loggingEnabled: Bool {
         get {
             return shared.rdInstance.loggingEnabled

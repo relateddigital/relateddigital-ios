@@ -26,9 +26,14 @@ final class NotificationBellViewController: RDBaseNotificationViewController, UI
     private let bellImageView = UIImageView()
     private let panel = NotificationBellPanelView()
     private var panelBottomToBellTop: NSLayoutConstraint!
+    private var panelTopToBellBottom: NSLayoutConstraint!
     private var isPanelVisible = false
+    
+    private var bellTrailingConstraint: NSLayoutConstraint!
+    private var bellBottomConstraint: NSLayoutConstraint!
 
     private let model: NotificationBellModel
+    weak var urlDelegate: RDNotificationBellDelegate?
 
     init(model: NotificationBellModel) {
         self.model = model
@@ -121,11 +126,14 @@ final class NotificationBellViewController: RDBaseNotificationViewController, UI
         view.addSubview(bellButton)
 
         if #available(iOS 11.0, *) {
+            bellTrailingConstraint = bellButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+            bellBottomConstraint = bellButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -86)
+            
             NSLayoutConstraint.activate([
                 bellButton.widthAnchor.constraint(equalToConstant: 52),
                 bellButton.heightAnchor.constraint(equalToConstant: 52),
-                bellButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-                bellButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -86),
+                bellTrailingConstraint,
+                bellBottomConstraint,
 
                 bellImageView.centerXAnchor.constraint(equalTo: bellButton.centerXAnchor),
                 bellImageView.centerYAnchor.constraint(equalTo: bellButton.centerYAnchor),
@@ -135,18 +143,71 @@ final class NotificationBellViewController: RDBaseNotificationViewController, UI
         }
 
         bellButton.addTarget(self, action: #selector(togglePanel), for: .touchUpInside)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        bellButton.addGestureRecognizer(panGesture)
     }
+    
+    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        guard let gestureView = gesture.view else { return }
+
+        switch gesture.state {
+        case .changed:
+            bellTrailingConstraint.constant += translation.x
+            bellBottomConstraint.constant += translation.y
+            gesture.setTranslation(.zero, in: view)
+        case .ended, .cancelled:
+            let screenWidth = view.bounds.width
+            let safePadding: CGFloat = 16
+            let buttonWidth: CGFloat = 52
+            
+            // Calculate current frame
+            let currentX = bellButton.frame.origin.x
+            let centerX = currentX + (buttonWidth / 2)
+            
+            // Decide snap target
+            let targetConstant: CGFloat
+            if centerX < screenWidth / 2 {
+                // Snap Left
+                // We want bellButton.leading = safePadding (relative to safeArea)
+                // bellTrailing = bellLeading + width
+                // bellTrailing - viewTrailing = constant
+                // (safeLeading + 16 + 52) - safeTrailing = constant
+                // constant = 68 - (safeTrailing - safeLeading) = 68 - safeWidth
+                let safeWidth = view.safeAreaLayoutGuide.layoutFrame.width
+                targetConstant = 68 - safeWidth
+            } else {
+                // Snap Right
+                targetConstant = -16
+            }
+            
+            // Animate snap
+            bellTrailingConstraint.constant = targetConstant
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0.5, options: .curveEaseOut) {
+                self.view.layoutIfNeeded()
+            }
+        default:
+            break
+        }
+    }
+
 
     private func setupPanel() {
         view.addSubview(panel)
         panel.backgroundColor = UIColor(hex: model.background_color)
         panel.translatesAutoresizingMaskIntoConstraints = false
-
+        
+        // Define both constraints (activate one later)
         panelBottomToBellTop = panel.bottomAnchor.constraint(equalTo: bellButton.topAnchor, constant: -12)
+        panelTopToBellBottom = panel.topAnchor.constraint(equalTo: bellButton.bottomAnchor, constant: 12)
 
         NSLayoutConstraint.activate([
             panel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             panel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            // panelBottomToBellTop is activated by default logic or implicitly via showPanel logic
+            // But initially we need one anchor to satisfy layout? 
+            // We'll activate panelBottomToBellTop here as default
             panelBottomToBellTop,
             panel.heightAnchor.constraint(greaterThanOrEqualToConstant: 280)
         ])
@@ -181,6 +242,13 @@ final class NotificationBellViewController: RDBaseNotificationViewController, UI
         for el in (model.bellElems ?? []) {
             let row = BellRowView(text: el.text ?? "", link: el.ios_lnk,model: model)
             row.backgroundColor = .clear
+            
+            row.onTap = { [weak self] url in
+                guard let self = self else { return }
+                self.urlDelegate?.urlClicked(url)
+                
+            }
+            
             panel.contentStack.addArrangedSubview(row)
         }
     }
@@ -191,8 +259,23 @@ final class NotificationBellViewController: RDBaseNotificationViewController, UI
 
     private func showPanel() {
         guard !isPanelVisible else { return }
+        
+        // Dynamic positioning: check if button is in upper or lower half
+        let bellMidY = bellButton.frame.midY
+        let screenHeight = view.bounds.height
+        
+        // If bell is in top 40% of screen, open DOWN. Else open UP.
+        if bellMidY < (screenHeight * 0.45) {
+            panelBottomToBellTop.isActive = false
+            panelTopToBellBottom.isActive = true
+        } else {
+            panelTopToBellBottom.isActive = false
+            panelBottomToBellTop.isActive = true
+        }
+        
         isPanelVisible = true
         panel.isHidden = false
+        view.layoutIfNeeded() // Apply constraints change before animation
         
         if let url = model.bellAnimation {
             ImageLoader.load(from: url, into: bellImageView)
@@ -265,9 +348,11 @@ final class BellRowView: UIControl {
     private let iconView = UIImageView()
     private let label = UILabel()
     private var link: String?
+    var onTap: ((URL) -> Void)?
 
     init(text: String, link: String?,model: NotificationBellModel) {
         super.init(frame: .zero)
+        self.translatesAutoresizingMaskIntoConstraints = false
         self.link = link
 
         iconView.translatesAutoresizingMaskIntoConstraints = false
@@ -291,6 +376,11 @@ final class BellRowView: UIControl {
         stack.spacing = 10
         stack.alignment = .top
         stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Make sure touches pass through to the BellRowView (UIControl)
+        stack.isUserInteractionEnabled = false
+        iconView.isUserInteractionEnabled = false
+        label.isUserInteractionEnabled = false
 
         layer.cornerRadius = 10
         addSubview(stack)
@@ -309,12 +399,20 @@ final class BellRowView: UIControl {
     }
 
     @objc private func openLink() {
+        RDLogger.info("BellRowView tapped. Link: \(link ?? "nil")")
         guard
             let link = link,
-            !link.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-            let url = URL(string: link)
-        else { return }
-        UIApplication.shared.open(url)
+            !link.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { 
+            RDLogger.warn("BellRowView: Link is empty or nil")
+            return 
+        }
+        
+        if let url = URL(string: link) {
+            onTap?(url)
+        } else {
+             RDLogger.error("BellRowView: Invalid URL string: \(link)")
+        }
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -406,4 +504,10 @@ final class NotificationBellPanelView: UIView {
     }
 
     required init?(coder: NSCoder) { fatalError() }
+}
+
+@objc
+public protocol RDNotificationBellDelegate: NSObjectProtocol {
+    @objc
+    func urlClicked( _ url: URL)
 }
