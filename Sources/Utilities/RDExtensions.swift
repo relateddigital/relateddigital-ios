@@ -150,7 +150,7 @@ extension UIImageView {
         }
     }
     
-    func setImage(withUrl urlString : URL?) {
+    func setImage(withUrl urlString : URL?, completion: (() -> Void)? = nil) {
         if let url = urlString {
             self.image = nil
 
@@ -173,7 +173,7 @@ extension UIImageView {
                             viewPop.imageHeightConstraint?.constant = height
                             self.layoutIfNeeded()
                         }
-                        
+                        completion?()
                     }
                 }
 

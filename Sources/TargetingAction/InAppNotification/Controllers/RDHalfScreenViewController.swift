@@ -26,6 +26,7 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
         super.init(nibName: nil, bundle: nil)
         self.notification = notification
         relatedDigitalHalfScreenView = RDHalfScreenView(frame: UIScreen.main.bounds, notification: halfScreenNotification)
+        relatedDigitalHalfScreenView.delegate = self
         view = relatedDigitalHalfScreenView
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))
@@ -145,4 +146,47 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
         }
     }
     
+}
+
+extension RDHalfScreenViewController: RDHalfScreenViewDelegate {
+    func halfScreenViewDidLoadImage(image: UIImage) {
+        
+        guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
+            return
+        }
+        var bounds: CGRect
+        if #available(iOS 13.0, *) {
+            let windowScene = sharedUIApplication
+                .connectedScenes
+                .filter { $0.activationState == .foregroundActive }
+                .first
+            guard let scene = windowScene as? UIWindowScene else { return }
+            bounds = scene.coordinateSpace.bounds
+        } else {
+            bounds = UIScreen.main.bounds
+        }
+        
+        let bottomInset = Double(RDHelper.getSafeAreaInsets().bottom)
+        let topInset = Double(RDHelper.getSafeAreaInsets().top)
+        
+        // Recalculate height
+        self.relatedDigitalHalfScreenView.layoutIfNeeded() // Ensure frames are updated
+        halfScreenHeight = Double(relatedDigitalHalfScreenView.getPreferredHeight())
+        
+        // Debug logging
+        print("[RDHalfScreen] Image Loaded.")
+        print("[RDHalfScreen] Image Height: \(relatedDigitalHalfScreenView.imageView.image?.size.height ?? 0)")
+        print("[RDHalfScreen] Calculated Preferred Height: \(halfScreenHeight)")
+        
+        let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
+        print("[RDHalfScreen] FrameY: \(frameY)")
+        
+        let frame = CGRect(origin: CGPoint(x: 0, y: CGFloat(frameY)), size: CGSize(width: bounds.size.width, height: CGFloat(halfScreenHeight)))
+        print("[RDHalfScreen] New Frame: \(frame)")
+        
+        DispatchQueue.main.async {
+            self.window?.frame = frame
+            self.window?.layoutIfNeeded() // Force window layout
+        }
+    }
 }

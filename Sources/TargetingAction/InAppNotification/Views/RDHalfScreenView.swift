@@ -14,16 +14,21 @@ class RDHalfScreenView: UIView {
     var titleLabel: UILabel!
     var imageView: UIImageView!
     var closeButton: UIButton!
+    weak var delegate: RDHalfScreenViewDelegate?
+    private var imageHeightConstraint: NSLayoutConstraint?
 
     init(frame: CGRect, notification: RDInAppNotification) {
         self.notification = notification
         super.init(frame: frame)
         setupTitle()
-
+        setCloseButton()
+        // Setup image view after title and close button to ensure hierarchy if needed, 
+        // though strictly order in init doesn't matter for property creation, 
+        // layoutContent depends on them.
+        // We call setupImageView before layoutContent.
         if let notUrl = notification.imageUrl {
             setupImageView(url: notUrl)
         }
-        setCloseButton()
         layoutContent()
     }
 
@@ -45,10 +50,21 @@ class RDHalfScreenView: UIView {
     private func setupImageView(url: URL) {
         imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
-        imageView.setImage(withUrl: url)
+        imageView.setImage(withUrl: url) { [weak self] in
+            self?.updateImageHeight()
+        }
         addSubview(imageView)
+    }
+    
+    private func updateImageHeight() {
+        guard let image = imageView.image else { return }
+        let aspectRatio = image.size.height / image.size.width
+        let newHeight = self.frame.width * aspectRatio
+        imageHeightConstraint?.constant = newHeight
+        self.layoutIfNeeded()
+        delegate?.halfScreenViewDidLoadImage(image: image)
     }
 
     private func setCloseButton() {
@@ -68,6 +84,7 @@ class RDHalfScreenView: UIView {
 
     private func layoutContent() {
         self.backgroundColor = notification.backGroundColor
+        titleLabel.top(to: self, offset: 0, relation: .equal, priority: .required)
         titleLabel.leading(to: self, offset: 0, relation: .equal, priority: .required)
         titleLabel.trailing(to: self, offset: 0, relation: .equal, priority: .required)
         titleLabel.centerX(to: self, priority: .required)
@@ -76,8 +93,8 @@ class RDHalfScreenView: UIView {
         imageView?.trailing(to: self, offset: 0, relation: .equal, priority: .required)
 
         if let _ = notification.imageUrl {
-            let screenSize: CGRect = UIScreen.main.bounds
-            imageView.height(screenSize.height/3.3)
+            // Initial height 0, will be updated when image loads
+            imageHeightConstraint = imageView.height(0)
         }
 
         closeButton.top(to: self, offset: -5.0)
@@ -94,9 +111,33 @@ class RDHalfScreenView: UIView {
             titleLabel.height(0)
             titleLabel.isHidden = true
         } else {
+            titleLabel.preferredMaxLayoutWidth = self.frame.width
             titleLabel.height(titleLabel.intrinsicContentSize.height + 20 )
         }
         super.layoutSubviews()
     }
+    
+    func getPreferredHeight() -> CGFloat {
+        var titleHeight: CGFloat = 0.0
+        if let text = titleLabel.text, !text.isEmptyOrWhitespace {
+             let size = titleLabel.sizeThatFits(CGSize(width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
+             titleHeight = size.height + 20 // +20 padding as in layoutSubviews
+        }
+        
+        var imgHeight: CGFloat = 0.0
+        if let image = imageView.image {
+             let aspectRatio = image.size.height / image.size.width
+             imgHeight = self.frame.width * aspectRatio
+        } else {
+             imgHeight = imageHeightConstraint?.constant ?? 0
+        }
+        
+        return titleHeight + imgHeight
+    }
 
+}
+
+
+protocol RDHalfScreenViewDelegate: AnyObject {
+    func halfScreenViewDidLoadImage(image: UIImage)
 }
