@@ -16,6 +16,10 @@ class RDHalfScreenView: UIView {
     var closeButton: UIButton!
     weak var delegate: RDHalfScreenViewDelegate?
     private var imageHeightConstraint: NSLayoutConstraint?
+    
+    var promotionContainer: UIView?
+    var promotionCodeLabel: UILabel?
+    var copyButton: UIButton?
 
     init(frame: CGRect, notification: RDInAppNotification) {
         self.notification = notification
@@ -29,6 +33,7 @@ class RDHalfScreenView: UIView {
         if let notUrl = notification.imageUrl {
             setupImageView(url: notUrl)
         }
+        setupPromotionCode()
         layoutContent()
     }
 
@@ -67,6 +72,30 @@ class RDHalfScreenView: UIView {
         delegate?.halfScreenViewDidLoadImage(image: image)
     }
 
+    private func setupPromotionCode() {
+        guard let promoCode = notification.promotionCode, !promoCode.isEmpty else { return }
+        
+        promotionContainer = UIView()
+        promotionContainer?.translatesAutoresizingMaskIntoConstraints = false
+        promotionContainer?.backgroundColor = .clear
+        addSubview(promotionContainer!)
+        
+        promotionCodeLabel = UILabel()
+        promotionCodeLabel?.text = promoCode
+        promotionCodeLabel?.font = notification.messageTitleFont
+        promotionCodeLabel?.textColor = notification.promotionTextColor ?? notification.messageTitleColor
+        promotionCodeLabel?.textAlignment = .center
+        promotionCodeLabel?.translatesAutoresizingMaskIntoConstraints = false
+        promotionContainer?.addSubview(promotionCodeLabel!)
+        
+        copyButton = UIButton()
+        copyButton?.translatesAutoresizingMaskIntoConstraints = false
+        let copyIcon = RDHelper.getUIImage(named: "RelatedCopyButton")
+        copyButton?.setImage(copyIcon, for: .normal)
+        copyButton?.addTarget(self, action: #selector(copyButtonTapped), for: .touchUpInside)
+        promotionContainer?.addSubview(copyButton!)
+    }
+
     private func setCloseButton() {
         closeButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -96,6 +125,19 @@ class RDHalfScreenView: UIView {
             // Initial height 0, will be updated when image loads
             imageHeightConstraint = imageView.height(0)
         }
+        
+        if let promotionContainer = promotionContainer {
+            promotionContainer.topToBottom(of: imageView, offset: 0)
+            promotionContainer.leading(to: self, offset: 0, relation: .equal, priority: .required)
+            promotionContainer.trailing(to: self, offset: 0, relation: .equal, priority: .required)
+            
+            promotionCodeLabel?.center(in: promotionContainer)
+            
+            copyButton?.centerY(to: promotionContainer)
+            copyButton?.trailing(to: promotionContainer, offset: -20)
+            copyButton?.width(30)
+            copyButton?.height(30)
+        }
 
         closeButton.top(to: self, offset: -5.0)
         closeButton.trailing(to: self, offset: -10.0)
@@ -106,6 +148,14 @@ class RDHalfScreenView: UIView {
 
     }
 
+    @objc func copyButtonTapped(_ sender: UIButton) {
+        if let code = promotionCodeLabel?.text {
+            UIPasteboard.general.string = code
+            RDHelper.showCopiedClipboardMessage()
+            RDHelper.setCopyButtonFeedback(button: sender)
+        }
+    }
+
     override func layoutSubviews() {
         if titleLabel.text.isNilOrWhiteSpace {
             titleLabel.height(0)
@@ -114,6 +164,17 @@ class RDHalfScreenView: UIView {
             titleLabel.preferredMaxLayoutWidth = self.frame.width
             titleLabel.height(titleLabel.intrinsicContentSize.height + 20 )
         }
+        
+        if let promotionContainer = promotionContainer, let promotionCodeLabel = promotionCodeLabel {
+            if promotionCodeLabel.text.isNilOrWhiteSpace {
+                promotionContainer.height(0)
+                promotionContainer.isHidden = true
+            } else {
+                let promoHeight = promotionCodeLabel.intrinsicContentSize.height + 20
+                promotionContainer.height(promoHeight)
+            }
+        }
+        
         super.layoutSubviews()
     }
     
@@ -132,7 +193,15 @@ class RDHalfScreenView: UIView {
              imgHeight = imageHeightConstraint?.constant ?? 0
         }
         
-        return titleHeight + imgHeight
+        var promoHeight: CGFloat = 0.0
+        if let promoContainer = promotionContainer, !promoContainer.isHidden {
+            if let promoLabel = promotionCodeLabel, !promoLabel.text.isNilOrWhiteSpace {
+                let size = promoLabel.sizeThatFits(CGSize(width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
+                promoHeight = size.height + 20
+            }
+        }
+        
+        return titleHeight + imgHeight + promoHeight
     }
 
 }

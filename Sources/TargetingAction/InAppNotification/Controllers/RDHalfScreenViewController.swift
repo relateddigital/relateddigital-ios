@@ -94,7 +94,19 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
         
         let bottomInset = Double(RDHelper.getSafeAreaInsets().bottom)
         let topInset = Double(RDHelper.getSafeAreaInsets().top)
-        halfScreenHeight = Double(relatedDigitalHalfScreenView.imageView.frame.height) + Double(relatedDigitalHalfScreenView.titleLabel.frame.height)
+        
+        var promoHeight: Double = 0.0
+        if let promoContainer = relatedDigitalHalfScreenView.promotionContainer, !promoContainer.isHidden {
+            promoHeight = Double(promoContainer.frame.height)
+            if promoHeight == 0.0, let promoLabel = relatedDigitalHalfScreenView.promotionCodeLabel {
+                let labelHeight = promoLabel.intrinsicContentSize.height
+                if labelHeight > 0 {
+                    promoHeight = Double(labelHeight) + 20.0
+                }
+            }
+        }
+        
+        halfScreenHeight = Double(relatedDigitalHalfScreenView.imageView.frame.height) + Double(relatedDigitalHalfScreenView.titleLabel.frame.height) + promoHeight
         
         let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
         
