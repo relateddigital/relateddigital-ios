@@ -165,17 +165,9 @@ class PushViewController: FormViewController {
     fileprivate func getPushMessages() -> ButtonRow {
         return ButtonRow {
             $0.title = "Get Push Messages"
-        }.onCellSelection { _, _ in
+        }.onCellSelection { [weak self] _, _ in
             RelatedDigital.getPushMessages { messages in
-                if messages.isEmpty {
-                    print("🚲 there is no recorded push message.")
-                }
-                
-                for message in messages {
-                    print("🆔: \(message.pushId ?? "")")
-                    print("📅: \(message.formattedDateString ?? "")")
-                    print(message.encode)
-                }
+                self?.showPushMessagesAlert(messages: messages, title: "Push Messages")
             }
         }
     }
@@ -183,19 +175,38 @@ class PushViewController: FormViewController {
     fileprivate func getPushMessagesWithID() -> ButtonRow {
         return ButtonRow {
             $0.title = "Get Push Messages With ID"
-        }.onCellSelection { _, _ in
+        }.onCellSelection { [weak self] _, _ in
             RelatedDigital.getPushMessagesWithID { messages in
-                if messages.isEmpty {
-                    print("🚲 there is no recorded push message.")
-                }
-                
-                for message in messages {
-                    print("🆔: \(message.pushId ?? "")")
-                    print("📅: \(message.formattedDateString ?? "")")
-                    print(message.encode)
-                }
+                self?.showPushMessagesAlert(messages: messages, title: "Push Messages With ID")
             }
         }
+    }
+    
+    fileprivate func showPushMessagesAlert(messages: [RDPushMessage], title: String) {
+        var messageText = ""
+        if messages.isEmpty {
+            messageText = "🚲 there is no recorded push message."
+        } else {
+            for (index, message) in messages.enumerated() {
+                messageText += "[\(index + 1)] 🆔: \(message.pushId ?? "nil")\n📅: \(message.formattedDateString ?? "nil")\nPushTitle: \(message.aps?.alert?.title ?? "nil")\n\n"
+            }
+        }
+        
+        let alertController = UIAlertController(title: title, message: messageText, preferredStyle: .alert)
+        
+        // Add a primary action to copy the full JSON of all messages (if any exist)
+        if !messages.isEmpty {
+            let copyAction = UIAlertAction(title: "Copy JSON", style: .default) { _ in
+                let jsonArray = messages.compactMap { $0.encode }
+                UIPasteboard.general.string = "[\n" + jsonArray.joined(separator: ",\n") + "\n]"
+            }
+            alertController.addAction(copyAction)
+        }
+        
+        let okAction = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alertController.addAction(okAction)
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     fileprivate func getToken() -> ButtonRow {

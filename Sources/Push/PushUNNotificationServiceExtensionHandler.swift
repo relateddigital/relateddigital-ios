@@ -64,7 +64,9 @@ class PushUNNotificationServiceExtensionHandler {
              loadAttachments(mediaUrl: mediaUrl, modifiedBestAttemptContent: modifiedBestAttemptContent, withContentHandler: contentHandler)
             
         } else if pushDetail.pushType == "Text" {
-            contentHandler(modifiedBestAttemptContent)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                contentHandler(modifiedBestAttemptContent)
+            }
         }
     }
     
