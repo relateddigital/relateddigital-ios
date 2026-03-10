@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.swift_version    = '5.0'
   s.author           = { 'Related Digital' => 'developer@relateddigital.com' }
   s.source           = { git: 'https://github.com/relateddigital/relateddigital-ios.git', tag: s.version.to_s }
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '12.0'
   s.source_files  = ['Sources/**/*.{swift,h,m}']
   s.resources    = ['Sources/**/*.{html,js,png,xib}']
   s.resource_bundle = { 'RelatedDigitalIOSResources' => 'Sources/**/*.{xib,html,js,png}' }
