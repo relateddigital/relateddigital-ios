@@ -747,14 +747,13 @@ class RDTargetingAction {
         if let texts = actionData[RDConstants.notification_texts] as? [[String: Any]] {
             
             for elem in texts {
-                if let text = elem[RDConstants.text] as? String,
-                   let iosLink = elem[RDConstants.iosLnk] as? String {
+                if let text = elem[RDConstants.text] as? String {
+                    let iosLink = elem[RDConstants.iosLnk] as? String
                     
                     var ballElem = bellElement()
                     ballElem.ios_lnk = iosLink
                     ballElem.text = text
                     notificationBellModel.bellElems?.append(ballElem)
-
                 }
             }
             

@@ -10,6 +10,7 @@ import UIKit
 protocol RDNotificationViewControllerDelegate: AnyObject {
     @discardableResult
     func notificationShouldDismiss(controller: RDBaseViewControllerProtocol, callToActionURL: URL?, shouldTrack: Bool, additionalTrackingProperties: Properties?) -> Bool
+    func trackNotification(controller: RDBaseViewControllerProtocol, event: String, properties: Properties?)
 }
 
 public protocol RDBaseViewControllerProtocol {

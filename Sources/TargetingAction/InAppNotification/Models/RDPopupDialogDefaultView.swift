@@ -310,6 +310,8 @@ public class RDPopupDialogDefaultView: UIView {
             setupForImageTextButton(true)
         case .imageButtonImage:
             setupForImageButtonImage()
+        case .npsWithMultiplePopup:
+            setupForNpsWithMultiplePopup()
         default:
             setupForDefault()
         }

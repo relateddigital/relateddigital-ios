@@ -471,4 +471,17 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         currentlyShowingNotification = nil
         currentlyShowingTargetingAction = nil
     }
+
+    func trackNotification(controller: RDBaseViewControllerProtocol, event: String, properties: Properties?) {
+        if let notification = controller.notification {
+            var finalProperties = properties ?? Properties()
+            if let addProps = properties {
+                if let point = addProps["OM.s_point"] { finalProperties["OM.s_point"] = point }
+                if let cat = addProps["OM.s_cat"] { finalProperties["OM.s_cat"] = cat }
+                if let page = addProps["OM.s_page"] { finalProperties["OM.s_page"] = page }
+                if let feed = addProps["OM.s_feed"] { finalProperties["OM.s_feed"] = feed }
+            }
+            self.delegate?.trackNotification(notification, event: event, properties: finalProperties)
+        }
+    }
 }

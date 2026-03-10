@@ -154,7 +154,8 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                                                  buttonTextColor: notification.buttonTextColor,
                                                  buttonColor: notification.buttonColor, action: commonButtonAction, buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
                 if notification.type == .npsWithNumbers ||
-                    notification.type == .nps {
+                    notification.type == .nps ||
+                    notification.type == .npsWithMultiplePopup {
                     button.isEnabled = false
                 }
                 addButton(button)
@@ -182,7 +183,8 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                                              buttonTextColor: notification.buttonTextColor,
                                              buttonColor: notification.buttonColor, action: commonButtonAction, buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
             if notification.type == .npsWithNumbers ||
-                notification.type == .nps {
+                notification.type == .nps ||
+                notification.type == .npsWithMultiplePopup {
                 button.isEnabled = false
             }
             addButton(button)
@@ -198,6 +200,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
     func commonButtonAction() {
         guard let notification = self.notification else { return }
         var returnCallback = true
+        var shouldDismiss = true
         var additionalTrackingProperties = Properties()
         if notification.type == .smileRating {
             additionalTrackingProperties["OM.s_point"]
@@ -229,17 +232,65 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                 additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
                 additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
             }
+        } else if notification.type == .npsWithMultiplePopup {
+            let threshold = Double(notification.multiplePopupFeedbackMinPoint ?? "0") ?? 100.0
+            let userRating = viewController.standardView.npsView.rating
+            if userRating < threshold {
+                shouldDismiss = false
+                returnCallback = false
+                
+                self.buttons.forEach { $0.removeFromSuperview() }
+                self.buttons.removeAll()
+                for view in popupContainerView.buttonStackView.arrangedSubviews {
+                    popupContainerView.buttonStackView.removeArrangedSubview(view)
+                    view.removeFromSuperview()
+                }
+
+                viewController.standardView.setupPage2ForNpsWithMultiplePopup()
+
+                self.buttonAlignment = .horizontal
+
+                let backButton = RDPopupDialogButton(title: notification.multiplePopupButtonText3 ?? "Geri",
+                                                     height: 45,
+                                                     font: notification.buttonTextFont,
+                                                     buttonTextColor: notification.multiplePopupButtonTextColor3 ?? .black,
+                                                     buttonColor: notification.multiplePopupButtonColor3 ?? .white,
+                                                     dismissOnTap: false,
+                                                     action: multiplePopupPage2BackAction,
+                                                     buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
+
+                let saveButton = RDPopupDialogButton(title: notification.multiplePopupButtonText2 ?? "Kaydet",
+                                                     height: 45,
+                                                     font: notification.buttonTextFont,
+                                                     buttonTextColor: notification.multiplePopupButtonTextColor2 ?? .white,
+                                                     buttonColor: notification.multiplePopupButtonColor2 ?? .black,
+                                                     dismissOnTap: false,
+                                                     action: multiplePopupPage2SaveAction,
+                                                     buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
+
+                addButton(backButton)
+                addButton(saveButton)
+                self.appendButtons()
+            } else {
+                additionalTrackingProperties["OM.s_point"] = String(userRating).replacingOccurrences(of: ",", with: ".")
+                additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
+                additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
+            }
         }
+        
         // Check if second popup coming
         var callToActionURL: URL? = notification.callToActionUrl
         if notification.type == .secondNps {
             callToActionURL = nil
             returnCallback = false
         }
-        self.delegate?.notificationShouldDismiss(controller: self,
-                                                 callToActionURL: callToActionURL,
-                                                 shouldTrack: true,
-                                                 additionalTrackingProperties: additionalTrackingProperties)
+        
+        if shouldDismiss {
+            self.delegate?.notificationShouldDismiss(controller: self,
+                                                     callToActionURL: callToActionURL,
+                                                     shouldTrack: true,
+                                                     additionalTrackingProperties: additionalTrackingProperties)
+        }
         
         if returnCallback {
             
@@ -267,6 +318,101 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         
         self.inappButtonDelegate?.didTapSecondButton(notification)
         
+    }
+
+    func multiplePopupPage2BackAction() {
+        guard let notification = self.notification else { return }
+        
+        // Restore Page 1 UI
+        viewController.standardView.setupForNpsWithMultiplePopup()
+        viewController.standardView.feedbackTF.removeFromSuperview()
+        
+        if let originalTitle = notification.messageTitle {
+            viewController.standardView.titleLabel.text = originalTitle.removeEscapingCharacters()
+        }
+        if let originalBody = notification.messageBody {
+            viewController.standardView.messageLabel.text = originalBody.removeEscapingCharacters()
+        }
+        
+        // Remove current buttons
+        self.buttons.forEach { $0.removeFromSuperview() }
+        self.buttons.removeAll()
+        for view in popupContainerView.buttonStackView.arrangedSubviews {
+            popupContainerView.buttonStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        
+        self.buttonAlignment = .vertical
+        
+        // Add original button
+        let button = RDPopupDialogButton(title: notification.buttonText ?? "Devam",
+                                         font: notification.buttonTextFont,
+                                         buttonTextColor: notification.buttonTextColor,
+                                         buttonColor: notification.buttonColor, 
+                                         action: commonButtonAction, 
+                                         buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
+        button.isEnabled = viewController.standardView.npsView.rating > 0
+        addButton(button)
+        self.appendButtons()
+    }
+    
+    func multiplePopupPage2SaveAction() {
+        guard let notification = self.notification else { return }
+        
+        // Track the data
+        var additionalTrackingProperties = Properties()
+        let userRating = viewController.standardView.npsView.rating
+        additionalTrackingProperties["OM.s_point"] = String(userRating).replacingOccurrences(of: ",", with: ".")
+        additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
+        additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
+        additionalTrackingProperties["OM.s_feed"] = viewController.standardView.feedbackTF.text ?? ""
+        
+        self.delegate?.trackNotification(controller: self,
+                                         event: "event",
+                                         properties: additionalTrackingProperties)
+        
+        // Go to page 3
+        viewController.standardView.setupPage3ForNpsWithMultiplePopup()
+        
+        // Remove current buttons
+        self.buttons.forEach { $0.removeFromSuperview() }
+        self.buttons.removeAll()
+        for view in popupContainerView.buttonStackView.arrangedSubviews {
+            popupContainerView.buttonStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+        
+        self.buttonAlignment = .vertical
+        
+        // Add Kapat button
+        let closeButton = RDPopupDialogButton(title: notification.multiplePopupButtonText4 ?? "Kapat",
+                                              font: notification.buttonTextFont,
+                                              buttonTextColor: notification.multiplePopupButtonTextColor4 ?? .white,
+                                              buttonColor: notification.multiplePopupButtonColor4 ?? .black,
+                                              dismissOnTap: true,
+                                              action: multiplePopupPage3CloseAction,
+                                              buttonCornerRadius: Double(notification.buttonBorderRadius ?? "0") ?? 0)
+        addButton(closeButton)
+        self.appendButtons()
+    }
+    
+    func multiplePopupPage3CloseAction() {
+        guard let notification = self.notification else { return }
+        
+        let callToActionURL: URL? = notification.callToActionUrl
+
+        self.delegate?.notificationShouldDismiss(controller: self,
+                                                 callToActionURL: callToActionURL,
+                                                 shouldTrack: false,
+                                                 additionalTrackingProperties: nil)
+                                                 
+        if notification.buttonFunction == RDConstants.copyRedirect {
+            if let promoCode = notification.promotionCode {
+                UIPasteboard.general.string = promoCode
+                RDHelper.showCopiedClipboardMessage()
+            }
+        }
+        self.inappButtonDelegate?.didTapButton(notification)
     }
     
     fileprivate func initForEmailForm(_ viewController: RDDPNVC) {

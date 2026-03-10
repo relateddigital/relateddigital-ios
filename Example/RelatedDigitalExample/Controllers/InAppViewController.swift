@@ -102,6 +102,7 @@ class InAppViewController: FormViewController, BannerDelegate, RDStoryURLDelegat
             .MultipleChoiceSurvey : [RDInAppNotificationType.MultipleChoiceSurvey.rawValue: 3111],
             .notificationBell : [RDInAppNotificationType.notificationBell.rawValue: 4321],
             .CountdownTimerBanner : [RDInAppNotificationType.CountdownTimerBanner.rawValue: 75759],
+            .npsWithMultiplePopup : [RDInAppNotificationType.npsWithMultiplePopup.rawValue: 1438]
             ]
     }
     
@@ -112,7 +113,7 @@ extension InAppViewController: RDInappButtonDelegate,ButtonCarouselViewDelegate 
     
     func didTapButton(_ notification: RDInAppNotification) {
         print("notification did tapped...")
-        print(notification)
+        print(notification.iosLink ?? "")
     }
     
     func showBannerCarousel() -> UIView {

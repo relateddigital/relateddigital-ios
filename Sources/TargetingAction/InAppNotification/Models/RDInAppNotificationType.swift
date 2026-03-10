@@ -21,6 +21,7 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case halfScreenImage = "half_screen_image"
     case scratchToWin = "scratch-to-win"
     case secondNps = "nps_with_secondpopup"
+    case npsWithMultiplePopup = "nps_with_multiple_popup"
     case inappcarousel = "inappcarousel"
     case imageButtonImage
     case spintowin

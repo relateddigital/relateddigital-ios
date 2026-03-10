@@ -19,9 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     var isRelatedInit = false
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        if UrlConstant.shared.getTestWithLocalData() {
+        //if UrlConstant.shared.getTestWithLocalData() {
             UrlConstant.shared.setTest()
-        }
+        //}
         RelatedDigital.initialize(
             organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource,
             launchOptions: launchOptions, askLocationPermmissionAtStart: false)
