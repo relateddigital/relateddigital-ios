@@ -634,7 +634,7 @@ extension RDPopupDialogDefaultView {
         scaleLabel.textAlignment = .center
         scaleLabel.textColor = UIColor(white: 0.2, alpha: 1)
         scaleLabel.font = .systemFont(ofSize: 11)
-        if let popupBody = rdInAppNotification?.multiplePopupBody {
+        if let popupBody = rdInAppNotification?.messageBody {
             scaleLabel.text = popupBody.removeEscapingCharacters()
         }
         addSubview(scaleLabel)

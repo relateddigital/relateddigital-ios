@@ -38,12 +38,21 @@ class SelectViewController: FormViewController {
         let pushSection = Section("Push Module")
         let analyticsSection = Section("Analytics Module")
         
+        form +++ titleLabel()
+        
         form +++ pushSection
         <<< pushButton()
         
         form +++ analyticsSection
         <<< analyticsButton()
         
+    }
+    
+    fileprivate func titleLabel() -> LabelRow {
+        return LabelRow {
+            $0.title = "Related Digital Native"
+            $0.cell.textLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        }
     }
     
     fileprivate func pushButton() -> ButtonRow {
