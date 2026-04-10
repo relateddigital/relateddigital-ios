@@ -1263,13 +1263,21 @@ extension RDInstance {
     }
 }
 
+public enum RDCarouselFullscreenButton {
+    case primary
+    case secondary
+}
+
 public protocol RDInappButtonDelegate: AnyObject {
     func didTapButton(_ notification: RDInAppNotification)
     func didTapSecondButton(_ notification: RDInAppNotification)
+    func didTapCarouselFullscreenButton(_ notification: RDInAppNotification, link: String?, button: RDCarouselFullscreenButton, carouselItemIndex: Int)
 }
 
 public extension RDInappButtonDelegate {
     func didTapSecondButton(_ notification: RDInAppNotification) {
         print("Optional Delegation Triggered")
+    }
+    func didTapCarouselFullscreenButton(_ notification: RDInAppNotification, link: String?, button: RDCarouselFullscreenButton, carouselItemIndex: Int) {
     }
 }

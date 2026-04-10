@@ -21,6 +21,7 @@ class InAppViewController: FormViewController, BannerDelegate, RDStoryURLDelegat
         form +++ InAppNotifications()
         RelatedDigital.countdownUrlDelegate = self
         RelatedDigital.notificationBellUrlDelegate = self
+        RelatedDigital.inappButtonDelegate = self
     }
     
     @objc func urlClicked(_ url: URL) {
@@ -60,7 +61,7 @@ class InAppViewController: FormViewController, BannerDelegate, RDStoryURLDelegat
                 properties["OM.pv"] = "CV7933-837-837"
             }
             RelatedDigital.customEvent("InAppTest", properties: properties)
-            RelatedDigital.inappButtonDelegate = self
+            
             propertiesUnitTest = properties
         }
 
@@ -102,7 +103,8 @@ class InAppViewController: FormViewController, BannerDelegate, RDStoryURLDelegat
             .MultipleChoiceSurvey : [RDInAppNotificationType.MultipleChoiceSurvey.rawValue: 3111],
             .notificationBell : [RDInAppNotificationType.notificationBell.rawValue: 4321],
             .CountdownTimerBanner : [RDInAppNotificationType.CountdownTimerBanner.rawValue: 75759],
-            .npsWithMultiplePopup : [RDInAppNotificationType.npsWithMultiplePopup.rawValue: 1438]
+            .npsWithMultiplePopup : [RDInAppNotificationType.npsWithMultiplePopup.rawValue: 1438],
+            .carouselFullscreen : ["fullscreen_carousel": 1349]
             ]
     }
     
@@ -110,10 +112,13 @@ class InAppViewController: FormViewController, BannerDelegate, RDStoryURLDelegat
 
 extension InAppViewController: RDInappButtonDelegate,ButtonCarouselViewDelegate {
 
-    
     func didTapButton(_ notification: RDInAppNotification) {
         print("notification did tapped...")
         print(notification.iosLink ?? "")
+    }
+    
+    func didTapCarouselFullscreenButton(_ notification: RDInAppNotification, link: String?, button: RDCarouselFullscreenButton, carouselItemIndex: Int) {
+        print("Carousel Link: \(link ?? "")")
     }
     
     func showBannerCarousel() -> UIView {

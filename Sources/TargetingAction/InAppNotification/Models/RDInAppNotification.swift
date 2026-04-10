@@ -77,6 +77,8 @@ public class RDInAppNotification {
         public static let secondButtonTextColor = "second_button_text_color"
         public static let secondButtonColor = "second_button_color"
         public static let secondButtonIosLnk = "second_button_ios_lnk"
+        public static let secondButtonFontFamily = "second_button_font_family"
+        public static let secondButtonCustomFont = "second_button_custom_font_family_ios"
         public static let buttonBorderRadius = "button_border_radius"
         public static let duration = "duration"
         public static let pos = "pos"
@@ -143,6 +145,8 @@ public class RDInAppNotification {
     let secondButtonTextColor: UIColor?
     let secondButtonColor: UIColor?
     let secondButtonIosLnk: String?
+    let secondButtonFontFamily: String?
+    let secondButtonCustomFont: String?
 
     let multiplePopupTitle: String?
     let multiplePopupBody: String?
@@ -242,6 +246,8 @@ public class RDInAppNotification {
                 secondButtonTextColor: String?,
                 secondButtonColor: String?,
                 secondButtonIosLnk: String?,
+                secondButtonFontFamily: String? = nil,
+                secondButtonCustomFont: String? = nil,
                 multiplePopupTitle: String? = nil,
                 multiplePopupBody: String? = nil,
                 multiplePopupButtonText2: String? = nil,
@@ -291,6 +297,8 @@ public class RDInAppNotification {
         self.secondButtonTextColor = UIColor(hex: secondButtonTextColor)
         self.secondButtonColor = UIColor(hex: secondButtonColor)
         self.secondButtonIosLnk = secondButtonIosLnk
+        self.secondButtonFontFamily = secondButtonFontFamily
+        self.secondButtonCustomFont = secondButtonCustomFont
 
         self.multiplePopupTitle = multiplePopupTitle
         self.multiplePopupBody = multiplePopupBody
@@ -460,6 +468,8 @@ public class RDInAppNotification {
         secondButtonTextColor = UIColor(hex: actionData[PayloadKey.secondButtonTextColor] as? String)
         secondButtonColor = UIColor(hex: actionData[PayloadKey.secondButtonColor] as? String)
         secondButtonIosLnk = actionData[PayloadKey.secondButtonIosLnk] as? String
+        secondButtonFontFamily = actionData[PayloadKey.secondButtonFontFamily] as? String
+        secondButtonCustomFont = actionData[PayloadKey.secondButtonCustomFont] as? String
 
         multiplePopupTitle = actionData[PayloadKey.multiplePopupTitle] as? String
         multiplePopupBody = actionData[PayloadKey.multiplePopupBody] as? String
@@ -607,6 +617,8 @@ public class RDInAppNotification {
         messageTitleFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageTitleTextSize, style: .title2, customFont: customFont)
         messageBodyFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .body, customFont: customFont)
         buttonTextFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .title2, customFont: customFont)
-        secondButtonTextFont = RDHelper.getFont(fontFamily: fontFamily, fontSize: messageBodyTextSize, style: .title2, customFont: customFont)
+        let sbFontFamily = secondButtonFontFamily ?? fontFamily
+        let sbCustomFont = secondButtonCustomFont ?? customFont
+        secondButtonTextFont = RDHelper.getFont(fontFamily: sbFontFamily, fontSize: messageBodyTextSize, style: .title2, customFont: sbCustomFont)
     }
 }

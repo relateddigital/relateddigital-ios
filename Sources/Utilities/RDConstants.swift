@@ -40,7 +40,7 @@ struct LogConfig: Codable {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.84"
+    static let sdkVersion = "4.0.85"
     static let sdkType = "native"
     
     static let HTTP = "http"
@@ -570,7 +570,7 @@ struct RDConstants {
     static let contentcount_text_color = "contentcount_text_color"
     static let contentcount_text_size = "contentcount_text_size"
     
-    static let backgroundClickCloseDisabledInAppNotificationTypes: [RDInAppNotificationType] = [.full, .feedbackForm, .mini, .halfScreenImage]
+    static let backgroundClickCloseDisabledInAppNotificationTypes: [RDInAppNotificationType] = [.full, .feedbackForm, .mini, .halfScreenImage, .carouselFullscreen]
     
     private static let targetPrefVossStoreKey = "OM.voss"
     private static let targetPrefVcnameStoreKey = "OM.vcname"

@@ -39,6 +39,14 @@ public class RDCarouselItem {
         public static let videourl = "videourl"
         public static let buttonFunction = "button_function"
         public static let buttonBorderRadius = "button_border_radius"
+        public static let second_button_text = "second_button_text"
+        public static let second_button_text_color = "second_button_text_color"
+        public static let second_button_color = "second_button_color"
+        public static let second_button_font_family = "second_button_font_family"
+        public static let second_button_custom_font_family_ios = "second_button_custom_font_family_ios"
+        public static let second_button_textsize = "second_button_textsize"
+        public static let second_ios_lnk = "second_button_ios_lnk"
+        public static let second_button_function = "second_button_function"
     }
 
     public let imageUrlString: String?
@@ -69,12 +77,22 @@ public class RDCarouselItem {
     public var videourl: String?
     public var buttonFunction: String?
     public var buttonBorderRadius: String?
+    public let secondButtonText: String?
+    public let secondButtonTextColor: UIColor?
+    public let secondButtonColor: UIColor?
+    public let secondButtonFontFamily: String?
+    public let secondButtonCustomFontFamily: String?
+    public let secondButtonTextsize: String?
+    public let secondLinkString: String?
+    public let secondButtonFunction: String?
 
     var titleFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title2), size: CGFloat(12))
     var bodyFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body), size: CGFloat(8))
     var buttonFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body), size: CGFloat(8))
+    var secondButtonFont: UIFont = UIFont(descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body), size: CGFloat(8))
 
     var linkUrl: URL?
+    var secondLinkUrl: URL?
 
     var imageUrl: URL?
 
@@ -82,7 +100,7 @@ public class RDCarouselItem {
 
     public var fetchImageBlock: FetchImageBlock?
 
-    public init(imageUrlString: String?, title: String?, titleColor: String?, titleFontFamily: String?, titleCustomFontFamily: String?, titleTextsize: String?, body: String?, bodyColor: UIColor?, bodyFontFamily: String?, bodyCustomFontFamily: String?, bodyTextsize: String?, promocodeType: String?, promotionCode: String?, promocodeBackgroundColor: UIColor?, promocodeTextColor: UIColor?, buttonText: String?, buttonTextColor: UIColor?, buttonColor: UIColor?, buttonFontFamily: String?, buttonCustomFontFamily: String?, buttonTextsize: String?, backgroundImageString: String?, backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?, videourl: String?, buttonFunction: String, buttonBorderRadius: String?) {
+    public init(imageUrlString: String?, title: String?, titleColor: String?, titleFontFamily: String?, titleCustomFontFamily: String?, titleTextsize: String?, body: String?, bodyColor: UIColor?, bodyFontFamily: String?, bodyCustomFontFamily: String?, bodyTextsize: String?, promocodeType: String?, promotionCode: String?, promocodeBackgroundColor: UIColor?, promocodeTextColor: UIColor?, buttonText: String?, buttonTextColor: UIColor?, buttonColor: UIColor?, buttonFontFamily: String?, buttonCustomFontFamily: String?, buttonTextsize: String?, backgroundImageString: String?, backgroundColor: UIColor?, linkString: String?, closeButtonColor: UIColor?, videourl: String?, buttonFunction: String, buttonBorderRadius: String?, secondButtonText: String? = nil, secondButtonTextColor: UIColor? = nil, secondButtonColor: UIColor? = nil, secondButtonFontFamily: String? = nil, secondButtonCustomFontFamily: String? = nil, secondButtonTextsize: String? = nil, secondLinkString: String? = nil, secondButtonFunction: String? = nil) {
         self.imageUrlString = imageUrlString
         self.title = title
         self.titleColor = UIColor(hex: titleColor)
@@ -110,9 +128,21 @@ public class RDCarouselItem {
         self.videourl = videourl
         self.buttonFunction = buttonFunction
         self.buttonBorderRadius = buttonBorderRadius
+        self.secondButtonText = secondButtonText
+        self.secondButtonTextColor = secondButtonTextColor
+        self.secondButtonColor = secondButtonColor
+        self.secondButtonFontFamily = secondButtonFontFamily
+        self.secondButtonCustomFontFamily = secondButtonCustomFontFamily
+        self.secondButtonTextsize = secondButtonTextsize
+        self.secondLinkString = secondLinkString
+        self.secondButtonFunction = secondButtonFunction
 
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
             self.linkUrl = URL(string: linkString)
+        }
+
+        if let secondLinkString = secondLinkString, !secondLinkString.isEmptyOrWhitespace {
+            self.secondLinkUrl = URL(string: secondLinkString)
         }
 
         if !imageUrlString.isNilOrWhiteSpace {
@@ -173,9 +203,21 @@ public class RDCarouselItem {
         self.videourl = object[PayloadKey.videourl] as? String
         self.buttonFunction = object[PayloadKey.buttonFunction] as? String
         self.buttonBorderRadius = object[PayloadKey.buttonBorderRadius] as? String
+        self.secondButtonText = object[PayloadKey.second_button_text] as? String
+        self.secondButtonTextColor = UIColor(hex: object[PayloadKey.second_button_text_color] as? String)
+        self.secondButtonColor = UIColor(hex: object[PayloadKey.second_button_color] as? String)
+        self.secondButtonFontFamily = object[PayloadKey.second_button_font_family] as? String
+        self.secondButtonCustomFontFamily = object[PayloadKey.second_button_custom_font_family_ios] as? String
+        self.secondButtonTextsize = object[PayloadKey.second_button_textsize] as? String
+        self.secondLinkString = object[PayloadKey.second_ios_lnk] as? String
+        self.secondButtonFunction = object[PayloadKey.second_button_function] as? String
 
         if let linkString = linkString, !linkString.isEmptyOrWhitespace {
             self.linkUrl = URL(string: linkString)
+        }
+
+        if let secondLinkString = secondLinkString, !secondLinkString.isEmptyOrWhitespace {
+            self.secondLinkUrl = URL(string: secondLinkString)
         }
 
         if !imageUrlString.isNilOrWhiteSpace {
@@ -204,6 +246,7 @@ public class RDCarouselItem {
         self.titleFont = RDHelper.getFont(fontFamily: titleFontFamily, fontSize: titleTextsize, style: .title2, customFont: titleCustomFontFamily)
         self.bodyFont = RDHelper.getFont(fontFamily: bodyFontFamily, fontSize: bodyTextsize, style: .body, customFont: bodyCustomFontFamily)
         self.buttonFont = RDHelper.getFont(fontFamily: buttonFontFamily, fontSize: buttonTextsize, style: .title2, customFont: buttonCustomFontFamily)
+        self.secondButtonFont = RDHelper.getFont(fontFamily: secondButtonFontFamily, fontSize: buttonTextsize, style: .title2, customFont: secondButtonCustomFontFamily)
     }
 
 }

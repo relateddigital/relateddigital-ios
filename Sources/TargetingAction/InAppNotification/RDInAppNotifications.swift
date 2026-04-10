@@ -50,6 +50,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                         shownNotification = self.showHalfScreenNotification(notification)
                     case .inappcarousel:
                         shownNotification = self.showCarousel(notification)
+                    case .carouselFullscreen:
+                        shownNotification = self.showCarouselFullscreen(notification)
                     case .alert:
                         shownNotification = true
                         self.showAlert(notification)
@@ -339,6 +341,21 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         } else {
             return false
         }
+    }
+
+    func showCarouselFullscreen(_ notification: RDInAppNotification) -> Bool {
+        let items = Array(notification.carouselItems.prefix(5))
+        if items.isEmpty {
+            RDLogger.error("Carousel fullscreen items are empty.")
+            return false
+        }
+        let vc = RDCarouselFullscreenViewController(notification: notification, carouselItems: items)
+        vc.delegate = self
+        vc.onButtonTap = { [weak self] notif, link, button, index in
+            self?.inappButtonDelegate?.didTapCarouselFullscreenButton(notif, link: link, button: button, carouselItemIndex: index)
+        }
+        vc.show(animated: true)
+        return true
     }
 
     func showAlert(_ notification: RDInAppNotification) {

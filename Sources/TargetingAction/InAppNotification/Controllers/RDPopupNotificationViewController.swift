@@ -275,6 +275,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                 additionalTrackingProperties["OM.s_point"] = String(userRating).replacingOccurrences(of: ",", with: ".")
                 additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
                 additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
+                additionalTrackingProperties["OM.s_feed"] = "Feedback Sayfası Görüntülenmedi"
             }
         }
         
@@ -316,7 +317,7 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
                                                  shouldTrack: true,
                                                  additionalTrackingProperties: additionalTrackingProperties)
         
-        self.inappButtonDelegate?.didTapSecondButton(notification)
+        self.inappButtonDelegate?.didTapButton(notification)
         
     }
 
@@ -365,7 +366,11 @@ class RDPopupNotificationViewController: RDBaseNotificationViewController {
         additionalTrackingProperties["OM.s_point"] = String(userRating).replacingOccurrences(of: ",", with: ".")
         additionalTrackingProperties["OM.s_cat"] = notification.type.rawValue
         additionalTrackingProperties["OM.s_page"] = "act-\(notification.actId)"
-        additionalTrackingProperties["OM.s_feed"] = viewController.standardView.feedbackTF.text ?? ""
+        if (viewController.standardView.feedbackTF.text! != "" || !viewController.standardView.feedbackTF.text!.isEmpty) {
+            additionalTrackingProperties["OM.s_feed"] = viewController.standardView.feedbackTF.text ?? ""
+        } else {
+            additionalTrackingProperties["OM.s_feed"] = "Kullanıcı feedback alanını boş bıraktı"
+        }
         
         self.delegate?.trackNotification(controller: self,
                                          event: "event",
