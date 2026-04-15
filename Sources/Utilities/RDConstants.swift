@@ -40,7 +40,7 @@ struct LogConfig: Codable {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.85"
+    static let sdkVersion = "4.0.86"
     static let sdkType = "native"
     
     static let HTTP = "http"
