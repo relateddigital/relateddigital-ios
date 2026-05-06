@@ -104,7 +104,8 @@ class InAppViewController: FormViewController, BannerDelegate, RDStoryURLDelegat
             .notificationBell : [RDInAppNotificationType.notificationBell.rawValue: 4321],
             .CountdownTimerBanner : [RDInAppNotificationType.CountdownTimerBanner.rawValue: 75759],
             .npsWithMultiplePopup : [RDInAppNotificationType.npsWithMultiplePopup.rawValue: 1438],
-            .carouselFullscreen : ["fullscreen_carousel": 1349]
+            .carouselFullscreen : ["fullscreen_carousel": 1349],
+            .fullscreenPopup : ["fullscreen_popup" : 1457]
             ]
     }
     

@@ -44,6 +44,7 @@ public enum RDInAppNotificationType: String, CaseIterable {
     case notificationBell = "NotificationBell"
     case CountdownTimerBanner = "CountdownTimerBanner"
     case carouselFullscreen = "carousel_fullscreen"
+    case fullscreenPopup = "fullscreen_popup"
 }
 
 public enum RDSecondPopupType: String, CaseIterable {
