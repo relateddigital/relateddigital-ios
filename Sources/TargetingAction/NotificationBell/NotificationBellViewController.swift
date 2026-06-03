@@ -293,7 +293,7 @@ final class NotificationBellViewController: RDBaseNotificationViewController, UI
     }
 
     
-    @objc private func closeAction() {
+    @objc func closeAction() {
         stopPageChangeObserving()
         self.window?.isHidden = true
         self.window?.removeFromSuperview()

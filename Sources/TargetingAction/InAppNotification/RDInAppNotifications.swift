@@ -24,6 +24,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     weak var countdownUrlDelegate: RDStoryURLDelegate?
     weak var notificationBellUrlDelegate: RDNotificationBellDelegate?
     weak var currentViewController: UIViewController?
+    weak var currentlyShowingBell: NotificationBellViewController?
 
     init(lock: RDReadWriteLock) {
         self.lock = lock
@@ -275,11 +276,21 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
 
+            // Prevent stacking multiple bell windows on top of each other.
+            // A new targeting action request can arrive on every page/visit; without
+            // this guard each one created a new bell window at the same position,
+            // and dragging the top one revealed the duplicates underneath.
+            if let existingBell = self.currentlyShowingBell {
+                existingBell.closeAction()
+                self.currentlyShowingBell = nil
+            }
+
             let notifBell = NotificationBellViewController(model: model)
             notifBell.delegate = self
             notifBell.urlDelegate = self.notificationBellUrlDelegate
             notifBell.show(animated: true)
-        
+            self.currentlyShowingBell = notifBell
+
         })
         return true
     }

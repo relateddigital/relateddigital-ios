@@ -9,7 +9,10 @@ private enum RDCarouselFullscreenStyle {
     static let defaultTitle = UIColor(red: 0, green: 137 / 255, blue: 123 / 255, alpha: 1)
     static let defaultBody = UIColor(red: 117 / 255, green: 117 / 255, blue: 117 / 255, alpha: 1)
     static let defaultPrimaryFill = UIColor(red: 0, green: 137 / 255, blue: 123 / 255, alpha: 1)
+    /// Hero alanının tercih edilen oranı. Daha küçük cihazlarda metin büyükse otomatik olarak küçülür.
     static let heroHeightFraction: CGFloat = 0.85
+    /// Hero alanının küçülebileceği alt sınır; metin çok büyük olsa bile hero'nun yok olmasını engeller.
+    static let heroMinHeightFraction: CGFloat = 0.45
     /// Kartın üste bindirme miktarı; hero yüksekliği (0.85) sabitken kartın dikey alanını büyütür.
     static let cardOverlapIntoHero: CGFloat = 72
 }
@@ -21,9 +24,11 @@ private final class RDCarouselFullscreenCell: UICollectionViewCell {
     private let heroContainer = UIView()
     private let heroImageView = UIImageView()
     private let cardView = UIView()
+    private let iconWrapper = UIView()
     private let iconImageView = UIImageView()
     private let titleLabel = UILabel()
     private let bodyLabel = UILabel()
+    private let contentStack = UIStackView()
 
     private var heroTask: URLSessionDataTask?
     private var iconTask: URLSessionDataTask?
@@ -58,23 +63,62 @@ private final class RDCarouselFullscreenCell: UICollectionViewCell {
         iconImageView.layer.cornerRadius = 8
         iconImageView.layer.masksToBounds = true
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(iconImageView)
+
+        // Icon, stack içerisinde sabit 64x64 olarak yatayda ortalanır.
+        iconWrapper.translatesAutoresizingMaskIntoConstraints = false
+        iconWrapper.addSubview(iconImageView)
 
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
+        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.adjustsFontForContentSizeCategory = false
+        titleLabel.clipsToBounds = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(titleLabel)
+        // Hero küçültme tercihi (.defaultLow) ile içerik sıkıştırma çakışırsa
+        // önce hero küçülmeli; metin asla kesilmemeli. Bu yüzden label dikey
+        // sıkıştırma direncini default'tan (750) yüksek bir değere alıyoruz.
+        titleLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        titleLabel.setContentHuggingPriority(UILayoutPriority(999), for: .vertical)
 
         bodyLabel.textAlignment = .center
         bodyLabel.numberOfLines = 0
+        bodyLabel.lineBreakMode = .byWordWrapping
+        bodyLabel.adjustsFontForContentSizeCategory = false
+        bodyLabel.clipsToBounds = false
         bodyLabel.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(bodyLabel)
+        bodyLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .vertical)
+        bodyLabel.setContentHuggingPriority(UILayoutPriority(999), for: .vertical)
+
+        contentStack.axis = .vertical
+        contentStack.alignment = .fill
+        contentStack.distribution = .fill
+        contentStack.spacing = 8
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
+        contentStack.addArrangedSubview(iconWrapper)
+        contentStack.addArrangedSubview(titleLabel)
+        contentStack.addArrangedSubview(bodyLabel)
+        cardView.addSubview(contentStack)
+
+        // Hero yüksekliği "tercih edilen" olarak düşük öncelikle tanımlanır; içerik
+        // büyük olduğunda kartın yer kaplaması için bu öncelik kırılabilir.
+        let heroPreferredHeight = heroContainer.heightAnchor.constraint(
+            equalTo: contentView.heightAnchor,
+            multiplier: RDCarouselFullscreenStyle.heroHeightFraction
+        )
+        heroPreferredHeight.priority = .defaultLow
+
+        // Hero'nun belirli bir alt sınırın altına inmemesi için zorunlu kısıt.
+        let heroMinHeight = heroContainer.heightAnchor.constraint(
+            greaterThanOrEqualTo: contentView.heightAnchor,
+            multiplier: RDCarouselFullscreenStyle.heroMinHeightFraction
+        )
 
         NSLayoutConstraint.activate([
             heroContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
             heroContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             heroContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            heroContainer.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: RDCarouselFullscreenStyle.heroHeightFraction),
+            heroPreferredHeight,
+            heroMinHeight,
 
             heroImageView.topAnchor.constraint(equalTo: heroContainer.topAnchor),
             heroImageView.leadingAnchor.constraint(equalTo: heroContainer.leadingAnchor),
@@ -86,24 +130,37 @@ private final class RDCarouselFullscreenCell: UICollectionViewCell {
             cardView.topAnchor.constraint(equalTo: heroContainer.bottomAnchor, constant: -RDCarouselFullscreenStyle.cardOverlapIntoHero),
             cardView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -12),
 
-            iconImageView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
-            iconImageView.centerXAnchor.constraint(equalTo: cardView.centerXAnchor),
+            iconImageView.topAnchor.constraint(equalTo: iconWrapper.topAnchor),
+            iconImageView.bottomAnchor.constraint(equalTo: iconWrapper.bottomAnchor),
+            iconImageView.centerXAnchor.constraint(equalTo: iconWrapper.centerXAnchor),
             iconImageView.widthAnchor.constraint(equalToConstant: 64),
             iconImageView.heightAnchor.constraint(equalToConstant: 64),
 
-            titleLabel.topAnchor.constraint(equalTo: iconImageView.bottomAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 20),
-            titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -20),
-
-            bodyLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            bodyLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 20),
-            bodyLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -20),
-            bodyLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -24)
+            contentStack.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 20),
+            contentStack.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 20),
+            contentStack.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -20),
+            contentStack.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -24)
         ])
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // Label'lar UIStackView içerisinde fill alignment ile genişlik kazanır;
+        // intrinsic yüksekliklerinin doğru genişlikte hesaplanması için
+        // preferredMaxLayoutWidth değeri net olarak verilir. Aksi halde ilk
+        // layout pass'inde yanlış ölçüm yapılıp metin tek satırda
+        // sıkıştırılabilir / üst kısmı kesik görünebilir.
+        let availableWidth = max(cardView.bounds.width - 40, 0)
+        if titleLabel.preferredMaxLayoutWidth != availableWidth {
+            titleLabel.preferredMaxLayoutWidth = availableWidth
+        }
+        if bodyLabel.preferredMaxLayoutWidth != availableWidth {
+            bodyLabel.preferredMaxLayoutWidth = availableWidth
+        }
     }
 
     override func prepareForReuse() {
