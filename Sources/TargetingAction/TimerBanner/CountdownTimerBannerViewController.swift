@@ -108,7 +108,10 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
             ])
             let top = (model.position_on_page?.lowercased() ?? "topposition") == "topposition"
             topC = bannerView.topAnchor.constraint(equalTo: safe.topAnchor, constant: 8)
-            bottomC = bannerView.bottomAnchor.constraint(equalTo: safe.bottomAnchor, constant: -8)
+            // Alta yapışırken ekranın en dibine değil, host uygulamanın alt menüsünün
+            // (tab bar) ya da home indicator alanının üstünde duracak şekilde
+            // konumlandırılır. Alt kısıt, ekran (view) altına göre hesaplanır.
+            bottomC = bannerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: resolveBottomConstant())
             topC.isActive = top
             bottomC.isActive = !top
 
@@ -120,14 +123,86 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
             tap.cancelsTouchesInView = false
             bannerView.pill.isUserInteractionEnabled = true
             bannerView.pill.addGestureRecognizer(tap)
-            
+
+            let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+            bannerView.addGestureRecognizer(pan)
+
         } else {
             // Fallback on earlier versions
         }
 
     }
-    
-    
+
+    // Banner alta yapışırken bırakılacak alt boşluğu (view altına göre, negatif)
+    // hesaplar: host uygulamada görünür bir tab bar varsa onun üstünde, yoksa
+    // home indicator üstünde durur.
+    private func resolveBottomConstant() -> CGFloat {
+        let gap: CGFloat = 8
+        let screenH = UIScreen.main.bounds.height
+        if let tabBar = hostTabBar(), tabBar.frame.height > 0 {
+            let tabTop = tabBar.convert(tabBar.bounds, to: nil).minY
+            return -(screenH - tabTop + gap)
+        }
+        var safeBottom: CGFloat = 0
+        if #available(iOS 11.0, *) {
+            safeBottom = hostWindow()?.safeAreaInsets.bottom ?? 0
+        }
+        return -(safeBottom + 16)
+    }
+
+    private func hostWindow() -> UIWindow? {
+        var windows: [UIWindow] = []
+        if #available(iOS 13.0, *) {
+            windows = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap { $0.windows }
+        } else {
+            windows = UIApplication.shared.windows
+        }
+        let hosts = windows.filter { !($0 is PassthroughWindow) && $0 !== window }
+        return hosts.first(where: { $0.isKeyWindow }) ?? hosts.first
+    }
+
+    private func hostTabBar() -> UITabBar? {
+        guard let root = hostWindow()?.rootViewController else { return nil }
+        return findTabBar(in: root)
+    }
+
+    private func findTabBar(in vc: UIViewController) -> UITabBar? {
+        if let tab = vc as? UITabBarController, !tab.tabBar.isHidden, tab.tabBar.alpha > 0.01 {
+            return tab.tabBar
+        }
+        if let presented = vc.presentedViewController, let found = findTabBar(in: presented) {
+            return found
+        }
+        for child in vc.children {
+            if let found = findTabBar(in: child) { return found }
+        }
+        return nil
+    }
+
+    // Banner'ı dikey olarak sürükler ve bırakıldığında ekranın üst/alt yarısına
+    // göre tam üste veya tam alta yapıştırır.
+    @objc private func handlePan(_ g: UIPanGestureRecognizer) {
+        let translation = g.translation(in: view)
+        switch g.state {
+        case .changed:
+            bannerView.transform = CGAffineTransform(translationX: 0, y: translation.y)
+        case .ended, .cancelled, .failed:
+            let predictedCenterY = bannerView.center.y + translation.y
+            let snapTop = predictedCenterY < view.bounds.height / 2
+            topC.isActive = snapTop
+            bottomC.isActive = !snapTop
+            UIView.animate(withDuration: 0.25) {
+                self.bannerView.transform = .identity
+                self.view.layoutIfNeeded()
+            }
+        default:
+            break
+        }
+    }
+
+
     @objc private func didTapView(_ g: UITapGestureRecognizer) {
         guard let s = self.model.ios_lnk,
               let url = URL(string: s),
@@ -171,10 +246,22 @@ final class CountdownTimerBannerViewController: RDBaseNotificationViewController
     }
 
     private func resolveTargetDate() {
+        targetDate = Self.resolveTargetDate(for: model)
+    }
+
+    // Modelden geri sayım hedef tarihini çözer (statik; gösterimden önce kontrol için).
+    static func resolveTargetDate(for model: RDCountdownTimerBannerModel) -> Date? {
         // txtStartDate öncelikli (“dd.MM.yyyy HH:mm” veya “dd.MM.yyyy”)
-        if let s = model.txtStartDate, let d = Self.parseDate(s) { targetDate = d; return }
-        if let d = model.counter_Date, let t = model.counter_Time, let date = Self.parseDate("\(d) \(t)") { targetDate = date; return }
-        if let d = model.counter_Date, let date = Self.parseDate(d) { targetDate = date }
+        if let s = model.txtStartDate, let d = parseDate(s) { return d }
+        if let d = model.counter_Date, let t = model.counter_Time, let date = parseDate("\(d) \(t)") { return date }
+        if let d = model.counter_Date, let date = parseDate(d) { return date }
+        return nil
+    }
+
+    // Geri sayım süresi dolmuşsa banner gösterilmemelidir.
+    static func isExpired(model: RDCountdownTimerBannerModel) -> Bool {
+        guard let target = resolveTargetDate(for: model) else { return false }
+        return target <= Date()
     }
 
     // MARK: - Countdown

@@ -234,13 +234,22 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showTimerBanner(model: RDCountdownTimerBannerModel) -> Bool {
+        // Geri sayım süresi dolmuşsa banner hiç gösterilmez.
+        if CountdownTimerBannerViewController.isExpired(model: model) {
+            RDLogger.info("CountdownTimerBanner expired, not showing.")
+            return false
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
-
+            // Bekleme süresi içinde süre dolmuş olabilir; tekrar kontrol et.
+            if CountdownTimerBannerViewController.isExpired(model: model) {
+                RDLogger.info("CountdownTimerBanner expired, not showing.")
+                return
+            }
             let tBannerVC = CountdownTimerBannerViewController(model: model)
             tBannerVC.delegate = self
             tBannerVC.urlDelegate = self.countdownUrlDelegate
             tBannerVC.show(animated: true)
-        
+
         })
         return true
     }
