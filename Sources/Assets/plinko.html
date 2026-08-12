@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>Plinko Game</title>
+</head>
+
+<body>
+    <script src="plinko.js"></script>
+    <script type="text/javascript">
+        var config = {};
+        var plinko = {};
+        window.initPlinko = function (responseConfig) {
+            config = responseConfig;
+            plinko = new Plinko(config);
+        };
+        // Native, kazanan slot index'ini ve promosyon kodunu buradan döner.
+        window.choosePlinkoSlot = function (slotIndex, promotionCode) {
+            if (window.plinko && typeof window.plinko.choose === "function") {
+                window.plinko.choose(slotIndex, promotionCode);
+            }
+        };
+        if (window.Android) {
+            config = JSON.parse(Android.getResponse());
+            initPlinko(config);
+        } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.eventHandler) {
+            window.webkit.messageHandlers.eventHandler.postMessage({
+                method: "initPlinko"
+            });
+            window.console.log = function (message) {
+                var stringMessage = message;
+                if (typeof message !== "string") {
+                    stringMessage = JSON.stringify(message);
+                }
+                window.webkit.messageHandlers.eventHandler.postMessage({
+                    method: "console.log",
+                    message: stringMessage
+                });
+            };
+        } else {
+            // Tarayıcıda test için örnek konfigürasyon (spin_to_win modeli baz alınmıştır).
+            window.BrowserTest = {
+                getPromotionCode: function () {
+                    window.choosePlinkoSlot(2, "PLINKO25");
+                },
+                sendReport: function () { }
+            };
+
+            const extendedProps = {
+                "background_color": "#F76205",
+                "background_image": "",
+                "board_background_color": "rgba(255,255,255,0.08)",
+                "peg_color": "#ffffff",
+                "peg_size": "1.4",
+                "ball_color": "#ffd23f",
+                "ball_size": "3",
+                "ball_border_color": "#ffffff",
+                "close_button_color": "#ffffff",
+                "title_position": "top",
+                "title_text_color": "#ffffff",
+                "title_font_family": "default",
+                "title_custom_font_family_ios": "",
+                "title_text_size": "4",
+                "text_position": "top",
+                "text_color": "#e9e4ff",
+                "text_font_family": "default",
+                "text_custom_font_family_ios": "",
+                "text_size": "2",
+                "button_position": "bottom",
+                "button_color": "#ff477e",
+                "button_text_color": "#ffffff",
+                "button_font_family": "default",
+                "button_text_size": "3",
+                "displayname_text_color": "#ffffff",
+                "displayname_font_family": "default",
+                "displayname_text_size": "2",
+                "displayname_text_align": "horizontal",
+                "slot_text_color": "#ffffff",
+                "slot_border_color": "rgba(255,255,255,0.25)",
+                "slot_border_width": "1",
+                "promocode_title_text_color": "#ffffff",
+                "promocode_title_font_family": "default",
+                "promocode_title_text_size": "3",
+                "promocode_background_color": "#ffffff",
+                "promocode_text_color": "#1b1436",
+                "copybutton_color": "#ff477e",
+                "copybutton_text_color": "#ffffff",
+                "copybutton_font_family": "default",
+                "copybutton_text_size": "2",
+                "emailpermit_text_url": "https://github.com/",
+                "consent_text_url": "https://app.visilabs.net/",
+                "promocodes_soldout_message_text_color": "#ffffff",
+                "promocodes_soldout_message_text_size": "3",
+                "promocodes_soldout_message_background_color": "transparent",
+                "promocode_banner_text": "Kodunu kullanmayı unutma",
+                "promocode_banner_text_color": "#ffffff",
+                "promocode_banner_background_color": "#1b1436",
+                "promocode_banner_button_label": "Kopyala"
+            };
+
+            let extendedPropsString = JSON.stringify(extendedProps);
+            extendedPropsString = encodeURIComponent(extendedPropsString);
+
+            config = {
+                "actid": 999,
+                "title": "Plinko Test",
+                "actiontype": "Plinko",
+                "actiondata": {
+                    "slices": [
+                        { "displayName": "%5", "color": "#f9a03f", "code": "PLINKO5", "type": "pass", "ios_lnk": "https://www.relateddigital.com", "android_lnk": "https://www.relateddigital.com", "infotext": "%5 indirim", "is_available": true },
+                        { "displayName": "%10", "color": "#f7c548", "code": "PLINKO10", "type": "staticcode", "ios_lnk": "https://www.relateddigital.com", "android_lnk": "https://www.relateddigital.com", "infotext": "%10 indirim", "is_available": true },
+                        { "displayName": "X", "color": "#c7d3bf", "code": "", "type": "pass", "ios_lnk": "", "android_lnk": "", "infotext": "", "is_available": false },
+                        { "displayName": "%15", "color": "#8cd867", "code": "PLINKO15", "type": "staticcode", "ios_lnk": "https://www.google.com", "android_lnk": "https://www.google.com", "infotext": "%15 indirim", "is_available": true },
+                        { "displayName": "%50", "color": "#38b000", "code": "PLINKO50", "type": "pass", "ios_lnk": "https://www.twitter.com", "android_lnk": "https://www.twitter.com", "infotext": "%50 indirim", "is_available": true },
+                        { "displayName": "%15", "color": "#8cd867", "code": "PLINKO15B", "type": "staticcode", "ios_lnk": "https://www.google.com", "android_lnk": "https://www.google.com", "infotext": "%15 indirim", "is_available": true },
+                        ],
+                    "mail_subscription": false,
+                    "plinko_content": {
+                        "title": "Topu Bırak, Kazan!",
+                        "message": "Topun düştüğü dilimdeki ödülü kazanırsın.",
+                        "placeholder": "E-posta adresi",
+                        "button_label": "Topu Bırak",
+                        "consent_text": " <LINK>Kullanım koşulları</LINK>",
+                        "invalid_email_message": "Geçersiz e-posta adresi",
+                        "success_message": "Mail form dolduruldu",
+                        "emailpermit_text": " E-posta <LINK>izin</LINK> metni",
+                        "check_consent_message": "İzin metnini onaylayın"
+                    },
+                    "row_count": 12,
+                    "ball_drop_action": "button",
+                    "auth": "",
+                    "promoAuth": "",
+                    "type": "plinko_email",
+                    "waiting_time": 0,
+                    "courseofaction": "GetPromoCode",
+                    "ExtendedProps": extendedPropsString,
+                    "report": {
+                        "impression": "",
+                        "click": "OM.zn=acttype-99&OM.zpc=act-999"
+                    },
+                    "img": "",
+                    "promocode_title": "Tebrikler!\nKodun: <%PromotionCode%>",
+                    "copybutton_label": "Kopyala",
+                    "copybutton_function": "copy_redirect",
+                    "promocodes_soldout_message": "Kampanya sona erdi.",
+                    "redirectbutton_label": "Alışverişe Başla"
+                },
+                "panelv2": false
+            };
+            initPlinko(config);
+        }
+    </script>
+</body>
+
+</html>
