@@ -144,6 +144,10 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                    if self.showClawMachine(model: clawMachine) {
                        self.markTargetingActionShown(model: clawMachine)
                    }
+               } else if model.targetingActionType == .plinko, let plinko = model as? PlinkoModel {
+                   if self.showPlinko(model: plinko) {
+                       self.markTargetingActionShown(model: plinko)
+                   }
                }
                 else if model.targetingActionType == .apprating {
                     self.showInappRating()
@@ -270,6 +274,15 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         let clawMachineVC = ClawMachineViewController(model)
         clawMachineVC.delegate = self
         clawMachineVC.show(animated: true)
+        })
+        return true
+    }
+
+    func showPlinko(model: PlinkoModel) -> Bool {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+            let plinkoVC = PlinkoViewController(model)
+            plinkoVC.delegate = self
+            plinkoVC.show(animated: true)
         })
         return true
     }

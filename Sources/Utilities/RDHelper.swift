@@ -103,6 +103,7 @@ internal class RDHelper {
         RDBasePath.endpoints[.jackpotJs] = RDConstants.jackpoteUrl
         RDBasePath.endpoints[.pollJs] = RDConstants.pollUrl
         RDBasePath.endpoints[.clawMachineJs] = RDConstants.clawMachineUrl
+        RDBasePath.endpoints[.plinkoJs] = RDConstants.plinkoUrl
 
 
         

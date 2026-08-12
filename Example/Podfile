@@ -1,23 +1,22 @@
- platform :ios, '12.0'
+platform :ios, '12.0'
+
+# The sample app is pure SwiftUI — Eureka, SplitRow and CleanyModal are no
+# longer needed, so RelatedDigitalIOS is the only dependency left.
 
 target 'RelatedDigitalExample' do
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'
-  pod 'CleanyModal'
-  pod "SplitRow", :git => 'https://github.com/EurekaCommunity/SplitRow.git'
 end
 
 target 'NotificationService' do
   use_frameworks!
   pod 'RelatedDigitalIOS', :path => '../'
-  
 end
 
 target 'NotificationContent' do
   use_frameworks!
-  pod 'RelatedDigitalIOS', :path => '../'  
+  pod 'RelatedDigitalIOS', :path => '../'
 end
-
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

@@ -93,7 +93,7 @@ class RDTargetingAction {
         props[RDConstants.tvcKey] = String(rdUser.tvc)
         props[RDConstants.lvtKey] = rdUser.lvt
 
-        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.MultipleChoiceSurvey)~\(RDConstants.NotificationBell)~\(RDConstants.CountdownTimerBanner)"
+        props[RDConstants.actionType] = "\(RDConstants.mailSubscriptionForm)~\(RDConstants.spinToWin)~\(RDConstants.scratchToWin)~\(RDConstants.productStatNotifier)~\(RDConstants.drawer)~\(RDConstants.gamification)~\(RDConstants.findToWin)~\(RDConstants.shakeToWin)~\(RDConstants.giftBox)~\(RDConstants.chooseFavorite)~\(RDConstants.slotMachine)~\(RDConstants.mobileCustomActions)~\(RDConstants.apprating)~\(RDConstants.clawMachine)~\(RDConstants.plinko)~\(RDConstants.MultipleChoiceSurvey)~\(RDConstants.NotificationBell)~\(RDConstants.CountdownTimerBanner)"
 
         for (key, value) in RDPersistence.readTargetParameters() {
             if !key.isEmptyOrWhitespace && !value.isEmptyOrWhitespace && props[key] == nil {
@@ -183,6 +183,15 @@ class RDTargetingAction {
                     }
                     semaphore.signal()
                 })
+            } else if targetingActionViewModel?.targetingActionType == .plinko {
+                RDRequest.sendPlinkoScriptRequest(completion: { (result: String?, _: RDError?) in
+                    if let result = result {
+                        targetingActionViewModel?.jsContent = result
+                    } else {
+                        targetingActionViewModel = nil
+                    }
+                    semaphore.signal()
+                })
             } else {
                 semaphore.signal()
             }
@@ -228,6 +237,8 @@ class RDTargetingAction {
             return parsePoll(survey)
         } else if let clawMachine = result[RDConstants.clawMachine] as? [[String: Any?]], let clawMachine = clawMachine.first {
             return parseClawMachine(clawMachine)
+        } else if let plinko = result[RDConstants.plinko] as? [[String: Any?]], let plinko = plinko.first {
+            return parsePlinko(plinko)
         } else if let customWeb = result[RDConstants.mobileCustomActions] as? [[String: Any?]], let customWeb = customWeb.first {
             return parseCustomWebview(customWeb)
         } else if let notBell = result[RDConstants.NotificationBell] as? [[String: Any?]], let notifBell = notBell.first {
@@ -679,6 +690,10 @@ class RDTargetingAction {
         sideBarServiceModel.contentMaximizedBackgroundImage = extendedProps[RDConstants.contentMaximizedBackgroundImage] as? String ?? ""
         sideBarServiceModel.contentMaximizedBackgroundColor = extendedProps[RDConstants.contentMaximizedBackgroundColor] as? String ?? ""
 
+        if let items = extendedProps[RDConstants.contentMinimizedItems] as? [[String: Any?]] {
+            sideBarServiceModel.items = items.map { parseDrawerItem($0) }
+        }
+
         let report = actionData[RDConstants.report] as? [String: Any] ?? [String: Any]()
         let impression = report[RDConstants.impression] as? String ?? ""
         let click = report[RDConstants.click] as? String ?? ""
@@ -687,6 +702,26 @@ class RDTargetingAction {
         sideBarServiceModel.report = drawerReport
 
         return sideBarServiceModel
+    }
+
+    private func parseDrawerItem(_ item: [String: Any?]) -> DrawerItemServiceModel {
+        var itemModel = DrawerItemServiceModel()
+
+        itemModel.contentMinimizedImage = item[RDConstants.contentMinimizedImage] as? String ?? ""
+        itemModel.contentMinimizedText = item[RDConstants.contentMinimizedText] as? String ?? ""
+        itemModel.contentMinimizedTextSize = item[RDConstants.contentMinimizedTextSize] as? String ?? ""
+        itemModel.contentMinimizedTextColor = item[RDConstants.contentMinimizedTextColor] as? String ?? ""
+        itemModel.contentMinimizedFontFamily = item[RDConstants.contentMinimizedFontFamily] as? String ?? ""
+        itemModel.contentMinimizedCustomFontFamilyIos = item[RDConstants.contentMinimizedCustomFontFamilyIos] as? String ?? ""
+        itemModel.contentMinimizedTextOrientation = item[RDConstants.contentMinimizedTextOrientation] as? String ?? ""
+        itemModel.contentMinimizedBackgroundImage = item[RDConstants.contentMinimizedBackgroundImage] as? String ?? ""
+        itemModel.contentMinimizedBackgroundColor = item[RDConstants.contentMinimizedBackgroundColor] as? String ?? ""
+        itemModel.contentMinimizedArrowColor = item[RDConstants.contentMinimizedArrowColor] as? String ?? ""
+        itemModel.contentMaximizedImage = item[RDConstants.contentMaximizedImage] as? String ?? ""
+        itemModel.contentMaximizedBackgroundImage = item[RDConstants.contentMaximizedBackgroundImage] as? String ?? ""
+        itemModel.contentMaximizedBackgroundColor = item[RDConstants.contentMaximizedBackgroundColor] as? String ?? ""
+
+        return itemModel
     }
     
     
@@ -1238,6 +1273,65 @@ class RDTargetingAction {
         }
 
         return ClowMachineModel
+    }
+
+    private func parsePlinko(_ plinko: [String: Any?]) -> PlinkoModel? {
+
+        guard let actionData = plinko[RDConstants.actionData] as? [String: Any] else { return nil }
+        guard let slices = actionData[RDConstants.slices] as? [[String: Any]] else { return nil }
+        let encodedStr = actionData[RDConstants.extendedProps] as? String ?? ""
+        guard let extendedProps = encodedStr.urlDecode().convertJsonStringToDictionary() else { return nil }
+
+        var model = PlinkoModel(targetingActionType: .plinko)
+        model.actId = plinko[RDConstants.actid] as? Int ?? 0
+        model.title = plinko[RDConstants.title] as? String ?? ""
+        model.auth = actionData[RDConstants.authentication] as? String ?? ""
+        model.promoAuth = actionData[RDConstants.promoAuth] as? String ?? ""
+        model.type = actionData[RDConstants.type] as? String ?? "plinko_email"
+        model.mailSubscription = actionData[RDConstants.mailSubscription] as? Bool ?? false
+        model.promocodeTitle = actionData[RDConstants.promocodeTitle] as? String ?? ""
+        model.copyButtonFunction = actionData[RDConstants.copyButtonFunction] as? String ?? "copy"
+        model.waitingTime = actionData[RDConstants.waitingTime] as? Int ?? 0
+
+        // report
+        let report = actionData[RDConstants.report] as? [String: Any] ?? [String: Any]()
+        model.report = PlinkoReport(impression: report[RDConstants.impression] as? String ?? "",
+                                    click: report[RDConstants.click] as? String ?? "")
+
+        // slices (topun düşebileceği slotlar)
+        var sliceArray = [PlinkoSliceViewModel]()
+        for slice in slices {
+            let displayName = slice[RDConstants.displayName] as? String ?? ""
+            let color = slice[RDConstants.color] as? String ?? ""
+            let code = slice[RDConstants.code] as? String ?? ""
+            let type = slice[RDConstants.type] as? String ?? ""
+            let isAvailable = slice[RDConstants.isAvailable] as? Bool ?? true
+            let iosLink = slice[RDConstants.iosLink] as? String ?? ""
+            let infotext = slice[RDConstants.infotext] as? String ?? ""
+            sliceArray.append(PlinkoSliceViewModel(displayName: displayName, color: color, code: code, type: type, isAvailable: isAvailable, iosLink: iosLink, infotext: infotext))
+        }
+        model.slices = sliceArray
+
+        // extended props (banner + native fontlar)
+        model.font_family = extendedProps[RDConstants.fontFamily] as? String ?? ""
+        model.custom_font_family_ios = extendedProps[RDConstants.customFontFamilyIos] as? String ?? ""
+        model.close_button_color = extendedProps[RDConstants.closeButtonColor] as? String ?? ""
+        model.copybutton_color = extendedProps[RDConstants.copybuttonColor] as? String ?? ""
+        model.copybutton_text_color = extendedProps[RDConstants.copybuttonTextColor] as? String ?? ""
+        model.copybutton_text_size = extendedProps[RDConstants.copybuttonTextSize] as? String ?? ""
+        model.promocode_banner_text = extendedProps[RDConstants.promocode_banner_text] as? String ?? ""
+        model.promocode_banner_text_color = extendedProps[RDConstants.promocode_banner_text_color] as? String ?? ""
+        model.promocode_banner_background_color = extendedProps[RDConstants.promocode_banner_background_color] as? String ?? ""
+        model.promocode_banner_button_label = extendedProps[RDConstants.promocode_banner_button_label] as? String ?? ""
+
+        // JS'e ham JSON gönderilir (backend'den gelen model).
+        if let theJSONData = try? JSONSerialization.data(withJSONObject: plinko, options: []) {
+            model.jsonContent = String(data: theJSONData, encoding: .utf8)
+        }
+
+        model.bannercodeShouldShow = model.promocode_banner_button_label.count > 0 && model.promocode_banner_text.count > 0
+
+        return model
     }
 
 

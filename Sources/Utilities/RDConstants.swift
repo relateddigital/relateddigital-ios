@@ -40,7 +40,7 @@ struct LogConfig: Codable {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.89"
+    static let sdkVersion = "4.0.90"
     static let sdkType = "native"
     
     static let HTTP = "http"
@@ -227,6 +227,7 @@ struct RDConstants {
     static let slotMachine = "SlotMachine"
     static let MultipleChoiceSurvey = "MultipleChoiceSurvey"
     static let clawMachine = "ClawMachine"
+    static let plinko = "Plinko"
     static let apprating = "MobileAppRating"
     static let appBanners = "app_banners"
     static let transitionAction = "transition_action"
@@ -415,6 +416,7 @@ struct RDConstants {
     static let contentMinimizedArrowColor = "content_minimized_arrow_color"
     static let contentMaximizedBackgroundImage = "content_maximized_background_image"
     static let contentMaximizedBackgroundColor = "content_maximized_background_color"
+    static let contentMinimizedItems = "content_minimized_items"
     
     //downHsView
     static let emailpermitText = "emailpermit_text"
@@ -611,13 +613,14 @@ struct RDConstants {
     
     //Gamification Urls
     static let giftCatchUrl = "https://mbls.visilabs.net/gift_catch.js"
-    static let spintoWinUrl = "https://mbls.visilabs.net/spin_to_win.js"
+    static let spintoWinUrl = "https://mbls.visilabs.net/spin_to_win_modern.js"
     static let findToWinUrl = "https://mbls.visilabs.net/find_to_win.js"
     static let giftBoxUrl = "https://mbls.visilabs.net/giftbox.js"
     static let chooseFavoriteUrl = "https://mbls.visilabs.net/swiping.js"
     static let jackpoteUrl = "https://mbls.visilabs.net/jackpot.js"
     static let pollUrl = "https://mbls.visilabs.net/survey.js"
     static let clawMachineUrl = "https://mbls.visilabs.net/clawmachine.js"
+    static let plinkoUrl = "https://mbls.visilabs.net/plinko.js"
 
 
     

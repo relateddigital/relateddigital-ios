@@ -570,6 +570,10 @@ extension RDInstance: RDInAppNotificationsDelegate {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "ClawMachine_email")
     }
 
+    func subscribePlinkoMail(actid: String, auth: String, mail: String) {
+        createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "plinko_email")
+    }
+
     func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String) {
         createSubsJsonRequest(actid: actid, auth: auth, mail: mail, type: "chooseFavorite_email")
     }
@@ -635,6 +639,14 @@ extension RDInstance: RDInAppNotificationsDelegate {
         properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
         properties["OM.zn"] = clowMachineReport.click?.parseClick().omZn
         properties["OM.zpc"] = clowMachineReport.click?.parseClick().omZpc
+        customEvent(RDConstants.omEvtGif, properties: properties)
+    }
+
+    func trackPlinkoClick(plinkoReport: PlinkoReport) {
+        var properties = Properties()
+        properties[RDConstants.domainkey] = "\(rdProfile.dataSource)_IOS"
+        properties["OM.zn"] = plinkoReport.click?.parseClick().omZn
+        properties["OM.zpc"] = plinkoReport.click?.parseClick().omZpc
         customEvent(RDConstants.omEvtGif, properties: properties)
     }
 

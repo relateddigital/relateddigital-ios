@@ -174,7 +174,7 @@ class RDSpinToWinViewController: RDBaseNotificationViewController {
             return nil
         }
         let htmlUrl = docUrl.appendingPathComponent("spin_to_win.html")
-        let jsUrl = docUrl.appendingPathComponent("spin_to_win.js")
+        let jsUrl = docUrl.appendingPathComponent("spin_to_win_modern.js")
 #if SWIFT_PACKAGE
         let bundle = Bundle.module
 #else

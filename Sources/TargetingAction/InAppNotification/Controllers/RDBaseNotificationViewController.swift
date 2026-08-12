@@ -41,6 +41,7 @@ class RDBaseNotificationViewController: UIViewController, RDBaseViewControllerPr
     var jackpot: JackpotModel?
     var poll: PollModel?
     var ClawMachine: ClawMachineModel?
+    var plinko: PlinkoModel?
     var chooseFavoriteModel: ChooseFavoriteModel?
     var customWebViewModel: CustomWebViewModel?
 
