@@ -40,7 +40,7 @@ struct LogConfig: Codable {
 
 struct RDConstants {
     
-    static let sdkVersion = "4.0.90"
+    static let sdkVersion = "4.0.91"
     static let sdkType = "native"
     
     static let HTTP = "http"
@@ -227,7 +227,6 @@ struct RDConstants {
     static let slotMachine = "SlotMachine"
     static let MultipleChoiceSurvey = "MultipleChoiceSurvey"
     static let clawMachine = "ClawMachine"
-    static let plinko = "Plinko"
     static let apprating = "MobileAppRating"
     static let appBanners = "app_banners"
     static let transitionAction = "transition_action"
@@ -620,7 +619,6 @@ struct RDConstants {
     static let jackpoteUrl = "https://mbls.visilabs.net/jackpot.js"
     static let pollUrl = "https://mbls.visilabs.net/survey.js"
     static let clawMachineUrl = "https://mbls.visilabs.net/clawmachine.js"
-    static let plinkoUrl = "https://mbls.visilabs.net/plinko.js"
 
 
     

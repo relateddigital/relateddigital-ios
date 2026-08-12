@@ -33,7 +33,6 @@ enum RDEndpoint {
     case jackpotJs
     case pollJs
     case clawMachineJs
-    case plinkoJs
 
 
 }

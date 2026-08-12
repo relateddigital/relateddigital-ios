@@ -246,10 +246,6 @@ public class RelatedDigital {
         shared.rdInstance.subscribeClowMachineMail(actid: actid, auth: auth, mail: mail)
     }
     
-    static func subscribePlinkoMail(actid: String, auth: String, mail: String) {
-        shared.rdInstance.subscribePlinkoMail(actid: actid, auth: auth, mail: mail)
-    }
-    
     static func subscribeChooseFavoriteMail(actid: String, auth: String, mail: String) {
         shared.rdInstance.subscribeChooseFavoriteMail(actid: actid, auth: auth, mail: mail)
     }
@@ -288,10 +284,6 @@ public class RelatedDigital {
     
     static func trackClawMachineClick(clawMachinetReport: ClawMachineReport) {
         shared.rdInstance.trackClowMachineClick(clowMachineReport: clawMachinetReport)
-    }
-    
-    static func trackPlinkoClick(plinkoReport: PlinkoReport) {
-        shared.rdInstance.trackPlinkoClick(plinkoReport: plinkoReport)
     }
     
     static func trackChooseFavoriteClick(chooseFavoriteReport: ChooseFavoriteReport) {

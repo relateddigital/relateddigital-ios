@@ -22,7 +22,6 @@ public enum TargetingActionType: String, Codable {
     case slotMachine = "slotMachine"
     case MultipleChoiceSurvey = "MultipleChoiceSurvey"
     case clawMachine = "ClawMachine"
-    case plinko = "Plinko"
     case mobileCustomActions = "mobileCustomActions"
     case apprating = "MobileAppRating"
     case notificationBell = "NotificationBell"
