@@ -696,6 +696,8 @@ class RDTargetingAction {
     private func parseDrawerItem(_ item: [String: Any?]) -> DrawerItemServiceModel {
         var itemModel = DrawerItemServiceModel()
 
+        itemModel.iosLnk = item[RDConstants.iosLnk] as? String ?? ""
+        itemModel.staticcode = item[RDConstants.staticcode] as? String ?? ""
         itemModel.contentMinimizedImage = item[RDConstants.contentMinimizedImage] as? String ?? ""
         itemModel.contentMinimizedText = item[RDConstants.contentMinimizedText] as? String ?? ""
         itemModel.contentMinimizedTextSize = item[RDConstants.contentMinimizedTextSize] as? String ?? ""

@@ -102,6 +102,12 @@ public class RDInstance: RDInstanceProtocol {
         }
     }
 
+    public weak var drawerUrlDelegate: RDDrawerURLDelegate? {
+        didSet {
+            rdTargetingActionInstance.notificationsInstance.drawerUrlDelegate = drawerUrlDelegate
+        }
+    }
+
     // swiftlint:disable function_body_length
     init(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIA.LaunchOptionsKey: Any]? = nil, askLocationPermissionAtStart: Bool = true) {
         rdProfile = RDPersistence.readRDProfile() ?? RDProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermissionAtStart: askLocationPermissionAtStart)

@@ -19,6 +19,7 @@ struct RelatedDigitalExampleApp: App {
 
     var body: some Scene {
         WindowGroup {
+            
             // `toastOverlay` reads ToastCenter from the environment, so the
             // environment objects have to be injected above it.
             RootView()

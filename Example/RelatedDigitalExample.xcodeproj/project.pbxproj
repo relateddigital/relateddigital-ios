@@ -170,7 +170,6 @@
 				D0B4A116C21F26FFE1261213 /* Theme.swift */,
 				68256F2DDA52A30859A67E94 /* UIKitBridge.swift */,
 			);
-			name = Core;
 			path = Core;
 			sourceTree = "<group>";
 		};
@@ -200,7 +199,6 @@
 				D9934E3D861DFFCCF9FCDB8D /* RelatedDigitalExampleApp.swift */,
 				6DCC4B846D7B674158BE424F /* RootView.swift */,
 			);
-			name = App;
 			path = App;
 			sourceTree = "<group>";
 		};
@@ -280,7 +278,6 @@
 				0F69FD9D0E4216143A18B65F /* SettingsView.swift */,
 				31E91DA6CE90929E9590A112 /* TargetingActionsView.swift */,
 			);
-			name = Features;
 			path = Features;
 			sourceTree = "<group>";
 		};
@@ -502,9 +499,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RelatedDigitalExample/Pods-RelatedDigitalExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

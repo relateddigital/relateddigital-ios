@@ -126,6 +126,17 @@ public class RelatedDigital {
             shared.rdInstance.notificationBellUrlDelegate = newValue
         }
     }
+
+    /// Set this to handle drawer links in the app, for example to route deep links.
+    /// While it is set the SDK does not open drawer links itself.
+    public static var drawerUrlDelegate: RDDrawerURLDelegate? {
+        get {
+            return shared.rdInstance.drawerUrlDelegate
+        }
+        set {
+            shared.rdInstance.drawerUrlDelegate = newValue
+        }
+    }
     
     public static var loggingEnabled: Bool {
         get {

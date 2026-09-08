@@ -23,6 +23,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     weak var inappButtonDelegate: RDInappButtonDelegate?
     weak var countdownUrlDelegate: RDStoryURLDelegate?
     weak var notificationBellUrlDelegate: RDNotificationBellDelegate?
+    weak var drawerUrlDelegate: RDDrawerURLDelegate?
     weak var currentViewController: UIViewController?
     weak var currentlyShowingBell: NotificationBellViewController?
 
@@ -277,6 +278,7 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     func showDrawer(model: DrawerServiceModel) -> Bool {
         let drawerViewController = RDDrawerViewController(model: model)
         drawerViewController.delegate = self
+        drawerViewController.urlDelegate = self.drawerUrlDelegate
         drawerViewController.show(animated: true)
         return true
     }

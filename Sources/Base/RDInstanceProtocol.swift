@@ -30,6 +30,7 @@ protocol RDInstanceProtocol {
     var inappButtonDelegate: RDInappButtonDelegate? { get set }
     var countdownUrlDelegate: RDStoryURLDelegate? { get set }
     var notificationBellUrlDelegate: RDNotificationBellDelegate? { get set }
+    var drawerUrlDelegate: RDDrawerURLDelegate? { get set }
     var loggingEnabled: Bool { get set }
     var inAppNotificationsEnabled: Bool { get set }
     var geofenceEnabled: Bool { get set }
