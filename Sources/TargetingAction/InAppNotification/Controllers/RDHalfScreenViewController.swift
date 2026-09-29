@@ -5,12 +5,31 @@
 //  Created by Egemen Gülkılık on 10.11.2021.
 //
 
-import UIKit
 import AVFoundation
+import UIKit
 import WebKit
 
+final class HalfScreenPassthroughWindow: UIWindow {
+    var hitCheckViews: (() -> [UIView])?
+
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        guard let views = hitCheckViews?() else { return super.point(inside: point, with: event) }
+        for view in views {
+            let localPoint = view.convert(point, from: self)
+            if view is UIButton {
+                let hitBounds = view.bounds.insetBy(dx: -10, dy: -10)
+                if hitBounds.contains(localPoint) {
+                    return true
+                }
+            } else if view.point(inside: localPoint, with: event) {
+                return true
+            }
+        }
+        return false
+    }
+}
+
 class RDHalfScreenViewController: RDBaseNotificationViewController {
-    
     var halfScreenNotification: RDInAppNotification! {
         return super.notification
     }
@@ -31,11 +50,12 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(gesture:)))
         tapGesture.numberOfTapsRequired = 1
-        relatedDigitalHalfScreenView.addGestureRecognizer(tapGesture)
+        relatedDigitalHalfScreenView.containerView.addGestureRecognizer(tapGesture)
         
         let closeTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(closeButtonTapped(tapGestureRecognizer:)))
         relatedDigitalHalfScreenView.closeButton.isUserInteractionEnabled = true
         relatedDigitalHalfScreenView.closeButton.addGestureRecognizer(closeTapGestureRecognizer)
+        relatedDigitalHalfScreenView.closeButton.addTarget(self, action: #selector(closeButtonPressed), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -48,8 +68,8 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        player = relatedDigitalHalfScreenView.imageView.addVideoPlayer(urlString: notification?.videourl ?? "")
-        webPlayer = relatedDigitalHalfScreenView.imageView.addYoutubeVideoPlayer(urlString: notification?.videourl ?? "")
+        player = relatedDigitalHalfScreenView.imageView?.addVideoPlayer(urlString: notification?.videourl ?? "")
+        webPlayer = relatedDigitalHalfScreenView.imageView?.addYoutubeVideoPlayer(urlString: notification?.videourl ?? "")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -67,6 +87,10 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
         }
     }
     
+    @objc func closeButtonPressed() {
+        closeButtonTapped(tapGestureRecognizer: UITapGestureRecognizer())
+    }
+
     @objc func closeButtonTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         dismiss(animated: true) {
             self.delegate?.notificationShouldDismiss(controller: self,
@@ -81,13 +105,14 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
             return
         }
         var bounds: CGRect
+        var targetWindowScene: UIWindowScene?
         if #available(iOS 13.0, *) {
             let windowScene = sharedUIApplication
                 .connectedScenes
                 .filter { $0.activationState == .foregroundActive }
-                .first
-            guard let scene = windowScene as? UIWindowScene else { return }
-            bounds = scene.coordinateSpace.bounds
+                .first as? UIWindowScene
+            targetWindowScene = windowScene
+            bounds = windowScene?.coordinateSpace.bounds ?? UIScreen.main.bounds
         } else {
             bounds = UIScreen.main.bounds
         }
@@ -106,29 +131,31 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
             }
         }
         
-        halfScreenHeight = Double(relatedDigitalHalfScreenView.imageView.frame.height) + Double(relatedDigitalHalfScreenView.titleLabel.frame.height) + promoHeight
+        let imgHeight = Double(relatedDigitalHalfScreenView.imageView?.frame.height ?? 0)
+        let titleHeight = Double(relatedDigitalHalfScreenView.titleLabel.frame.height)
+        halfScreenHeight = imgHeight + titleHeight + promoHeight
         
-        let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
+        let extraSpace = Double(RDHalfScreenView.closeButtonExtraSpace)
+        let totalHeight = halfScreenHeight + extraSpace
+        let isBottom = halfScreenNotification.position == .bottom
         
+        let frameY = isBottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) - extraSpace : topInset
         
-        let frame = CGRect(origin: CGPoint(x: 0, y: CGFloat(frameY)), size: CGSize(width: bounds.size.width, height: CGFloat(halfScreenHeight)))
+        let frame = CGRect(origin: CGPoint(x: 0, y: CGFloat(frameY)), size: CGSize(width: bounds.size.width, height: CGFloat(totalHeight)))
         
-        if #available(iOS 13.0, *) {
-            let windowScene = sharedUIApplication
-                .connectedScenes
-                .filter { $0.activationState == .foregroundActive }
-                .first
-            if let windowScene = windowScene as? UIWindowScene {
-                window = UIWindow(frame: frame)
-                window?.windowScene = windowScene
-            }
-        } else {
-            window = UIWindow(frame: frame)
+        let passthroughWindow = HalfScreenPassthroughWindow(frame: frame)
+        if #available(iOS 13.0, *), let scene = targetWindowScene {
+            passthroughWindow.windowScene = scene
         }
+        passthroughWindow.hitCheckViews = { [weak self] in
+            guard let self = self, let halfView = self.relatedDigitalHalfScreenView else { return [] }
+            return [halfView.containerView, halfView.closeButton]
+        }
+        window = passthroughWindow
         
         if let window = window {
             window.windowLevel = UIWindow.Level.alert
-            window.clipsToBounds = false // true
+            window.clipsToBounds = false
             window.rootViewController = self
             window.isHidden = false
         }
@@ -140,12 +167,12 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
             let duration = animated ? 0.5 : 0
             
             UIView.animate(withDuration: duration, animations: {
-                
                 var originY = 0.0
+                let extraSpace = Double(RDHalfScreenView.closeButtonExtraSpace)
                 if self.halfScreenNotification.position == .bottom {
-                    originY = self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().bottom)
+                    originY = self.halfScreenHeight + extraSpace + Double(RDHelper.getSafeAreaInsets().bottom)
                 } else {
-                    originY = -(self.halfScreenHeight + Double(RDHelper.getSafeAreaInsets().top))
+                    originY = -(self.halfScreenHeight + extraSpace + Double(RDHelper.getSafeAreaInsets().top))
                 }
                 
                 self.window?.frame.origin.y += CGFloat(originY)
@@ -157,12 +184,10 @@ class RDHalfScreenViewController: RDBaseNotificationViewController {
             })
         }
     }
-    
 }
 
 extension RDHalfScreenViewController: RDHalfScreenViewDelegate {
     func halfScreenViewDidLoadImage(image: UIImage) {
-        
         guard let sharedUIApplication = RDInstance.sharedUIApplication() else {
             return
         }
@@ -185,16 +210,11 @@ extension RDHalfScreenViewController: RDHalfScreenViewDelegate {
         self.relatedDigitalHalfScreenView.layoutIfNeeded() // Ensure frames are updated
         halfScreenHeight = Double(relatedDigitalHalfScreenView.getPreferredHeight())
         
-        // Debug logging
-        print("[RDHalfScreen] Image Loaded.")
-        print("[RDHalfScreen] Image Height: \(relatedDigitalHalfScreenView.imageView.image?.size.height ?? 0)")
-        print("[RDHalfScreen] Calculated Preferred Height: \(halfScreenHeight)")
+        let extraSpace = Double(RDHalfScreenView.closeButtonExtraSpace)
+        let totalHeight = halfScreenHeight + extraSpace
+        let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) - extraSpace : topInset
         
-        let frameY = halfScreenNotification.position == .bottom ? Double(bounds.size.height) - (halfScreenHeight + bottomInset) : topInset
-        print("[RDHalfScreen] FrameY: \(frameY)")
-        
-        let frame = CGRect(origin: CGPoint(x: 0, y: CGFloat(frameY)), size: CGSize(width: bounds.size.width, height: CGFloat(halfScreenHeight)))
-        print("[RDHalfScreen] New Frame: \(frame)")
+        let frame = CGRect(origin: CGPoint(x: 0, y: CGFloat(frameY)), size: CGSize(width: bounds.size.width, height: CGFloat(totalHeight)))
         
         DispatchQueue.main.async {
             self.window?.frame = frame
