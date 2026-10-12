@@ -66,6 +66,11 @@ struct SettingsView: View {
                 FieldRow(label: "App group", placeholder: "group.…", text: $config.appGroupsKey)
             }
 
+            Card(title: "Capture", systemImage: "chart.line.uptrend.xyaxis",
+                 footnote: "Passed to initialize(captureApiKey:). Leave empty to disable capture. Takes effect on the next launch.") {
+                FieldRow(label: "API key", placeholder: "phc_…", text: $config.captureApiKey)
+            }
+
             Card(title: "Environment", systemImage: "network",
                  footnote: "Switching swaps both the endpoint and the credential set above. Takes effect on the next launch.") {
                 SwitchRow(title: "Use test environment",

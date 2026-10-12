@@ -45,8 +45,9 @@ public class RelatedDigital {
     ///     - profileId: The ID of the profile you want to integrate.
     ///     - dataSource: The data source of the profile you want to integrate.
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`
+    ///     - captureApiKey: `capture` event'lerinde gönderilen müşteriye özel `api_key`. Verilmezse capture kapalıdır.
     ///
-    public class func initialize(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, askLocationPermmissionAtStart: Bool = true) {
+    public class func initialize(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIApplication.LaunchOptionsKey : Any]?, askLocationPermmissionAtStart: Bool = true, captureApiKey: String? = nil) {
         
         guard Thread.isMainThread else {
             fatalError("initialize must be called on the main thread.")
@@ -63,7 +64,7 @@ public class RelatedDigital {
             fatalError("organizationId, profileId and dataSource must have value.")
         }
         
-        _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermissionAtStart: askLocationPermmissionAtStart))
+        _shared = RelatedDigital(instance: RDInstance(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermissionAtStart: askLocationPermmissionAtStart, captureApiKey: captureApiKey))
         
     }
     
@@ -204,6 +205,44 @@ public class RelatedDigital {
     
     public static func logout() {
         shared.rdInstance.logout()
+    }
+    
+    // MARK: - Capture
+    
+    /// PostHog uyumlu event gönderir. Cihaz, uygulama, session ve kimlik bilgileri otomatik eklenir.
+    /// `initialize`'a `captureApiKey` verilmediyse hiçbir şey göndermez.
+    ///
+    /// Kullanıcı eşleştirme otomatiktir: `login` / `signUp` çağrıldığında exVisitorId ile `$identify`
+    /// gönderilir ve önceki anonim event'ler bu kullanıcıya bağlanır; `logout` yeni anonim kimlik başlatır.
+    ///
+    /// - Parameters:
+    ///   - event: Event adı, ör. `"rmc_view_item"`.
+    ///   - properties: String, sayı, Bool, Date, URL, dizi ve sözlük değerleri desteklenir.
+    public static func capture(_ event: String, properties: [String: Any] = [:]) {
+        shared.rdInstance.capture(event, properties: properties)
+    }
+    
+    /// Mevcut kullanıcının kişi profiline property yazar (`$set` event'i).
+    /// - Parameters:
+    ///   - properties: Her çağrıda üzerine yazılır.
+    ///   - setOnce: Sadece daha önce yazılmamışsa yazılır.
+    public static func setPersonProperties(_ properties: [String: Any], setOnce: [String: Any] = [:]) {
+        shared.rdInstance.setPersonProperties(properties, setOnce: setOnce)
+    }
+    
+    /// Kuyrukta bekleyen capture event'lerini hemen gönderir.
+    public static func flushCapture() {
+        shared.rdInstance.flushCapture()
+    }
+    
+    /// Capture event'lerinin `distinct_id`'si: login öncesi anonim id, sonrası exVisitorId.
+    public static func getDistinctId() -> String {
+        return shared.rdInstance.getDistinctId()
+    }
+    
+    /// Bu kurulum için üretilen anonim id. `logout` ile yenilenir.
+    public static func getAnonymousId() -> String {
+        return shared.rdInstance.getAnonymousId()
     }
     
     public static func getStoryView(actionId: Int? = nil, urlDelegate: RDStoryURLDelegate? = nil) -> RDStoryHomeView {

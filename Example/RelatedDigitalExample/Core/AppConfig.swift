@@ -67,6 +67,9 @@ final class AppConfig: ObservableObject {
 
     static let shared = AppConfig()
 
+    /// Test project key for the PostHog-compatible capture endpoint (`event.visilabs.net`).
+    static let defaultCaptureApiKey = "phc_hMbCDB4GWbGncpc7pJ2LXzO4t5o3BCO2fFzsyBkx9LM"
+
     // MARK: - Environment
 
     /// Routes the SDK at the test backend. Backed by the SDK's own `UrlConstant`
@@ -115,6 +118,8 @@ final class AppConfig: ObservableObject {
     @Published var appGroupsKey: String { didSet { persist(appGroupsKey, .appGroupsKey) } }
     @Published var exVisitorId: String { didSet { persist(exVisitorId, .exVisitorId) } }
     @Published var email: String { didSet { persist(email, .email) } }
+    /// Passed to `initialize(captureApiKey:)`. Empty disables capture.
+    @Published var captureApiKey: String { didSet { persist(captureApiKey, .captureApiKey) } }
 
     @Published var inAppNotificationsEnabled: Bool {
         didSet {
@@ -158,6 +163,7 @@ final class AppConfig: ObservableObject {
         var profileId = ""
         var dataSource = ""
         var appAlias = ""
+        var captureApiKey = ""
         var useTestEnvironment = false
     }
 
@@ -166,6 +172,7 @@ final class AppConfig: ObservableObject {
                  profileId: profileId,
                  dataSource: dataSource,
                  appAlias: appAlias,
+                 captureApiKey: captureApiKey,
                  useTestEnvironment: useTestEnvironment)
     }
 
@@ -195,6 +202,7 @@ final class AppConfig: ObservableObject {
             ?? "group.com.relateddigital.RelatedDigitalExample.relateddigital"
         exVisitorId = d.string(forKey: Key.exVisitorId.rawValue) ?? "userKey"
         email = d.string(forKey: Key.email.rawValue) ?? "user@mail.com"
+        captureApiKey = d.string(forKey: Key.captureApiKey.rawValue) ?? AppConfig.defaultCaptureApiKey
         inAppNotificationsEnabled = d.object(forKey: Key.inAppNotificationsEnabled.rawValue) as? Bool ?? true
         geofenceEnabled = d.object(forKey: Key.geofenceEnabled.rawValue) as? Bool ?? true
         loggingEnabled = d.object(forKey: Key.loggingEnabled.rawValue) as? Bool ?? true
@@ -226,6 +234,7 @@ final class AppConfig: ObservableObject {
         appGroupsKey = "group.com.relateddigital.RelatedDigitalExample.relateddigital"
         exVisitorId = "userKey"
         email = "user@mail.com"
+        captureApiKey = AppConfig.defaultCaptureApiKey
         inAppNotificationsEnabled = true
         geofenceEnabled = true
         loggingEnabled = true
@@ -277,6 +286,7 @@ final class AppConfig: ObservableObject {
         case appGroupsKey = "cfg.appGroupsKey"
         case exVisitorId = "cfg.exVisitorId"
         case email = "cfg.email"
+        case captureApiKey = "cfg.captureApiKey"
         case inAppNotificationsEnabled = "cfg.inAppNotificationsEnabled"
         case geofenceEnabled = "cfg.geofenceEnabled"
         case loggingEnabled = "cfg.loggingEnabled"

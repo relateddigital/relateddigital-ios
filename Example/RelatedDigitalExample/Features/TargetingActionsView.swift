@@ -124,7 +124,6 @@ struct TargetingActionsView: View {
     }
 
     var body: some View {
-        RelatedDigital.drawerUrlDelegate = self
         Screen(title: "Targeting",
                subtitle: "Fires customEvent(\"InAppTest\") with OM.inapptype set to the selected action.") {
 
@@ -204,9 +203,3 @@ struct TargetingActionsView: View {
     }
 }
 
-class TargetingActionsView: RDDrawerURLDelegate {
-    func drawerLinkClicked(_ link: String, itemIndex: Int, staticCode: String) {
-        // link panelden geldiği haliyle, örn. "myapp://campaign/42"
-        // kendi yönlendirmeni burada yap
-    }
-}

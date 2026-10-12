@@ -43,6 +43,11 @@ protocol RDInstanceProtocol {
     func login(exVisitorId: String, properties: Properties)
     func signUp(exVisitorId: String, properties: Properties)
     func logout()
+    func capture(_ event: String, properties: [String: Any])
+    func setPersonProperties(_ properties: [String: Any], setOnce: [String: Any])
+    func flushCapture()
+    func getDistinctId() -> String
+    func getAnonymousId() -> String
     func showNotification(_ relatedDigitalInAppNotification: RDInAppNotification)
     func subscribeSpinToWinMail(actid: String, auth: String, mail: String)
     func subscribeGamificationMail(actid: String, auth: String, mail: String)

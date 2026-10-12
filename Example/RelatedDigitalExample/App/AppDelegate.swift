@@ -30,7 +30,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
             profileId: config.profileId,
             dataSource: config.dataSource,
             launchOptions: launchOptions,
-            askLocationPermmissionAtStart: config.askLocationPermissionAtStart
+            askLocationPermmissionAtStart: config.askLocationPermissionAtStart,
+            captureApiKey: config.captureApiKey.isEmpty ? nil : config.captureApiKey
         )
 
         RelatedDigital.enablePushNotifications(
@@ -54,6 +55,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
                 "profileId": config.profileId,
                 "dataSource": config.dataSource,
                 "appAlias": config.appAlias,
+                "captureApiKey": config.captureApiKey.isEmpty ? "(capture disabled)" : config.captureApiKey,
                 "environment": config.environment.displayName,
                 "host": config.environment.host
             ]))

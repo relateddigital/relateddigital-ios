@@ -188,6 +188,54 @@ enum AnalyticsCatalog {
     }
 }
 
+// MARK: - Capture catalog
+
+/// Rows of the Capture card. Each one calls the PostHog-compatible capture API.
+enum CaptureTest: String, CaseIterable, Identifiable {
+    case viewItem, addToCart, purchase, loginAndCapture, allPropertyTypes, setPersonProperties, batch, flush, logout
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .viewItem: return "rmc_view_item"
+        case .addToCart: return "rmc_add_to_cart"
+        case .purchase: return "rmc_purchase (nested items)"
+        case .loginAndCapture: return "Login + rmc_login"
+        case .allPropertyTypes: return "All property types"
+        case .setPersonProperties: return "Set person properties (email)"
+        case .batch: return "25 events (batch)"
+        case .flush: return "Flush queue"
+        case .logout: return "Logout (new anonymous id)"
+        }
+    }
+
+    var signature: String {
+        switch self {
+        case .viewItem, .addToCart, .purchase, .allPropertyTypes: return "capture(_:properties:)"
+        case .loginAndCapture: return "login(exVisitorId:) → $identify, then capture"
+        case .setPersonProperties: return "setPersonProperties(_:setOnce:) → $set"
+        case .batch: return "sent at 20 events, the rest within 10 s"
+        case .flush: return "flushCapture()"
+        case .logout: return "logout() → reset capture identity"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .viewItem: return "eye.fill"
+        case .addToCart: return "cart.badge.plus"
+        case .purchase: return "creditcard.fill"
+        case .loginAndCapture: return "person.crop.circle.badge.checkmark"
+        case .allPropertyTypes: return "list.bullet.rectangle"
+        case .setPersonProperties: return "person.text.rectangle"
+        case .batch: return "square.stack.3d.up.fill"
+        case .flush: return "paperplane.fill"
+        case .logout: return "arrow.left.to.line"
+        }
+    }
+}
+
 // MARK: - View
 
 struct EventsView: View {
@@ -198,6 +246,8 @@ struct EventsView: View {
 
     @State private var basket = SampleBasket.random()
     @State private var expanded: Set<String> = []
+    @State private var captureDistinctId = ""
+    @State private var captureAnonymousId = ""
 
     var body: some View {
         Screen(title: "Events",
@@ -214,6 +264,8 @@ struct EventsView: View {
                     }
                 }
             }
+
+            captureCard
 
             Card(title: "Sample data", systemImage: "dice.fill",
                  footnote: "Product codes, prices and quantities are randomised so repeated sends stay distinguishable in the panel.") {
@@ -353,6 +405,137 @@ struct EventsView: View {
 
         // Sample values are single-use so consecutive sends differ.
         basket = SampleBasket.random()
+        refreshCaptureIds()
+    }
+
+    // MARK: Capture
+
+    private var captureCard: some View {
+        Card(title: "Capture", systemImage: "chart.line.uptrend.xyaxis",
+             footnote: "PostHog-compatible events, sent to event.visilabs.net in batches. Login and sign up identify the user with exVisitorId and merge the earlier anonymous events; logout starts a new anonymous id. With logging enabled the request bodies are printed to the Xcode console.") {
+            InfoRow(label: "distinct_id", value: captureDistinctId)
+            RowDivider()
+            InfoRow(label: "anonymous_id", value: captureAnonymousId)
+            RowDivider()
+            InfoRow(label: "State",
+                    value: captureDistinctId == captureAnonymousId ? "anonymous" : "identified",
+                    isMonospaced: false)
+            ForEach(CaptureTest.allCases) { test in
+                RowDivider()
+                ActionRow(title: test.title, subtitle: test.signature, systemImage: test.icon) {
+                    runCaptureTest(test)
+                }
+            }
+        }
+        .onAppear(perform: refreshCaptureIds)
+    }
+
+    private func runCaptureTest(_ test: CaptureTest) {
+        switch test {
+        case .viewItem:
+            capture("rmc_view_item", [
+                "item_id": 1001,
+                "item_name": "Shoei NXR2",
+                "item_brand": "Shoei",
+                "item_category": "Motor Kaskları",
+                "item_variant": "Mat Siyah / L",
+                "original_price": 2000,
+                "discounted_price": 1500,
+                "discount_rate": 20,
+                "currency": "TRY",
+                "cart_price": 1000,
+                "product_rating": 4.8,
+                "review_count": 126,
+                "stock_quantity": 3,
+                "stock_status": "low_stock",
+                "list_source": "search",
+                "search_term": "kask",
+                "product_campaign": "Summer Sale"
+            ])
+
+        case .addToCart:
+            capture("rmc_add_to_cart", [
+                "item_id": 1001,
+                "item_name": "Shoei NXR2",
+                "quantity": 1,
+                "price": 1500,
+                "currency": "TRY",
+                "cart_total": 2500
+            ])
+
+        case .purchase:
+            capture("rmc_purchase", [
+                "order_id": "ORD-\(basket.orderId)",
+                "revenue": 2750.5,
+                "currency": "TRY",
+                "items": [
+                    ["item_id": 1001, "quantity": 1, "price": 1500],
+                    ["item_id": 2002, "quantity": 2, "price": 625.25]
+                ] as [[String: Any]]
+            ])
+
+        case .loginAndCapture:
+            guard requireVisitorId() else { return }
+            // login sends $identify (anonymous id + exVisitorId are merged);
+            // the rmc_login that follows already goes out with exVisitorId.
+            RDLog.call("login(exVisitorId: \"\(config.exVisitorId)\")", channel: .analytics)
+            RelatedDigital.login(exVisitorId: config.exVisitorId, properties: [:])
+            capture("rmc_login", ["method": "email"])
+
+        case .allPropertyTypes:
+            capture("rmc_property_types", [
+                "string": "text",
+                "int": 42,
+                "double": 3.14,
+                "bool": true,
+                "date": Date(),
+                "url": URL(string: "https://www.relateddigital.com")!,
+                "array": [1, "two", 3.0] as [Any],
+                "dictionary": ["nested": true],
+                "nan": Double.nan // dropped, the SDK logs a warning
+            ])
+
+        case .setPersonProperties:
+            let email = config.email.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !email.isEmpty else {
+                toast.showError("email cannot be empty")
+                return
+            }
+            RDLog.call("setPersonProperties", channel: .analytics,
+                       payload: ["$set.email": email, "$set_once.first_seen_app": "RelatedDigitalExample"])
+            RelatedDigital.setPersonProperties(["email": email], setOnce: ["first_seen_app": "RelatedDigitalExample"])
+            toast.show("$set queued")
+
+        case .batch:
+            RDLog.call("capture × 25 (rmc_batch_test)", channel: .analytics)
+            for index in 1...25 {
+                RelatedDigital.capture("rmc_batch_test", properties: ["index": index])
+            }
+            toast.show("25 events queued")
+
+        case .flush:
+            RDLog.call("flushCapture()", channel: .analytics)
+            RelatedDigital.flushCapture()
+            toast.show("Capture queue flushed")
+
+        case .logout:
+            RDLog.call("logout()", channel: .analytics)
+            RelatedDigital.logout()
+            toast.show("Logged out", icon: "arrow.left.to.line", tint: Theme.info)
+        }
+        refreshCaptureIds()
+    }
+
+    private func capture(_ event: String, _ properties: [String: Any]) {
+        RDLog.call("capture(\"\(event)\")", channel: .analytics,
+                   payload: properties.mapValues { "\($0)" })
+        RelatedDigital.capture(event, properties: properties)
+        toast.show("\(event) queued")
+    }
+
+    private func refreshCaptureIds() {
+        captureDistinctId = RelatedDigital.getDistinctId()
+        captureAnonymousId = RelatedDigital.getAnonymousId()
     }
 
     private func requireVisitorId() -> Bool {

@@ -109,12 +109,13 @@ public class RDInstance: RDInstanceProtocol {
     }
 
     // swiftlint:disable function_body_length
-    init(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIA.LaunchOptionsKey: Any]? = nil, askLocationPermissionAtStart: Bool = true) {
+    init(organizationId: String, profileId: String, dataSource: String, launchOptions: [UIA.LaunchOptionsKey: Any]? = nil, askLocationPermissionAtStart: Bool = true, captureApiKey: String? = nil) {
         rdProfile = RDPersistence.readRDProfile() ?? RDProfile(organizationId: organizationId, profileId: profileId, dataSource: dataSource, askLocationPermissionAtStart: askLocationPermissionAtStart)
         rdProfile.organizationId = organizationId
         rdProfile.profileId = profileId
         rdProfile.dataSource = dataSource
         rdProfile.askLocationPermissionAtStart = askLocationPermissionAtStart
+        rdProfile.captureApiKey = captureApiKey
         self.launchOptions = launchOptions
 
         RDPersistence.saveRDProfile(rdProfile)
@@ -140,10 +141,16 @@ public class RDInstance: RDInstanceProtocol {
             rdUser.appVersion = appVersion
         }
 
+        // cookieId önceki bir açılıştan kaldıysa SDK bu cihazda daha önce çalışmış demektir.
+        let isExistingInstall = !rdUser.cookieId.isNilOrWhiteSpace
         if rdUser.cookieId.isNilOrWhiteSpace {
             rdUser.cookieId = RDHelper.generateCookieId()
             RDPersistence.archiveUser(rdUser)
         }
+
+        RDCapture.shared.configure(apiKey: captureApiKey,
+                                   exVisitorId: rdUser.exVisitorId,
+                                   isExistingInstall: isExistingInstall)
 
         if rdProfile.isIDFAEnabled {
             RDHelper.getIDFA { uuid in
@@ -174,7 +181,7 @@ public class RDInstance: RDInstanceProtocol {
 
     convenience init?() {
         if let relatedDigitalProfile = RDPersistence.readRDProfile() {
-            self.init(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource, askLocationPermissionAtStart: relatedDigitalProfile.askLocationPermissionAtStart)
+            self.init(organizationId: relatedDigitalProfile.organizationId, profileId: relatedDigitalProfile.profileId, dataSource: relatedDigitalProfile.dataSource, askLocationPermissionAtStart: relatedDigitalProfile.askLocationPermissionAtStart, captureApiKey: relatedDigitalProfile.captureApiKey)
         } else {
             return nil
         }
@@ -240,6 +247,12 @@ extension RDInstance {
         if pageName.isEmptyOrWhitespace {
             RDLogger.error("customEvent can not be called with empty page name.")
             return
+        }
+        
+        // login / signUp / OM.exVisitorID ile gelen kullanıcı capture tarafında da tanıtılır.
+        // Sonrasında çağrılan capture'lardan önce sıraya girmesi için burada, senkron çağrılıyor.
+        if let exVisitorId = properties[RDConstants.exvisitorIdKey], !exVisitorId.isEmptyOrWhitespace {
+            RDCapture.shared.identify(exVisitorId)
         }
         
         checkPushPermission()
@@ -423,6 +436,31 @@ extension RDInstance {
         rdUser.cookieId = RDHelper.generateCookieId()
         RDPersistence.archiveUser(rdUser)
         RDPush.logout() // TODO: BUNA BAK SONRA
+        RDCapture.shared.reset()
+    }
+}
+
+// MARK: - CAPTURE
+
+extension RDInstance {
+    public func capture(_ event: String, properties: [String: Any]) {
+        RDCapture.shared.capture(event, properties: properties)
+    }
+
+    public func setPersonProperties(_ properties: [String: Any], setOnce: [String: Any]) {
+        RDCapture.shared.setPersonProperties(properties, setOnce: setOnce)
+    }
+
+    public func flushCapture() {
+        RDCapture.shared.flush()
+    }
+
+    public func getDistinctId() -> String {
+        return RDCapture.shared.distinctId
+    }
+
+    public func getAnonymousId() -> String {
+        return RDCapture.shared.anonymousId
     }
 }
 

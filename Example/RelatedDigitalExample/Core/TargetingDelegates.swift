@@ -24,9 +24,10 @@ final class TargetingDelegateHub: NSObject {
         RelatedDigital.inappButtonDelegate = self
         RelatedDigital.countdownUrlDelegate = self
         RelatedDigital.notificationBellUrlDelegate = self
+        RelatedDigital.drawerUrlDelegate = self
         Task { @MainActor in
             RDLog.info("Targeting delegates registered", channel: .targeting,
-                       detail: "inappButtonDelegate\ncountdownUrlDelegate\nnotificationBellUrlDelegate")
+                       detail: "inappButtonDelegate\ncountdownUrlDelegate\nnotificationBellUrlDelegate\ndrawerUrlDelegate")
         }
     }
 }
@@ -73,3 +74,16 @@ extension TargetingDelegateHub: RDStoryURLDelegate, RDNotificationBellDelegate {
         }
     }
 }
+
+// MARK: - Drawer links
+
+extension TargetingDelegateHub: RDDrawerURLDelegate {
+
+    func drawerLinkClicked(_ link: String, itemIndex: Int, staticCode: String) {
+        Task { @MainActor in
+            RDLog.result("Drawer link tapped", channel: .targeting,
+                         detail: "link = \(link)\nitemIndex = \(itemIndex)\nstaticCode = \(staticCode)")
+        }
+    }
+}
+

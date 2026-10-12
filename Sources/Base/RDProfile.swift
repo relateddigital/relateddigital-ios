@@ -22,6 +22,8 @@ public struct RDProfile: Codable {
     public var isPushNotificationEnabled: Bool = false
     public var appAlias: String?
     public var appGroupsKey: String?
+    /// `capture` event'lerinde gönderilen `api_key`. nil ise capture kapalıdır.
+    public var captureApiKey: String?
 
     
     
