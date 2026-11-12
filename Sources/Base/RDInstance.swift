@@ -141,8 +141,11 @@ public class RDInstance: RDInstanceProtocol {
             rdUser.appVersion = appVersion
         }
 
-        // cookieId önceki bir açılıştan kaldıysa SDK bu cihazda daha önce çalışmış demektir.
-        let isExistingInstall = !rdUser.cookieId.isNilOrWhiteSpace
+        // Install tracker initialization (Keychain, UserDefaults and StoreKit 2)
+        _ = RDInstallTracker.shared
+
+        // cookieId önceki bir açılıştan kaldıysa veya reinstall ise bu cihazda daha önce çalışmış demektir.
+        let isExistingInstall = !rdUser.cookieId.isNilOrWhiteSpace || RDInstallTracker.shared.isReinstall
         if rdUser.cookieId.isNilOrWhiteSpace {
             rdUser.cookieId = RDHelper.generateCookieId()
             RDPersistence.archiveUser(rdUser)
@@ -422,6 +425,18 @@ extension RDInstance {
         props["SignUp"] = exVisitorId
         props["OM.b_sgnp"] = "SignUp"
         customEvent("SignUpPage", properties: props)
+    }
+
+    public var isFirstInstall: Bool {
+        return RDInstallTracker.shared.isFirstInstall
+    }
+
+    public var isReinstall: Bool {
+        return RDInstallTracker.shared.isReinstall
+    }
+
+    public var installType: RDInstallType {
+        return RDInstallTracker.shared.initialInstallType
     }
 
     public func logout() {

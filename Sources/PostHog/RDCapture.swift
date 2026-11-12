@@ -102,7 +102,20 @@ final class RDCapture {
             RDLogger.error("capture: event adı boş olamaz.")
             return
         }
-        let sanitized = RDCaptureUtils.sanitize(properties)
+        var props = properties ?? [:]
+        if props["is_first_install"] == nil {
+            props["is_first_install"] = RDInstallTracker.shared.isFirstInstall
+        }
+        if props["is_reinstall"] == nil {
+            props["is_reinstall"] = RDInstallTracker.shared.isReinstall
+        }
+        if props[RDConstants.isFirstInstallKey] == nil {
+            props[RDConstants.isFirstInstallKey] = RDInstallTracker.shared.isFirstInstallString
+        }
+        if props[RDConstants.isReinstallKey] == nil {
+            props[RDConstants.isReinstallKey] = RDInstallTracker.shared.isReinstallString
+        }
+        let sanitized = RDCaptureUtils.sanitize(props)
         queue.async { [weak self] in
             guard let self = self else { return }
             guard self.isEnabled else {
@@ -255,6 +268,10 @@ final class RDCapture {
             if isExistingInstall {
                 return nil
             }
+            properties["is_first_install"] = RDInstallTracker.shared.isFirstInstall
+            properties["is_reinstall"] = RDInstallTracker.shared.isReinstall
+            properties[RDConstants.isFirstInstallKey] = RDInstallTracker.shared.isFirstInstallString
+            properties[RDConstants.isReinstallKey] = RDInstallTracker.shared.isReinstallString
             return ("Application Installed", properties)
         }
         if previousVersion == version && previousBuild == build {

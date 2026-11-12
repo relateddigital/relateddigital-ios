@@ -92,6 +92,9 @@ public class RelatedDigital {
     }
     
     public static var exVisitorId: String? { return shared.rdInstance.exVisitorId }
+    public static var isFirstInstall: Bool { return shared.rdInstance.isFirstInstall }
+    public static var isReinstall: Bool { return shared.rdInstance.isReinstall }
+    public static var installType: RDInstallType { return shared.rdInstance.installType }
     
     public static var locationServicesEnabledForDevice: Bool {
         return shared.rdInstance.locationServicesEnabledForDevice

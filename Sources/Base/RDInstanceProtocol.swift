@@ -22,6 +22,9 @@ public typealias FavoriteAttributeActionCompletion = (RDFavoriteAttributeActionR
 public typealias GetPushMessagesCompletion = ([RDPushMessage]) -> Void
 
 protocol RDInstanceProtocol {
+    var isFirstInstall: Bool { get }
+    var isReinstall: Bool { get }
+    var installType: RDInstallType { get }
     var exVisitorId: String? { get }
     var rdUser: RDUser { get }
     var rdProfile: RDProfile { get }

@@ -14,6 +14,20 @@ protocol RDInAppNotificationsDelegate: AnyObject {
     func trackNotification(_ notification: RDInAppNotification, event: String, properties: Properties)
 }
 
+private class ScheduledNotificationItem {
+    let notification: RDInAppNotification
+    var workItem: DispatchWorkItem?
+    let scheduledDate: Date
+    let delayTime: TimeInterval
+
+    init(notification: RDInAppNotification, workItem: DispatchWorkItem? = nil, scheduledDate: Date = Date(), delayTime: TimeInterval) {
+        self.notification = notification
+        self.workItem = workItem
+        self.scheduledDate = scheduledDate
+        self.delayTime = delayTime
+    }
+}
+
 class RDInAppNotifications: RDNotificationViewControllerDelegate {
     let lock: RDReadWriteLock
     var miniNotificationPresentationTime = 6.0
@@ -27,55 +41,359 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     weak var currentViewController: UIViewController?
     weak var currentlyShowingBell: NotificationBellViewController?
 
+    private var pendingNotifications: [RDInAppNotification] = []
+    private var scheduledNotificationIds: Set<Int> = []
+    private var scheduledNotifications: [Int: ScheduledNotificationItem] = [:]
+    private var recentlyShownNotificationIds: [Int: Date] = [:]
+    private let deduplicationTimeInterval: TimeInterval = 30.0
+    private let maxNotificationRetries = 10
+    private var lastDismissedTime: Date?
+    private let chainedDismissThreshold: TimeInterval = 5.0
+    private let fastTrackTransitionDelay: TimeInterval = 0.3
+
     init(lock: RDReadWriteLock) {
         self.lock = lock
     }
 
     func showNotification(_ notification: RDInAppNotification) {
-        let notification = notification
-        let delayTime = notification.waitingTime ?? 0
-        DispatchQueue.main.async {
-            self.currentViewController = RDHelper.getRootViewController()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(delayTime), execute: {
-            if self.currentlyShowingNotification != nil || self.currentlyShowingTargetingAction != nil {
-                RDLogger.warn("already showing an in-app notification")
-            } else {
-                if notification.waitingTime ?? 0 == 0 || self.currentViewController == RDHelper.getRootViewController() {
-                    var shownNotification = false
-                    switch notification.type {
-                    case .mini:
-                        shownNotification = self.showMiniNotification(notification)
-                    case .full:
-                        shownNotification = self.showFullNotification(notification)
-                    case .halfScreenImage:
-                        shownNotification = self.showHalfScreenNotification(notification)
-                    case .inappcarousel:
-                        shownNotification = self.showCarousel(notification)
-                    case .carouselFullscreen:
-                        shownNotification = self.showCarouselFullscreen(notification)
-                    case .fullscreenPopup:
-                        shownNotification = self.showFullscreenPopup(notification)
-                    case .alert:
-                        shownNotification = true
-                        self.showAlert(notification)
-                    default:
-                        shownNotification = self.showPopUp(notification)
-                    }
+        let actId = notification.actId
 
-                    if shownNotification {
-                        self.markNotificationShown(notification: notification)
-                        self.delegate?.notificationDidShow(notification)
-                    }
+        var isAlreadyShowing = false
+        var isAlreadyPending = false
+        var isAlreadyScheduled = false
+        var isRecentlyShown = false
+
+        lock.write {
+            let now = Date()
+            self.recentlyShownNotificationIds = self.recentlyShownNotificationIds.filter { now.timeIntervalSince($0.value) < self.deduplicationTimeInterval }
+
+            if self.currentlyShowingNotification?.actId == actId || self.currentlyShowingTargetingAction?.actIdValue == actId {
+                isAlreadyShowing = true
+            }
+            if self.pendingNotifications.contains(where: { $0.actId == actId }) {
+                isAlreadyPending = true
+            }
+            if self.scheduledNotificationIds.contains(actId) {
+                isAlreadyScheduled = true
+            }
+            if self.recentlyShownNotificationIds[actId] != nil {
+                isRecentlyShown = true
+            }
+
+            if !isAlreadyShowing && !isAlreadyPending && !isAlreadyScheduled && !isRecentlyShown {
+                self.scheduledNotificationIds.insert(actId)
+            }
+        }
+
+        if isAlreadyShowing {
+            RDLogger.info("Notification \(actId) is already currently showing. Dropping duplicate.")
+            return
+        }
+        if isAlreadyPending {
+            RDLogger.info("Notification \(actId) is already in pending queue. Dropping duplicate.")
+            return
+        }
+        if isAlreadyScheduled {
+            RDLogger.info("Notification \(actId) is already scheduled to show. Dropping duplicate.")
+            return
+        }
+        if isRecentlyShown {
+            RDLogger.info("Notification \(actId) was shown recently (< \(deduplicationTimeInterval)s ago). Dropping duplicate.")
+            return
+        }
+
+        let delayTime = notification.waitingTime ?? 0
+
+        // Check if this notification arrived as part of a chained flow right after a previous dismissal
+        var shouldFastTrack = false
+        lock.read {
+            if let lastDismiss = self.lastDismissedTime, Date().timeIntervalSince(lastDismiss) < self.chainedDismissThreshold {
+                shouldFastTrack = true
+            }
+        }
+
+        if shouldFastTrack {
+            RDLogger.info("Notification \(actId) arrived shortly after previous dismiss (< \(chainedDismissThreshold)s). Fast-tracking display (in \(fastTrackTransitionDelay)s) instead of waiting \(delayTime)s.")
+            lock.write {
+                self.lastDismissedTime = nil
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + fastTrackTransitionDelay) { [weak self] in
+                self?.lock.write {
+                    self?.scheduledNotificationIds.remove(actId)
+                    self?.scheduledNotifications.removeValue(forKey: actId)
+                }
+                self?.attemptToShowNotification(notification, retryCount: 0)
+            }
+            return
+        }
+
+        RDLogger.info("showNotification scheduled with waitingTime: \(delayTime)s for actId: \(actId)")
+
+        if delayTime > 0 {
+            let scheduledItem = ScheduledNotificationItem(notification: notification, delayTime: TimeInterval(delayTime))
+
+            let workItem = DispatchWorkItem { [weak self] in
+                self?.lock.write {
+                    self?.scheduledNotifications.removeValue(forKey: actId)
+                    self?.scheduledNotificationIds.remove(actId)
+                }
+                self?.attemptToShowNotification(notification, retryCount: 0)
+            }
+            scheduledItem.workItem = workItem
+
+            lock.write {
+                self.scheduledNotifications[actId] = scheduledItem
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + DispatchTimeInterval.seconds(delayTime), execute: workItem)
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.lock.write {
+                    self?.scheduledNotificationIds.remove(actId)
+                    self?.scheduledNotifications.removeValue(forKey: actId)
+                }
+                self?.attemptToShowNotification(notification, retryCount: 0)
+            }
+        }
+    }
+
+    private func attemptToShowNotification(_ notification: RDInAppNotification, retryCount: Int = 0) {
+        guard let sharedUIApplication = RDInstance.sharedUIApplication(),
+              sharedUIApplication.applicationState != .background else {
+            RDLogger.warn("Application is in background, adding notification \(notification.actId) to pending queue.")
+            queuePendingNotification(notification)
+            return
+        }
+
+        var isBusy = false
+        var isAlreadyShowingThis = false
+        lock.read {
+            if self.currentlyShowingNotification?.actId == notification.actId || self.currentlyShowingTargetingAction?.actIdValue == notification.actId {
+                isAlreadyShowingThis = true
+            }
+            isBusy = (self.currentlyShowingNotification != nil || self.currentlyShowingTargetingAction != nil)
+        }
+
+        if isAlreadyShowingThis {
+            RDLogger.info("Notification \(notification.actId) is already on screen. Dropping duplicate.")
+            lock.write {
+                self.scheduledNotificationIds.remove(notification.actId)
+                self.scheduledNotifications.removeValue(forKey: notification.actId)
+            }
+            return
+        }
+
+        if isBusy {
+            if retryCount < maxNotificationRetries {
+                RDLogger.info("Another in-app or action is currently showing. Retrying in 0.5s... (attempt \(retryCount + 1)/\(maxNotificationRetries))")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.attemptToShowNotification(notification, retryCount: retryCount + 1)
+                }
+            } else {
+                RDLogger.info("Max retries reached while waiting. Adding notification \(notification.actId) to pending queue.")
+                queuePendingNotification(notification)
+            }
+            return
+        }
+
+        guard let rootViewController = RDHelper.getRootViewController() else {
+            RDLogger.warn("No active visible view controller found to present notification \(notification.actId). Retrying in 0.5s...")
+            if retryCount < maxNotificationRetries {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.attemptToShowNotification(notification, retryCount: retryCount + 1)
                 }
             }
-        })
+            return
+        }
+
+        if rootViewController.isBeingDismissed {
+            RDLogger.info("Current view controller is being dismissed, waiting 0.3s before presenting notification \(notification.actId).")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.attemptToShowNotification(notification, retryCount: retryCount + 1)
+            }
+            return
+        }
+
+        presentNotification(notification)
+    }
+
+    private func presentNotification(_ notification: RDInAppNotification) {
+        var shownNotification = false
+        switch notification.type {
+        case .mini:
+            shownNotification = self.showMiniNotification(notification)
+        case .full:
+            shownNotification = self.showFullNotification(notification)
+        case .halfScreenImage:
+            shownNotification = self.showHalfScreenNotification(notification)
+        case .inappcarousel:
+            shownNotification = self.showCarousel(notification)
+        case .carouselFullscreen:
+            shownNotification = self.showCarouselFullscreen(notification)
+        case .fullscreenPopup:
+            shownNotification = self.showFullscreenPopup(notification)
+        case .alert:
+            shownNotification = true
+            self.showAlert(notification)
+        default:
+            shownNotification = self.showPopUp(notification)
+        }
+
+        if shownNotification {
+            self.markNotificationShown(notification: notification)
+            self.delegate?.notificationDidShow(notification)
+            self.lock.write {
+                self.recentlyShownNotificationIds[notification.actId] = Date()
+            }
+        } else {
+            RDLogger.error("Failed to present notification \(notification.actId).")
+        }
+    }
+
+    private func queuePendingNotification(_ notification: RDInAppNotification) {
+        lock.write {
+            if self.currentlyShowingNotification?.actId == notification.actId {
+                RDLogger.info("Notification \(notification.actId) is already currently showing. Not queuing duplicate.")
+                return
+            }
+            if !self.pendingNotifications.contains(where: { $0.actId == notification.actId }) {
+                self.pendingNotifications.append(notification)
+                RDLogger.info("Notification \(notification.actId) added to pending queue (size: \(self.pendingNotifications.count)).")
+            }
+        }
+    }
+
+    private func getEffectiveDelay(for delaySeconds: Int) -> Double {
+        var shouldFastTrack = false
+        lock.read {
+            if let lastDismiss = self.lastDismissedTime, Date().timeIntervalSince(lastDismiss) < self.chainedDismissThreshold {
+                shouldFastTrack = true
+            }
+        }
+        if shouldFastTrack {
+            lock.write {
+                self.lastDismissedTime = nil
+            }
+            RDLogger.info("Action arrived shortly after previous dismiss (< \(chainedDismissThreshold)s). Fast-tracking (\(fastTrackTransitionDelay)s) instead of waiting \(delaySeconds)s.")
+            return fastTrackTransitionDelay
+        }
+        return Double(delaySeconds)
+    }
+
+    private func showNextPendingNotificationIfAny() {
+        var scheduledToFastTrack: RDInAppNotification?
+
+        lock.write {
+            let now = Date()
+            self.pendingNotifications.removeAll { notif in
+                if let lastShown = self.recentlyShownNotificationIds[notif.actId], now.timeIntervalSince(lastShown) < self.deduplicationTimeInterval {
+                    RDLogger.info("Removing recently shown notification \(notif.actId) from pending queue.")
+                    return true
+                }
+                return false
+            }
+
+            // If there is any notification waiting on a waitingTime timer, fast-track the earliest scheduled one
+            // because the previous popup/action has been dismissed.
+            if let firstScheduled = self.scheduledNotifications.values.sorted(by: { $0.scheduledDate < $1.scheduledDate }).first {
+                firstScheduled.workItem?.cancel()
+                self.scheduledNotifications.removeValue(forKey: firstScheduled.notification.actId)
+                self.scheduledNotificationIds.remove(firstScheduled.notification.actId)
+                scheduledToFastTrack = firstScheduled.notification
+            }
+        }
+
+        if let fastTrackNotif = scheduledToFastTrack {
+            var isRecentlyShown = false
+            lock.read {
+                if let lastShown = self.recentlyShownNotificationIds[fastTrackNotif.actId],
+                   Date().timeIntervalSince(lastShown) < self.deduplicationTimeInterval {
+                    isRecentlyShown = true
+                }
+            }
+            if isRecentlyShown {
+                RDLogger.info("Fast-tracked notification \(fastTrackNotif.actId) was shown recently. Dropping duplicate.")
+                showNextPendingNotificationIfAny()
+                return
+            }
+
+            RDLogger.info("Previous popup dismissed. Fast-tracking scheduled notification \(fastTrackNotif.actId) in \(fastTrackTransitionDelay)s.")
+            DispatchQueue.main.asyncAfter(deadline: .now() + fastTrackTransitionDelay) { [weak self] in
+                self?.attemptToShowNotification(fastTrackNotif, retryCount: 0)
+            }
+            return
+        }
+
+        var nextNotif: RDInAppNotification?
+        lock.write {
+            if !self.pendingNotifications.isEmpty {
+                nextNotif = self.pendingNotifications.removeFirst()
+            }
+        }
+        if let next = nextNotif {
+            RDLogger.info("Triggering next pending notification: \(next.actId)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                self?.attemptToShowNotification(next, retryCount: 0)
+            }
+        }
     }
 
     func showTargetingAction(_ model: TargetingActionViewModel) {
+        if let actId = model.actIdValue {
+            var isAlreadyShowing = false
+            var isAlreadyPending = false
+            var isAlreadyScheduled = false
+            var isRecentlyShown = false
+
+            lock.write {
+                let now = Date()
+                self.recentlyShownNotificationIds = self.recentlyShownNotificationIds.filter { now.timeIntervalSince($0.value) < self.deduplicationTimeInterval }
+
+                if self.currentlyShowingNotification?.actId == actId || self.currentlyShowingTargetingAction?.actIdValue == actId {
+                    isAlreadyShowing = true
+                }
+                if self.pendingNotifications.contains(where: { $0.actId == actId }) {
+                    isAlreadyPending = true
+                }
+                if self.scheduledNotificationIds.contains(actId) {
+                    isAlreadyScheduled = true
+                }
+                if self.recentlyShownNotificationIds[actId] != nil {
+                    isRecentlyShown = true
+                }
+
+                if !isAlreadyShowing && !isAlreadyPending && !isAlreadyScheduled && !isRecentlyShown {
+                    self.scheduledNotificationIds.insert(actId)
+                }
+            }
+
+            if isAlreadyShowing {
+                RDLogger.info("Targeting action \(actId) is already currently showing. Dropping duplicate.")
+                return
+            }
+            if isAlreadyPending {
+                RDLogger.info("Targeting action \(actId) is already in pending queue. Dropping duplicate.")
+                return
+            }
+            if isAlreadyScheduled {
+                RDLogger.info("Targeting action \(actId) is already scheduled to show. Dropping duplicate.")
+                return
+            }
+            if isRecentlyShown {
+                RDLogger.info("Targeting action \(actId) was shown recently (< \(deduplicationTimeInterval)s ago). Dropping duplicate.")
+                return
+            }
+        }
+
         DispatchQueue.main.async {
             if self.currentlyShowingNotification != nil || self.currentlyShowingTargetingAction != nil {
                 RDLogger.warn("already showing an notification")
+                if let actId = model.actIdValue {
+                    self.lock.write {
+                        self.scheduledNotificationIds.remove(actId)
+                        self.scheduledNotifications.removeValue(forKey: actId)
+                    }
+                }
             } else {
                 if model.targetingActionType == .mailSubscriptionForm, let mailSubscriptionForm = model as? MailSubscriptionViewModel {
                     if self.showMailPopup(mailSubscriptionForm) {
@@ -161,8 +479,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showGiftCatch(giftCatchViewModel: GiftCatchViewModel) -> Bool {
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(giftCatchViewModel.waitingTime), execute: {
+        let delay = getEffectiveDelay(for: giftCatchViewModel.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             let giftCatchVC = GiftCatchViewController(giftCatchViewModel)
             giftCatchVC.delegate = self
             giftCatchVC.show(animated: true)
@@ -172,8 +490,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showFindToWin(findToWinModel: FindToWinViewModel) -> Bool {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(findToWinModel.waitingTime), execute: {
-            
+        let delay = getEffectiveDelay(for: findToWinModel.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             let findToWinVC = FindToWinViewController(findToWinModel)
             findToWinVC.delegate = self
             findToWinVC.show(animated: true)
@@ -183,9 +501,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showGiftBox(giftBoxModel: GiftBoxModel) -> Bool {
-    
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(giftBoxModel.waitingTime), execute: {
-            
+        let delay = getEffectiveDelay(for: giftBoxModel.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             let giftBoxVC = GiftBoxViewController(giftBoxModel)
             giftBoxVC.delegate = self
             giftBoxVC.show(animated: true)
@@ -195,23 +512,21 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showChooseFavorite(model: ChooseFavoriteModel) -> Bool {
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
-
-        let chooseFavoriteVC = ChooseFavoriteGameViewController(model)
-        chooseFavoriteVC.delegate = self
-        chooseFavoriteVC.show(animated: true)
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
+            let chooseFavoriteVC = ChooseFavoriteGameViewController(model)
+            chooseFavoriteVC.delegate = self
+            chooseFavoriteVC.show(animated: true)
         })
         return true
     }
     
     func showCustomWebview(model: CustomWebViewModel) -> Bool {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
-
-        let customWebviewVC = CustomWebViewController(model)
-        customWebviewVC.delegate = self
-        customWebviewVC.show(animated: true)
-        
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
+            let customWebviewVC = CustomWebViewController(model)
+            customWebviewVC.delegate = self
+            customWebviewVC.show(animated: true)
         })
         return true
     }
@@ -225,7 +540,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showJackpot(model: JackpotModel) -> Bool {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             let jackpotVC = JackpotViewController(model)
             jackpotVC.delegate = self
             jackpotVC.show(animated: true)
@@ -240,7 +556,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             RDLogger.info("CountdownTimerBanner expired, not showing.")
             return false
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             // Bekleme süresi içinde süre dolmuş olabilir; tekrar kontrol et.
             if CountdownTimerBannerViewController.isExpired(model: model) {
                 RDLogger.info("CountdownTimerBanner expired, not showing.")
@@ -256,7 +573,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showPoll(model: PollModel) -> Bool {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             let pollVC = PollViewController(model)
             pollVC.delegate = self
             pollVC.show(animated: true)
@@ -266,11 +584,11 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
     
     func showClawMachine(model: ClawMachineModel) -> Bool {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
-
-        let clawMachineVC = ClawMachineViewController(model)
-        clawMachineVC.delegate = self
-        clawMachineVC.show(animated: true)
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
+            let clawMachineVC = ClawMachineViewController(model)
+            clawMachineVC.delegate = self
+            clawMachineVC.show(animated: true)
         })
         return true
     }
@@ -284,9 +602,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showNotificationBell(model: NotificationBellModel) -> Bool {
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
-
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             // Prevent stacking multiple bell windows on top of each other.
             // A new targeting action request can arrive on every page/visit; without
             // this guard each one created a new bell window at the same position,
@@ -425,7 +742,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showScratchToWin(_ model: ScratchToWinModel) -> Bool {
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute:{
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute:{
             let popUpVC = RDPopupNotificationViewController(scratchToWin: model)
             popUpVC.delegate = self
             popUpVC.inappButtonDelegate = self.inappButtonDelegate
@@ -436,13 +754,12 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func showSpinToWin(_ model: SpinToWinViewModel) -> Bool {
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(model.waitingTime), execute: {
+        let delay = getEffectiveDelay(for: model.waitingTime)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {
             let spinToWinVC = RDSpinToWinViewController(model)
             spinToWinVC.delegate = self
             spinToWinVC.show(animated: true)
         })
-        
         return true
     }
 
@@ -465,6 +782,8 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
         lock.write {
             RDLogger.info("marking notification as seen: \(notification.actId)")
             self.currentlyShowingNotification = notification
+            self.scheduledNotificationIds.remove(notification.actId)
+            self.scheduledNotifications.removeValue(forKey: notification.actId)
             // TO_DO: burada customEvent request'i atılmalı
         }
     }
@@ -472,13 +791,21 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     func markTargetingActionShown(model: TargetingActionViewModel) {
         lock.write {
             self.currentlyShowingTargetingAction = model
+            if let actId = model.actIdValue {
+                self.scheduledNotificationIds.remove(actId)
+                self.scheduledNotifications.removeValue(forKey: actId)
+                self.recentlyShownNotificationIds[actId] = Date()
+                RDLogger.info("marking targeting action as seen: \(actId)")
+            }
         }
     }
 
     @discardableResult
     func notificationShouldDismiss(controller: RDBaseViewControllerProtocol, callToActionURL: URL?, shouldTrack: Bool, additionalTrackingProperties: Properties?) -> Bool {
-        if currentlyShowingNotification?.actId != controller.notification?.actId {
-            return false
+        if let currentNotif = currentlyShowingNotification, let controllerNotif = controller.notification {
+            if currentNotif.actId != controllerNotif.actId {
+                return false
+            }
         }
 
         let completionBlock = {
@@ -493,8 +820,12 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
                     self.delegate?.trackNotification(controller.notification!, event: "event", properties: properties)
                 }
             }
-            self.currentlyShowingNotification = nil
-            self.currentlyShowingTargetingAction = nil
+            self.lock.write {
+                self.currentlyShowingNotification = nil
+                self.currentlyShowingTargetingAction = nil
+                self.lastDismissedTime = Date()
+            }
+            self.showNextPendingNotificationIfAny()
         }
 
         if let callToActionURL = callToActionURL {
@@ -517,8 +848,12 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
     }
 
     func alertDismiss() {
-        currentlyShowingNotification = nil
-        currentlyShowingTargetingAction = nil
+        lock.write {
+            currentlyShowingNotification = nil
+            currentlyShowingTargetingAction = nil
+            lastDismissedTime = Date()
+        }
+        showNextPendingNotificationIfAny()
     }
 
     func trackNotification(controller: RDBaseViewControllerProtocol, event: String, properties: Properties?) {
@@ -532,5 +867,28 @@ class RDInAppNotifications: RDNotificationViewControllerDelegate {
             }
             self.delegate?.trackNotification(notification, event: event, properties: finalProperties)
         }
+    }
+}
+
+extension TargetingActionViewModel {
+    var actIdValue: Int? {
+        if let m = self as? SpinToWinViewModel { return m.actId }
+        if let m = self as? ScratchToWinModel { return m.actId }
+        if let m = self as? MailSubscriptionViewModel { return m.actId }
+        if let m = self as? PollModel { return m.actId }
+        if let m = self as? RDCountdownTimerBannerModel { return m.actId }
+        if let m = self as? DrawerServiceModel { return m.actId }
+        if let m = self as? CustomWebViewModel { return m.actId }
+        if let m = self as? NotificationBellModel { return m.actId }
+        if let m = self as? InappReviewModel { return m.actId }
+        if let m = self as? GiftCatchViewModel { return m.actId }
+        if let m = self as? FindToWinViewModel { return m.actId }
+        if let m = self as? GiftBoxModel { return m.actId }
+        if let m = self as? ShakeToWinViewModel { return m.actId }
+        if let m = self as? ChooseFavoriteModel { return m.actId }
+        if let m = self as? JackpotModel { return m.actId }
+        if let m = self as? ClawMachineModel { return m.actId }
+        if let m = self as? downHsViewServiceModel { return m.actId }
+        return nil
     }
 }

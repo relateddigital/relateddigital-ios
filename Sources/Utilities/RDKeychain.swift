@@ -53,6 +53,13 @@ internal class RDKeychain {
     }
 
     @discardableResult
+    static func delete(_ key: String) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return deleteNoLock(key)
+    }
+
+    @discardableResult
     static func deleteNoLock(_ key: String) -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,

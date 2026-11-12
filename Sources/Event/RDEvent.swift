@@ -123,6 +123,13 @@ class RDEvent {
         props[RDConstants.tvcKey] = String(user.tvc)
         props[RDConstants.lvtKey] = user.lvt
 
+        if props[RDConstants.isFirstInstallKey] == nil {
+            props[RDConstants.isFirstInstallKey] = RDInstallTracker.shared.isFirstInstallValue(tvc: user.tvc)
+        }
+        if props[RDConstants.isReinstallKey] == nil {
+            props[RDConstants.isReinstallKey] = RDInstallTracker.shared.isReinstallValue(tvc: user.tvc)
+        }
+
         
         if !deviceLanguage.isNilOrWhiteSpace {
             props[RDConstants.deviceLanguage] = deviceLanguage

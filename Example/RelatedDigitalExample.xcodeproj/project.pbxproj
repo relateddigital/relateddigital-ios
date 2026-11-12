@@ -19,6 +19,7 @@
 		2F05B64A27C62B64009D7ECB /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F05B64927C62B64009D7ECB /* UserNotificationsUI.framework */; };
 		2F05B65427C62B64009D7ECB /* NotificationContent.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F05B64627C62B64009D7ECB /* NotificationContent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2F05B65927C62B95009D7ECB /* RDNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F05B65827C62B95009D7ECB /* RDNotificationViewController.swift */; };
+		2F59793E3099ADD000BCA494 /* rdtest.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2F59793D3099ADD000BCA494 /* rdtest.mp3 */; };
 		3B73BF515338FB1DBE274EF6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F84001F58D5632570E81EA /* AppDelegate.swift */; };
 		3BE07810258DEC23D5981DFD /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83EB76B34AA6DE3D60EEDF7 /* AppConfig.swift */; };
 		3CE6236F714051AA87D375E0 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6845D1C97BCCF6D482256D1 /* Components.swift */; };
@@ -89,6 +90,7 @@
 		2F05B65827C62B95009D7ECB /* RDNotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDNotificationViewController.swift; sourceTree = "<group>"; };
 		2F325DEE27BFBB5A00817023 /* RelatedDigitalExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RelatedDigitalExample.entitlements; sourceTree = "<group>"; };
 		2F4916B72996952800120EB4 /* Location.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Location.gpx; sourceTree = "<group>"; };
+		2F59793D3099ADD000BCA494 /* rdtest.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rdtest.mp3; sourceTree = "<group>"; };
 		31E91DA6CE90929E9590A112 /* TargetingActionsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TargetingActionsView.swift; sourceTree = "<group>"; };
 		32139F039401A37F2B553FED /* ConsoleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ConsoleView.swift; sourceTree = "<group>"; };
 		48969B1D02B45826FD4D0117 /* Pods-NotificationService.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationService.debug.xcconfig"; path = "Target Support Files/Pods-NotificationService/Pods-NotificationService.debug.xcconfig"; sourceTree = "<group>"; };
@@ -251,6 +253,7 @@
 				5C461744186A1056DC087E88 /* App */,
 				0D40ACAD3227093A59AE39C4 /* Core */,
 				DE317DCE1B7221A1B7D503BA /* Features */,
+				2F59793D3099ADD000BCA494 /* rdtest.mp3 */,
 			);
 			path = RelatedDigitalExample;
 			sourceTree = "<group>";
@@ -418,6 +421,7 @@
 				88680B192694FC0C004B8DE8 /* LaunchScreen.storyboard in Resources */,
 				88A44ADB292A76B2002F90FA /* sydneysignature.ttf in Resources */,
 				88680B162694FC0C004B8DE8 /* Assets.xcassets in Resources */,
+				2F59793E3099ADD000BCA494 /* rdtest.mp3 in Resources */,
 				88A44ADA292A76B2002F90FA /* android101.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
